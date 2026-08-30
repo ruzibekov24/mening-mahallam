@@ -89,8 +89,13 @@ export interface PremiumRequest {
 export interface Banner {
   id: string;
   imageUrl: string;
+  title?: string;
+  description?: string;
   linkUrl?: string;
   order: number;
+  attribution?: string;
+  createdAt?: string;
+  [key: string]: unknown;
 }
 
 export interface Report {
@@ -184,6 +189,33 @@ export interface AdminUser {
   [key: string]: unknown;
 }
 
+export interface LocalService {
+  id: string;
+  mahallaId: string;
+  name: string;
+  category: string;
+  phone: string;
+  description?: string;
+  authorUid?: string;
+  createdAt?: string;
+  [key: string]: unknown;
+}
+
+export const SERVICE_CATEGORIES = [
+  { value: 'santexnik', label: 'Santexnik' },
+  { value: 'elektrik', label: 'Elektrik' },
+  { value: 'duradgor', label: 'Duradgor' },
+  { value: 'tozalash', label: 'Tozalash' },
+  { value: 'qurilish', label: 'Qurilish' },
+  { value: 'boshqa', label: 'Boshqa' },
+] as const;
+
+export const ANNOUNCEMENT_CATEGORIES = [
+  { value: 'kommunal', label: 'Kommunal' },
+  { value: 'xavfsizlik', label: 'Xavfsizlik' },
+  { value: 'umumiy', label: 'Umumiy' },
+] as const;
+
 export const api = {
   getStats: () => request<Stats>('/api/stats'),
   getMahallas: () => request<{ mahallas: Mahalla[] }>('/api/mahallas').then((r) => r.mahallas),
@@ -196,8 +228,29 @@ export const api = {
   rejectPremiumRequest: (id: string) =>
     request<void>(`/api/premium-requests/${encodeURIComponent(id)}/reject`, { method: 'POST' }),
   getBanners: () => request<{ banners: Banner[] }>('/api/banners').then((r) => r.banners),
-  createBanner: (data: { imageUrl: string; linkUrl?: string; order: number }) =>
-    request<void>('/api/banners', { method: 'POST', body: JSON.stringify(data) }),
+  createBanner: (data: {
+    imageUrl: string;
+    title: string;
+    description: string;
+    linkUrl?: string;
+    order: number;
+    attribution?: string;
+  }) => request<{ banner: Banner }>('/api/banners', { method: 'POST', body: JSON.stringify(data) }),
+  updateBanner: (
+    id: string,
+    data: Partial<{
+      imageUrl: string;
+      title: string;
+      description: string;
+      linkUrl: string;
+      order: number;
+      attribution: string;
+    }>
+  ) =>
+    request<{ banner: Banner }>(`/api/banners/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
   deleteBanner: (id: string) =>
     request<void>(`/api/banners/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   getReports: (status = 'pending') =>
@@ -213,6 +266,26 @@ export const api = {
     request<{ announcements: Announcement[] }>(
       `/api/announcements${mahallaId ? `?mahallaId=${encodeURIComponent(mahallaId)}` : ''}`
     ).then((r) => r.announcements),
+  createAnnouncement: (data: {
+    mahallaId: string;
+    title: string;
+    body: string;
+    category: string;
+    imageUrl?: string;
+  }) =>
+    request<{ announcement: Announcement }>('/api/announcements', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  updateAnnouncement: (
+    mahallaId: string,
+    id: string,
+    data: Partial<{ title: string; body: string; category: string; imageUrl: string }>
+  ) =>
+    request<{ announcement: Announcement }>(
+      `/api/announcements/${encodeURIComponent(mahallaId)}/${encodeURIComponent(id)}`,
+      { method: 'PATCH', body: JSON.stringify(data) }
+    ),
   deleteAnnouncement: (mahallaId: string, id: string) =>
     request<void>(
       `/api/announcements/${encodeURIComponent(mahallaId)}/${encodeURIComponent(id)}`,
@@ -222,6 +295,17 @@ export const api = {
     request<{ events: MahallaEvent[] }>(
       `/api/events${mahallaId ? `?mahallaId=${encodeURIComponent(mahallaId)}` : ''}`
     ).then((r) => r.events),
+  createEvent: (data: { mahallaId: string; title: string; dateTime: string; location: string }) =>
+    request<{ event: MahallaEvent }>('/api/events', { method: 'POST', body: JSON.stringify(data) }),
+  updateEvent: (
+    mahallaId: string,
+    id: string,
+    data: Partial<{ title: string; dateTime: string; location: string }>
+  ) =>
+    request<{ event: MahallaEvent }>(
+      `/api/events/${encodeURIComponent(mahallaId)}/${encodeURIComponent(id)}`,
+      { method: 'PATCH', body: JSON.stringify(data) }
+    ),
   deleteEvent: (mahallaId: string, id: string) =>
     request<void>(`/api/events/${encodeURIComponent(mahallaId)}/${encodeURIComponent(id)}`, {
       method: 'DELETE',
@@ -248,15 +332,98 @@ export const api = {
     request<{ polls: Poll[] }>(
       `/api/polls${mahallaId ? `?mahallaId=${encodeURIComponent(mahallaId)}` : ''}`
     ).then((r) => r.polls),
+  createPoll: (data: {
+    mahallaId: string;
+    question: string;
+    options: string[];
+    allowMultiple?: boolean;
+    isAnonymous?: boolean;
+    closesAt?: string | null;
+  }) => request<{ poll: Poll }>('/api/polls', { method: 'POST', body: JSON.stringify(data) }),
+  updatePoll: (
+    mahallaId: string,
+    id: string,
+    data: Partial<{
+      question: string;
+      options: string[];
+      allowMultiple: boolean;
+      isAnonymous: boolean;
+      closesAt: string | null;
+    }>
+  ) =>
+    request<{ poll: Poll }>(`/api/polls/${encodeURIComponent(mahallaId)}/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+  deletePoll: (mahallaId: string, id: string) =>
+    request<void>(`/api/polls/${encodeURIComponent(mahallaId)}/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
   getServiceAds: (mahallaId?: string) =>
     request<{ serviceAds: ServiceAd[] }>(
       `/api/service-ads${mahallaId ? `?mahallaId=${encodeURIComponent(mahallaId)}` : ''}`
     ).then((r) => r.serviceAds),
+  createServiceAd: (data: {
+    mahallaId: string;
+    title: string;
+    description: string;
+    phone: string;
+    ownerName: string;
+    durationDays?: number;
+  }) =>
+    request<{ serviceAd: ServiceAd }>('/api/service-ads', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  updateServiceAd: (
+    mahallaId: string,
+    id: string,
+    data: Partial<{
+      title: string;
+      description: string;
+      phone: string;
+      ownerName: string;
+      durationDays: number;
+      extendFromCurrent: boolean;
+    }>
+  ) =>
+    request<{ serviceAd: ServiceAd }>(
+      `/api/service-ads/${encodeURIComponent(mahallaId)}/${encodeURIComponent(id)}`,
+      { method: 'PATCH', body: JSON.stringify(data) }
+    ),
   deleteServiceAd: (mahallaId: string, id: string) =>
     request<void>(
       `/api/service-ads/${encodeURIComponent(mahallaId)}/${encodeURIComponent(id)}`,
       { method: 'DELETE' }
     ),
+  getServices: (mahallaId?: string) =>
+    request<{ services: LocalService[] }>(
+      `/api/services${mahallaId ? `?mahallaId=${encodeURIComponent(mahallaId)}` : ''}`
+    ).then((r) => r.services),
+  createService: (data: {
+    mahallaId: string;
+    name: string;
+    category: string;
+    phone: string;
+    description: string;
+  }) =>
+    request<{ service: LocalService }>('/api/services', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  updateService: (
+    mahallaId: string,
+    id: string,
+    data: Partial<{ name: string; category: string; phone: string; description: string }>
+  ) =>
+    request<{ service: LocalService }>(
+      `/api/services/${encodeURIComponent(mahallaId)}/${encodeURIComponent(id)}`,
+      { method: 'PATCH', body: JSON.stringify(data) }
+    ),
+  deleteService: (mahallaId: string, id: string) =>
+    request<void>(`/api/services/${encodeURIComponent(mahallaId)}/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
   searchUsers: (search: string) =>
     request<{ users: AdminUser[]; searchedField: string }>(
       `/api/users?search=${encodeURIComponent(search)}`
@@ -265,6 +432,15 @@ export const api = {
     request<{ user: AdminUser }>(`/api/users/${encodeURIComponent(uid)}/role`, {
       method: 'POST',
       body: JSON.stringify({ role }),
+    }),
+  grantPremium: (uid: string, months = 1) =>
+    request<{ user: AdminUser }>(`/api/users/${encodeURIComponent(uid)}/premium/grant`, {
+      method: 'POST',
+      body: JSON.stringify({ months }),
+    }),
+  revokePremium: (uid: string) =>
+    request<{ user: AdminUser }>(`/api/users/${encodeURIComponent(uid)}/premium/revoke`, {
+      method: 'POST',
     }),
 };
 

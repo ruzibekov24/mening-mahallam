@@ -56,6 +56,7 @@ export async function renderFoydalanuvchilar(container: HTMLElement): Promise<vo
                   <th>Telefon</th>
                   <th>Rol</th>
                   <th>Mahalla</th>
+                  <th>Premium</th>
                   <th></th>
                 </tr>
               </thead>
@@ -67,6 +68,12 @@ export async function renderFoydalanuvchilar(container: HTMLElement): Promise<vo
         `;
         body.querySelectorAll<HTMLSelectElement>('[data-role-select]').forEach((select) => {
           select.addEventListener('change', () => handleRoleChange(select));
+        });
+        body.querySelectorAll<HTMLButtonElement>('[data-action="grant-premium"]').forEach((btn) => {
+          btn.addEventListener('click', () => handleGrantPremium(btn, body));
+        });
+        body.querySelectorAll<HTMLButtonElement>('[data-action="revoke-premium"]').forEach((btn) => {
+          btn.addEventListener('click', () => handleRevokePremium(btn, body));
         });
       }
     } catch (err) {
@@ -83,6 +90,16 @@ function fullName(u: AdminUser): string {
   return name || '—';
 }
 
+function premiumStatus(u: AdminUser): string {
+  if (!('premiumUntil' in u)) return '';
+  const until = u.premiumUntil;
+  if (!until) return '<span class="badge">Premium yo\'q</span>';
+  const isActive = new Date(until as string).getTime() > Date.now();
+  return isActive
+    ? `<span class="badge badge-success">Premium: ${escapeHtml(new Date(until as string).toLocaleDateString('uz-UZ'))} gacha</span>`
+    : `<span class="badge badge-danger">Premium tugagan</span>`;
+}
+
 function renderRow(u: AdminUser): string {
   return `
     <tr data-row-id="${escapeHtml(u.id)}">
@@ -90,6 +107,7 @@ function renderRow(u: AdminUser): string {
       <td class="mono">${escapeHtml(u.phone ?? '—')}</td>
       <td>${escapeHtml(u.role)}</td>
       <td class="mono">${escapeHtml(u.mahallaId ?? '—')}</td>
+      <td>${premiumStatus(u)}</td>
       <td class="actions-cell">
         <select data-role-select data-uid="${escapeHtml(u.id)}">
           ${ROLE_OPTIONS.map(
@@ -97,9 +115,57 @@ function renderRow(u: AdminUser): string {
               `<option value="${o.value}" ${o.value === u.role ? 'selected' : ''}>${escapeHtml(o.label)}</option>`
           ).join('')}
         </select>
+        <button class="btn btn-success btn-sm" data-action="grant-premium" data-uid="${escapeHtml(u.id)}">Premium berish</button>
+        <button class="btn btn-ghost btn-sm" data-action="revoke-premium" data-uid="${escapeHtml(u.id)}">Premium olib tashlash</button>
       </td>
     </tr>
   `;
+}
+
+async function handleGrantPremium(btn: HTMLButtonElement, body: HTMLElement): Promise<void> {
+  const uid = btn.dataset.uid!;
+  const input = prompt('Necha oyga premium berilsin?', '1');
+  if (input === null) return;
+  const months = Number(input);
+  if (!Number.isInteger(months) || months <= 0) {
+    alert("Oylar soni musbat butun son bo'lishi kerak.");
+    return;
+  }
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.innerHTML = '<span class="spinner"></span>';
+  try {
+    await api.grantPremium(uid, months);
+    const row = btn.closest('tr');
+    row?.querySelectorAll<HTMLButtonElement>('button').forEach((b) => (b.disabled = false));
+    alert('Premium muvaffaqiyatli berildi.');
+  } catch (err) {
+    const message = err instanceof ApiError ? err.message : "Premium berib bo'lmadi.";
+    alert(`Xatolik: ${message}`);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+    void body;
+  }
+}
+
+async function handleRevokePremium(btn: HTMLButtonElement, body: HTMLElement): Promise<void> {
+  const uid = btn.dataset.uid!;
+  if (!confirm("Ushbu foydalanuvchidan premiumni olib tashlashni tasdiqlaysizmi?")) return;
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.innerHTML = '<span class="spinner"></span>';
+  try {
+    await api.revokePremium(uid);
+    alert('Premium olib tashlandi.');
+  } catch (err) {
+    const message = err instanceof ApiError ? err.message : "Premium olib tashlab bo'lmadi.";
+    alert(`Xatolik: ${message}`);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+    void body;
+  }
 }
 
 async function handleRoleChange(select: HTMLSelectElement): Promise<void> {

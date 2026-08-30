@@ -22,6 +22,7 @@ import {
   createDoc,
   patchDoc,
   deleteDoc,
+  FieldDelete,
 } from './lib/firestore.js';
 import { getStats, upsertStats } from './lib/supabase.js';
 
@@ -182,6 +183,50 @@ async function route(request, env, pathname, searchParams, uid) {
     return jsonResponse({ banner: doc }, 201, env);
   }
 
+  // PATCH /api/banners/:id
+  //
+  // Partial update. `promo_banner_repository.dart` has no `updateBanner`
+  // method of its own (only `createBanner`/`deleteBanner`), so this
+  // mirrors `createBanner`'s field set instead — every field it accepts
+  // is optionally patchable here (not just imageUrl/linkUrl/order).
+  const bannerPatchMatch = pathname.match(/^\/api\/banners\/([^/]+)$/);
+  if (method === 'PATCH' && bannerPatchMatch) {
+    const id = bannerPatchMatch[1];
+    const body = await safeJson(request);
+    const fields = {};
+    if (body?.imageUrl !== undefined) {
+      if (typeof body.imageUrl !== 'string' || !body.imageUrl) {
+        throw new HttpError(400, 'imageUrl must be a non-empty string');
+      }
+      fields.imageUrl = body.imageUrl;
+    }
+    if (body?.title !== undefined) {
+      if (typeof body.title !== 'string' || !body.title) {
+        throw new HttpError(400, 'title must be a non-empty string');
+      }
+      fields.title = body.title;
+    }
+    if (body?.description !== undefined) {
+      if (typeof body.description !== 'string' || !body.description) {
+        throw new HttpError(400, 'description must be a non-empty string');
+      }
+      fields.description = body.description;
+    }
+    if (body?.order !== undefined) {
+      if (!Number.isInteger(body.order)) throw new HttpError(400, 'order must be an integer');
+      fields.order = body.order;
+    }
+    if (body?.linkUrl !== undefined) fields.linkUrl = body.linkUrl;
+    if (body?.attribution !== undefined) fields.attribution = body.attribution;
+    if (Object.keys(fields).length === 0) {
+      throw new HttpError(400, 'No updatable fields provided');
+    }
+    const existing = await getDoc(env, 'promoBanners', id);
+    if (!existing) throw new HttpError(404, 'Banner not found');
+    const updated = await patchDoc(env, 'promoBanners', id, fields);
+    return jsonResponse({ banner: updated }, 200, env);
+  }
+
   // DELETE /api/banners/:id
   const bannerDeleteMatch = pathname.match(/^\/api\/banners\/([^/]+)$/);
   if (method === 'DELETE' && bannerDeleteMatch) {
@@ -243,6 +288,81 @@ async function route(request, env, pathname, searchParams, uid) {
     return jsonResponse({ announcements: docs }, 200, env);
   }
 
+  // POST /api/announcements
+  //
+  // Matches lib/features/announcements/data/announcement_repository.dart's
+  // `AnnouncementRepository.createAnnouncement`. `authorUid` is set to the
+  // calling superAdmin's uid (the Dart model's `authorUid` field is
+  // required/non-nullable, so this Worker never omits it).
+  // `reactedUids` is intentionally never written here — new announcements
+  // simply start with none (`Announcement.fromFirestore` already defaults
+  // a missing `reactedUids` map to `{}`).
+  if (method === 'POST' && pathname === '/api/announcements') {
+    const body = await safeJson(request);
+    if (!body || typeof body.mahallaId !== 'string' || !body.mahallaId) {
+      throw new HttpError(400, 'mahallaId is required');
+    }
+    if (typeof body.title !== 'string' || !body.title) {
+      throw new HttpError(400, 'title is required');
+    }
+    if (typeof body.body !== 'string' || !body.body) {
+      throw new HttpError(400, 'body is required');
+    }
+    if (!['kommunal', 'xavfsizlik', 'umumiy'].includes(body.category)) {
+      throw new HttpError(400, 'category must be one of "kommunal", "xavfsizlik", "umumiy"');
+    }
+    const fields = {
+      title: body.title,
+      body: body.body,
+      category: body.category,
+      authorUid: uid,
+      createdAt: new Date(),
+    };
+    if (typeof body.imageUrl === 'string' && body.imageUrl) fields.imageUrl = body.imageUrl;
+    const doc = await createDoc(env, `mahallas/${body.mahallaId}/announcements`, fields);
+    doc.mahallaId = body.mahallaId;
+    return jsonResponse({ announcement: doc }, 201, env);
+  }
+
+  // PATCH /api/announcements/:mahallaId/:id
+  //
+  // Partial update of title/body/category/imageUrl — never touches
+  // `reactedUids`, which is only ever mutated by the mobile app's
+  // reaction toggle (`AnnouncementRepository.toggleReaction`).
+  const announcementPatchMatch = pathname.match(/^\/api\/announcements\/([^/]+)\/([^/]+)$/);
+  if (method === 'PATCH' && announcementPatchMatch) {
+    const [, mahallaId, id] = announcementPatchMatch;
+    const body = await safeJson(request);
+    const fields = {};
+    if (body?.title !== undefined) {
+      if (typeof body.title !== 'string' || !body.title) {
+        throw new HttpError(400, 'title must be a non-empty string');
+      }
+      fields.title = body.title;
+    }
+    if (body?.body !== undefined) {
+      if (typeof body.body !== 'string' || !body.body) {
+        throw new HttpError(400, 'body must be a non-empty string');
+      }
+      fields.body = body.body;
+    }
+    if (body?.category !== undefined) {
+      if (!['kommunal', 'xavfsizlik', 'umumiy'].includes(body.category)) {
+        throw new HttpError(400, 'category must be one of "kommunal", "xavfsizlik", "umumiy"');
+      }
+      fields.category = body.category;
+    }
+    if (body?.imageUrl !== undefined) fields.imageUrl = body.imageUrl;
+    if (Object.keys(fields).length === 0) {
+      throw new HttpError(400, 'No updatable fields provided');
+    }
+    const existing = await getDoc(env, `mahallas/${mahallaId}/announcements`, id);
+    if (!existing) throw new HttpError(404, 'Announcement not found');
+    const updated = await patchDoc(env, `mahallas/${mahallaId}/announcements`, id, fields);
+    updated.mahallaId = mahallaId;
+    return jsonResponse({ announcement: updated }, 200, env);
+  }
+
   // DELETE /api/announcements/:mahallaId/:id
   const announcementDeleteMatch = pathname.match(/^\/api\/announcements\/([^/]+)\/([^/]+)$/);
   if (method === 'DELETE' && announcementDeleteMatch) {
@@ -256,6 +376,75 @@ async function route(request, env, pathname, searchParams, uid) {
     const mahallaId = searchParams.get('mahallaId');
     const docs = await listMahallaSubcollection(env, 'events', mahallaId, 'dateTime');
     return jsonResponse({ events: docs }, 200, env);
+  }
+
+  // POST /api/events
+  //
+  // Matches lib/features/announcements/data/event_repository.dart's
+  // `EventRepository.createEvent`. `participantsCount` always starts at
+  // 0 (mirrors the Dart method — it's incremented elsewhere, not
+  // settable at creation).
+  if (method === 'POST' && pathname === '/api/events') {
+    const body = await safeJson(request);
+    if (!body || typeof body.mahallaId !== 'string' || !body.mahallaId) {
+      throw new HttpError(400, 'mahallaId is required');
+    }
+    if (typeof body.title !== 'string' || !body.title) {
+      throw new HttpError(400, 'title is required');
+    }
+    if (typeof body.location !== 'string' || !body.location) {
+      throw new HttpError(400, 'location is required');
+    }
+    const dateTime = parseIsoDate(body.dateTime);
+    if (!dateTime) throw new HttpError(400, 'dateTime is required (ISO 8601 string)');
+    const fields = {
+      title: body.title,
+      dateTime,
+      location: body.location,
+      participantsCount: 0,
+      createdAt: new Date(),
+      authorUid: uid,
+    };
+    const doc = await createDoc(env, `mahallas/${body.mahallaId}/events`, fields);
+    doc.mahallaId = body.mahallaId;
+    return jsonResponse({ event: doc }, 201, env);
+  }
+
+  // PATCH /api/events/:mahallaId/:id
+  //
+  // Partial update of title/dateTime/location — matches
+  // `EventRepository.updateEvent` (which doesn't touch
+  // `participantsCount` either).
+  const eventPatchMatch = pathname.match(/^\/api\/events\/([^/]+)\/([^/]+)$/);
+  if (method === 'PATCH' && eventPatchMatch) {
+    const [, mahallaId, id] = eventPatchMatch;
+    const body = await safeJson(request);
+    const fields = {};
+    if (body?.title !== undefined) {
+      if (typeof body.title !== 'string' || !body.title) {
+        throw new HttpError(400, 'title must be a non-empty string');
+      }
+      fields.title = body.title;
+    }
+    if (body?.location !== undefined) {
+      if (typeof body.location !== 'string' || !body.location) {
+        throw new HttpError(400, 'location must be a non-empty string');
+      }
+      fields.location = body.location;
+    }
+    if (body?.dateTime !== undefined) {
+      const dateTime = parseIsoDate(body.dateTime);
+      if (!dateTime) throw new HttpError(400, 'dateTime must be a valid ISO 8601 string');
+      fields.dateTime = dateTime;
+    }
+    if (Object.keys(fields).length === 0) {
+      throw new HttpError(400, 'No updatable fields provided');
+    }
+    const existing = await getDoc(env, `mahallas/${mahallaId}/events`, id);
+    if (!existing) throw new HttpError(404, 'Event not found');
+    const updated = await patchDoc(env, `mahallas/${mahallaId}/events`, id, fields);
+    updated.mahallaId = mahallaId;
+    return jsonResponse({ event: updated }, 200, env);
   }
 
   // DELETE /api/events/:mahallaId/:id
@@ -313,6 +502,102 @@ async function route(request, env, pathname, searchParams, uid) {
     return jsonResponse({ polls }, 200, env);
   }
 
+  // POST /api/polls
+  //
+  // Matches lib/features/polls/data/poll_repository.dart's
+  // `PollRepository.createPoll`. `votes` always starts empty (`{}`) —
+  // the Dart repository is the only writer that ever touches it after
+  // creation (via `vote`).
+  if (method === 'POST' && pathname === '/api/polls') {
+    const body = await safeJson(request);
+    if (!body || typeof body.mahallaId !== 'string' || !body.mahallaId) {
+      throw new HttpError(400, 'mahallaId is required');
+    }
+    if (typeof body.question !== 'string' || !body.question) {
+      throw new HttpError(400, 'question is required');
+    }
+    if (!Array.isArray(body.options) || body.options.length < 2 ||
+        !body.options.every((o) => typeof o === 'string' && o)) {
+      throw new HttpError(400, 'options must be an array of at least 2 non-empty strings');
+    }
+    const closesAt = body.closesAt === undefined || body.closesAt === null
+      ? null
+      : parseIsoDate(body.closesAt);
+    if (body.closesAt !== undefined && body.closesAt !== null && !closesAt) {
+      throw new HttpError(400, 'closesAt must be a valid ISO 8601 string or null');
+    }
+    const fields = {
+      question: body.question,
+      options: body.options,
+      authorUid: uid,
+      createdAt: new Date(),
+      votes: {},
+      allowMultiple: body.allowMultiple === true,
+      isAnonymous: body.isAnonymous === true,
+      closesAt,
+    };
+    const doc = await createDoc(env, `mahallas/${body.mahallaId}/polls`, fields);
+    doc.mahallaId = body.mahallaId;
+    doc.results = computePollResults(doc);
+    return jsonResponse({ poll: doc }, 201, env);
+  }
+
+  // PATCH /api/polls/:mahallaId/:id
+  //
+  // Partial update of question/options/allowMultiple/isAnonymous/
+  // closesAt. Deliberately never touches `votes` — that's mutated only
+  // by the mobile app's voting flow (`PollRepository.vote`). Note this
+  // differs from `PollRepository.updatePoll`, which resets `votes` to
+  // `{}` whenever options change (to avoid stale option indexes) — this
+  // endpoint leaves that judgment call to the caller/frontend instead.
+  const pollPatchMatch = pathname.match(/^\/api\/polls\/([^/]+)\/([^/]+)$/);
+  if (method === 'PATCH' && pollPatchMatch) {
+    const [, mahallaId, id] = pollPatchMatch;
+    const body = await safeJson(request);
+    const fields = {};
+    if (body?.question !== undefined) {
+      if (typeof body.question !== 'string' || !body.question) {
+        throw new HttpError(400, 'question must be a non-empty string');
+      }
+      fields.question = body.question;
+    }
+    if (body?.options !== undefined) {
+      if (!Array.isArray(body.options) || body.options.length < 2 ||
+          !body.options.every((o) => typeof o === 'string' && o)) {
+        throw new HttpError(400, 'options must be an array of at least 2 non-empty strings');
+      }
+      fields.options = body.options;
+    }
+    if (body?.allowMultiple !== undefined) fields.allowMultiple = body.allowMultiple === true;
+    if (body?.isAnonymous !== undefined) fields.isAnonymous = body.isAnonymous === true;
+    if (body?.closesAt !== undefined) {
+      if (body.closesAt === null) {
+        fields.closesAt = null;
+      } else {
+        const closesAt = parseIsoDate(body.closesAt);
+        if (!closesAt) throw new HttpError(400, 'closesAt must be a valid ISO 8601 string or null');
+        fields.closesAt = closesAt;
+      }
+    }
+    if (Object.keys(fields).length === 0) {
+      throw new HttpError(400, 'No updatable fields provided');
+    }
+    const existing = await getDoc(env, `mahallas/${mahallaId}/polls`, id);
+    if (!existing) throw new HttpError(404, 'Poll not found');
+    const updated = await patchDoc(env, `mahallas/${mahallaId}/polls`, id, fields);
+    updated.mahallaId = mahallaId;
+    updated.results = computePollResults(updated);
+    return jsonResponse({ poll: updated }, 200, env);
+  }
+
+  // DELETE /api/polls/:mahallaId/:id
+  const pollDeleteMatch = pathname.match(/^\/api\/polls\/([^/]+)\/([^/]+)$/);
+  if (method === 'DELETE' && pollDeleteMatch) {
+    const [, mahallaId, id] = pollDeleteMatch;
+    await deleteDoc(env, `mahallas/${mahallaId}/polls`, id);
+    return jsonResponse({ ok: true }, 200, env);
+  }
+
   // GET /api/service-ads?mahallaId=X
   if (method === 'GET' && pathname === '/api/service-ads') {
     const mahallaId = searchParams.get('mahallaId');
@@ -320,11 +605,207 @@ async function route(request, env, pathname, searchParams, uid) {
     return jsonResponse({ serviceAds: docs }, 200, env);
   }
 
+  // POST /api/service-ads
+  //
+  // Matches lib/features/ads/data/service_ad_repository.dart's
+  // `ServiceAdRepository.createAd`. Note: the real doc schema is just
+  // title/description/phone/ownerName/activeUntil/createdAt — there is
+  // no `category` or `weeklyPrice` field stored per-doc (`weeklyPrice`
+  // is a static price constant in the Dart repository, not per-ad
+  // data), despite what earlier planning assumed. `durationDays`
+  // (optional, default 7 — matches `ServiceAdRepository.defaultDuration`)
+  // controls `activeUntil = now + durationDays`.
+  if (method === 'POST' && pathname === '/api/service-ads') {
+    const body = await safeJson(request);
+    if (!body || typeof body.mahallaId !== 'string' || !body.mahallaId) {
+      throw new HttpError(400, 'mahallaId is required');
+    }
+    if (typeof body.title !== 'string' || !body.title) {
+      throw new HttpError(400, 'title is required');
+    }
+    if (typeof body.description !== 'string' || !body.description) {
+      throw new HttpError(400, 'description is required');
+    }
+    if (typeof body.phone !== 'string' || !body.phone) {
+      throw new HttpError(400, 'phone is required');
+    }
+    if (typeof body.ownerName !== 'string' || !body.ownerName) {
+      throw new HttpError(400, 'ownerName is required');
+    }
+    const durationDays = Number.isFinite(body.durationDays) ? body.durationDays : 7;
+    const activeUntil = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000);
+    const fields = {
+      title: body.title,
+      description: body.description,
+      phone: body.phone,
+      ownerName: body.ownerName,
+      createdAt: new Date(),
+      activeUntil,
+    };
+    const doc = await createDoc(env, `mahallas/${body.mahallaId}/serviceAds`, fields);
+    doc.mahallaId = body.mahallaId;
+    return jsonResponse({ serviceAd: doc }, 201, env);
+  }
+
+  // PATCH /api/service-ads/:mahallaId/:id
+  //
+  // Partial update of title/description/phone/ownerName, plus optional
+  // `durationDays` to extend/replace `activeUntil` from now (mirrors
+  // `ServiceAdRepository.extendAd`'s "extend from max(now, current)"
+  // logic when `extendFromCurrent` is true, or set outright otherwise).
+  const serviceAdPatchMatch = pathname.match(/^\/api\/service-ads\/([^/]+)\/([^/]+)$/);
+  if (method === 'PATCH' && serviceAdPatchMatch) {
+    const [, mahallaId, id] = serviceAdPatchMatch;
+    const body = await safeJson(request);
+    const fields = {};
+    if (body?.title !== undefined) {
+      if (typeof body.title !== 'string' || !body.title) {
+        throw new HttpError(400, 'title must be a non-empty string');
+      }
+      fields.title = body.title;
+    }
+    if (body?.description !== undefined) {
+      if (typeof body.description !== 'string' || !body.description) {
+        throw new HttpError(400, 'description must be a non-empty string');
+      }
+      fields.description = body.description;
+    }
+    if (body?.phone !== undefined) {
+      if (typeof body.phone !== 'string' || !body.phone) {
+        throw new HttpError(400, 'phone must be a non-empty string');
+      }
+      fields.phone = body.phone;
+    }
+    if (body?.ownerName !== undefined) {
+      if (typeof body.ownerName !== 'string' || !body.ownerName) {
+        throw new HttpError(400, 'ownerName must be a non-empty string');
+      }
+      fields.ownerName = body.ownerName;
+    }
+    if (body?.durationDays !== undefined) {
+      if (!Number.isFinite(body.durationDays)) {
+        throw new HttpError(400, 'durationDays must be a number');
+      }
+      const existingAd = await getDoc(env, `mahallas/${mahallaId}/serviceAds`, id);
+      if (!existingAd) throw new HttpError(404, 'Service ad not found');
+      const current = existingAd.activeUntil ? new Date(existingAd.activeUntil) : null;
+      const now = new Date();
+      const base = body.extendFromCurrent && current && current > now ? current : now;
+      fields.activeUntil = new Date(base.getTime() + body.durationDays * 24 * 60 * 60 * 1000);
+    }
+    if (Object.keys(fields).length === 0) {
+      throw new HttpError(400, 'No updatable fields provided');
+    }
+    const existing = await getDoc(env, `mahallas/${mahallaId}/serviceAds`, id);
+    if (!existing) throw new HttpError(404, 'Service ad not found');
+    const updated = await patchDoc(env, `mahallas/${mahallaId}/serviceAds`, id, fields);
+    updated.mahallaId = mahallaId;
+    return jsonResponse({ serviceAd: updated }, 200, env);
+  }
+
   // DELETE /api/service-ads/:mahallaId/:id
   const serviceAdDeleteMatch = pathname.match(/^\/api\/service-ads\/([^/]+)\/([^/]+)$/);
   if (method === 'DELETE' && serviceAdDeleteMatch) {
     const [, mahallaId, id] = serviceAdDeleteMatch;
     await deleteDoc(env, `mahallas/${mahallaId}/serviceAds`, id);
+    return jsonResponse({ ok: true }, 200, env);
+  }
+
+  // GET /api/services?mahallaId=X
+  //
+  // Matches lib/features/services/data/service_repository.dart's
+  // `LocalService`/`ServiceRepository` — the admin-curated local
+  // service-provider directory ("Xizmatlar", e.g. plumber/electrician),
+  // distinct from the paid `serviceAds` classifieds above.
+  if (method === 'GET' && pathname === '/api/services') {
+    const mahallaId = searchParams.get('mahallaId');
+    const docs = await listMahallaSubcollection(env, 'services', mahallaId, 'createdAt');
+    return jsonResponse({ services: docs }, 200, env);
+  }
+
+  // POST /api/services
+  //
+  // Matches `ServiceRepository.createService`. `authorUid` is set to
+  // the calling superAdmin's uid.
+  if (method === 'POST' && pathname === '/api/services') {
+    const body = await safeJson(request);
+    if (!body || typeof body.mahallaId !== 'string' || !body.mahallaId) {
+      throw new HttpError(400, 'mahallaId is required');
+    }
+    if (typeof body.name !== 'string' || !body.name) {
+      throw new HttpError(400, 'name is required');
+    }
+    if (!SERVICE_CATEGORIES.includes(body.category)) {
+      throw new HttpError(400, `category must be one of ${SERVICE_CATEGORIES.join(', ')}`);
+    }
+    if (typeof body.phone !== 'string' || !body.phone) {
+      throw new HttpError(400, 'phone is required');
+    }
+    if (typeof body.description !== 'string' || !body.description) {
+      throw new HttpError(400, 'description is required');
+    }
+    const fields = {
+      name: body.name,
+      category: body.category,
+      phone: body.phone,
+      description: body.description,
+      authorUid: uid,
+      createdAt: new Date(),
+    };
+    const doc = await createDoc(env, `mahallas/${body.mahallaId}/services`, fields);
+    doc.mahallaId = body.mahallaId;
+    return jsonResponse({ service: doc }, 201, env);
+  }
+
+  // PATCH /api/services/:mahallaId/:id
+  //
+  // Partial update of name/category/phone/description — matches
+  // `ServiceRepository.updateService` (which doesn't touch `authorUid`
+  // or `createdAt` either).
+  const servicePatchMatch = pathname.match(/^\/api\/services\/([^/]+)\/([^/]+)$/);
+  if (method === 'PATCH' && servicePatchMatch) {
+    const [, mahallaId, id] = servicePatchMatch;
+    const body = await safeJson(request);
+    const fields = {};
+    if (body?.name !== undefined) {
+      if (typeof body.name !== 'string' || !body.name) {
+        throw new HttpError(400, 'name must be a non-empty string');
+      }
+      fields.name = body.name;
+    }
+    if (body?.category !== undefined) {
+      if (!SERVICE_CATEGORIES.includes(body.category)) {
+        throw new HttpError(400, `category must be one of ${SERVICE_CATEGORIES.join(', ')}`);
+      }
+      fields.category = body.category;
+    }
+    if (body?.phone !== undefined) {
+      if (typeof body.phone !== 'string' || !body.phone) {
+        throw new HttpError(400, 'phone must be a non-empty string');
+      }
+      fields.phone = body.phone;
+    }
+    if (body?.description !== undefined) {
+      if (typeof body.description !== 'string' || !body.description) {
+        throw new HttpError(400, 'description must be a non-empty string');
+      }
+      fields.description = body.description;
+    }
+    if (Object.keys(fields).length === 0) {
+      throw new HttpError(400, 'No updatable fields provided');
+    }
+    const existing = await getDoc(env, `mahallas/${mahallaId}/services`, id);
+    if (!existing) throw new HttpError(404, 'Service not found');
+    const updated = await patchDoc(env, `mahallas/${mahallaId}/services`, id, fields);
+    updated.mahallaId = mahallaId;
+    return jsonResponse({ service: updated }, 200, env);
+  }
+
+  // DELETE /api/services/:mahallaId/:id
+  const serviceDeleteMatch = pathname.match(/^\/api\/services\/([^/]+)\/([^/]+)$/);
+  if (method === 'DELETE' && serviceDeleteMatch) {
+    const [, mahallaId, id] = serviceDeleteMatch;
+    await deleteDoc(env, `mahallas/${mahallaId}/services`, id);
     return jsonResponse({ ok: true }, 200, env);
   }
 
@@ -398,7 +879,71 @@ async function route(request, env, pathname, searchParams, uid) {
     return jsonResponse({ user: updated }, 200, env);
   }
 
+  // POST /api/users/:uid/premium/grant  { months?: number }
+  //
+  // Direct grant, separate from the premiumRequests approve/reject flow
+  // above — for use from a user-search/management UI (e.g. comping a
+  // user premium without them having filed a payment request). Mirrors
+  // `PremiumRepository.grantPremium` exactly: extends the existing
+  // `premiumUntil` if it's still in the future, else starts from now;
+  // `subscriptionPeriod` (30 days) * months.
+  const premiumGrantMatch = pathname.match(/^\/api\/users\/([^/]+)\/premium\/grant$/);
+  if (method === 'POST' && premiumGrantMatch) {
+    const uidToGrant = premiumGrantMatch[1];
+    const body = await safeJson(request);
+    const months = body?.months !== undefined ? body.months : 1;
+    if (!Number.isInteger(months) || months < 1) {
+      throw new HttpError(400, 'months must be a positive integer');
+    }
+    const existing = await getDoc(env, 'users', uidToGrant);
+    if (!existing) throw new HttpError(404, 'User not found');
+    const updated = await grantUserPremium(env, uidToGrant, months);
+    return jsonResponse({ user: updated }, 200, env);
+  }
+
+  // POST /api/users/:uid/premium/revoke
+  //
+  // Mirrors `PremiumRepository.revokePremium` exactly: deletes the
+  // `premiumUntil` field entirely (via Firestore's field-delete, not
+  // setting it to null) — matches the Dart `FieldValue.delete()` call.
+  const premiumRevokeMatch = pathname.match(/^\/api\/users\/([^/]+)\/premium\/revoke$/);
+  if (method === 'POST' && premiumRevokeMatch) {
+    const uidToRevoke = premiumRevokeMatch[1];
+    const existing = await getDoc(env, 'users', uidToRevoke);
+    if (!existing) throw new HttpError(404, 'User not found');
+    const updated = await patchDoc(env, 'users', uidToRevoke, { premiumUntil: FieldDelete });
+    return jsonResponse({ user: updated }, 200, env);
+  }
+
   throw new HttpError(404, 'Not found');
+}
+
+/** Valid `ServiceCategory` values — mirrors `ServiceCategoryX.firestoreValue`
+ * in lib/features/services/data/service_repository.dart. */
+const SERVICE_CATEGORIES = ['santexnik', 'elektrik', 'duradgor', 'tozalash', 'qurilish', 'boshqa'];
+
+/** Parses an ISO 8601 date string into a `Date`, or returns `null` if invalid. */
+function parseIsoDate(value) {
+  if (typeof value !== 'string' || !value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+/**
+ * Grants/extends premium on a user doc — the exact same shape as
+ * `PremiumRepository.grantPremium`: extends the existing `premiumUntil`
+ * if it's still in the future, otherwise starts from now, by
+ * `subscriptionPeriod` (30 days) * months. Shared by both the
+ * premium-request approval flow and the direct grant endpoint.
+ */
+async function grantUserPremium(env, uid, months) {
+  const SUBSCRIPTION_PERIOD_MS = 30 * 24 * 60 * 60 * 1000; // matches Dart's subscriptionPeriod
+  const userDoc = await getDoc(env, 'users', uid);
+  const currentPremiumUntil = userDoc?.premiumUntil ? new Date(userDoc.premiumUntil) : null;
+  const now = new Date();
+  const base = currentPremiumUntil && currentPremiumUntil > now ? currentPremiumUntil : now;
+  const until = new Date(base.getTime() + SUBSCRIPTION_PERIOD_MS * months);
+  return patchDoc(env, 'users', uid, { premiumUntil: until });
 }
 
 async function safeJson(request) {

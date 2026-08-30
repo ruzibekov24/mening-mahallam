@@ -11,6 +11,7 @@ import { renderMurojaatlar } from './pages/murojaatlar';
 import { renderFoydalanuvchilar } from './pages/foydalanuvchilar';
 import { renderSorovnomalar } from './pages/sorovnomalar';
 import { renderXizmatlar } from './pages/xizmatlar';
+import { renderXizmatlarRoyxati } from './pages/xizmatlar-royxati';
 
 const root = document.getElementById('app')!;
 
@@ -26,7 +27,8 @@ const ROUTES: Record<string, PageRenderer> = {
   '#/murojaatlar': renderMurojaatlar,
   '#/foydalanuvchilar': renderFoydalanuvchilar,
   '#/sorovnomalar': renderSorovnomalar,
-  '#/xizmatlar': renderXizmatlar,
+  '#/xizmatlar': renderXizmatlarRoyxati,
+  '#/reklama-elonlari': renderXizmatlar,
 };
 
 let currentUser: User | null = null;

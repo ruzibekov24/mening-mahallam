@@ -196,19 +196,37 @@ export async function createDoc(env, collection, fields) {
 }
 
 /**
+ * Sentinel value for `patchDoc` — pass this as a field's value to delete
+ * that field from the document entirely (mirrors the Flutter app's
+ * `FieldValue.delete()`, e.g. `PremiumRepository.revokePremium`'s
+ * `{'premiumUntil': FieldValue.delete()}`). The field's key is still
+ * listed in `updateMask.fieldPaths` (so Firestore knows to touch it) but
+ * omitted from the request body's `fields`, which is exactly how the
+ * Firestore REST API represents "remove this field" — as opposed to
+ * setting it to `null` (which keeps the field, with a null value).
+ */
+export const FieldDelete = Symbol('FieldDelete');
+
+/**
  * Updates (merges) fields on an existing document. Only the fields
  * listed in `fields` are touched — Firestore's `updateMask.fieldPaths`
  * ensures other fields on the document are left untouched, matching
  * `SetOptions(merge: true)` / `.update()` semantics in the Flutter app.
+ * See `FieldDelete` above to delete a field instead of setting it.
  */
 export async function patchDoc(env, collection, id, fields) {
   const mask = Object.keys(fields)
     .map((key) => `updateMask.fieldPaths=${encodeURIComponent(key)}`)
     .join('&');
+  const writeFields = {};
+  for (const [key, value] of Object.entries(fields)) {
+    if (value === FieldDelete) continue; // in mask, absent from fields -> deleted
+    writeFields[key] = value;
+  }
   const url = `${BASE}/${documentsRoot(env)}/${collection}/${id}?${mask}`;
   const res = await fsFetch(env, url, {
     method: 'PATCH',
-    body: JSON.stringify({ fields: encodeFields(fields) }),
+    body: JSON.stringify({ fields: encodeFields(writeFields) }),
   });
   if (!res.ok) throw new Error(`Firestore patchDoc failed: ${res.status}`);
   const doc = await res.json();

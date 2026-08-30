@@ -18,7 +18,10 @@ Google service-account OAuth2, and Firestore/Supabase REST calls.
   the resulting access token in memory for its ~1hr lifetime.
 - `lib/firestore.js` — Firestore REST client (get/list/query/aggregate/
   create/patch/delete), with encode/decode between plain JS values and
-  Firestore's tagged `{stringValue: ...}` REST value format.
+  Firestore's tagged `{stringValue: ...}` REST value format. Also
+  exports `FieldDelete`, a sentinel passed as a `patchDoc` field value
+  to delete that field entirely (mirrors the Flutter app's
+  `FieldValue.delete()`) — used by `POST /api/users/:uid/premium/revoke`.
 - `lib/supabase.js` — reads/upserts the single `admin_stats` row via
   Supabase PostgREST.
 - `lib/auth.js` — `requireSuperAdmin()`: verifies the bearer token, then
@@ -185,6 +188,30 @@ Body:
 `201 { "banner": {...created doc with id} }`. `400` if `imageUrl`,
 `title`, or `description` are missing.
 
+### `PATCH /api/banners/:id`
+
+Partial update. `promo_banner_repository.dart` has no `updateBanner`
+method of its own (only `createBanner`/`deleteBanner`) — this endpoint
+mirrors `createBanner`'s full field set (not just `imageUrl`/`linkUrl`/
+`order`), since a real edit form needs to touch title/description too.
+
+Body (all optional, at least one required):
+
+```json
+{
+  "imageUrl": "https://...",
+  "title": "...",
+  "description": "...",
+  "order": 0,
+  "linkUrl": "https://...",
+  "attribution": "..."
+}
+```
+
+`200 { "banner": {...updated doc} }`. `400` if no updatable field is
+provided, or if a provided `imageUrl`/`title`/`description` is an empty
+string, or `order` isn't an integer. `404` if the banner doesn't exist.
+
 ### `DELETE /api/banners/:id`
 
 `200 { "ok": true }`.
@@ -256,6 +283,47 @@ Delta JSON (rich text) rather than plain text — see
 `Announcement.plainTextPreview` in the Dart source if you need a plain
 preview client-side.
 
+### `POST /api/announcements`
+
+Matches `AnnouncementRepository.createAnnouncement`. `authorUid` is
+always set to the calling superAdmin's uid (the Dart model's
+`authorUid` is required/non-nullable). `reactedUids` is never written
+here — new announcements simply start with none.
+
+Body:
+
+```json
+{
+  "mahallaId": "...",           // required
+  "title": "...",               // required
+  "body": "...",                // required — plain text or Quill Delta JSON
+  "category": "kommunal",       // required — "kommunal" | "xavfsizlik" | "umumiy"
+  "imageUrl": "https://..."     // optional
+}
+```
+
+`201 { "announcement": {...created doc, with mahallaId} }`. `400` if
+`mahallaId`/`title`/`body` are missing or `category` is invalid.
+
+**Note**: unlike `createAnnouncement`, this endpoint does not send a
+push notification to the mahalla — same out-of-scope caveat as the
+premium approve/reject and request-status endpoints.
+
+### `PATCH /api/announcements/:mahallaId/:id`
+
+Partial update of `title`/`body`/`category`/`imageUrl` (all optional,
+at least one required). Deliberately never touches `reactedUids` —
+that field is only ever mutated by the mobile app's reaction toggle
+(`AnnouncementRepository.toggleReaction`), and since `patchDoc` only
+sends an `updateMask` for the fields you provide, omitting
+`reactedUids` from the body guarantees it's left untouched.
+
+Body: same shape as `POST`, all fields optional.
+
+`200 { "announcement": {...updated doc, with mahallaId} }`. `400` if no
+updatable field is provided or a provided field is invalid, `404` if
+the announcement doesn't exist.
+
 ### `DELETE /api/announcements/:mahallaId/:id`
 
 `200 { "ok": true }`. Succeeds even if the doc doesn't already exist
@@ -279,6 +347,36 @@ descending — note this orders by the event's scheduled date/time, not
   ]
 }
 ```
+
+### `POST /api/events`
+
+Matches `EventRepository.createEvent`. `participantsCount` always
+starts at `0` (it's incremented elsewhere by the app, not settable at
+creation) and `authorUid` is set to the calling superAdmin's uid.
+
+Body:
+
+```json
+{
+  "mahallaId": "...",              // required
+  "title": "...",                  // required
+  "dateTime": "2026-09-15T18:00:00.000Z",  // required — ISO 8601 string
+  "location": "..."                // required
+}
+```
+
+`201 { "event": {...created doc, with mahallaId} }`. `400` if any
+required field is missing or `dateTime` isn't a valid ISO 8601 string.
+Same no-push-notification caveat as announcements.
+
+### `PATCH /api/events/:mahallaId/:id`
+
+Partial update of `title`/`dateTime`/`location` (all optional, at least
+one required) — matches `EventRepository.updateEvent`, which also
+never touches `participantsCount`.
+
+`200 { "event": {...updated doc, with mahallaId} }`. `400`/`404` same
+pattern as announcements' PATCH.
 
 ### `DELETE /api/events/:mahallaId/:id`
 
@@ -365,6 +463,55 @@ will be a plain number rather than `[number]`, and it's excluded from
 `results` (only array values are counted). In practice this only
 matters for very old, unmigrated poll docs.
 
+### `POST /api/polls`
+
+Matches `PollRepository.createPoll`. `votes` always starts as `{}` —
+after creation, only the mobile app's `vote()` call ever writes into
+it. `authorUid` is set to the calling superAdmin's uid.
+
+Body:
+
+```json
+{
+  "mahallaId": "...",           // required
+  "question": "...",            // required
+  "options": ["A", "B", "C"],   // required — at least 2 non-empty strings
+  "allowMultiple": false,       // optional, defaults to false
+  "isAnonymous": false,         // optional, defaults to false
+  "closesAt": "2026-09-01T00:00:00.000Z"  // optional, ISO 8601 string or null/omitted for "never closes"
+}
+```
+
+`201 { "poll": {...created doc, with mahallaId and results} }` (same
+`results` shape as the `GET` endpoint, computed from the now-empty
+`votes`). `400` if `mahallaId`/`question` are missing, `options` has
+fewer than 2 non-empty strings, or `closesAt` is present but not a
+valid ISO 8601 string. Same no-push-notification caveat as
+announcements.
+
+### `PATCH /api/polls/:mahallaId/:id`
+
+Partial update of `question`/`options`/`allowMultiple`/`isAnonymous`/
+`closesAt` (all optional, at least one required; `closesAt` can be set
+to `null` to clear it). **Deliberately never touches `votes`** — that's
+mutated only by the mobile app's voting flow.
+
+**Note this differs from `PollRepository.updatePoll`**, which resets
+`votes` to `{}` whenever it's called (to avoid stale option indexes
+after an options edit) — this endpoint leaves that judgment call to the
+frontend/caller instead: if you change `options` in a way that
+invalidates existing vote indexes, decide separately whether to also
+call something that clears `votes` (there's currently no dedicated
+endpoint for that — `DELETE` + re-`POST` the poll is the only way via
+this API today).
+
+`200 { "poll": {...updated doc, with mahallaId and results} }`. `400`/
+`404` same pattern as announcements' PATCH.
+
+### `DELETE /api/polls/:mahallaId/:id`
+
+`200 { "ok": true }`.
+
 ### `GET /api/service-ads?mahallaId=<id>`
 
 Lists `mahallas/{mahallaId}/serviceAds` docs (paid classified ads),
@@ -385,7 +532,114 @@ the Flutter app's `watchActiveAds`; this mirrors
 }
 ```
 
+### `POST /api/service-ads`
+
+Matches `ServiceAdRepository.createAd`. **Important correction vs. an
+earlier assumption**: the actual doc schema is just
+`title`/`description`/`phone`/`ownerName`/`activeUntil`/`createdAt` —
+there is **no** `category` or `weeklyPrice` field stored per-doc
+(`weeklyPrice` is a static price constant in the Dart repository, not
+per-ad data). Don't send those.
+
+Body:
+
+```json
+{
+  "mahallaId": "...",       // required
+  "title": "...",           // required
+  "description": "...",     // required
+  "phone": "...",           // required
+  "ownerName": "...",       // required
+  "durationDays": 7         // optional, defaults to 7 (matches ServiceAdRepository.defaultDuration) — activeUntil = now + durationDays
+}
+```
+
+`201 { "serviceAd": {...created doc, with mahallaId} }`. `400` if any
+required field is missing.
+
+### `PATCH /api/service-ads/:mahallaId/:id`
+
+Partial update of `title`/`description`/`phone`/`ownerName` (all
+optional). There is no dedicated `updateAd` in the Dart repository
+(only `createAd`/`deleteAd`/`extendAd`), so this endpoint also accepts
+an optional `durationDays` + `extendFromCurrent` pair to adjust
+`activeUntil`, mirroring `ServiceAdRepository.extendAd`'s logic:
+
+```json
+{
+  "title": "...",              // optional
+  "description": "...",        // optional
+  "phone": "...",              // optional
+  "ownerName": "...",          // optional
+  "durationDays": 7,           // optional — if present, recomputes activeUntil
+  "extendFromCurrent": true    // optional, defaults to false — true: activeUntil = max(now, current activeUntil) + durationDays (matches extendAd); false/omitted: activeUntil = now + durationDays
+}
+```
+
+At least one field must be provided. `200 { "serviceAd": {...updated
+doc, with mahallaId} }`. `400` if no updatable field is provided or
+`durationDays` isn't a number, `404` if the ad doesn't exist.
+
 ### `DELETE /api/service-ads/:mahallaId/:id`
+
+`200 { "ok": true }`.
+
+### `GET /api/services?mahallaId=<id>`
+
+Lists `mahallas/{mahallaId}/services` docs (the "Xizmatlar" local
+service-provider directory — admin-curated listings like
+plumber/electrician that residents call directly — **distinct from**
+the paid `serviceAds` classifieds above), newest first. Matches
+`lib/features/services/data/service_repository.dart`'s `LocalService`.
+Same `mahallaId`-omitted collection-group behavior as
+announcements/events/polls/service-ads.
+
+```json
+{
+  "services": [
+    {
+      "id": "...", "mahallaId": "...", "name": "...",
+      "category": "santexnik", "phone": "...", "description": "...",
+      "authorUid": "...", "createdAt": "..."
+    }
+  ]
+}
+```
+
+`category` ∈ `santexnik | elektrik | duradgor | tozalash | qurilish |
+boshqa`.
+
+### `POST /api/services`
+
+Matches `ServiceRepository.createService`. `authorUid` is set to the
+calling superAdmin's uid.
+
+Body:
+
+```json
+{
+  "mahallaId": "...",       // required
+  "name": "...",            // required
+  "category": "santexnik",  // required — one of the values listed above
+  "phone": "...",           // required
+  "description": "..."      // required
+}
+```
+
+`201 { "service": {...created doc, with mahallaId} }`. `400` if any
+required field is missing or `category` is invalid.
+
+### `PATCH /api/services/:mahallaId/:id`
+
+Partial update of `name`/`category`/`phone`/`description` (all
+optional, at least one required) — matches
+`ServiceRepository.updateService`, which also never touches
+`authorUid`/`createdAt`.
+
+`200 { "service": {...updated doc, with mahallaId} }`. `400`/`404`
+same pattern as the other subcollection PATCH endpoints.
+
+### `DELETE /api/services/:mahallaId/:id`
 
 `200 { "ok": true }`.
 
@@ -453,6 +707,32 @@ requiring a trip to Firebase Console. **Reconsider this if it turns out
 to be too permissive** — e.g. by carving `superAdmin` out into a
 separate, more locked-down endpoint, or requiring some extra
 confirmation step in the frontend before this call is made.
+
+### `POST /api/users/:uid/premium/grant`
+
+Direct premium grant, separate from the `premiumRequests` approve/
+reject flow above — for use from a user-search/management UI (e.g.
+comping a user premium without them filing a payment request). Mirrors
+`PremiumRepository.grantPremium` exactly: if `premiumUntil` is still in
+the future, extends it; otherwise starts from now. Adds
+`subscriptionPeriod` (30 days) `* months`.
+
+Body: `{ "months": 1 }` (optional, defaults to `1`, must be a positive
+integer if provided).
+
+`200 { "user": {...updated doc} }`. `400` if `months` is present but
+not a positive integer, `404` if the user doesn't exist.
+
+### `POST /api/users/:uid/premium/revoke`
+
+Mirrors `PremiumRepository.revokePremium` exactly: **deletes** the
+`premiumUntil` field from the user doc entirely (Firestore
+field-delete via `updateMask` + omitting the field from the write —
+see `FieldDelete` in `lib/firestore.js`), not merely setting it to
+`null` or a past date — matching the Dart `FieldValue.delete()` call.
+
+No body. `200 { "user": {...updated doc, without premiumUntil} }`.
+`404` if the user doesn't exist.
 
 ## CORS
 
