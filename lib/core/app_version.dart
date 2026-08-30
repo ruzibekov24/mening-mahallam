@@ -8,4 +8,4 @@
 ///
 /// Splash ekranida va Sozlamalar > Versiya bo'limida ko'rsatiladi,
 /// shunda qaysi build o'rnatilgani har doim aniq bo'ladi.
-const String kAppVersion = '1.0.5';
+const String kAppVersion = '1.1.0';

@@ -7,7 +7,7 @@ murojaatlar, so'rovnomalar, qo'shnilar, chat, xarita, QR orqali qo'shilish,
 premium, bildirishnomalar. Reja: **indin** (relizdan keyin dizayn/nashr
 sanasi yangilanadi).
 
-## v1.1 — Sifat va izchillik (jarayonda, `v1.1-dev` branch)
+## v1.1.0 — Sifat va izchillik (tayyor, release)
 
 Yangi funksiya yo'q — maqsad: dizayn tizimini (design tokens, `AppCard`,
 `UserAvatar`) qolgan ekranlarga to'liq qo'llash va o'lik kodni tozalash.
@@ -20,9 +20,15 @@ Asos: [`FRONTEND_AUDIT.md`](../FRONTEND_AUDIT.md).
       (audit hujjatida "tegilmagan" deb belgilangan, lekin tekshiruvda
       aksariyati allaqachon tayyor chiqdi — faqat `new_event_screen.dart`da
       1 ta kichik tuzatish kerak bo'ldi)
-- [ ] `onboarding_screen.dart` uchun bosqichlarga alohida illyustratsiya
-      (yangi vizual asset talab qiladi — alohida ish)
-- [ ] `flutter analyze` bo'yicha qolgan warning/info'larni tozalash
+- [x] `onboarding_screen.dart` uchun bosqichlarga alohida illyustratsiya
+      (tekshiruvda audit hujjatidan keyingi sessiyada allaqachon
+      qilinganligi aniqlandi — haqiqiy, litsenziyalangan CC0/Met Museum
+      rasmlari `assets/images/onboarding_backgrounds/` va
+      `onboarding_icons/` da mavjud va ekranda to'liq ishlatiladi)
+- [x] `flutter analyze` bo'yicha qolgan warning/info'larni tozalash
+      (170 → 5 ta, qolgani ataylab tegilmagan: 3 tasi xavfsiz `mounted`
+      naqshi, 2 tasi `Radio` API eskirishi — alohida refaktoring talab
+      qiladi)
 
 ## v2.0 — Katta yangilanish (rejalashtirish bosqichida, `v2-dev` branch)
 
