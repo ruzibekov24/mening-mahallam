@@ -322,8 +322,7 @@ class _PickerField extends StatelessWidget {
               child: Text(
                 label,
                 overflow: TextOverflow.ellipsis,
-                style: context.bodyStyle.copyWith(
-                  fontSize: 13,
+                style: context.secondaryStyle.copyWith(
                   color: isPlaceholder ? context.textSecondary : context.textPrimary,
                   fontWeight:
                       isPlaceholder ? FontWeight.w400 : FontWeight.w600,
