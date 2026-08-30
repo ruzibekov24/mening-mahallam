@@ -24,14 +24,46 @@ Asos: [`FRONTEND_AUDIT.md`](../FRONTEND_AUDIT.md).
       (yangi vizual asset talab qiladi — alohida ish)
 - [ ] `flutter analyze` bo'yicha qolgan warning/info'larni tozalash
 
-## v2.0 — Katta yangilanish (rejalashtirish bosqichida, `v2-dev` branch)
+## v1.5 — Jamoat faolligi, xavfsizlik, to'liqlik (rejalashtirish bosqichida, `v1.5-dev` branch)
 
-Hali aniq qamrov belgilanmagan — g'oyalar to'planmoqda. Nomzod
-yo'nalishlar (tasdiqlanmagan):
+Yangi to'lov infratuzilmasisiz — mavjud arxitekturani to'ldirish va
+kengaytirish.
 
-- Premium modulini kengaytirish (mahalla uchun yangi pullik imkoniyatlar)
-- So'rovnoma/e'lonlar uchun kengaytirilgan statistika
-- Push-bildirishnoma stsenariylarini boyitish
+- [ ] Report (shikoyat) mexanizmi — hozir faqat `block` bor, foydalanuvchi/
+      kontent ustidan shikoyat qilish yo'q
+- [ ] Bildirishnoma turlarini to'liq ulash — `newEvent`/`newPoll`/
+      `newMessage` enum'da e'lon qilingan, lekin repository'larda
+      chaqirilmagan
+- [ ] E'lonlarga reaksiya/izoh qo'shish
+- [ ] So'rovnomani yaxshilash — ko'p tanlovli, anonim, tugash muddati
+- [ ] Qidiruvni kengaytirish — `services/` va `polls/` ni qo'shish
+- [ ] Ingliz tili (`l10n/`ga 4-til)
+- [ ] Xizmatlar (`services/`) bo'limiga reyting/sharh (to'lovsiz)
+
+## v2.0 — Katta yangilanish: to'lov integratsiyasi (rejalashtirish bosqichida, `v2-dev` branch)
+
+Markazida real to'lov shlyuzi turadi (hozir premium/e'lon to'lovi qo'lda,
+admin tasdiqlaydi — kodda ochiq izoh bilan qayd etilgan).
+
+- [ ] Click/Payme (va/yoki Play Billing) integratsiyasi — premium va
+      xizmat e'lonlari uchun
+- [ ] Murojaatlar oqimini chuqurlashtirish — xodimga biriktirish, izoh/
+      thread, SLA/muddat, eskalatsiya
+- [ ] Guruh chat (hozir faqat 1:1)
+- [ ] Xarita boyitish — xizmat ko'rsatuvchilar uchun pinlar
+- [ ] Web admin panel asosi — ko'p mahallani boshqaruvchi super-adminlar
+      uchun (hozir admin funksiyalari faqat mobil ilova ichida tarqoq)
+- [ ] Xizmatlar bozorini peer-to-peer qilish + to'lov orqali buyurtma
+
+## v3.0 — Uzoq muddatli, tasdiqlanmagan g'oyalar
+
+- Usage analytics / BI dashboard (hozir kod bazasida hech qanday
+  analitika yo'q)
+- AI-yordamchi (murojaat kategoriyalash, FAQ-bot)
+- Kommunal xizmat integratsiyasi (davlat tizimlariga bog'liq, yuqori
+  murakkablik/huquqiy tomon — faqat imkoniyat, majburiy emas)
+- Ko'p-mintaqa/ko'p-shahar miqyoslash
+- Web/desktop to'liq qo'llab-quvvatlash (hozir faqat skeleton)
 
 ## Jamoa
 
