@@ -23,7 +23,7 @@ class ServiceAdCard extends ConsumerWidget {
     final ad = ref.watch(currentServiceAdProvider);
     if (ad == null) return const SizedBox.shrink();
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -92,7 +92,7 @@ class ServiceAdCard extends ConsumerWidget {
               ),
               if (ad.phone.isNotEmpty) ...[
                 const SizedBox(width: AppSpacing.sm),
-                Icon(PhosphorIconsFill.phone,
+                const Icon(PhosphorIconsFill.phone,
                     size: 16, color: AppColors.primary),
               ],
             ],

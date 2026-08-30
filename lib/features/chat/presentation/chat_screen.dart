@@ -72,7 +72,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final myUid = FirebaseAuth.instance.currentUser?.uid;
     final otherBriefAsync = ref.watch(chatUserBriefProvider(widget.otherUid));
     final messagesAsync =
@@ -127,16 +127,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           ],
                         ),
                       ),
-                      loading: () => Row(
+                      loading: () => const Row(
                         children: [
-                          const SizedBox(width: 36, height: 36),
-                          const SizedBox(width: AppSpacing.sm),
+                          SizedBox(width: 36, height: 36),
+                          SizedBox(width: AppSpacing.sm),
                         ],
                       ),
-                      error: (_, __) => Row(
+                      error: (_, __) => const Row(
                         children: [
-                          const SizedBox(width: 36, height: 36),
-                          const SizedBox(width: AppSpacing.sm),
+                          SizedBox(width: 36, height: 36),
+                          SizedBox(width: AppSpacing.sm),
                         ],
                       ),
                     ),

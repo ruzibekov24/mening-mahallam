@@ -79,7 +79,7 @@ class NeighborProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final roleColor = member.role.color;
     final fullName = '${member.firstName} ${member.lastName}'.trim();
 

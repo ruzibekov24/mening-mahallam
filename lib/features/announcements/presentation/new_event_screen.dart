@@ -77,7 +77,7 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
   }
 
   Future<void> _submit() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final title = _titleController.text.trim();
     final location = _locationController.text.trim();
     final dateTime = _combinedDateTime;
@@ -136,7 +136,7 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -322,8 +322,7 @@ class _PickerField extends StatelessWidget {
               child: Text(
                 label,
                 overflow: TextOverflow.ellipsis,
-                style: context.bodyStyle.copyWith(
-                  fontSize: 13,
+                style: context.secondaryStyle.copyWith(
                   color: isPlaceholder ? context.textSecondary : context.textPrimary,
                   fontWeight:
                       isPlaceholder ? FontWeight.w400 : FontWeight.w600,

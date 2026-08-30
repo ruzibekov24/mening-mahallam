@@ -61,7 +61,7 @@ class AnnouncementsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final showEvents = ref.watch(announcementsShowEventsProvider);
     final profileAsync = ref.watch(currentUserProfileProvider);
 
@@ -246,7 +246,7 @@ class _AnnouncementsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final announcementsAsync = ref.watch(myAnnouncementsProvider);
     final selectedCategory = ref.watch(_announcementsFilterProvider);
 
@@ -336,7 +336,7 @@ class _AnnouncementCard extends StatelessWidget {
   const _AnnouncementCard({required this.announcement});
 
   String _timeAgo(BuildContext context, DateTime dt) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final diff = DateTime.now().difference(dt);
     if (diff.inMinutes < 60) return l10n.minutesAgo(diff.inMinutes);
     if (diff.inHours < 24) return l10n.hoursAgo(diff.inHours);
@@ -346,7 +346,7 @@ class _AnnouncementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final color = announcement.category.color;
 
     return AppCard(
@@ -537,7 +537,7 @@ class _EventsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final eventsAsync = ref.watch(myEventsProvider);
 
     return RefreshIndicator(
@@ -579,7 +579,7 @@ class _EventCard extends StatelessWidget {
   const _EventCard({required this.event, required this.colorIndex});
 
   String _formatDateTime(BuildContext context, DateTime dt) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final now = DateTime.now();
     final isToday =
         dt.year == now.year && dt.month == now.month && dt.day == now.day;
@@ -591,7 +591,7 @@ class _EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final gradient = AppAccents
         .bannerGradients[colorIndex % AppAccents.bannerGradients.length];
 

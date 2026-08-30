@@ -95,7 +95,7 @@ class _NewAnnouncementScreenState
   }
 
   Future<void> _submit() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final title = _titleController.text.trim();
     final isBodyEmpty = _bodyController.document.isEmpty();
     final bodyJson = jsonEncode(_bodyController.document.toDelta().toJson());
@@ -168,7 +168,7 @@ class _NewAnnouncementScreenState
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(

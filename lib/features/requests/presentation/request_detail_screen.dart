@@ -40,7 +40,7 @@ class RequestDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDark = context.isDarkMode;
 
     final requestAsync = ref.watch(requestsRepositoryProvider).watchRequestById(
@@ -269,7 +269,7 @@ class _RequestAuthorCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final briefAsync = ref.watch(chatUserBriefProvider(authorUid));
 
     return briefAsync.when(
@@ -364,7 +364,7 @@ class _JoinSectionState extends ConsumerState<_JoinSection> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final repo = ref.read(requestsRepositoryProvider);
 
     return AppCard(

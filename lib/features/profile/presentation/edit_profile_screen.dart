@@ -68,7 +68,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   static const int _maxAnimatedBytes = 5 * 1024 * 1024;
 
   Future<void> _pickAndUploadPhoto() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isPremium =
         ref.read(currentUserProfileProvider).valueOrNull?.isPremiumActive ==
             true;
@@ -138,7 +138,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     setState(() => _saving = true);
     try {
@@ -170,7 +170,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final profileAsync = ref.watch(currentUserProfileProvider);
 
     return Scaffold(

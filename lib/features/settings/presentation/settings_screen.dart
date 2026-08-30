@@ -35,7 +35,7 @@ class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   Future<void> _confirmChangeMahalla(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -80,7 +80,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Future<void> _confirmDeleteAccount(BuildContext context, WidgetRef ref) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -143,7 +143,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _clearCache(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // Ilgari faqat "Kesh tozalandi" deb yozardi, lekin hech narsa
     // tozalanmasdi. Endi haqiqatan ham xotiradagi rasm keshi
     // bo'shatiladi — avatarlar/bannerlar eskirib qolganda yoki ilova
@@ -161,7 +161,7 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final profileAsync = ref.watch(currentUserProfileProvider);
     final currentLanguage = ref.watch(languageProvider);
     final currentThemeMode = ref.watch(themeModeProvider);
@@ -521,7 +521,7 @@ class SettingsScreen extends ConsumerWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
       ),
       builder: (sheetContext) {
-        final l10n = AppLocalizations.of(sheetContext)!;
+        final l10n = AppLocalizations.of(sheetContext);
         return SafeArea(
           child: Consumer(
             builder: (context, ref, _) {
@@ -603,7 +603,7 @@ class SettingsScreen extends ConsumerWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
       ),
       builder: (sheetContext) {
-        final l10n = AppLocalizations.of(sheetContext)!;
+        final l10n = AppLocalizations.of(sheetContext);
         return SafeArea(
           child: Consumer(
             builder: (context, ref, _) {
@@ -685,7 +685,7 @@ class SettingsScreen extends ConsumerWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
       ),
       builder: (sheetContext) {
-        final l10n = AppLocalizations.of(sheetContext)!;
+        final l10n = AppLocalizations.of(sheetContext);
         return SafeArea(
           child: Consumer(
             builder: (context, ref, _) {

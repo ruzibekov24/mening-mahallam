@@ -22,7 +22,7 @@ class PremiumRequestsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final requestsAsync = ref.watch(pendingPremiumRequestsProvider);
 
     return Scaffold(
@@ -228,7 +228,7 @@ class _ManualGrantCardState extends ConsumerState<_ManualGrantCard> {
   }
 
   Future<void> _grantToSelf() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
 
@@ -247,7 +247,7 @@ class _ManualGrantCardState extends ConsumerState<_ManualGrantCard> {
   }
 
   Future<void> _grantByPhone() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final raw = _phoneController.text.replaceAll(RegExp(r'\D'), '');
     if (raw.length < 9) {
       _toast(l10n.phoneValidationError, error: true);
@@ -302,7 +302,7 @@ class _ManualGrantCardState extends ConsumerState<_ManualGrantCard> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return AppCard(
       child: Column(

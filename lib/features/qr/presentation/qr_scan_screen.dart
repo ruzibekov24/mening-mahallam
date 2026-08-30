@@ -120,7 +120,7 @@ class _QrScanScreenState extends ConsumerState<QrScanScreen> {
       await _controller.start();
     } catch (_) {
       setState(() => _errorText =
-          AppLocalizations.of(context)!.qrGenericError);
+          AppLocalizations.of(context).qrGenericError);
       await _controller.start();
     } finally {
       if (mounted) setState(() => _isProcessing = false);
@@ -222,7 +222,7 @@ class _QrScanScreenState extends ConsumerState<QrScanScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxl),
                   child: Text(
-                    AppLocalizations.of(context)!.qrScanInstruction,
+                    AppLocalizations.of(context).qrScanInstruction,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Colors.white,
@@ -247,8 +247,8 @@ class _QrScanScreenState extends ConsumerState<QrScanScreen> {
                 else
                   Text(
                     _isProcessing
-                        ? AppLocalizations.of(context)!.checkingStatus
-                        : AppLocalizations.of(context)!.scanningStatus,
+                        ? AppLocalizations.of(context).checkingStatus
+                        : AppLocalizations.of(context).scanningStatus,
                     style: const TextStyle(color: Colors.white54, fontSize: 12),
                   ),
                 const SizedBox(height: 24),
@@ -270,7 +270,7 @@ class _QrScanScreenState extends ConsumerState<QrScanScreen> {
                         horizontal: AppSpacing.xl, vertical: AppSpacing.sm),
                   ),
                   label: Text(
-                    AppLocalizations.of(context)!.enterCodeManually,
+                    AppLocalizations.of(context).enterCodeManually,
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
@@ -298,7 +298,7 @@ class _CameraIntroView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       color: Colors.black,
       padding: const EdgeInsets.all(AppSpacing.xxxl),
@@ -374,7 +374,7 @@ class _CameraErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final String message;
     switch (error.errorCode) {
@@ -525,7 +525,7 @@ class _ManualCodeSheetState extends State<_ManualCodeSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: EdgeInsets.only(
         left: AppSpacing.xl,

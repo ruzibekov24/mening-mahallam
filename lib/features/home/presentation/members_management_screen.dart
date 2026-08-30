@@ -24,7 +24,7 @@ class MembersManagementScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final membersAsync = ref.watch(mahallaMembersProvider(mahallaId));
 
     return Scaffold(
@@ -105,7 +105,7 @@ class _MemberTile extends ConsumerWidget {
     WidgetRef ref,
     UserRole newRole,
   ) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     try {
       await ref.read(homeRepositoryProvider).updateMemberRole(
             uid: member.uid,
@@ -186,7 +186,7 @@ class _MemberTile extends ConsumerWidget {
   }
 
   void _showRolePicker(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       // Bu ekran Navigator.push bilan ochiladi — orqasida

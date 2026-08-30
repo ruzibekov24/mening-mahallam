@@ -19,7 +19,7 @@ class PreviewItem {
 }
 
 List<PreviewItem> onboardingPreviewItems(BuildContext context) {
-  final l10n = AppLocalizations.of(context)!;
+  final l10n = AppLocalizations.of(context);
   return [
     PreviewItem(
       icon: Icons.campaign_rounded,
@@ -76,7 +76,7 @@ class OnboardingPageData {
 /// 4 ta bosqich — onboardingPreviewItems bilan bir xil tartibda:
 /// 0-E'lonlar, 1-Tadbirlar, 2-Murojaatlar, 3-Qo'shnilar.
 List<OnboardingPageData> onboardingPages(BuildContext context) {
-  final l10n = AppLocalizations.of(context)!;
+  final l10n = AppLocalizations.of(context);
   return [
     OnboardingPageData(
       image: 'assets/images/onboarding_backgrounds/announcements.png',

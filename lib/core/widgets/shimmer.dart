@@ -102,12 +102,12 @@ class ShimmerListTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           const SizedBox(width: 12),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ShimmerBox(width: double.infinity, height: 13),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 ShimmerBox(width: 120, height: 11),
               ],
             ),
@@ -156,9 +156,9 @@ class ShimmerStatCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           const SizedBox(height: 8),
-          ShimmerBox(width: 40, height: 18),
+          const ShimmerBox(width: 40, height: 18),
           const SizedBox(height: 6),
-          ShimmerBox(width: 60, height: 10),
+          const ShimmerBox(width: 60, height: 10),
         ],
       ),
     );

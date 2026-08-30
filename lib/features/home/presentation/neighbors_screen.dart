@@ -41,7 +41,7 @@ class _NeighborsScreenState extends ConsumerState<NeighborsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final membersAsync = ref.watch(neighborsProvider(widget.mahallaId));
     final myProfileAsync = ref.watch(currentUserProfileProvider);
     final myStreet = myProfileAsync.valueOrNull?.street?.trim();
@@ -246,7 +246,7 @@ class _NeighborTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return AppCard(
       onTap: () => Navigator.of(context).push(

@@ -9,7 +9,7 @@ import '../theme/app_tokens.dart';
 /// tasdiqlash oynasi. `itemTitle` — o'chirilayotgan narsaning sarlavhasi
 /// (xabarda ko'rsatish uchun). `true` qaytarsa — foydalanuvchi tasdiqladi.
 Future<bool> confirmDelete(BuildContext context, {required String itemTitle}) async {
-  final l10n = AppLocalizations.of(context)!;
+  final l10n = AppLocalizations.of(context);
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(

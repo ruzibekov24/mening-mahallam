@@ -48,7 +48,7 @@ class _BoundaryEditorScreenState extends ConsumerState<BoundaryEditorScreen> {
   /// Koordinatani qo'lda kiritish — masalan Google Maps'dan
   /// nusxalangan "40.203328, 68.840926" ko'rinishidagi matn.
   Future<void> _enterCoordinates() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final controller = TextEditingController(
       text: _center == null
           ? ''
@@ -109,7 +109,7 @@ class _BoundaryEditorScreenState extends ConsumerState<BoundaryEditorScreen> {
   }
 
   Future<void> _saveCenter() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final center = _center;
     if (center == null) return;
 
@@ -141,7 +141,7 @@ class _BoundaryEditorScreenState extends ConsumerState<BoundaryEditorScreen> {
   }
 
   Future<void> _save() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_points.length < 3) {
       showAppAlert(context, l10n.boundaryMinPointsError, kind: AppAlertKind.error);
       return;
@@ -167,7 +167,7 @@ class _BoundaryEditorScreenState extends ConsumerState<BoundaryEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final centerAsync = ref.watch(mahallaMapCenterProvider(widget.mahallaId));
 
     // Mavjud chegara bo'lsa, birinchi ochilishda tahrirlash uchun

@@ -24,7 +24,7 @@ class BannerManagementScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final bannersAsync = ref.watch(activeBannersProvider);
 
     return Scaffold(
@@ -180,7 +180,7 @@ class _NewBannerSheetState extends ConsumerState<_NewBannerSheet> {
   }
 
   Future<void> _submit() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_imageFile == null) {
       showAppAlert(context, l10n.bannerImageRequiredError, kind: AppAlertKind.error);
       return;
@@ -224,7 +224,7 @@ class _NewBannerSheetState extends ConsumerState<_NewBannerSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: EdgeInsets.only(

@@ -278,7 +278,7 @@ class _BannerDetailSheet extends StatelessWidget {
   const _BannerDetailSheet({required this.banner});
 
   Future<void> _openLink(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final url = banner.linkUrl;
     if (url == null || url.isEmpty) return;
     final uri = Uri.tryParse(url);
@@ -291,7 +291,7 @@ class _BannerDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final hasLink = banner.linkUrl != null && banner.linkUrl!.isNotEmpty;
 
     return SafeArea(

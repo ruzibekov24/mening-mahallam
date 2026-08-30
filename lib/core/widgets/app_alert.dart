@@ -28,7 +28,7 @@ Future<void> showAppAlert(
   AppAlertKind kind = AppAlertKind.info,
   String? title,
 }) {
-  final l10n = AppLocalizations.of(context)!;
+  final l10n = AppLocalizations.of(context);
 
   final (IconData icon, Color color) = switch (kind) {
     AppAlertKind.success => (PhosphorIconsFill.checkCircle, AppAccents.requests),

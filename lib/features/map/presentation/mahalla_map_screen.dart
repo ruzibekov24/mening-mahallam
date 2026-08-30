@@ -25,7 +25,7 @@ class _MahallaMapScreenState extends ConsumerState<MahallaMapScreen> {
   @override
   Widget build(BuildContext context) {
     final mahallaId = widget.mahallaId;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final profileAsync = ref.watch(currentUserProfileProvider);
     final canEditBoundary =
         profileAsync.valueOrNull?.role.canManageMembers == true;
