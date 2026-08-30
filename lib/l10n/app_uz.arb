@@ -974,5 +974,22 @@
   "reportSubmitAction": "Yuborish",
   "reportSubmittedMessage": "Shikoyatingiz qabul qilindi, ko'rib chiqamiz",
   "reportErrorMessage": "Shikoyat yuborishda xatolik yuz berdi",
-  "reportChooseReasonError": "Iltimos, sababni tanlang"
+  "reportChooseReasonError": "Iltimos, sababni tanlang",
+  "serviceRatingCount": "{count} baho",
+  "@serviceRatingCount": {
+    "description": "Xizmat kartochkasidagi reyting soni",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "serviceNoRatingsYet": "Hali baho yo'q",
+  "@serviceNoRatingsYet": {
+    "description": "Xizmat kartochkasida hech kim baho bermagan bo'lsa"
+  },
+  "yourRatingLabel": "Sizning bahoyingiz",
+  "@yourRatingLabel": {
+    "description": "Xizmatga yulduzcha baho berish qatorining sarlavhasi"
+  }
 }

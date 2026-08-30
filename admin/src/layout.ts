@@ -17,6 +17,7 @@ export const NAV_ITEMS: NavItem[] = [
   { path: '#/sorovnomalar', label: "So'rovnomalar" },
   { path: '#/xizmatlar', label: 'Xizmatlar' },
   { path: '#/reklama-elonlari', label: "Reklama e'lonlari" },
+  { path: '#/audit-log', label: 'Harakatlar tarixi' },
 ];
 
 export function renderLayout(root: HTMLElement, userEmail: string | null): HTMLElement {
@@ -49,7 +50,10 @@ export function renderLayout(root: HTMLElement, userEmail: string | null): HTMLE
 }
 
 export function setActiveNav(root: HTMLElement, currentPath: string): void {
+  // currentPath may be a route pattern like '#/mahallalar/:id' for detail
+  // pages — treat the base segment as belonging to the parent nav item.
+  const base = currentPath.split('/:')[0];
   root.querySelectorAll<HTMLAnchorElement>('.nav-link').forEach((link) => {
-    link.classList.toggle('active', link.dataset.path === currentPath);
+    link.classList.toggle('active', link.dataset.path === base);
   });
 }

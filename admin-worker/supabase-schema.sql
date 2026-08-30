@@ -13,3 +13,19 @@ create table if not exists admin_stats (
   updated_at timestamptz,
   constraint admin_stats_singleton check (id = 1)
 );
+
+-- admin_stats_history: append-only log of the same four aggregate counts,
+-- one row per Cron Trigger run (every 30 min — see scheduled() in
+-- index.js), used to render trend charts (GET /api/stats/history) over
+-- time. Unlike `admin_stats` above (a single-row cache, always
+-- overwritten in place), every cron run INSERTs a new row here instead
+-- of upserting, so the full history is preserved for as long as the
+-- table isn't pruned.
+create table if not exists admin_stats_history (
+  id bigserial primary key,
+  total_mahallas int,
+  total_users int,
+  total_active_requests int,
+  total_pending_premium int,
+  recorded_at timestamptz not null default now()
+);

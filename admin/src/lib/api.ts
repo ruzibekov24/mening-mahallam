@@ -76,6 +76,35 @@ export interface Mahalla {
   [key: string]: unknown;
 }
 
+export interface StatsHistoryEntry {
+  totalMahallas: number;
+  totalUsers: number;
+  totalActiveRequests: number;
+  totalPendingPremium: number;
+  recordedAt: string;
+}
+
+export interface MahallaDetail extends Mahalla {
+  rais: { id: string; [key: string]: unknown } | null;
+  raisCount: number;
+  memberCount: number;
+  requestsByStatus: { yangi: number; jarayonda: number; yakunlandi: number };
+  counts: {
+    announcements: number;
+    events: number;
+    polls: number;
+    serviceAds: number;
+    services: number;
+  };
+}
+
+export interface AuditLogEntry {
+  actorUid: string;
+  action: string;
+  details?: Record<string, unknown> | string | null;
+  timestamp: string;
+}
+
 export interface PremiumRequest {
   id: string;
   uid: string;
@@ -218,7 +247,19 @@ export const ANNOUNCEMENT_CATEGORIES = [
 
 export const api = {
   getStats: () => request<Stats>('/api/stats'),
+  getStatsHistory: (days = 30) =>
+    request<{ history: StatsHistoryEntry[] }>(`/api/stats/history?days=${days}`).then(
+      (r) => r.history
+    ),
   getMahallas: () => request<{ mahallas: Mahalla[] }>('/api/mahallas').then((r) => r.mahallas),
+  getMahallaDetail: (id: string) =>
+    request<{ mahalla: MahallaDetail }>(
+      `/api/mahallas/${encodeURIComponent(id)}/detail`
+    ).then((r) => r.mahalla),
+  getAuditLog: (limit = 50) =>
+    request<{ auditLog: AuditLogEntry[] }>(`/api/audit-log?limit=${limit}`).then(
+      (r) => r.auditLog
+    ),
   getPremiumRequests: (status = 'pending') =>
     request<{ premiumRequests: PremiumRequest[] }>(
       `/api/premium-requests?status=${encodeURIComponent(status)}`

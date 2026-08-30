@@ -1766,4 +1766,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get reportChooseReasonError => 'Пожалуйста, выберите причину';
+
+  @override
+  String serviceRatingCount(int count) {
+    return '$count оценок';
+  }
+
+  @override
+  String get serviceNoRatingsYet => 'Пока нет оценок';
+
+  @override
+  String get yourRatingLabel => 'Ваша оценка';
 }

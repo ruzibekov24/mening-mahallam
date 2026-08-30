@@ -192,6 +192,21 @@ service cloud.firestore {
       allow update, delete: if isSuperAdmin();
     }
 
+    // ---------- adminAuditLog/{logId} (super admin harakatlari jurnali) ----------
+    // admin-worker (Cloudflare Worker) tomonidan har bir mutatsion admin
+    // amalidan (banner/e'lon/tadbir/so'rovnoma/xizmat yaratish-tahrirlash-
+    // o'chirish, premium berish/bekor qilish, foydalanuvchi roli/holat
+    // o'zgartirish va h.k.) keyin yoziladi. Worker o'z servis hisobi
+    // (service-account) orqali Firestore'ga kirganligi sababli bu qoidalar
+    // umuman chetlab o'tiladi (Admin SDK bilan bir xil) — shuning uchun
+    // `allow write: if false` shunchaki HECH QANDAY mobil klient bu
+    // kolleksiyaga yoza olmasligini yoki soxta yozuv qo'sha olmasligini
+    // KAFOLATLAYDI, Worker'ning o'zi bu qoida bilan cheklanmaydi.
+    match /adminAuditLog/{logId} {
+      allow read: if isSuperAdmin();
+      allow write: if false;
+    }
+
     // ---------- promoBanners/{bannerId} (bosh ekran bannerlari) ----------
     // Mahallaga bog'lanmagan, butun ilova bo'ylab bir xil aylanuvchi
     // banner (e'lon/reklama/konkurs/tashqi havola) — faqat super

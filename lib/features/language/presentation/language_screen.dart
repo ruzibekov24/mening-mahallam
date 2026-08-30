@@ -30,6 +30,8 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
         return 'Давом этиш';
       case AppLanguage.russian:
         return 'Продолжить';
+      case AppLanguage.english:
+        return 'Continue';
     }
   }
 
@@ -41,6 +43,8 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
         return 'Тилни танлаш';
       case AppLanguage.russian:
         return 'Выберите язык';
+      case AppLanguage.english:
+        return 'Choose language';
     }
   }
 
@@ -52,6 +56,8 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
         return 'Иловадан осон фойдаланиш учун интерфейс тилини танланг';
       case AppLanguage.russian:
         return 'Выберите язык интерфейса для удобного использования приложения';
+      case AppLanguage.english:
+        return 'Choose the interface language for easier use of the app';
     }
   }
 
@@ -243,13 +249,84 @@ class LanguageFlag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late final CustomPainter painter;
+    switch (language) {
+      case AppLanguage.russian:
+        painter = const _RussiaFlagPainter();
+      case AppLanguage.english:
+        painter = const _UnitedKingdomFlagPainter();
+      case AppLanguage.uzbekLatin:
+      case AppLanguage.uzbekCyrillic:
+        painter = const _UzbekistanFlagPainter();
+    }
     return CustomPaint(
-      painter: language == AppLanguage.russian
-          ? const _RussiaFlagPainter()
-          : const _UzbekistanFlagPainter(),
+      painter: painter,
       child: const SizedBox.expand(),
     );
   }
+}
+
+/// Buyuk Britaniya bayrog'i (Union Jack) — soddalashtirilgan geometrik
+/// versiya, boshqa ikkita bayroq singari to'liq kod orqali chiziladi
+/// (rasm fayliga bog'liq emas).
+class _UnitedKingdomFlagPainter extends CustomPainter {
+  const _UnitedKingdomFlagPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    const blue = Color(0xFF00247D);
+    const red = Color(0xFFCF142B);
+    final paint = Paint();
+
+    // Fon — ko'k.
+    paint.color = blue;
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), paint);
+
+    // Oq diagonal chiziqlar (Andrew xochi).
+    paint
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = h * 0.22;
+    canvas.drawLine(const Offset(0, 0), Offset(w, h), paint);
+    canvas.drawLine(Offset(w, 0), Offset(0, h), paint);
+
+    // Qizil diagonal chiziqlar (Patrik xochi) — ingichkaroq va
+    // markazdan siljigan, chunki rasmiy bayroqda ular teng emas.
+    paint
+      ..color = red
+      ..strokeWidth = h * 0.09;
+    canvas.drawLine(const Offset(0, 0), Offset(w, h), paint);
+    canvas.drawLine(Offset(w, 0), Offset(0, h), paint);
+
+    // Oq fon — Jorj xochi uchun.
+    paint
+      ..style = PaintingStyle.fill
+      ..color = Colors.white;
+    canvas.drawRect(
+      Rect.fromLTWH(0, h / 2 - h * 0.16, w, h * 0.32),
+      paint,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(w / 2 - w * 0.09, 0, w * 0.18, h),
+      paint,
+    );
+
+    // Qizil Jorj xochi — markazda.
+    paint.color = red;
+    canvas.drawRect(
+      Rect.fromLTWH(0, h / 2 - h * 0.09, w, h * 0.18),
+      paint,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(w / 2 - w * 0.05, 0, w * 0.1, h),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 /// Rossiya bayrog'i — uchta teng gorizontal chiziq.

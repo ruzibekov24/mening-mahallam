@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Ilova qo'llab-quvvatlaydigan tillar.
-enum AppLanguage { uzbekLatin, uzbekCyrillic, russian }
+enum AppLanguage { uzbekLatin, uzbekCyrillic, russian, english }
 
 extension AppLanguageX on AppLanguage {
   String get label {
@@ -14,6 +14,8 @@ extension AppLanguageX on AppLanguage {
         return 'Ўзбекча';
       case AppLanguage.russian:
         return 'Русский';
+      case AppLanguage.english:
+        return 'English';
     }
   }
 
@@ -27,6 +29,8 @@ extension AppLanguageX on AppLanguage {
         return 'ЎЗ';
       case AppLanguage.russian:
         return 'РУ';
+      case AppLanguage.english:
+        return 'EN';
     }
   }
 
@@ -44,6 +48,8 @@ extension AppLanguageX on AppLanguage {
         );
       case AppLanguage.russian:
         return const Locale('ru');
+      case AppLanguage.english:
+        return const Locale('en');
     }
   }
 

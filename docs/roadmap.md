@@ -59,13 +59,24 @@ ro'yxatidan 4 punkt (report, bildirishnoma, reaksiya, so'rovnoma+qidiruv).
       (eski formatdagi ovozlar bilan orqaga moslik saqlangan)
 - [x] Qidiruvni kengaytirish — `services/` va `polls/` endi qidiruvda
 
-## v1.3 — Til va xizmatlar (rejalashtirish bosqichida)
+## v1.3.0 — Til/xizmat reytingi + admin panel kengaytmasi (tayyor, `v1.3-dev` branch)
 
-Avval v1.5 deb nomlangan ro'yxatdan qolgan 2 punkt (qolganlari v1.2.0'ga
-ko'chirildi):
+**A-qism — Mobil ilova:**
+- [x] Ingliz tili — `lib/l10n/app_en.arb` (538 kalit), `language_screen.dart`
+      ga 4-til tanlovi qo'shildi
+- [x] Xizmatlar (`services/`) bo'limiga reyting — `LocalService.ratings`
+      (uid → 1-5 yulduz), o'rtacha baho va son ko'rsatiladi, matnli
+      sharh keyingi versiyaga qoldirildi
 
-- [ ] Ingliz tili (`l10n/`ga 4-til)
-- [ ] Xizmatlar (`services/`) bo'limiga reyting/sharh (to'lovsiz)
+**B-qism — Web admin panel kengaytmasi:**
+- [x] Statistika trend grafiklari — `admin_stats_history` (Supabase,
+      append-only), dashboard kartalarida sparkline
+- [x] Mahalla tafsilot sahifasi — `GET /api/mahallas/:id/detail`,
+      a'zolar/murojaat holati/e'lon-tadbir-so'rovnoma-xizmat sonlari
+- [x] Audit-log — har bir imtiyozli amal (25 ta endpoint) `adminAuditLog`
+      kolleksiyasiga yoziladi, alohida sahifada ko'rsatiladi
+- Ko'p super-admin qo'llab-quvvatlash — **rad etildi**, hozircha kerak
+  emas deb topildi
 
 ## v2.0 — Katta yangilanish: to'lov integratsiyasi (rejalashtirish bosqichida, `v2-dev` branch)
 

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -167,10 +168,15 @@ class _ServiceCard extends ConsumerWidget {
     final profile = ref.watch(currentUserProfileProvider).valueOrNull;
     final canManage =
         profile?.role.canPost == true && profile?.mahallaId != null;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final myRating = uid == null ? null : service.ratings[uid];
 
     return AppCard(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
@@ -304,7 +310,79 @@ class _ServiceCard extends ConsumerWidget {
             ],
           ),
         ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _ServiceRatingRow(
+            service: service,
+            myRating: myRating,
+            enabled: uid != null && profile?.mahallaId != null,
+            onRate: (stars) {
+              if (uid == null || profile?.mahallaId == null) return;
+              ref.read(serviceRepositoryProvider).rateService(
+                    mahallaId: profile!.mahallaId!,
+                    serviceId: service.id,
+                    uid: uid,
+                    stars: stars,
+                  );
+            },
+          ),
+        ],
       ),
+    );
+  }
+}
+
+/// Xizmat kartochkasidagi baholash qatori: o'rtacha bahoni va baho
+/// beruvchilar sonini ko'rsatadi, shuningdek joriy foydalanuvchi
+/// bosib o'z bahosini yuborishi mumkin bo'lgan 5 ta yulduzcha.
+class _ServiceRatingRow extends StatelessWidget {
+  final LocalService service;
+  final int? myRating;
+  final bool enabled;
+  final ValueChanged<int> onRate;
+
+  const _ServiceRatingRow({
+    required this.service,
+    required this.myRating,
+    required this.enabled,
+    required this.onRate,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final hasRatings = service.ratingCount > 0;
+
+    return Row(
+      children: [
+        const Icon(PhosphorIconsFill.star, size: 16, color: Color(0xFFE0A526)),
+        const SizedBox(width: AppSpacing.xxs),
+        Text(
+          hasRatings
+              ? '${service.averageRating.toStringAsFixed(1)} · ${l10n.serviceRatingCount(service.ratingCount)}'
+              : l10n.serviceNoRatingsYet,
+          style: context.captionStyle,
+        ),
+        const Spacer(),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(5, (index) {
+            final starIndex = index + 1;
+            final filled = myRating != null && starIndex <= myRating!;
+            return TapScale(
+              onTap: enabled ? () => onRate(starIndex) : null,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 1),
+                child: Icon(
+                  filled ? PhosphorIconsFill.star : PhosphorIconsRegular.star,
+                  size: 18,
+                  color: filled ? const Color(0xFFE0A526) : context.textMuted,
+                ),
+              ),
+            );
+          }),
+        ),
+      ],
     );
   }
 }
