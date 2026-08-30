@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../l10n/app_localizations.dart';
@@ -13,7 +12,7 @@ class HelpScreen extends StatelessWidget {
   const HelpScreen({super.key});
 
   Future<void> _call(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final uri = Uri(scheme: 'tel', path: '+998902400405');
     if (!await launchUrl(uri)) {
       if (context.mounted) {
@@ -23,7 +22,7 @@ class HelpScreen extends StatelessWidget {
   }
 
   Future<void> _openTelegram(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final uri = Uri.parse('https://t.me/mahallam_support_bot');
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (context.mounted) {
@@ -34,7 +33,7 @@ class HelpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final faqItems = [
       (l10n.faqQ1, l10n.faqA1),

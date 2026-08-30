@@ -21,7 +21,7 @@ class PremiumScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final profileAsync = ref.watch(currentUserProfileProvider);
     final configAsync = ref.watch(premiumConfigProvider);
     final requestAsync = ref.watch(myPremiumRequestProvider);
@@ -126,9 +126,9 @@ class _HeroCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.xl),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: AppRadius.lgAll,
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [Color(0xFF2F5BFF), Color(0xFF1B3FCC)],
@@ -187,9 +187,9 @@ class _ActiveCard extends StatelessWidget {
     final days = until.difference(DateTime.now()).inDays;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.xl),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: AppRadius.lgAll,
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [Color(0xFFE0A526), Color(0xFFC07E12)],

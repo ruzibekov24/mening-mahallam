@@ -59,17 +59,9 @@ extension on NotificationType {
 class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
 
-  String _timeAgo(AppLocalizations l10n, DateTime dateTime) {
-    final diff = DateTime.now().difference(dateTime);
-    if (diff.inMinutes < 1) return l10n.lastSeenJustNow;
-    if (diff.inMinutes < 60) return l10n.lastSeenMinutesAgo(diff.inMinutes);
-    if (diff.inHours < 24) return l10n.lastSeenHoursAgo(diff.inHours);
-    return l10n.lastSeenDaysAgo(diff.inDays);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final notificationsAsync = ref.watch(myNotificationsProvider);
 
     return Scaffold(
@@ -154,7 +146,7 @@ class _NotificationTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final color = notification.type.color;
 
     return AppCard(

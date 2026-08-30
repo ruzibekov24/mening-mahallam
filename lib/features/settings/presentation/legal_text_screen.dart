@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
-import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 
 /// "Foydalanish shartlari" va "Maxfiylik siyosati" uchun umumiy

@@ -28,7 +28,6 @@ import '../data/home_repository.dart';
 import '../data/home_stats_provider.dart';
 import 'neighbor_profile_screen.dart';
 import 'role_styles.dart';
-import '../../../core/widgets/app_alert.dart';
 
 /// 9. ASOSIY (HOME) ekrani.
 class HomeScreen extends ConsumerWidget {
@@ -36,7 +35,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final profileAsync = ref.watch(currentUserProfileProvider);
     final eventsAsync = ref.watch(upcomingEventsProvider);
     final mahallaNameAsync = ref.watch(currentMahallaNameProvider);
@@ -384,8 +383,9 @@ class HomeScreen extends ConsumerWidget {
                                 ref.watch(staffMembersProvider(mahallaId));
                             return staffAsync.when(
                               data: (staff) {
-                                if (staff.isEmpty)
+                                if (staff.isEmpty) {
                                   return const SizedBox.shrink();
+                                }
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -597,7 +597,7 @@ class _EventRow extends StatelessWidget {
   ];
 
   String _formatWhen(BuildContext context, DateTime dt) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final now = DateTime.now();
     final isToday =
         dt.year == now.year && dt.month == now.month && dt.day == now.day;
@@ -684,66 +684,6 @@ class _StaffCard extends StatelessWidget {
   }
 }
 
-/// So'nggi faoliyat ro'yxatidagi bitta qator (e'lon, murojaat yoki
-/// tadbir bo'lishi mumkin — turiga qarab ikonka va rang o'zgaradi).
-class _ActivityRow extends StatelessWidget {
-  final ActivityItem item;
-  const _ActivityRow({required this.item});
-
-  IconData get _icon {
-    switch (item.kind) {
-      case ActivityKind.announcement:
-        return PhosphorIconsFill.megaphone;
-      case ActivityKind.request:
-        return PhosphorIconsFill.chatCircleDots;
-      case ActivityKind.event:
-        return PhosphorIconsFill.calendarCheck;
-    }
-  }
-
-  Color get _color {
-    switch (item.kind) {
-      case ActivityKind.announcement:
-        return AppAccents.announcements;
-      case ActivityKind.request:
-        return AppAccents.requests;
-      case ActivityKind.event:
-        return AppAccents.events;
-    }
-  }
-
-  String _label(AppLocalizations l10n) {
-    switch (item.kind) {
-      case ActivityKind.announcement:
-        return l10n.activityNewAnnouncement(item.title);
-      case ActivityKind.request:
-        return l10n.activityNewRequest(item.title);
-      case ActivityKind.event:
-        return l10n.activityNewEvent(item.title);
-    }
-  }
-
-  String _timeAgo(AppLocalizations l10n) {
-    final diff = DateTime.now().difference(item.createdAt);
-    if (diff.inMinutes < 60)
-      return l10n.minutesAgo(diff.inMinutes.clamp(0, 59));
-    if (diff.inHours < 24) return l10n.hoursAgo(diff.inHours);
-    return l10n.daysAgo(diff.inDays);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    return AppListCard(
-      icon: _icon,
-      accent: _color,
-      title: _label(l10n),
-      trailing: Text(_timeAgo(l10n), style: context.captionStyle),
-    );
-  }
-}
-
 /// Mahalla statistikasi — 2x2 grid ko'rinishida, minimal kartalar.
 class _StatsGrid extends StatelessWidget {
   final HomeStats stats;
@@ -751,7 +691,7 @@ class _StatsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final items = [
       (
         icon: PhosphorIconsFill.usersThree,

@@ -22,7 +22,7 @@ class ConversationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final conversationsAsync = ref.watch(myConversationsProvider);
     final myUid = FirebaseAuth.instance.currentUser?.uid;
 
@@ -123,7 +123,7 @@ class _ConversationTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final briefAsync = ref.watch(chatUserBriefProvider(otherUid));
 
     return briefAsync.when(

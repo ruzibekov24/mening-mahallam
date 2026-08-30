@@ -69,7 +69,7 @@ class _PremiumConfigScreenState extends ConsumerState<PremiumConfigScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     setState(() => _saving = true);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final navigator = Navigator.of(context);
     try {
       await ref.read(premiumRepositoryProvider).saveConfig(
@@ -96,7 +96,7 @@ class _PremiumConfigScreenState extends ConsumerState<PremiumConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.premiumConfigTitle)),

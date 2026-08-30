@@ -66,7 +66,7 @@ class _NewRequestFlowScreenState extends ConsumerState<NewRequestFlowScreen> {
       !_descriptionController.document.isEmpty();
 
   void _goNext() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_currentStep == 1 && !_canGoNextFromDetails) {
       showAppAlert(context, l10n.fillTitleAndDescription, kind: AppAlertKind.error);
       return;
@@ -87,7 +87,7 @@ class _NewRequestFlowScreenState extends ConsumerState<NewRequestFlowScreen> {
   }
 
   Future<void> _submit() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     setState(() => _isSubmitting = true);
     try {
       List<String> imageUrls = [];
@@ -132,7 +132,7 @@ class _NewRequestFlowScreenState extends ConsumerState<NewRequestFlowScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDark = context.isDarkMode;
     final stepLabels = [
       l10n.stepType,
@@ -364,7 +364,7 @@ class _TypeStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.xl),
       children: [
@@ -405,7 +405,7 @@ class _TypeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return AppCard(
       onTap: onTap,
@@ -488,7 +488,7 @@ class _DetailsStepState extends State<_DetailsStep> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final charCount = widget.descriptionController.document.toPlainText().length;
 
     return ListView(
@@ -553,7 +553,7 @@ class _PrioritySlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final trackColor = value.color;
 
     return Column(
@@ -619,7 +619,7 @@ class _LocationStepState extends ConsumerState<_LocationStep> {
   bool _isLocating = false;
 
   Future<void> _useCurrentLocation() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     setState(() => _isLocating = true);
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -658,7 +658,7 @@ class _LocationStepState extends ConsumerState<_LocationStep> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDark = context.isDarkMode;
 
     return Padding(
@@ -791,7 +791,7 @@ class _ReviewStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.xl),
@@ -910,7 +910,7 @@ class _SuccessStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.xxxl),

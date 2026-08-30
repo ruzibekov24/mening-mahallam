@@ -50,7 +50,7 @@ class ServicesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final servicesAsync = ref.watch(mahallaServicesProvider);
     final profileAsync = ref.watch(currentUserProfileProvider);
 
@@ -161,7 +161,7 @@ class _ServiceCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final profile = ref.watch(currentUserProfileProvider).valueOrNull;
     final canManage =
         profile?.role.canPost == true && profile?.mahallaId != null;
@@ -313,7 +313,7 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
   }
 
   Future<void> _submit() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
 
@@ -357,7 +357,7 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: SafeArea(
@@ -490,7 +490,7 @@ class _AdvertiseYourServiceCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isPremium =
         ref.watch(currentUserProfileProvider).valueOrNull?.isPremiumActive ==
             true;

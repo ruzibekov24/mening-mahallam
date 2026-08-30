@@ -30,7 +30,7 @@ class _RequestsManagementScreenState
   RequestStatus? _filterStatus;
 
   Future<void> _openStatusSheet(MahallaRequest request) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final newStatus = await showModalBottomSheet<RequestStatus>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -82,7 +82,7 @@ class _RequestsManagementScreenState
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final requestsAsync = ref.watch(allRequestsForManagementProvider);
 
     return Scaffold(
@@ -224,7 +224,7 @@ class _ManagementRequestCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final authorAsync = ref.watch(chatUserBriefProvider(request.authorUid));
     final statusColor = request.status.manageColor;
 

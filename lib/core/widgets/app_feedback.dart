@@ -231,7 +231,7 @@ class AppErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _StateIllustration(
+            const _StateIllustration(
               icon: PhosphorIconsFill.warningCircle,
               accent: AppColors.danger,
             ),

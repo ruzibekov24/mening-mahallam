@@ -42,7 +42,7 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
   RequestStatus? _selectedStatus; // null = hammasi
 
   Future<void> _openNewRequestFlow() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final profile = await ref.read(currentUserProfileProvider.future);
     final mahallaId = profile?.mahallaId;
 
@@ -70,7 +70,7 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final requestsAsync = ref.watch(myRequestsProvider);
     final profileAsync = ref.watch(currentUserProfileProvider);
 
@@ -363,7 +363,7 @@ class _RequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDark = context.isDarkMode;
 
     return AppCard(

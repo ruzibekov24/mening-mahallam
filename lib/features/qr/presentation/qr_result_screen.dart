@@ -25,7 +25,7 @@ class _QrResultScreenState extends ConsumerState<QrResultScreen> {
   bool _isConfirming = false;
 
   Future<void> _confirm() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     setState(() => _isConfirming = true);
     try {
       await ref
@@ -43,7 +43,7 @@ class _QrResultScreenState extends ConsumerState<QrResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(

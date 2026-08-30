@@ -21,7 +21,7 @@ class AdManagementScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final adsAsync = ref.watch(allServiceAdsProvider(mahallaId));
 
     return Scaffold(
@@ -219,7 +219,7 @@ class _AdEditorSheetState extends ConsumerState<_AdEditorSheet> {
   }
 
   Future<void> _save() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (_title.text.trim().isEmpty) {
       showAppAlert(context, l10n.adTitleRequired, kind: AppAlertKind.error);
       return;
@@ -244,7 +244,7 @@ class _AdEditorSheetState extends ConsumerState<_AdEditorSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: EdgeInsets.only(
           bottom: MediaQuery.viewInsetsOf(context).bottom),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
-import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/uz_phone_input_formatter.dart';
 import '../../../l10n/app_localizations.dart';
@@ -37,7 +36,7 @@ class _ChangePhoneScreenState extends ConsumerState<ChangePhoneScreen> {
   }
 
   Future<void> _submit() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
 
     final digits = cleanPhoneDigits(_phoneController.text);
@@ -96,7 +95,7 @@ class _ChangePhoneScreenState extends ConsumerState<ChangePhoneScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(

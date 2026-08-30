@@ -30,7 +30,7 @@ class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   Future<void> _confirmLogout(BuildContext context, WidgetRef ref) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -77,7 +77,7 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final profileAsync = ref.watch(currentUserProfileProvider);
     final mahallaNameAsync = ref.watch(currentMahallaNameProvider);
 
@@ -294,7 +294,7 @@ class _ProfileBannerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final banner = bannerById(profile?.profileBannerId);
     final fullName = profile == null
         ? l10n.defaultUserName
@@ -447,7 +447,7 @@ Future<void> _showBannerPicker(
   String currentBannerId, {
   required bool isPremiumActive,
 }) async {
-  final l10n = AppLocalizations.of(context)!;
+  final l10n = AppLocalizations.of(context);
   await showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
@@ -482,7 +482,7 @@ class _BannerPickerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return SafeArea(
       child: Container(
         margin: const EdgeInsets.all(AppSpacing.md),
@@ -924,7 +924,7 @@ class _ActivityStatsRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final myRequestsAsync = ref.watch(myOwnRequestsProvider);
     final myAnnouncementsAsync = ref.watch(myOwnAnnouncementsProvider);
     final joinedCount = ref.watch(myJoinedRequestsCountProvider);
@@ -1021,7 +1021,7 @@ class _MyActivitySection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final myRequestsAsync = ref.watch(myOwnRequestsProvider);
     final mahallaId = profile.mahallaId;
 

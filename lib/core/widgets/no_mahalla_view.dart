@@ -26,7 +26,7 @@ class NoMahallaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return AppEmptyView(
       icon: PhosphorIconsFill.qrCode,
       title: l10n.noMahallaTitle,
@@ -52,7 +52,7 @@ class NoMahallaBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDark = context.isDarkMode;
 
     return TapScale(

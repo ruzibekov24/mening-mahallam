@@ -36,7 +36,7 @@ class _MahallaSwitcherScreenState
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final activeOverride = ref.watch(activeMahallaOverrideProvider);
 
     return Scaffold(

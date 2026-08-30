@@ -24,7 +24,7 @@ class PollsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final pollsAsync = ref.watch(mahallaPollsProvider);
     final profileAsync = ref.watch(currentUserProfileProvider);
 
@@ -130,7 +130,7 @@ class _PollCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final myUid = FirebaseAuth.instance.currentUser?.uid;
     final myVote = poll.myVote(myUid);
     final counts = poll.voteCounts;
@@ -365,7 +365,7 @@ class _NewPollSheetState extends ConsumerState<_NewPollSheet> {
   }
 
   Future<void> _submit() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final question = _questionController.text.trim();
     final options = _optionControllers
         .map((c) => c.text.trim())
@@ -409,7 +409,7 @@ class _NewPollSheetState extends ConsumerState<_NewPollSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.viewInsetsOf(context).bottom,

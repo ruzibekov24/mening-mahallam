@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../announcements/data/announcement_repository.dart';
 import '../../announcements/data/announcements_providers.dart';
-import '../../announcements/data/event_repository.dart';
 import '../../home/data/home_repository.dart';
 import '../../requests/data/requests_repository.dart';
 
