@@ -5,6 +5,8 @@ import 'package:latlong2/latlong.dart';
 import '../../home/data/home_repository.dart';
 import '../../qr/data/mahalla_repository.dart';
 import '../../requests/data/requests_repository.dart';
+import '../../services/data/service_repository.dart';
+import '../../services/data/services_providers.dart';
 
 /// Xaritada ko'rsatish uchun bitta murojaat markeri.
 class RequestMapMarker {
@@ -106,4 +108,40 @@ final mahallaBoundaryProvider =
 final requestMapMarkersProvider = StreamProvider.autoDispose
     .family<List<RequestMapMarker>, String>((ref, mahallaId) {
   return _visibleRequestMarkers(ref, mahallaId);
+});
+
+/// Xaritada ko'rsatish uchun bitta xizmat ko'rsatuvchi markeri.
+class ServiceMapMarker {
+  final String serviceId;
+  final LatLng position;
+  final String name;
+  final String phone;
+  final ServiceCategory category;
+
+  ServiceMapMarker({
+    required this.serviceId,
+    required this.position,
+    required this.name,
+    required this.phone,
+    required this.category,
+  });
+}
+
+/// Joylashuvi belgilangan mahalliy xizmat ko'rsatuvchilarni xarita
+/// markerlariga aylantirib beradi — `_visibleRequestMarkers` bilan bir
+/// xil naqsh, faqat xizmatlar hamma uchun ochiq (murojaatlardan farqli
+/// o'laroq maxfiylik cheklovi yo'q).
+final serviceMapMarkersProvider = StreamProvider.autoDispose
+    .family<List<ServiceMapMarker>, String>((ref, mahallaId) {
+  final repo = ref.watch(serviceRepositoryProvider);
+  return repo.watchServices(mahallaId).map((services) => services
+      .where((s) => s.hasLocation)
+      .map((s) => ServiceMapMarker(
+            serviceId: s.id,
+            position: LatLng(s.latitude!, s.longitude!),
+            name: s.name,
+            phone: s.phone,
+            category: s.category,
+          ))
+      .toList());
 });

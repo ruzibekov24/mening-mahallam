@@ -1774,4 +1774,144 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get yourRatingLabel => 'Your rating';
+
+  @override
+  String get assignStaffTitle => 'Assign to staff';
+
+  @override
+  String get noStaffFoundLabel => 'No staff found in the mahalla';
+
+  @override
+  String get cancelAssignmentAction => 'Cancel assignment';
+
+  @override
+  String get requestAssignedMessage => 'Request assigned';
+
+  @override
+  String get dueDateSetMessage => 'Due date set';
+
+  @override
+  String get assignAction => 'Assign';
+
+  @override
+  String get setDueDateAction => 'Set due date';
+
+  @override
+  String assignedToLabel(String fullName) {
+    return 'Assigned to: $fullName';
+  }
+
+  @override
+  String dueDateLabel(String date) {
+    return 'Due: $date';
+  }
+
+  @override
+  String get dueDateOverdueSuffix => ' — overdue';
+
+  @override
+  String get commentsTitle => 'Comments';
+
+  @override
+  String get noCommentsYet => 'No comments yet';
+
+  @override
+  String get commentHint => 'Write a comment...';
+
+  @override
+  String get createGroupAction => 'Create group';
+
+  @override
+  String get groupNameLabel => 'Group name';
+
+  @override
+  String get groupNameHint => 'e.g. Street activists';
+
+  @override
+  String get selectMembersLabel => 'Select members';
+
+  @override
+  String selectMembersLabelWithCount(int count) {
+    return 'Select members ($count)';
+  }
+
+  @override
+  String get enterGroupNameError => 'Enter a group name';
+
+  @override
+  String get selectAtLeastOneMemberError => 'Select at least one member';
+
+  @override
+  String get groupCreateError => 'Error creating group';
+
+  @override
+  String get groupsSectionTitle => 'Groups';
+
+  @override
+  String get locationFieldLabel => 'Location';
+
+  @override
+  String get locationSetLabel => 'Location set';
+
+  @override
+  String get setLocationLabel => 'Set location';
+
+  @override
+  String get locationDetectError =>
+      'Could not detect location. Check permissions or GPS status.';
+
+  @override
+  String get tapMapHint => 'Tap the map to set a point';
+
+  @override
+  String get assistantScreenTitle => 'AI Assistant';
+
+  @override
+  String get assistantInputHint => 'Type your question...';
+
+  @override
+  String get assistantGreetingTitle => 'Hi! I\'m your AI assistant';
+
+  @override
+  String get assistantGreetingSubtitle =>
+      'Ready to answer your questions about the mahalla and help you use the app.';
+
+  @override
+  String get assistantSuggestion1 =>
+      'What services are available in my mahalla?';
+
+  @override
+  String get assistantSuggestion2 => 'How do I submit a request?';
+
+  @override
+  String get assistantSuggestion3 => 'How do I use the app?';
+
+  @override
+  String get notificationPreferencesTitle => 'Notification preferences';
+
+  @override
+  String get notificationPreferencesSubtitle =>
+      'Choose which types of messages you receive';
+
+  @override
+  String get notificationPreferencesSectionHeader =>
+      'Which messages you receive';
+
+  @override
+  String get notificationTypeAnnouncementLabel => 'New announcements';
+
+  @override
+  String get notificationTypeEventLabel => 'New events';
+
+  @override
+  String get notificationTypePollLabel => 'New polls';
+
+  @override
+  String get notificationTypeMessageLabel => 'New messages';
+
+  @override
+  String get notificationTypeRequestStatusLabel => 'Request status';
+
+  @override
+  String get offlineBannerMessage => 'Offline — no internet';
 }

@@ -18,6 +18,7 @@ export const NAV_ITEMS: NavItem[] = [
   { path: '#/xizmatlar', label: 'Xizmatlar' },
   { path: '#/reklama-elonlari', label: "Reklama e'lonlari" },
   { path: '#/audit-log', label: 'Harakatlar tarixi' },
+  { path: '#/ai-sozlamalari', label: 'AI sozlamalari' },
 ];
 
 export function renderLayout(root: HTMLElement, userEmail: string | null): HTMLElement {

@@ -13,7 +13,10 @@ import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/chat_providers.dart';
 import '../data/chat_repository.dart';
+import '../data/group_chat_repository.dart';
 import 'chat_screen.dart';
+import 'group_chat_screen.dart';
+import 'new_group_screen.dart';
 
 /// Barcha suhbatlar ro'yxati — Profil menyusidagi "Xabarlar" orqali
 /// ochiladi.
@@ -24,6 +27,7 @@ class ConversationsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final conversationsAsync = ref.watch(myConversationsProvider);
+    final groupsAsync = ref.watch(myGroupChatsProvider);
     final myUid = FirebaseAuth.instance.currentUser?.uid;
 
     return Scaffold(
@@ -31,6 +35,13 @@ class ConversationsScreen extends ConsumerWidget {
       // MainShell foni YO'Q. Shaffof qoldirilsa ekran qop-qora
       // bo'lib ko'rinardi. Rang berilmasa mavzudagi
       // `scaffoldBackgroundColor` ishlaydi (dark mode ham).
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const NewGroupScreen()),
+        ),
+        icon: const Icon(PhosphorIconsFill.usersThree),
+        label: Text(l10n.createGroupAction),
+      ),
       body: SafeArea(
         top: false,
         child: Column(
@@ -55,7 +66,8 @@ class ConversationsScreen extends ConsumerWidget {
             Expanded(
               child: conversationsAsync.when(
                 data: (conversations) {
-                  if (conversations.isEmpty) {
+                  final groups = groupsAsync.valueOrNull ?? const [];
+                  if (conversations.isEmpty && groups.isEmpty) {
                     return AppEmptyView(
                       icon: PhosphorIconsFill.chatDots,
                       title: l10n.noConversationsYet,
@@ -63,22 +75,39 @@ class ConversationsScreen extends ConsumerWidget {
                       scrollable: true,
                     );
                   }
-                  return ListView.builder(
+                  return ListView(
                     padding: AppSpacing.listPadding,
-                    itemCount: conversations.length,
-                    itemBuilder: (context, index) {
-                      final conversation = conversations[index];
-                      final otherUid = conversation.otherUid(myUid ?? '');
-                      final unread = conversation.unreadCounts[myUid] ?? 0;
-                      return StaggeredEntrance(
-                        index: index,
-                        child: _ConversationTile(
-                          conversation: conversation,
-                          otherUid: otherUid,
-                          unreadCount: unread,
-                        ),
-                      );
-                    },
+                    children: [
+                      if (groups.isNotEmpty) ...[
+                        AppSectionHeader(title: l10n.groupsSectionTitle),
+                        const SizedBox(height: AppSpacing.sm),
+                        ...groups.asMap().entries.map((entry) {
+                          return StaggeredEntrance(
+                            index: entry.key,
+                            child: _GroupChatTile(
+                              group: entry.value,
+                              myUid: myUid ?? '',
+                            ),
+                          );
+                        }),
+                        const SizedBox(height: AppSpacing.lg),
+                        AppSectionHeader(title: l10n.conversationsTitle),
+                        const SizedBox(height: AppSpacing.sm),
+                      ],
+                      ...conversations.asMap().entries.map((entry) {
+                        final conversation = entry.value;
+                        final otherUid = conversation.otherUid(myUid ?? '');
+                        final unread = conversation.unreadCounts[myUid] ?? 0;
+                        return StaggeredEntrance(
+                          index: entry.key,
+                          child: _ConversationTile(
+                            conversation: conversation,
+                            otherUid: otherUid,
+                            unreadCount: unread,
+                          ),
+                        );
+                      }),
+                    ],
                   );
                 },
                 loading: () => ListView(
@@ -94,6 +123,72 @@ class ConversationsScreen extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _GroupChatTile extends StatelessWidget {
+  final GroupChat group;
+  final String myUid;
+
+  const _GroupChatTile({required this.group, required this.myUid});
+
+  String _formatTime(DateTime? t) {
+    if (t == null) return '';
+    final now = DateTime.now();
+    final isToday =
+        t.year == now.year && t.month == now.month && t.day == now.day;
+    if (isToday) {
+      return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+    }
+    return '${t.day.toString().padLeft(2, '0')}.${t.month.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => GroupChatScreen(groupId: group.id),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Guruhlar shaxsiy avatar o'rniga umumiy belgi bilan
+          // ko'rsatiladi — ro'yxatda 1:1 suhbatlardan vizual jihatdan
+          // ajratish uchun.
+          Container(
+            width: 48,
+            height: 48,
+            decoration: const BoxDecoration(
+              color: AppAccents.neighbors,
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: const Icon(PhosphorIconsFill.usersThree,
+                color: Colors.white, size: 22),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(group.name, style: context.cardTitleStyle),
+                const SizedBox(height: AppSpacing.xxs),
+                Text(
+                  group.lastMessage,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.secondaryStyle,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Text(_formatTime(group.lastMessageAt), style: context.captionStyle),
+        ],
       ),
     );
   }

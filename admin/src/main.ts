@@ -14,6 +14,7 @@ import { renderXizmatlar } from './pages/xizmatlar';
 import { renderXizmatlarRoyxati } from './pages/xizmatlar-royxati';
 import { renderMahallaDetail } from './pages/mahalla-detail';
 import { renderAuditLog } from './pages/audit-log';
+import { renderAiSozlamalari } from './pages/ai-sozlamalari';
 
 const root = document.getElementById('app')!;
 
@@ -36,6 +37,7 @@ const ROUTES: Record<string, PageRenderer> = {
   '#/xizmatlar': renderXizmatlarRoyxati,
   '#/reklama-elonlari': renderXizmatlar,
   '#/audit-log': renderAuditLog,
+  '#/ai-sozlamalari': renderAiSozlamalari,
 };
 
 const ROUTE_PATHS = Object.keys(ROUTES);

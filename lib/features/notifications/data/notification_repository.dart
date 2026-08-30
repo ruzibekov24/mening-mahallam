@@ -23,6 +23,8 @@ enum NotificationType {
   // Super adminga: kimdir hisobini o'chirishni so'radi (qo'lda
   // bajariladi, chunki qaytarib bo'lmaydigan amal).
   accountDeletionRequested,
+  // Biriktirilgan xodimga: murojaat muddati (SLA) o'tib ketdi.
+  requestOverdue,
 }
 
 extension NotificationTypeX on NotificationType {
@@ -44,6 +46,8 @@ extension NotificationTypeX on NotificationType {
         return NotificationType.premiumRejected;
       case 'accountDeletionRequested':
         return NotificationType.accountDeletionRequested;
+      case 'requestOverdue':
+        return NotificationType.requestOverdue;
       default:
         return NotificationType.requestStatusChanged;
     }
@@ -69,8 +73,54 @@ extension NotificationTypeX on NotificationType {
         return 'premiumRejected';
       case NotificationType.accountDeletionRequested:
         return 'accountDeletionRequested';
+      case NotificationType.requestOverdue:
+        return 'requestOverdue';
     }
   }
+}
+
+/// Berilgan turdagi bildirishnoma foydalanuvchi tomonidan
+/// yoqilgan/o'chirilgan holda sozlanishi mumkinmi — agar mumkin
+/// bo'lsa, `UserProfile.notificationPrefs`dagi mos kalitni qaytaradi.
+/// `null` — bu tur HAR DOIM yuboriladi (tizim/kritik xabar,
+/// masalan to'lov yoki hisobni o'chirish so'rovi) va foydalanuvchi
+/// sozlamasiga bog'liq emas.
+///
+/// `requestOverdue` ataylab alohida kalitga ega emas — u
+/// `requestStatusChanged` bilan bitta "Murojaat holati" tugmasi
+/// ostida birlashtirilgan (ikkalasi ham murojaat hayot siklining
+/// bir qismi, alohida tugma foydalanuvchi uchun ortiqcha murakkablik
+/// bo'lardi).
+String? _userTogglePrefKey(NotificationType type) {
+  switch (type) {
+    case NotificationType.newAnnouncement:
+      return NotificationType.newAnnouncement.storageValue;
+    case NotificationType.newEvent:
+      return NotificationType.newEvent.storageValue;
+    case NotificationType.newPoll:
+      return NotificationType.newPoll.storageValue;
+    case NotificationType.newMessage:
+      return NotificationType.newMessage.storageValue;
+    case NotificationType.requestStatusChanged:
+    case NotificationType.requestOverdue:
+      return NotificationType.requestStatusChanged.storageValue;
+    case NotificationType.premiumPaymentSubmitted:
+    case NotificationType.premiumApproved:
+    case NotificationType.premiumRejected:
+    case NotificationType.accountDeletionRequested:
+      return null;
+  }
+}
+
+/// Berilgan foydalanuvchi hujjati ma'lumotlariga qarab, shu turdagi
+/// push foydalanuvchiga yuborilishi kerakmi. Xaritada kalit yo'q
+/// bo'lsa (hali hech qachon o'zgartirilmagan) — standart YOQILGAN.
+bool _pushAllowedForUser(Map<String, dynamic>? userData, NotificationType type) {
+  final prefKey = _userTogglePrefKey(type);
+  if (prefKey == null) return true; // Tizim xabari — sozlamaga bog'liq emas.
+  final prefs = userData?['notificationPrefs'] as Map<String, dynamic>?;
+  if (prefs == null) return true;
+  return prefs[prefKey] != false;
 }
 
 class AppNotification {
@@ -224,8 +274,13 @@ class NotificationRepository {
     });
 
     final userDoc = await _firestore.collection('users').doc(uid).get();
-    final token = userDoc.data()?['fcmToken'] as String?;
-    if (token != null) {
+    final userData = userDoc.data();
+    final token = userData?['fcmToken'] as String?;
+    // Push server tomonidan sozlamaga qarab o'chirilishi mumkin, lekin
+    // yuqoridagi Firestore yozuvi (ilova ichidagi bildirishnomalar
+    // ro'yxati) har doim amalga oshadi — foydalanuvchi keyinroq
+    // ilovani ochganda baribir ko'radi.
+    if (token != null && _pushAllowedForUser(userData, type)) {
       await _sendPush(
         tokens: [token],
         title: title,
@@ -287,7 +342,14 @@ class NotificationRepository {
     final userDocs = await Future.wait(
       memberUids.map((uid) => _firestore.collection('users').doc(uid).get()),
     );
+    // Har bir a'zo hujjati alohida o'qilgani uchun (yuqoridagi izohda
+    // tushuntirilgan "list" cheklovi sababli), shu yerda ham har bir
+    // a'zoning `notificationPrefs`ini tekshirib, shu turni
+    // o'chirganlarni push ro'yxatidan chiqarib tashlaymiz — bitta
+    // mahalla-keng "topic" push emas, aynan shu tokenlar ro'yxati
+    // ishlatilgani uchun bu filtr oson qo'llanadi.
     final tokens = userDocs
+        .where((doc) => _pushAllowedForUser(doc.data(), type))
         .map((doc) => doc.data()?['fcmToken'] as String?)
         .whereType<String>()
         .toList();

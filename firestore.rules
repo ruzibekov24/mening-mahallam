@@ -153,6 +153,40 @@ service cloud.firestore {
       }
     }
 
+    // ---------- groupChats/{groupId} (guruh chatlari) ----------
+    // Mahalla-ga bog'langan, 2+ foydalanuvchi orasidagi guruh suhbati —
+    // mavjud `conversations` (qat'iy 1:1) dan farqli, hujjat ID'si
+    // Firestore tomonidan avtomatik generatsiya qilinadi (a'zolar
+    // ro'yxati o'zgaruvchan bo'lgani uchun tartiblangan uid juftligiga
+    // asoslangan deterministik ID mos kelmaydi).
+    match /groupChats/{groupId} {
+      allow read: if isSignedIn() && myUid() in resource.data.participantUids;
+
+      allow create: if isSignedIn() &&
+        myUid() in request.resource.data.participantUids &&
+        request.resource.data.createdBy == myUid();
+
+      // A'zolar ro'yxatini (qo'shish/chiqarish) yaratuvchi YOKI
+      // mavjud istalgan a'zo o'zgartira oladi — guruh chatlarida odatda
+      // istalgan a'zo yangi odam taklif qila olishi kutiladi (WhatsApp
+      // guruhlaridagi kabi), faqat yaratuvchiga cheklab qo'yish juda
+      // qattiq bo'lardi. Boshqa maydonlar (nom, mahalla) ham shu
+      // yo'l bilan tahrirlanishi mumkin, lekin faqat mavjud a'zo
+      // tomonidan.
+      allow update: if isSignedIn() && myUid() in resource.data.participantUids;
+
+      match /messages/{messageId} {
+        function isGroupParticipant() {
+          return myUid() in get(/databases/$(database)/documents/groupChats/$(groupId)).data.participantUids;
+        }
+
+        allow read: if isSignedIn() && isGroupParticipant();
+        allow create: if isSignedIn() && isGroupParticipant() &&
+          request.resource.data.senderUid == myUid();
+        allow update, delete: if false;
+      }
+    }
+
     // ---------- appFeedback/{feedbackId} (ilova haqida fikr-mulohaza) ----------
     // Mahallaga bog'lanmagan, butun ilova haqidagi fikr — faqat super
     // admin ko'radi. Har bir foydalanuvchi cheksiz fikr qoldira oladi,
@@ -319,19 +353,42 @@ service cloud.firestore {
           (request.resource.data.get('authorWasPremium', false) == false ||
            myUserDoc().data.get('premiumUntil', request.time) > request.time));
 
-        // Status changes: staff/rais/super-admin only. Everything else
-        // on the document (title, description, etc.) is immutable
-        // after creation except joinedCount/joinedUids, which any
-        // member may update when tapping "join this request".
+        // Status changes / assignment / due date: staff/rais/super-admin
+        // only. Everything else on the document (title, description,
+        // etc.) is immutable after creation except joinedCount/joinedUids
+        // (any member, "join this request") and overdueNotifiedAt (any
+        // member, opportunistic client-side overdue check —
+        // `RequestsRepository.checkAndNotifyOverdue`).
         allow update: if (isStaffOrRaisOf(mahallaId) || isSuperAdmin()) &&
           request.resource.data.diff(resource.data).affectedKeys()
-            .hasOnly(['status']) ||
+            .hasOnly(['status', 'assignedToUid', 'dueAt']) ||
           (isMemberOf(mahallaId) &&
            request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['joinedCount', 'joinedUids']));
+             .hasOnly(['joinedCount', 'joinedUids'])) ||
+          (isMemberOf(mahallaId) &&
+           request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['overdueNotifiedAt']));
 
         allow delete: if isStaffOrRaisOf(mahallaId) || isSuperAdmin() ||
           (isMemberOf(mahallaId) && resource.data.authorUid == myUid());
+
+        // ---------- comments ----------
+        // Ko'rish — murojaatning o'zini ko'ra oladigan har kim (yuqoridagi
+        // `read` qoidasi bilan bir xil maxfiy/ommaviy shart). Yozish —
+        // faqat yaratish, faqat mahalla a'zosi va faqat o'z nomidan
+        // (tahrirlash/o'chirish hozircha yo'q).
+        match /comments/{commentId} {
+          allow read: if isSuperAdmin() || (isMemberOf(mahallaId) && (
+            get(/databases/$(database)/documents/mahallas/$(mahallaId)/requests/$(requestId)).data.type == 'ommaviy' ||
+            get(/databases/$(database)/documents/mahallas/$(mahallaId)/requests/$(requestId)).data.authorUid == myUid() ||
+            isStaffOrRaisOf(mahallaId)
+          ));
+
+          allow create: if isMemberOf(mahallaId) &&
+            request.resource.data.authorUid == myUid();
+
+          allow update, delete: if false;
+        }
       }
 
       // ---------- serviceAds (xizmat reklamalari) ----------

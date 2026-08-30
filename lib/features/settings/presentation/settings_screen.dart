@@ -20,6 +20,7 @@ import '../../language/data/language_repository.dart';
 import '../../language/presentation/language_screen.dart';
 import '../../premium/presentation/premium_config_screen.dart';
 import '../../premium/presentation/premium_requests_screen.dart';
+import '../../assistant/presentation/assistant_screen.dart';
 import '../../premium/presentation/premium_screen.dart';
 import '../../profile/presentation/edit_profile_screen.dart';
 import '../../profile/presentation/help_screen.dart';
@@ -27,6 +28,7 @@ import '../../qr/presentation/qr_scan_screen.dart';
 import '../data/account_deletion_repository.dart';
 import '../data/notification_settings_provider.dart';
 import 'legal_text_screen.dart';
+import 'notification_preferences_screen.dart';
 import 'privacy_security_screen.dart';
 import '../../../core/widgets/app_alert.dart';
 
@@ -382,12 +384,30 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ),
                 SettingsTile(
+                  icon: PhosphorIconsFill.bellRinging,
+                  iconColor: AppAccents.requests,
+                  title: l10n.notificationPreferencesTitle,
+                  subtitle: l10n.notificationPreferencesSubtitle,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (_) => const NotificationPreferencesScreen()),
+                  ),
+                ),
+                SettingsTile(
                   icon: PhosphorIconsFill.textAa,
                   iconColor: AppAccents.requests,
                   title: l10n.textSizeSettingTitle,
                   subtitle: currentTextScale.label,
                   subtitleIsValue: true,
                   onTap: () => _showTextScalePicker(context, ref),
+                ),
+                SettingsTile(
+                  icon: PhosphorIconsFill.sparkle,
+                  iconColor: AppColors.primary,
+                  title: l10n.assistantScreenTitle,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AssistantScreen()),
+                  ),
                   showDivider: false,
                 ),
               ],

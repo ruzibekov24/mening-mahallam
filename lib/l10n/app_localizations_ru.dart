@@ -1777,4 +1777,143 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get yourRatingLabel => 'Ваша оценка';
+
+  @override
+  String get assignStaffTitle => 'Назначить сотруднику';
+
+  @override
+  String get noStaffFoundLabel => 'В махалле не найдено сотрудников';
+
+  @override
+  String get cancelAssignmentAction => 'Отменить назначение';
+
+  @override
+  String get requestAssignedMessage => 'Обращение назначено';
+
+  @override
+  String get dueDateSetMessage => 'Срок установлен';
+
+  @override
+  String get assignAction => 'Назначить';
+
+  @override
+  String get setDueDateAction => 'Установить срок';
+
+  @override
+  String assignedToLabel(String fullName) {
+    return 'Назначено: $fullName';
+  }
+
+  @override
+  String dueDateLabel(String date) {
+    return 'Срок: $date';
+  }
+
+  @override
+  String get dueDateOverdueSuffix => ' — просрочено';
+
+  @override
+  String get commentsTitle => 'Комментарии';
+
+  @override
+  String get noCommentsYet => 'Пока нет комментариев';
+
+  @override
+  String get commentHint => 'Напишите комментарий...';
+
+  @override
+  String get createGroupAction => 'Создать группу';
+
+  @override
+  String get groupNameLabel => 'Название группы';
+
+  @override
+  String get groupNameHint => 'Например: Активисты улицы';
+
+  @override
+  String get selectMembersLabel => 'Выберите участников';
+
+  @override
+  String selectMembersLabelWithCount(int count) {
+    return 'Выберите участников ($count)';
+  }
+
+  @override
+  String get enterGroupNameError => 'Введите название группы';
+
+  @override
+  String get selectAtLeastOneMemberError => 'Выберите хотя бы одного участника';
+
+  @override
+  String get groupCreateError => 'Ошибка при создании группы';
+
+  @override
+  String get groupsSectionTitle => 'Группы';
+
+  @override
+  String get locationFieldLabel => 'Местоположение';
+
+  @override
+  String get locationSetLabel => 'Местоположение указано';
+
+  @override
+  String get setLocationLabel => 'Указать местоположение';
+
+  @override
+  String get locationDetectError =>
+      'Не удалось определить местоположение. Проверьте разрешения или состояние GPS.';
+
+  @override
+  String get tapMapHint => 'Нажмите на карту, чтобы указать точку';
+
+  @override
+  String get assistantScreenTitle => 'ИИ Помощник';
+
+  @override
+  String get assistantInputHint => 'Напишите ваш вопрос...';
+
+  @override
+  String get assistantGreetingTitle => 'Привет! Я ИИ-помощник';
+
+  @override
+  String get assistantGreetingSubtitle =>
+      'Готов ответить на ваши вопросы о махалле и помочь с использованием приложения.';
+
+  @override
+  String get assistantSuggestion1 => 'Какие услуги есть в моей махалле?';
+
+  @override
+  String get assistantSuggestion2 => 'Как отправить обращение?';
+
+  @override
+  String get assistantSuggestion3 => 'Как пользоваться приложением?';
+
+  @override
+  String get notificationPreferencesTitle => 'Настройки уведомлений';
+
+  @override
+  String get notificationPreferencesSubtitle =>
+      'Выберите, какие уведомления получать';
+
+  @override
+  String get notificationPreferencesSectionHeader =>
+      'Какие уведомления вы получаете';
+
+  @override
+  String get notificationTypeAnnouncementLabel => 'Новые объявления';
+
+  @override
+  String get notificationTypeEventLabel => 'Новые мероприятия';
+
+  @override
+  String get notificationTypePollLabel => 'Новые опросы';
+
+  @override
+  String get notificationTypeMessageLabel => 'Новые сообщения';
+
+  @override
+  String get notificationTypeRequestStatusLabel => 'Статус обращения';
+
+  @override
+  String get offlineBannerMessage => 'Офлайн — нет интернета';
 }

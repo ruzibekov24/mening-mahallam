@@ -20,7 +20,6 @@ import '../../premium/data/premium_repository.dart';
 import '../data/requests_labels.dart';
 import '../data/requests_repository.dart';
 import 'request_styles.dart';
-import 'requests_screen.dart';
 import '../../../core/widgets/app_alert.dart';
 
 String _typeDescription(AppLocalizations l10n, RequestType type) {
