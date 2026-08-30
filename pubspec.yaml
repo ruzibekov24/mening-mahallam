@@ -1,0 +1,102 @@
+name: mening_mahallam
+description: "Mening mahallam — mahalla aholisi uchun mobil ilova"
+publish_to: 'none'
+version: 1.0.5+6
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  # Zamonaviy ikon to'plami (statistika, tab bar va h.k.) — Dart 3.x
+  # bilan mos fork (asl phosphor_flutter IconData'ni extend qilgani
+  # uchun Dart 3.x'da compile bo'lmaydi).
+  phosphoricons_flutter: ^1.0.0
+
+  # iOS 26 "Liquid Glass" pastki navigatsiya: iOS 26+ da haqiqiy
+  # native UIKit/SwiftUI rendering, Android va iOS 26'dan pastda esa
+  # o'zining Flutter fallback shisha uslubi (frosted, pill-highlight).
+  # Bitta widget — ikkala platformada ham ishlaydi.
+  # glass_bottom_navigation: ^0.2.0
+
+  # Kop tillilik (3 ta til: uz, uz_Cyrl, ru)
+  intl: ^0.20.2
+
+  # Rich text editor (e'lon va murojaat matnlarini formatlash uchun)
+  flutter_quill: ^11.4.1
+
+  # State management
+  flutter_riverpod: ^2.5.1
+
+  # Routing
+  go_router: ^14.2.0
+
+  # Firebase
+  firebase_core: ^3.3.0
+  firebase_auth: ^5.1.4
+  cloud_firestore: ^5.2.1
+
+  # Push notifications (FCM). Yuborish tomoni Firebase Cloud Functions
+  # emas, Supabase Edge Function orqali amalga oshiriladi — Blaze
+  # (pullik) plan kerak bo'lmasligi uchun (loyiha hozircha Spark/bepul
+  # planda). Bu yerdagi paket faqat QABUL qilish/ko'rsatish tomoni.
+  firebase_messaging: ^15.1.3
+  flutter_local_notifications: ^18.0.1
+
+  # UI helpers
+  google_fonts: ^6.2.1
+  smooth_page_indicator: ^1.2.0
+
+  # QR skanerlash
+  mobile_scanner: ^6.0.2
+
+  # Sozlamalarni saqlash
+  shared_preferences: ^2.3.2
+
+  # Rasm biriktirish
+  image_picker: ^1.1.2
+  firebase_database: ^11.3.4
+
+  # Supabase Storage'ga to'g'ridan-to'g'ri REST orqali rasm/video yuklash
+  http: ^1.2.2
+
+  # Telefon/Telegram havolalarini ochish
+  url_launcher: ^6.3.0
+
+  # Mahalla xaritasi (OpenStreetMap, API key kerak emas)
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  geolocator: ^13.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/images/
+    - assets/images/flags/
+    - assets/images/language_banners/
+    - assets/images/patterns/
+    - assets/images/onboarding_icons/
+    - assets/images/onboarding_backgrounds/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  # Adaptiv ikonka (Android 8+). Busiz Samsung One UI eski ikonkani oq
+  # squircle ichiga solib qo'yadi — ikonka chetida oq ramka paydo bo'lardi.
+  # Fayllar assets/ dan tashqarida turadi, shunda APK ichiga qo'shilmaydi.
+  adaptive_icon_background: "icon/app_icon_background.png"
+  adaptive_icon_foreground: "icon/app_icon_foreground.png"
+  remove_alpha_ios: true

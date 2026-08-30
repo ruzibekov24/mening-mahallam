@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mening-mahallam.pages.dev/sitemap.xml

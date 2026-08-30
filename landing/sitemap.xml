@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://mening-mahallam.pages.dev/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/"/>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/ru/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/en/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/yordam/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/yordam/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/yordam/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/help/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/ru/yordam/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/yordam/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/yordam/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/help/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/en/help/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/yordam/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/yordam/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/help/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/aloqa/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/aloqa/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/aloqa/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/contact/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/ru/aloqa/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/aloqa/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/aloqa/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/contact/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/en/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/aloqa/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/aloqa/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/contact/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/statistika/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/statistika/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/statistika/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/stats/"/>
+    <changefreq>daily</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/ru/statistika/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/statistika/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/statistika/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/stats/"/>
+    <changefreq>daily</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/en/stats/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/statistika/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/statistika/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/stats/"/>
+    <changefreq>daily</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/maxfiylik/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/maxfiylik/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/maxfiylik/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/privacy/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/ru/maxfiylik/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/maxfiylik/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/maxfiylik/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/privacy/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/en/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/maxfiylik/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/maxfiylik/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/privacy/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/foydalanish-shartlari/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/foydalanish-shartlari/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/foydalanish-shartlari/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/terms/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/ru/foydalanish-shartlari/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/foydalanish-shartlari/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/foydalanish-shartlari/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/terms/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/en/terms/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/foydalanish-shartlari/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/foydalanish-shartlari/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/terms/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/plakat/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/plakat/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/plakat/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/poster/"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/ru/plakat/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/plakat/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/plakat/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/poster/"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://mening-mahallam.pages.dev/en/poster/</loc>
+    <xhtml:link rel="alternate" hreflang="uz" href="https://mening-mahallam.pages.dev/plakat/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mening-mahallam.pages.dev/ru/plakat/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mening-mahallam.pages.dev/en/poster/"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url><loc>https://mening-mahallam.pages.dev/yangiliklar/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+</urlset>

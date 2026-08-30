@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 5+ uchun. `?android:colorBackground` (mavzuning standart
+     fon rangi — yorug'da oq, qorong'ida qop-qora) o'rniga ilovaning
+     o'z rangini ishlatamiz, shunda ochilishda rang sakramaydi. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splashBackground" />
+</layer-list>

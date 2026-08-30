@@ -1,0 +1,955 @@
+{
+  "@@locale": "uz",
+  "appTitle": "Mening Mahallam",
+  "@appTitle": {
+    "description": "Ilova nomi, splash ekranida ko'rinadi"
+  },
+  "splashTagline": "Sizning mahallangiz bitta ilovada",
+  "onboardingAnnouncementsTitle": "E'lonlardan xabardor bo'ling",
+  "onboardingAnnouncementsDescription": "Mahallangizdagi barcha yangiliklar va e'lonlar bir joyda",
+  "onboardingEventsTitle": "Tadbirlardan xabardor bo'ling",
+  "onboardingEventsDescription": "Mahalladagi yig'ilishlar va tashabbuslarda ishtirok eting",
+  "onboardingRequestsTitle": "Murojaat yuboring",
+  "onboardingRequestsDescription": "Muammoingizni bildiring va javobini real vaqtda kuzating",
+  "onboardingNeighborsTitle": "Qo'shni bilan bog'laning",
+  "onboardingNeighborsDescription": "Mahalla a'zolari bilan muloqot qiling, birga qaror qabul qiling",
+  "previewAnnouncements": "E'lonlar",
+  "previewEvents": "Tadbirlar",
+  "previewRequests": "Murojaatlar",
+  "previewNeighbors": "Qo'shnilar",
+  "continueButton": "Davom etish",
+  "skipButton": "O'tkazib yuborish",
+  "loginButton": "Kirish",
+  "registerButton": "Ro'yxatdan o'tish",
+  "loginTitle": "Kirish",
+  "loginSubtitle": "Ma'lumotlaringizni kiriting",
+  "phoneLabel": "Telefon raqam",
+  "passwordLabel": "Parol",
+  "forgotPassword": "Parolni unutdingizmi?",
+  "orDivider": "yoki",
+  "noAccountQuestion": "Hisobingiz yo'qmi? ",
+  "phoneValidationError": "Telefon raqamni to'liq kiriting",
+  "passwordValidationError": "Parol kamida 6 ta belgidan iborat bo'lishi kerak",
+  "unexpectedError": "Kutilmagan xatolik yuz berdi",
+  "registerTitle": "Ro'yxatdan o'tish",
+  "registerSubtitle": "Yangi hisob yaratish",
+  "firstNameLabel": "Ism",
+  "lastNameLabel": "Familiya",
+  "firstNameValidationError": "Ismingizni kiriting",
+  "lastNameValidationError": "Familiyangizni kiriting",
+  "haveAccountQuestion": "Hisobingiz bormi? ",
+  "welcomeGreeting": "Xush kelibsiz",
+  "helloUser": "Assalomu alaykum, {name}!",
+  "@helloUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "helloGeneric": "Assalomu alaykum!",
+  "guestName": "mehmon",
+  "searchHint": "Qidirish...",
+  "categoryAnnouncements": "E'lonlar",
+  "categoryEvents": "Tadbirlar",
+  "categoryRequests": "Murojaatlar",
+  "categoryNeighbors": "Qo'shnilar",
+  "upcomingEventsTitle": "Yaqin tadbirlar",
+  "noUpcomingEvents": "Hozircha yaqin tadbirlar yo'q",
+  "eventsLoadError": "Tadbirlarni yuklashda xatolik yuz berdi",
+  "today": "Bugun",
+  "tomorrow": "Ertaga",
+  "profileTitle": "Profil",
+  "defaultUserName": "Foydalanuvchi",
+  "profileLoadError": "Ma'lumotlarni yuklashda xatolik",
+  "chooseBannerTitle": "Banner tanlang",
+  "premiumBannerLockedMessage": "Bu banner premium — hozircha qulflangan",
+  "premiumTitle": "Premium",
+  "premiumSettingSubtitle": "Cheksiz murojaat, reklamasiz va boshqa imkoniyatlar",
+  "premiumHeroTitle": "Premium obuna",
+  "premiumHeroSubtitle": "Mahallangizda faolroq bo'ling — cheklovlarsiz",
+  "premiumPerMonth": "so'm/oy",
+  "premiumBenefitsTitle": "NIMALAR OCHILADI",
+  "premiumBenefitUnlimited": "Cheksiz murojaat — kunlik limit yo'q",
+  "premiumBenefitNoAds": "Reklamalar umuman ko'rinmaydi",
+  "premiumBenefitPriority": "Murojaatingiz ro'yxatda tepada turadi",
+  "premiumBenefitImages": "Bitta murojaatga 10 tagacha rasm",
+  "premiumBenefitBanners": "Maxsus profil bannerlari",
+  "premiumBenefitBadge": "Profilingizda premium nishoni",
+  "premiumBuyAction": "Premium olish",
+  "premiumActiveTitle": "Premium faol",
+  "premiumActiveUntil": "{date} gacha — {days} kun qoldi",
+  "premiumTransferHint": "Quyidagi kartaga o'tkazma qiling. Nusxa olish uchun ustiga bosing.",
+  "premiumCardNumber": "Karta raqami",
+  "premiumCardHolder": "Karta egasi",
+  "premiumAmount": "To'lov summasi",
+  "premiumCardCopied": "Karta raqami nusxalandi",
+  "premiumHolderCopied": "Karta egasi nusxalandi",
+  "premiumAmountCopied": "Summa nusxalandi",
+  "premiumPaymentTimeLeft": "To'lov uchun {time} qoldi",
+  "premiumPaymentExpired": "To'lov vaqti tugadi — qaytadan boshlang",
+  "premiumIPaidAction": "To'ladim",
+  "premiumContactAdmin": "Admin bilan Telegramda",
+  "premiumTelegramHint": "Tezroq tasdiqlash uchun chekni Telegramga yuboring — ixtiyoriy.",
+  "premiumWaitingTitle": "Tasdiqlash kutilmoqda",
+  "premiumWaitingSubtitle": "Admin to'lovni tekshirgach premium ochiladi",
+  "premiumRequestsTitle": "Premium so'rovlari",
+  "premiumRequestsEmpty": "Kutilayotgan so'rov yo'q",
+  "premiumRequestMonths": "{count} oylik obuna",
+  "premiumApproveAction": "Tasdiqlash",
+  "premiumRejectAction": "Rad etish",
+  "adLabel": "Reklama",
+  "adManagementTitle": "Xizmat reklamalari",
+  "adAddAction": "Reklama qo'shish",
+  "adEmptyTitle": "Hozircha reklama yo'q",
+  "adTitleLabel": "Xizmat nomi",
+  "adDescriptionLabel": "Qisqacha tavsif",
+  "adOwnerLabel": "Usta / tashkilot nomi",
+  "adTitleRequired": "Xizmat nomini kiriting",
+  "adSaveAction": "Saqlash",
+  "adStatusActive": "Faol",
+  "adStatusExpired": "Tugagan",
+  "adActiveUntil": "{date} gacha faol",
+  "adExtendAction": "7 kunga uzaytirish",
+  "adPromoteTitle": "Xizmatingizni reklama qiling",
+  "adPromoteSubtitle": "Haftasiga {price} — mahallangiz ko'radi",
+  "adPromoteAction": "Reklama berish",
+  "noMahallaTitle": "Avval mahallangizga qo'shiling",
+  "noMahallaSubtitle": "Mahalla raisi bergan QR kodni skanerlang — shundan keyin e'lonlar, murojaatlar va qo'shnilaringiz shu yerda ko'rinadi.",
+  "noMahallaAction": "QR kodni skanerlash",
+  "emptyAnnouncementsSubtitle": "Mahalla raisi yoki xodimlari e'lon joylaganda shu yerda ko'rinadi.",
+  "emptyRequestsSubtitle": "Mahallada muammo bo'lsa, birinchi murojaatni siz yuborishingiz mumkin.",
+  "emptyRequestsAction": "Murojaat yuborish",
+  "emptyNeighborsSubtitle": "Qo'shnilaringiz ilovaga qo'shilgach shu yerda ko'rinadi. Ularni taklif qiling!",
+  "emptyServicesSubtitle": "Mahalladagi ustalar va xizmatlar shu yerda to'planadi.",
+  "emptyEventsSubtitle": "Rejalashtirilgan tadbirlar shu yerda ko'rinadi.",
+  "@adActiveUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@adPromoteSubtitle": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "@premiumActiveUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@premiumPaymentTimeLeft": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@premiumRequestMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "premiumBadgeLabel": "Premium",
+  "dailyRequestLimitReached": "Kunlik murojaat limitiga ({count} ta) yetdingiz. Ertaga qayta urinib ko'ring yoki Premium bilan cheksiz yuboring.",
+  "myInfoMenuItem": "Mening ma'lumotlarim",
+  "notificationsMenuItem": "Bildirishnomalar",
+  "settingsMenuItem": "Sozlamalar",
+  "helpMenuItem": "Yordam",
+  "logoutMenuItem": "Chiqish",
+  "logoutConfirmTitle": "Chiqishni tasdiqlang",
+  "logoutConfirmMessage": "Haqiqatan ham tizimdan chiqmoqchimisiz?",
+  "cancelButton": "Bekor qilish",
+  "settingsTitle": "Sozlamalar",
+  "sectionMahalla": "Mahalla",
+  "currentMahalla": "Joriy mahalla",
+  "notConnected": "Bog'lanmagan",
+  "unknownValue": "Noma'lum",
+  "changeButton": "Almashtirish",
+  "changeMahallaTitle": "Mahallani almashtirish",
+  "changeMahallaMessage": "Yangi mahallaga QR kod skanerlash yoki kodni qo'lda kiritish orqali bog'lanasiz. Davom etasizmi?",
+  "sectionGeneral": "Umumiy",
+  "sectionManagement": "Boshqaruv",
+  "membersManagementTitle": "A'zolarni boshqarish",
+  "noMembersYet": "Hozircha a'zolar yo'q",
+  "roleUpdated": "Rol yangilandi",
+  "selectRoleTitle": "Rolni tanlang",
+  "languageSettingTitle": "Til",
+  "appearanceSettingTitle": "Ko'rinish",
+  "textSizeSettingTitle": "Matn kattaligi",
+  "sectionAbout": "Ilova haqida",
+  "versionLabel": "Versiya",
+  "statActiveRequests": "Faol murojaatlar",
+  "statNewAnnouncements": "Yangi e'lonlar",
+  "statUpcomingEvents": "Yaqin tadbirlar",
+  "myRequestsStat": "Murojaatlarim",
+  "myAnnouncementsStat": "E'lonlarim",
+  "myJoinedStat": "Qo'shilganlarim",
+  "myRequestsTitle": "Mening murojaatlarim",
+  "recentActivityTitle": "So'nggi faoliyat",
+  "mahallaStatsTitle": "Mahalla statistikasi",
+  "statsTotalMembers": "A'zolar",
+  "statsActiveRequests": "Faol murojaat",
+  "statsNewAnnouncements": "Yangi e'lon",
+  "statsUpcomingEvents": "Yaqin tadbir",
+  "noRecentActivity": "Hozircha faoliyat yo'q",
+  "activityLoadError": "Faoliyatni yuklashda xatolik yuz berdi",
+  "activityNewAnnouncement": "Yangi e'lon: {title}",
+  "@activityNewAnnouncement": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "activityNewRequest": "Yangi murojaat: {title}",
+  "@activityNewRequest": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "activityNewEvent": "Yangi tadbir: {title}",
+  "@activityNewEvent": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesAgo": "{count} daqiqa oldin",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{count} soat oldin",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count} kun oldin",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionAccount": "Hisob",
+  "changePasswordTitle": "Parolni o'zgartirish",
+  "changePhoneTitle": "Telefon raqamni o'zgartirish",
+  "deleteAccountTitle": "Hisobni o'chirish",
+  "deleteAccountConfirmTitle": "Hisobni o'chirish",
+  "deleteAccountConfirmMessage": "Bu amalni ortga qaytarib bo'lmaydi. Barcha ma'lumotlaringiz butunlay o'chiriladi. Davom etasizmi?",
+  "deleteButton": "O'chirish",
+  "editButton": "Tahrirlash",
+  "sectionDataStorage": "Ma'lumotlar va xotira",
+  "clearCacheTitle": "Keshni tozalash",
+  "clearCacheSubtitle": "Vaqtinchalik saqlangan fayllarni o'chiradi",
+  "cacheClearedMessage": "Kesh tozalandi",
+  "sectionSupport": "Yordam va qo'llab-quvvatlash",
+  "rateAppTitle": "Ilovani baholash",
+  "feedbackTitle": "Fikr bildirish",
+  "feedbackSubtitle": "Ilova haqidagi fikringiz bizga muhim — mahalla rahbariyatiga to'g'ridan-to'g'ri yetadi.",
+  "feedbackRatingRequiredError": "Iltimos, yulduzcha bilan baho bering",
+  "feedbackMessageLabel": "Fikringiz (ixtiyoriy)",
+  "feedbackMessageHint": "Nima yoqdi, nimani yaxshilash kerak?",
+  "feedbackSubmitButton": "Yuborish",
+  "feedbackSubmittedMessage": "Rahmat! Fikringiz yuborildi",
+  "feedbackListTitle": "Foydalanuvchi fikrlari",
+  "noFeedbackFound": "Hozircha fikrlar yo'q",
+  "unknownUserLabel": "Noma'lum foydalanuvchi",
+  "requestAuthorLabel": "Yuborgan",
+  "quickNewRequestTitle": "Yangi murojaat yuborish",
+  "quickNewRequestSubtitle": "Muammo bormi? Bir necha soniyada yuboring",
+  "openLinkAction": "Havolani ochish",
+  "linkOpenFailedMessage": "Havolani ochib bo'lmadi",
+  "bannerManagementTitle": "Bannerlar",
+  "addBannerTitle": "Yangi banner qo'shish",
+  "bannerTitleLabel": "Sarlavha",
+  "bannerDescriptionLabel": "Tavsif (ixtiyoriy)",
+  "bannerLinkLabel": "Havola (ixtiyoriy, https://...)",
+  "bannerAttributionLabel": "Muallif/manba (ixtiyoriy)",
+  "bannerImageRequiredError": "Iltimos, rasm tanlang",
+  "bannerTitleRequiredError": "Iltimos, sarlavha kiriting",
+  "noBannersFound": "Hozircha bannerlar yo'q",
+  "mahallaOnMapTitle": "Mahallangiz xaritada",
+  "developerTitle": "Rivojlantiruvchi",
+  "developerSubtitle": "Mahallam jamoasi",
+  "termsTitle": "Foydalanish shartlari",
+  "privacyPolicyTitle": "Maxfiylik siyosati",
+  "comingSoonMessage": "Bu funksiya tez orada qo'shiladi",
+  "profileSaved": "Ma'lumotlar saqlandi",
+  "saveButton": "Saqlash",
+  "faqTitle": "Ko'p beriladigan savollar",
+  "contactUsTitle": "Biz bilan bog'laning",
+  "callUs": "Telefon orqali",
+  "telegramUs": "Telegram orqali",
+  "faqQ1": "Mahallaga qanday qo'shilaman?",
+  "faqA1": "Ro'yxatdan o'tgandan so'ng, mahalla raisi yoki mas'ul xodim tomonidan berilgan QR kodni skanerlash orqali mahallangizga bog'lanasiz.",
+  "faqQ2": "Murojaat qanday yuboraman?",
+  "faqA2": "\"Murojaat\" bo'limiga o'ting va yangi murojaat yarating. Murojaatingiz holati \"Yangi\", \"Jarayonda\" yoki \"Yakunlandi\" sifatida ko'rsatiladi.",
+  "faqQ3": "E'lonlarni qanday ko'raman?",
+  "faqA3": "Bosh ekrandagi \"E'lonlar\" bo'limida mahallangizga oid barcha rasmiy e'lonlar kategoriyalar bo'yicha ko'rsatiladi.",
+  "faqQ4": "Parolimni unutdim, nima qilaman?",
+  "faqA4": "Kirish ekranidagi «Parolni unutdingizmi?» tugmasini bosing. Elektron pochtangizga tiklash havolasi yuboriladi. Xat kelmasa, «Spam» papkasini ham tekshiring.",
+  "faqQ5": "Ma'lumotlarim xavfsizmi?",
+  "faqA5": "Ha, barcha ma'lumotlar faqat mahallangiz doirasida ko'rinadi va himoyalangan serverda saqlanadi.",
+  "callFailedMessage": "Qo'ng'iroq qilib bo'lmadi",
+  "telegramFailedMessage": "Telegram ochib bo'lmadi",
+  "announcementsTitle": "E'lonlar",
+  "eventsTitle": "Tadbirlar",
+  "newButton": "Yangi",
+  "noAnnouncementsYet": "Hozircha e'lonlar yo'q",
+  "noEventsYet": "Hozircha tadbirlar yo'q",
+  "announcementsLoadError": "E'lonlarni yuklashda xatolik yuz berdi",
+  "participantsCount": "{count} qatnashuvchi",
+  "@participantsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todayAt": "Bugun, {time}",
+  "@todayAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryKommunal": "Kommunal",
+  "categoryXavfsizlik": "Xavfsizlik",
+  "categoryUmumiy": "Umumiy",
+  "newAnnouncementTitle": "Yangi e'lon",
+  "editAnnouncementTitle": "E'lonni tahrirlash",
+  "pollsTitle": "So'rovnomalar",
+  "newPollTitle": "Yangi so'rovnoma",
+  "pollQuestionHint": "Savolingizni yozing...",
+  "pollOptionHint": "{number}-variant",
+  "@pollOptionHint": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "addOptionButton": "Variant qo'shish",
+  "fillPollFields": "Savol va kamida 2 ta variant kiriting",
+  "pollPostedMessage": "So'rovnoma joylandi",
+  "noPollsYet": "Hozircha so'rovnomalar yo'q",
+  "pollVotesCount": "{count} ovoz",
+  "@pollVotesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "conversationsTitle": "Xabarlar",
+  "conversationsMenuItem": "Xabarlar",
+  "noConversationsYet": "Hozircha suhbatlar yo'q",
+  "noMessagesYet": "Hozircha xabarlar yo'q. Birinchi bo'lib yozing!",
+  "messageHint": "Xabar yozing...",
+  "sendMessageAction": "Xabar yozish",
+  "switchMahallaTitle": "Mahalla tanlash",
+  "switchMahallaMenuItem": "Mahalla almashtirish (Super Admin)",
+  "switchMahallaMenuItemActive": "Boshqa mahallani boshqaryapsiz",
+  "exitMahallaModeAction": "O'z mahallamga qaytish",
+  "noMahallasFound": "Mahallalar topilmadi",
+  "broadcastToAllMahallasLabel": "Barcha mahallalarga yuborish (Super Admin)",
+  "servicesTitle": "Mahalliy xizmatlar",
+  "newServiceTitle": "Xizmat qo'shish",
+  "editServiceTitle": "Xizmatni tahrirlash",
+  "serviceCategoryLabel": "Toifa",
+  "serviceNameLabel": "Ism yoki tashkilot nomi",
+  "serviceNameHint": "Masalan: Aziz aka (santexnik)",
+  "servicePhoneLabel": "Telefon raqami",
+  "serviceDescriptionLabel": "Tavsif",
+  "serviceDescriptionHint": "Ish vaqti, narxi va h.k...",
+  "fillServiceFields": "Ism va telefon raqamini kiriting",
+  "servicePostedMessage": "Xizmat qo'shildi",
+  "serviceUpdatedMessage": "Xizmat yangilandi",
+  "noServicesYet": "Hozircha xizmatlar yo'q",
+  "serviceCategorySantexnik": "Santexnik",
+  "serviceCategoryElektrik": "Elektrik",
+  "serviceCategoryDuradgor": "Duradgor",
+  "serviceCategoryTozalash": "Tozalash",
+  "serviceCategoryQurilish": "Qurilish",
+  "serviceCategoryBoshqa": "Boshqa",
+  "editPollTitle": "So'rovnomani tahrirlash",
+  "pollUpdatedMessage": "So'rovnoma yangilandi",
+  "changeVoteConfirmTitle": "Ovozni almashtirish",
+  "changeVoteConfirmMessage": "Siz allaqachon boshqa variantga ovoz bergansiz. Ovozingizni almashtirmoqchimisiz?",
+  "changeVoteConfirmButton": "Ha, almashtirish",
+  "categoryLabel": "Kategoriya",
+  "titleLabel": "Sarlavha",
+  "titleHint": "Masalan: Ertaga suv o'chirilishi haqida",
+  "bodyLabel": "Matn",
+  "bodyHint": "E'lon matnini batafsil yozing...",
+  "photoLabel": "Rasm",
+  "optionalLabel": "(ixtiyoriy)",
+  "postButton": "Joylash",
+  "fillTitleAndBody": "Sarlavha va matnni to'ldiring",
+  "announcementPosted": "E'lon muvaffaqiyatli joylandi",
+  "announcementUpdated": "E'lon yangilandi",
+  "requestsTitle": "Murojaatlar",
+  "mustVerifyMahallaFirst": "Avval mahallangizni tasdiqlashingiz kerak",
+  "managementPanelBanner": "Boshqaruv paneli — barcha murojaatlar",
+  "requestsLoadError": "Murojaatlarni yuklashda xatolik yuz berdi",
+  "joinedCount": "{count} kishi qo'shildi",
+  "@joinedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noRequestsWithStatus": "{status} murojaatlar yo'q",
+  "filterAll": "Hammasi",
+  "noRequestsAtAll": "Hozircha murojaatlar yo'q",
+  "@noRequestsWithStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "statusYangi": "Yangi",
+  "statusJarayonda": "Jarayonda",
+  "statusYakunlandi": "Yakunlandi",
+  "typeMaxfiy": "Maxfiy",
+  "typeOmmaviy": "Ommaviy",
+  "priorityPast": "Past",
+  "priorityOrtacha": "O'rtacha",
+  "priorityYuqori": "Yuqori",
+  "managementPanelTitle": "Boshqaruv paneli",
+  "changeStatusTitle": "Holatni o'zgartirish",
+  "statusChangedMessage": "Holat \"{status}\" ga o'zgartirildi",
+  "@statusChangedMessage": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "statusChangeError": "Holatni o'zgartirishda xatolik yuz berdi",
+  "allFilter": "Barchasi",
+  "noRequestsFound": "Murojaatlar topilmadi",
+  "tapToChangeStatus": "Holatni o'zgartirish uchun bosing",
+  "stepType": "Turi",
+  "stepDetails": "Tafsilotlar",
+  "stepLocation": "Joylashuv",
+  "stepReview": "Ko'rib chiqish",
+  "stepDone": "Tayyor",
+  "newRequestTitle": "Yangi murojaat",
+  "fillTitleAndDescription": "Sarlavha va tavsifni to'ldiring",
+  "sendButton": "Yuborish",
+  "chooseRequestType": "Murojaat turini tanlang",
+  "requestTypeExplain": "Bu murojaatingizni kim ko'ra olishini belgilaydi",
+  "typeMaxfiyDescription": "Faqat siz va mahalla raisi ko'radi",
+  "typeOmmaviyDescription": "Mahalladagi hamma ko'radi va qo'shilishi mumkin",
+  "titleFieldLabel": "Sarlavha",
+  "titleFieldHint": "Masalan: Ko'cha yoritilishi ishlamayapti",
+  "descriptionLabel": "Tavsif",
+  "descriptionHint": "Muammoni batafsil tasvirlab bering...",
+  "attachPhotoLabel": "Rasm biriktirish",
+  "priorityLevelLabel": "Muhimlik darajasi",
+  "reviewDataTitle": "Ma'lumotlarni tekshiring",
+  "reviewType": "Turi",
+  "reviewPriority": "Muhimlik",
+  "reviewLocation": "Joylashuv",
+  "reviewLocationSet": "Belgilangan",
+  "reviewLocationNotSet": "Belgilanmagan",
+  "reviewPhotos": "Rasmlar ({count})",
+  "@reviewPhotos": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestSentTitle": "Murojaat yuborildi!",
+  "requestSentMessage": "Murojaatingiz qabul qilindi va ko'rib chiqilmoqda",
+  "backToListButton": "Ro'yxatga qaytish",
+  "qrScanInstruction": "Mahalla eshigidagi QR kodni ramka ichiga joylashtiring",
+  "checkingStatus": "Tekshirilmoqda...",
+  "scanningStatus": "Skanerlanmoqda...",
+  "enterCodeManually": "Kodni qo'lda kiritish",
+  "enterMahallaCodeTitle": "Mahalla kodini kiriting",
+  "mahallaCodeHint": "Masalan: MFY-00123",
+  "confirmButton": "Tasdiqlash",
+  "qrGenericError": "Xatolik yuz berdi, qayta urinib ko'ring",
+  "confirmError": "Tasdiqlashda xatolik yuz berdi, qayta urinib ko'ring",
+  "mahallaFoundLabel": "Mahalla topildi",
+  "rescanButton": "Qayta skanerlash",
+  "changePhotoLabel": "Rasmni o'zgartirish",
+  "birthDateLabel": "Tug'ilgan sana",
+  "addressLabel": "Manzil",
+  "streetLabel": "Ko'cha",
+  "streetHint": "Masalan: Bog'bon ko'chasi",
+  "houseNumberLabel": "Uy raqami",
+  "houseNumberHint": "Masalan: 15",
+  "genderLabel": "Jinsi",
+  "genderMale": "Erkak",
+  "genderFemale": "Ayol",
+  "notSpecified": "Ko'rsatilmagan",
+  "selectDate": "Sanani tanlang",
+  "photoUploadError": "Rasm yuklashda xatolik yuz berdi",
+  "otpTitle": "Tasdiqlash kodi",
+  "otpSubtitle": "{phone} raqamiga yuborilgan 6 xonali kodni kiriting",
+  "@otpSubtitle": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "otpInvalidCode": "Kod noto'g'ri, qaytadan kiriting",
+  "otpResendCode": "Kodni qayta yuborish",
+  "otpResendCooldown": "Qayta yuborish ({seconds}s)",
+  "@otpResendCooldown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "forgotPasswordTitle": "Parolni tiklash",
+  "forgotPasswordSubtitle": "Ro'yxatdan o'tgan telefon raqamingizni kiriting, unga tasdiqlash kodi yuboramiz",
+  "sendCodeButton": "Kod yuborish",
+  "newPasswordLabel": "Yangi parol",
+  "newPasswordTitle": "Yangi parol o'rnating",
+  "newPasswordSubtitle": "Hisobingiz uchun yangi parol o'ylab toping",
+  "savePasswordButton": "Parolni saqlash",
+  "passwordResetSuccess": "Parolingiz muvaffaqiyatli yangilandi",
+  "newEventTitle": "Yangi tadbir",
+  "editEventTitle": "Tadbirni tahrirlash",
+  "eventTitleHint": "Masalan: Mahalla yig'ilishi",
+  "dateLabel": "Sana",
+  "selectTime": "Vaqtni tanlang",
+  "locationLabel": "Manzil",
+  "locationHint": "Tadbir o'tkaziladigan joy",
+  "fillEventFields": "Sarlavha va sanani kiriting",
+  "eventPosted": "Tadbir joylandi",
+  "eventUpdated": "Tadbir yangilandi",
+  "neighborsTitle": "Qo'shnilar",
+  "mahalladoshlar": "Mahalladoshlar",
+  "noNeighborsYet": "Hozircha qo'shnilar yo'q",
+  "onlineNow": "Onlayn",
+  "lastSeenUnknown": "Oxirgi faollik noma'lum",
+  "lastSeenJustNow": "Hozirgina faol edi",
+  "lastSeenMinutesAgo": "{minutes} daqiqa oldin",
+  "@lastSeenMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "lastSeenHoursAgo": "{hours} soat oldin",
+  "@lastSeenHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "lastSeenDaysAgo": "{days} kun oldin",
+  "@lastSeenDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionPrivacy": "Maxfiylik",
+  "showPhoneToNeighborsTitle": "Telefonni qo'shnilarga ko'rsatish",
+  "showPhoneToNeighborsSubtitle": "Yoqilsa, Qo'shnilar ro'yxatida raqamingiz ko'rinadi",
+  "privacySecurityTitle": "Maxfiylik va xavfsizlik",
+  "privacySecuritySubtitle": "Ko'rinish, bloklangan foydalanuvchilar, parol",
+  "sectionVisibility": "Ko'rinish",
+  "showLastSeenTitle": "Oxirgi faollikni ko'rsatish",
+  "showLastSeenSubtitle": "Yoqilsa, qo'shnilar online holatingizni ko'radi",
+  "sectionBlockedUsers": "Bloklangan foydalanuvchilar",
+  "blockedUsersTitle": "Bloklangan foydalanuvchilar",
+  "noBlockedUsers": "Bloklangan foydalanuvchilar yo'q",
+  "blockedUsersCount": "{count} ta bloklangan",
+  "@blockedUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "blockUserAction": "Bloklash",
+  "blockUserConfirmTitle": "Foydalanuvchini bloklash",
+  "blockUserConfirmMessage": "{name} sizga xabar yoza olmaydi va ro'yxatingizda ko'rinmaydi. Rozimisiz?",
+  "@blockUserConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "userBlockedMessage": "{name} bloklandi",
+  "@userBlockedMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "unblockAction": "Blokdan chiqarish",
+  "userUnblockedMessage": "{name} blokdan chiqarildi",
+  "@userUnblockedMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneHiddenByUser": "Bu foydalanuvchi telefonini yashirgan",
+  "markAllAsReadAction": "Barchasini o'qilgan deb belgilash",
+  "noNotificationsYet": "Hozircha bildirishnomalar yo'q",
+  "searchPromptText": "E'lon, tadbir yoki murojaat qidiring",
+  "searchNoResults": "Hech narsa topilmadi",
+  "requestDetailTitle": "Murojaat tafsilotlari",
+  "requestNotFound": "Murojaat topilmadi",
+  "joinRequestAction": "Qo'shilish",
+  "leaveRequestAction": "Chiqish",
+  "mahallaStaffTitle": "Mahalla xodimlari",
+  "mahallaMapTitle": "Mahalla xaritasi",
+  "locationStepTitle": "Joylashuvni belgilang",
+  "locationStepSubtitle": "Xaritani bosib nuqta qo'ying yoki joriy joylashuvingizni ishlating (ixtiyoriy)",
+  "locationPermissionError": "Joylashuvga ruxsat berilmadi",
+  "clearLocationAction": "Tozalash",
+  "boundaryEditorTitle": "Chegarani belgilash",
+  "boundaryEditorHint": "Xaritani bosib mahalla chegarasi bo'ylab nuqtalar qo'ying (kamida 3 ta)",
+  "boundaryMinPointsError": "Kamida 3 ta nuqta belgilang",
+  "boundarySavedMessage": "Chegara saqlandi",
+  "saveBoundaryAction": "Chegarani saqlash",
+  "editBoundaryAction": "Chegarani tahrirlash",
+  "mapLayerSatellite": "Sputnik ko'rinishi",
+  "mapLayerStreets": "Ko'cha xaritasi",
+  "deleteItemConfirmTitle": "O'chirish",
+  "deleteItemConfirmMessage": "\"{title}\" butunlay o'chiriladi. Bu amalni ortga qaytarib bo'lmaydi.",
+  "@deleteItemConfirmMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDeletedMessage": "O'chirildi",
+  "searchNeighborHint": "Ism bo'yicha qidirish...",
+  "currentPasswordLabel": "Joriy parol",
+  "confirmPasswordLabel": "Parolni tasdiqlang",
+  "passwordMismatchError": "Parollar mos kelmadi",
+  "newPhoneLabel": "Yangi telefon raqam",
+  "phoneChangedMessage": "Telefon raqam muvaffaqiyatli o'zgartirildi",
+  "termsBody": "Ushbu ilovadan foydalanish orqali siz quyidagi shartlarga rozilik bildirasiz:\n\n1. Ilova mahalla aholisi va xodimlari o'rtasida muloqotni osonlashtirish uchun mo'ljallangan.\n2. Foydalanuvchi o'z profilida to'g'ri va haqiqiy ma'lumot kiritishi shart.\n3. Boshqa foydalanuvchilarga nisbatan haqoratli, noqonuniy yoki yolg'on ma'lumot tarqatish taqiqlanadi.\n4. Mahalla ma'muriyati (xodim/rais) tomonidan joylashtirilgan e'lon va tadbirlar rasmiy xarakterga ega bo'lishi mumkin.\n5. Ilova ma'muriyati qoidabuzarlik aniqlangan hisoblarni bloklash yoki o'chirish huquqini o'zida saqlab qoladi.",
+  "privacyPolicyBody": "Sizning ma'lumotlaringiz qanday ishlatiladi:\n\n1. Ism, familiya, telefon raqam va mahalla ma'lumotlari faqat mahalla ichidagi muloqot uchun ishlatiladi.\n2. Telefon raqamingiz sozlamalarda ruxsat bermaguningizcha boshqa aholiga ko'rinmaydi.\n3. Oxirgi faollik vaqti sozlamalarda o'chirilishi mumkin.\n4. Ma'lumotlaringiz uchinchi tomonlarga sotilmaydi yoki ularga uzatilmaydi.\n5. Hisobingizni o'chirishni so'rasangiz, ma'lumotlaringiz Firestore bazasidan olib tashlanadi.",
+  "deleteAccountRequested": "So'rovingiz yuborildi. Administrator tez orada hisobingizni o'chiradi.",
+  "@deleteAccountRequested": {
+    "description": "Hisobni o'chirish so'rovi natijasi"
+  },
+  "deleteAccountAlreadyPending": "Sizning o'chirish so'rovingiz allaqachon ko'rib chiqilmoqda.",
+  "@deleteAccountAlreadyPending": {
+    "description": "Hisobni o'chirish so'rovi natijasi"
+  },
+  "retryButton": "Qayta urinish",
+  "@retryButton": {
+    "description": "QR skaner / kamera"
+  },
+  "cameraIntroTitle": "Kameraga ruxsat kerak",
+  "@cameraIntroTitle": {
+    "description": "QR skaner / kamera"
+  },
+  "cameraIntroBody": "Mahallangizga qo'shilish uchun rais yoki xodim bergan QR kodni skanerlash kerak. Kamera faqat shu maqsadda ishlatiladi — hech qanday rasm saqlanmaydi va yuborilmaydi.",
+  "@cameraIntroBody": {
+    "description": "QR skaner / kamera"
+  },
+  "cameraIntroButton": "Kamerani ochish",
+  "@cameraIntroButton": {
+    "description": "QR skaner / kamera"
+  },
+  "cameraErrorPermission": "Kameraga ruxsat berilmagan. Ruxsatni telefon sozlamalarida (Ilovalar → Mening Mahallam → Ruxsatlar → Kamera) yoqishingiz mumkin. Yoki mahalla kodini qo'lda kiriting.",
+  "@cameraErrorPermission": {
+    "description": "QR skaner / kamera"
+  },
+  "cameraErrorUnsupported": "Bu qurilmada QR skanerlash qo'llab-quvvatlanmaydi. Mahalla kodini qo'lda kiriting.",
+  "@cameraErrorUnsupported": {
+    "description": "QR skaner / kamera"
+  },
+  "cameraErrorGeneric": "Kamera ochilmadi. Boshqa ilova kamerani ishlatayotgan bo'lishi mumkin — uni yoping va qayta urinib ko'ring.",
+  "@cameraErrorGeneric": {
+    "description": "QR skaner / kamera"
+  },
+  "noAnnouncementsHint": "Mahalla raisi yoki xodimlari e'lon joylaganda, u shu yerda birinchi bo'lib paydo bo'ladi.",
+  "@noAnnouncementsHint": {
+    "description": "Bo'sh holat uchun tushuntirish"
+  },
+  "noRequestsHint": "Ko'cha yoritgichi, tozalik, suv yoki boshqa masala bo'yicha murojaat yuboring — mahalla xodimlari javob beradi.",
+  "@noRequestsHint": {
+    "description": "Bo'sh holat uchun tushuntirish"
+  },
+  "noNeighborsHint": "Mahalladoshlaringiz ilovaga qo'shilgan sari ular shu yerda ko'rinadi. Qo'shnilaringizni taklif qiling!",
+  "@noNeighborsHint": {
+    "description": "Bo'sh holat uchun tushuntirish"
+  },
+  "noPollsHint": "Mahalla so'rovnomalari shu yerda chiqadi — ovoz berib, qaror qabul qilishda ishtirok etasiz.",
+  "@noPollsHint": {
+    "description": "Bo'sh holat uchun tushuntirish"
+  },
+  "noServicesHint": "Mahalladagi ustalar, do'konlar va xizmatlar shu yerda to'planadi.",
+  "@noServicesHint": {
+    "description": "Bo'sh holat uchun tushuntirish"
+  },
+  "noConversationsHint": "Qo'shnilar bo'limidan biror kishini tanlab, unga to'g'ridan-to'g'ri yozishingiz mumkin.",
+  "@noConversationsHint": {
+    "description": "Bo'sh holat uchun tushuntirish"
+  },
+  "noNotificationsHint": "Yangi e'lon, tadbir yoki murojaatingizga javob kelganda shu yerda xabar beramiz.",
+  "@noNotificationsHint": {
+    "description": "Bo'sh holat uchun tushuntirish"
+  },
+  "currencySom": "so'm",
+  "@currencySom": {
+    "description": "Premium to'lov rekvizitlari (super admin)"
+  },
+  "premiumConfigTitle": "To'lov rekvizitlari",
+  "@premiumConfigTitle": {
+    "description": "Premium to'lov rekvizitlari (super admin)"
+  },
+  "premiumConfigHint": "Bu yerda o'zgartirilgan qiymatlar barcha foydalanuvchilarga darhol ko'rinadi — ilovani yangilash shart emas.",
+  "@premiumConfigHint": {
+    "description": "Premium to'lov rekvizitlari (super admin)"
+  },
+  "premiumConfigSaved": "Rekvizitlar saqlandi",
+  "@premiumConfigSaved": {
+    "description": "Premium to'lov rekvizitlari (super admin)"
+  },
+  "premiumCardNumberLabel": "Karta raqami",
+  "@premiumCardNumberLabel": {
+    "description": "Premium to'lov rekvizitlari (super admin)"
+  },
+  "premiumCardNumberInvalid": "Karta raqami 16 ta raqamdan iborat bo'lishi kerak",
+  "@premiumCardNumberInvalid": {
+    "description": "Premium to'lov rekvizitlari (super admin)"
+  },
+  "premiumCardHolderLabel": "Karta egasining ismi",
+  "@premiumCardHolderLabel": {
+    "description": "Premium to'lov rekvizitlari (super admin)"
+  },
+  "premiumCardHolderInvalid": "Karta egasining ismini kiriting",
+  "@premiumCardHolderInvalid": {
+    "description": "Premium to'lov rekvizitlari (super admin)"
+  },
+  "premiumPriceLabel": "Oylik narx",
+  "@premiumPriceLabel": {
+    "description": "Premium to'lov rekvizitlari (super admin)"
+  },
+  "premiumPriceInvalid": "To'g'ri narx kiriting",
+  "@premiumPriceInvalid": {
+    "description": "Premium to'lov rekvizitlari (super admin)"
+  },
+  "premiumTelegramLabel": "Telegram foydalanuvchi nomi",
+  "@premiumTelegramLabel": {
+    "description": "Premium to'lov rekvizitlari (super admin)"
+  },
+  "premiumChoosePlan": "Muddatni tanlang",
+  "@premiumChoosePlan": {
+    "description": "Premium"
+  },
+  "premiumPlanMonths": "{count} oy",
+  "@premiumPlanMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "premiumPriceValue": "{amount} so'm",
+  "@premiumPriceValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumBenefitAdDiscount": "Xizmat reklamasini joylashtirish 50% arzon",
+  "@premiumBenefitAdDiscount": {
+    "description": "Premium"
+  },
+  "premiumBenefitSupport": "Ustuvor qo'llab-quvvatlash — murojaatingiz birinchi ko'riladi",
+  "@premiumBenefitSupport": {
+    "description": "Premium"
+  },
+  "premiumBenefitAvatar": "Profil suratida oltin premium halqa",
+  "@premiumBenefitAvatar": {
+    "description": "Premium"
+  },
+  "premiumBenefitEarlyAccess": "Yangi imkoniyatlar birinchi bo'lib sizga ochiladi",
+  "@premiumBenefitEarlyAccess": {
+    "description": "Premium"
+  },
+  "premiumPerMonthAmount": "oyiga {amount} so'm",
+  "@premiumPerMonthAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "advertiseTitle": "Xizmatingizni shu yerda reklama qiling",
+  "@advertiseTitle": {
+    "description": "Xizmat reklamasi"
+  },
+  "advertisePrice": "Haftasiga atigi {amount} so'm",
+  "@advertisePrice": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "advertisePremiumDiscount": "Premium chegirmangiz — oddiy narx {amount} so'm",
+  "@advertisePremiumDiscount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "advertiseHowTo": "Reklama joylashtirish uchun mahalla raisi yoki ilova administratori bilan bog'laning.",
+  "@advertiseHowTo": {
+    "description": "Xizmat reklamasi"
+  },
+  "photoTooLarge": "Fayl juda katta. 5 MB dan kichik rasm tanlang",
+  "@photoTooLarge": {
+    "description": "Premium / profil"
+  },
+  "premiumBenefitAnimatedAvatar": "Jonli (GIF) profil surati",
+  "@premiumBenefitAnimatedAvatar": {
+    "description": "Premium / profil"
+  },
+  "premiumGrantTitle": "Premiumni qo'lda berish",
+  "@premiumGrantTitle": {
+    "description": "Premium / profil"
+  },
+  "premiumGrantSelfAction": "O'zimga berish",
+  "@premiumGrantSelfAction": {
+    "description": "Premium / profil"
+  },
+  "premiumGrantPhoneLabel": "Telefon raqami",
+  "@premiumGrantPhoneLabel": {
+    "description": "Premium / profil"
+  },
+  "premiumGrantAction": "Shu raqamga berish",
+  "@premiumGrantAction": {
+    "description": "Premium / profil"
+  },
+  "premiumGrantedSelf": "Sizga {months} oylik premium berildi",
+  "@premiumGrantedSelf": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "premiumGrantedTo": "{name} — {months} oylik premium berildi",
+  "@premiumGrantedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "premiumGrantUserNotFound": "Bu raqam bilan foydalanuvchi topilmadi",
+  "@premiumGrantUserNotFound": {
+    "description": "Premium / profil"
+  },
+  "premiumUntilShort": "{date} gacha",
+  "@premiumUntilShort": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "personalInfoSection": "Shaxsiy ma'lumotlar",
+  "@personalInfoSection": {
+    "description": "Profil formasi bo'limi"
+  },
+  "addressSection": "Manzil",
+  "@addressSection": {
+    "description": "Profil formasi bo'limi"
+  },
+  "mahallaCenterTitle": "Mahalla markazi",
+  "@mahallaCenterTitle": {
+    "description": "Mahalla markazi / chegara muharriri"
+  },
+  "mahallaCenterHint": "Xaritaga bosib markazni belgilang yoki tepadagi nishon tugmasi orqali koordinatani kiriting.",
+  "@mahallaCenterHint": {
+    "description": "Mahalla markazi / chegara muharriri"
+  },
+  "mahallaCenterCoordsHint": "Google Maps'dan nusxalagan koordinatani qo'ying (kenglik, uzunlik).",
+  "@mahallaCenterCoordsHint": {
+    "description": "Mahalla markazi / chegara muharriri"
+  },
+  "mahallaCenterSaved": "Mahalla markazi saqlandi",
+  "@mahallaCenterSaved": {
+    "description": "Mahalla markazi / chegara muharriri"
+  },
+  "boundaryModeLabel": "Chegara",
+  "@boundaryModeLabel": {
+    "description": "Mahalla markazi / chegara muharriri"
+  },
+  "centerModeLabel": "Markaz",
+  "@centerModeLabel": {
+    "description": "Mahalla markazi / chegara muharriri"
+  },
+  "saveCenterAction": "Markazni saqlash",
+  "@saveCenterAction": {
+    "description": "Mahalla markazi / chegara muharriri"
+  },
+  "appearanceSystemHint": "Telefon sozlamasiga ergashadi",
+  "@appearanceSystemHint": {
+    "description": "Sozlamalar: ko'rinish / matn kattaligi"
+  },
+  "textSizePreviewTitle": "Mahalla yig'ilishi",
+  "@textSizePreviewTitle": {
+    "description": "Sozlamalar: ko'rinish / matn kattaligi"
+  },
+  "textSizePreviewBody": "Asosiy matn shunday ko'rinadi. Sizga qulay o'lchamni tanlang.",
+  "@textSizePreviewBody": {
+    "description": "Sozlamalar: ko'rinish / matn kattaligi"
+  },
+  "okButton": "OK",
+  "@okButton": {
+    "description": "Xabar oynasidagi tasdiqlash tugmasi"
+  }
+}

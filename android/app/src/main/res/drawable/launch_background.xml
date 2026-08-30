@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ilova ochilish ekrani (Android 11 va undan eski). Rang ilovaning
+     o'z fon rangi bilan bir xil — Flutter'ning standart shablonidagi
+     sof oq (@android:color/white) rang bu yerda ataylab ishlatilmaydi. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splashBackground" />
+</layer-list>

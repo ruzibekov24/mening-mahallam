@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Qorong'i rejim uchun — `AppColors.darkBg` bilan bir xil.
+         Avval tizim qop-qora (#000000) fon ko'rsatardi, ilova esa
+         #15171C bilan ochilardi — bu farq sezilib turardi. -->
+    <color name="splashBackground">#15171C</color>
+</resources>

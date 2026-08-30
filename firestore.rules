@@ -1,0 +1,381 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Helpers ----------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function myUid() {
+      return request.auth.uid;
+    }
+
+    function myUserDoc() {
+      return get(/databases/$(database)/documents/users/$(myUid()));
+    }
+
+    function isMemberOf(mahallaId) {
+      return isSignedIn() &&
+        myUserDoc().data.mahallaId == mahallaId;
+    }
+
+    function isStaffOrRaisOf(mahallaId) {
+      return isSignedIn() &&
+        myUserDoc().data.mahallaId == mahallaId &&
+        (myUserDoc().data.role == 'staff' || myUserDoc().data.role == 'rais');
+    }
+
+    // Faqat Firebase Console orqali qo'lda beriladigan platforma
+    // darajasidagi rol — istalgan mahallada boshqaruv huquqiga ega.
+    // `myUserDoc()` — `request.auth.uid` bo'yicha sobit hujjat, shuning
+    // uchun bu funksiya `resource.data`ga bog'liq emas va "list"
+    // so'rovlari uchun ham xavfsiz (`isMemberOf` bilan bir xil naqsh).
+    function isSuperAdmin() {
+      return isSignedIn() && myUserDoc().data.role == 'superAdmin';
+    }
+
+    // ---------- users/{uid} ----------
+    match /users/{uid} {
+      // A user can always read their own doc.
+      allow read: if isSignedIn() && uid == myUid();
+
+      // Other members of the same mahalla can read a profile too
+      // (needed for neighbor lists, search, request author names).
+      allow read: if isSignedIn() && uid != myUid() &&
+        resource.data.mahallaId != null &&
+        myUserDoc().data.mahallaId == resource.data.mahallaId;
+
+      // Super admin can read any profile, in any mahalla.
+      allow read: if isSuperAdmin();
+
+      // Account creation: only the user themself, with no mahalla yet.
+      // We don't check for an absent 'role' field here since the app
+      // never writes one at creation time — role defaults to 'citizen'
+      // client-side when read back. No mahallaId means no elevated-
+      // privilege bypass is possible via this path.
+      allow create: if isSignedIn() && uid == myUid() &&
+        request.resource.data.mahallaId == null;
+
+      // Case A: user still has no mahalla — they may update their own
+      // profile, including the one-time QR "join a mahalla" transition
+      // (mahallaId: null -> id), as long as they don't touch 'role'.
+      // MUHIM: `premiumUntil` ham `role` kabi taqiqlangan — aks holda
+      // foydalanuvchi o'z profilini tahrirlash huquqidan foydalanib,
+      // o'ziga bepul premium yozib qo'ya olardi. Bu maydonni faqat
+      // super admin (premium to'lovini tasdiqlaganda) o'zgartiradi.
+      allow update: if isSignedIn() && uid == myUid() &&
+        resource.data.mahallaId == null &&
+        !request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['role', 'premiumUntil']);
+
+      // Case B: user already belongs to a mahalla — they may edit
+      // their own profile fields and may NOT change their own role.
+      // They MAY move themselves to a different mahalla (the "Mahallani
+      // o'zgartirish" flow in Settings, or re-scanning a QR code) —
+      // but only while their current role is 'citizen', OR they're a
+      // super admin (who is always allowed to move between mahallas —
+      // this is the same underlying write the QR-join flow uses, so
+      // super admin needs this bypass too, not just the in-app
+      // "Mahalla almashtirish" session-only switcher). A staff/rais
+      // member cannot self-switch mahalla, which would otherwise let
+      // them carry elevated privileges into a mahalla they were never
+      // granted them in; they must first be demoted by their own
+      // mahalla's rais (see Case C) before they can rejoin elsewhere.
+      allow update: if isSignedIn() && uid == myUid() &&
+        resource.data.mahallaId != null &&
+        !request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['role', 'premiumUntil']) &&
+        (request.resource.data.mahallaId == resource.data.mahallaId ||
+         resource.data.role == 'citizen' ||
+         isSuperAdmin());
+
+      // Case C: role changes (citizen <-> staff/rais) may only be made
+      // by an existing staff/rais of that same mahalla (or a super
+      // admin, from any mahalla), on a member who already belongs to
+      // it, only the role field changes, and the new value can only
+      // ever be citizen/staff/rais — 'superAdmin' can NEVER be granted
+      // through this path (or any app path at all), only by hand in
+      // the Firebase Console.
+      allow update: if resource.data.mahallaId != null &&
+        (isStaffOrRaisOf(resource.data.mahallaId) || isSuperAdmin()) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['role']) &&
+        request.resource.data.role in ['citizen', 'staff', 'rais'];
+
+      // Case D: premium muddatini berish/bekor qilish — FAQAT super
+      // admin va faqat shu bitta maydonni o'zgartira oladi (to'lov
+      // tasdiqlangandan keyin, `PremiumRepository.grantPremium`).
+      allow update: if isSuperAdmin() &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['premiumUntil']);
+
+      allow delete: if false;
+
+      // ---------- users/{uid}/notifications/{id} ----------
+      match /notifications/{notifId} {
+        // Only the owner reads/writes their own notifications
+        allow read, update, delete: if isSignedIn() && uid == myUid();
+        // Notifications are created server-side/by other members'
+        // actions (e.g. staff changing a request status), never by
+        // the recipient themself.
+        allow create: if isSignedIn() && uid != myUid();
+      }
+    }
+
+    // ---------- conversations/{conversationId} (qo'shnilar chat) ----------
+    // Mahalla-ga bog'lanmagan, ikkita foydalanuvchi orasidagi to'g'ridan-
+    // to'g'ri xabar almashish. Hujjat ID'si ikkala uid'dan tartiblangan
+    // holda hosil qilinadi (`conversationIdFor`), shuning uchun bitta
+    // juftlik uchun har doim bitta hujjat bo'ladi.
+    match /conversations/{conversationId} {
+      allow read: if isSignedIn() && myUid() in resource.data.participantUids;
+
+      allow create: if isSignedIn() &&
+        myUid() in request.resource.data.participantUids &&
+        request.resource.data.participantUids.size() == 2;
+
+      // Ishtirokchilar ro'yxati yaratilgandan keyin o'zgarmas —
+      // faqat oxirgi xabar/o'qilmagan sanog'i kabi maydonlar
+      // yangilanishi mumkin.
+      allow update: if isSignedIn() && myUid() in resource.data.participantUids &&
+        request.resource.data.participantUids == resource.data.participantUids;
+
+      match /messages/{messageId} {
+        function isParticipant() {
+          return myUid() in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participantUids;
+        }
+
+        allow read: if isSignedIn() && isParticipant();
+        allow create: if isSignedIn() && isParticipant() &&
+          request.resource.data.senderUid == myUid();
+        allow update, delete: if false;
+      }
+    }
+
+    // ---------- appFeedback/{feedbackId} (ilova haqida fikr-mulohaza) ----------
+    // Mahallaga bog'lanmagan, butun ilova haqidagi fikr — faqat super
+    // admin ko'radi. Har bir foydalanuvchi cheksiz fikr qoldira oladi,
+    // lekin faqat o'zi yozganini yaratadi (boshqa birov nomidan
+    // yozib bo'lmaydi); tahrirlash/o'chirish yo'q — chin fikr sifatida
+    // saqlanadi.
+    match /appFeedback/{feedbackId} {
+      allow read: if isSuperAdmin();
+
+      // `authorWasPremium` ro'yxatdagi ustuvorlikni belgilaydi
+      // (ustuvor qo'llab-quvvatlash) — murojaatlardagi bilan bir xil
+      // himoya: uni faqat haqiqatan premium bo'lgan foydalanuvchi
+      // `true` qilib yoza oladi, aks holda har kim o'z fikrini
+      // ro'yxat boshiga chiqarib olardi.
+      allow create: if isSignedIn() &&
+        request.resource.data.authorUid == myUid() &&
+        (request.resource.data.get('authorWasPremium', false) == false ||
+         myUserDoc().data.get('premiumUntil', request.time) > request.time);
+
+      allow update, delete: if false;
+    }
+
+    // ---------- promoBanners/{bannerId} (bosh ekran bannerlari) ----------
+    // Mahallaga bog'lanmagan, butun ilova bo'ylab bir xil aylanuvchi
+    // banner (e'lon/reklama/konkurs/tashqi havola) — faqat super
+    // admin qo'shadi/o'chiradi, har bir signed-in foydalanuvchi o'qiy
+    // oladi.
+    match /promoBanners/{bannerId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    // ---------- appConfig/{docId} (premium narxi, karta rekvizitlari) ----------
+    // Har bir foydalanuvchi o'qishi kerak (to'lov ekranida karta
+    // ko'rsatiladi), lekin faqat super admin o'zgartira oladi — aks
+    // holda kimdir karta raqamini o'ziniki bilan almashtirib qo'yishi
+    // mumkin edi.
+    match /appConfig/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    // ---------- premiumRequests/{requestId} (premium to'lov so'rovlari) ----------
+    // Foydalanuvchi faqat O'ZINING so'rovini ko'radi va yaratadi.
+    // MUHIM: `status`ni `tasdiqlandi`ga o'zgartirish HUQUQI YO'Q —
+    // aks holda har kim o'ziga bepul premium berib olardi. U faqat
+    // "to'ladim" deb belgilashi mumkin; haqiqiy tasdiq super admindan.
+    match /premiumRequests/{requestId} {
+      allow read: if isSuperAdmin() || (isSignedIn() && resource.data.uid == myUid());
+
+      allow create: if isSignedIn() &&
+        request.resource.data.uid == myUid() &&
+        request.resource.data.status == 'kutilmoqda';
+
+      // Foydalanuvchi: faqat o'z so'rovini va faqat `tolandi` /
+      // `muddatiTugadi` holatiga o'tkaza oladi.
+      allow update: if isSuperAdmin() || (
+        isSignedIn() &&
+        resource.data.uid == myUid() &&
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.amount == resource.data.amount &&
+        request.resource.data.status in ['tolandi', 'muddatiTugadi']
+      );
+
+      allow delete: if isSuperAdmin();
+    }
+
+    // ---------- deletionRequests/{uid} (hisobni o'chirish so'rovlari) ----------
+    // Hujjat identifikatori = foydalanuvchi uid'i. Shu tufayli bitta
+    // foydalanuvchi bittadan ortiq so'rov yarata olmaydi va qoida
+    // juda oddiy bo'ladi: faqat o'z hujjatiga tegishi mumkin.
+    //
+    // Holatni o'zgartirish (bajarildi/rad etildi) faqat super adminda —
+    // aks holda foydalanuvchi o'z so'rovini "bajarildi" deb belgilab,
+    // ro'yxatni chalg'itishi mumkin edi.
+    match /deletionRequests/{uid} {
+      allow read: if isSuperAdmin() || (isSignedIn() && uid == myUid());
+
+      allow create: if isSignedIn() &&
+        uid == myUid() &&
+        request.resource.data.uid == myUid() &&
+        request.resource.data.status == 'kutilmoqda';
+
+      // Foydalanuvchi so'rovini bekor qilishi mumkin (o'chirish orqali),
+      // lekin holatini o'zgartira olmaydi.
+      allow update: if isSuperAdmin();
+      allow delete: if isSuperAdmin() || (isSignedIn() && uid == myUid());
+    }
+
+    // ---------- mahallas/{mahallaId} ----------
+    match /mahallas/{mahallaId} {
+      // Anyone signed in can read basic mahalla info (needed to preview
+      // before joining via QR, and for boundary/map display).
+      allow read: if isSignedIn();
+
+      // Mahalla documents are provisioned outside the client (admin
+      // console / seed script), not created by end users.
+      allow create, delete: if false;
+
+      // Only staff/rais of that mahalla (or a super admin) can edit
+      // mahalla-level fields (e.g. boundary polygon).
+      allow update: if isStaffOrRaisOf(mahallaId) || isSuperAdmin();
+
+      // ---------- requests ----------
+      match /requests/{requestId} {
+        // Members of the mahalla can read requests, except private
+        // ones which are restricted to the author and staff/rais.
+        //
+        // MUHIM: shart `resource.data.type == 'ommaviy'` shaklida
+        // yozilgan (`!= 'maxfiy'` emas, garchi ikkalasi ham `type` faqat
+        // 'maxfiy'/'ommaviy' bo'lgani uchun mantiqan bir xil bo'lsa ham).
+        // Sababi: Firestore "list" so'rovlarini faqat mos qoida sharti
+        // bilan **aynan bir xil operator** ishlatuvchi `.where()` filtri
+        // bilan isbotlay oladi. Klient tomonida
+        // `.where('type', isEqualTo: 'ommaviy')` so'rovi shu shart bilan
+        // to'g'ridan-to'g'ri mos keladi — `isNotEqualTo` bo'lganda mos
+        // kelmay, butun so'rov har doim rad etilardi (batafsili izoh:
+        // `requests_repository.dart`dagi `watchVisibleRequests`).
+        allow read: if isSuperAdmin() || (isMemberOf(mahallaId) && (
+          resource.data.type == 'ommaviy' ||
+          resource.data.authorUid == myUid() ||
+          isStaffOrRaisOf(mahallaId)
+        ));
+
+        // `authorWasPremium` ro'yxatdagi ustuvorlikni belgilaydi —
+        // shuning uchun uni faqat haqiqatan premium bo'lgan
+        // foydalanuvchigina `true` qilib yoza oladi, aks holda har kim
+        // o'z murojaatini tepaga chiqarib olardi.
+        allow create: if isSuperAdmin() || (isMemberOf(mahallaId) &&
+          request.resource.data.authorUid == myUid() &&
+          request.resource.data.status == 'yangi' &&
+          (request.resource.data.get('authorWasPremium', false) == false ||
+           myUserDoc().data.get('premiumUntil', request.time) > request.time));
+
+        // Status changes: staff/rais/super-admin only. Everything else
+        // on the document (title, description, etc.) is immutable
+        // after creation except joinedCount/joinedUids, which any
+        // member may update when tapping "join this request".
+        allow update: if (isStaffOrRaisOf(mahallaId) || isSuperAdmin()) &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['status']) ||
+          (isMemberOf(mahallaId) &&
+           request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['joinedCount', 'joinedUids']));
+
+        allow delete: if isStaffOrRaisOf(mahallaId) || isSuperAdmin() ||
+          (isMemberOf(mahallaId) && resource.data.authorUid == myUid());
+      }
+
+      // ---------- serviceAds (xizmat reklamalari) ----------
+      // Mahalla a'zolari o'qiydi (premium foydalanuvchilarga klient
+      // tomonida umuman ko'rsatilmaydi), lekin faqat super admin
+      // qo'sha/o'zgartira oladi — reklama pullik joy bo'lgani uchun
+      // uni foydalanuvchi o'zi yaratib qo'ya olmasligi kerak.
+      match /serviceAds/{adId} {
+        allow read: if isMemberOf(mahallaId) || isSuperAdmin();
+        allow create, update, delete: if isSuperAdmin();
+      }
+
+      // ---------- announcements ----------
+      match /announcements/{announcementId} {
+        allow read: if isMemberOf(mahallaId) || isSuperAdmin();
+        allow create, update, delete: if isStaffOrRaisOf(mahallaId) || isSuperAdmin();
+      }
+
+      // ---------- events ----------
+      match /events/{eventId} {
+        allow read: if isMemberOf(mahallaId) || isSuperAdmin();
+        allow create, update, delete: if isStaffOrRaisOf(mahallaId) || isSuperAdmin();
+      }
+
+      // ---------- polls (so'rovnomalar) ----------
+      // Ikkita alohida yangilash yo'li: xodim/rais savol/variantlarni
+      // to'liq tahrirlashi mumkin; oddiy a'zo esa FAQAT `votes`
+      // maydonini o'zgartira oladi (savolni o'zgartira olmasligi
+      // uchun `affectedKeys().hasOnly(['votes'])` bilan cheklangan).
+      match /polls/{pollId} {
+        allow read: if isMemberOf(mahallaId) || isSuperAdmin();
+        allow create, delete: if isStaffOrRaisOf(mahallaId) || isSuperAdmin();
+        allow update: if isStaffOrRaisOf(mahallaId) || isSuperAdmin() ||
+          (isMemberOf(mahallaId) &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['votes']));
+      }
+
+      // ---------- services (mahalliy xizmat ko'rsatuvchilar) ----------
+      match /services/{serviceId} {
+        allow read: if isMemberOf(mahallaId) || isSuperAdmin();
+        allow create, update, delete: if isStaffOrRaisOf(mahallaId) || isSuperAdmin();
+      }
+
+      // ---------- members (mahalla-a'zolik markerlari) ----------
+      // Nega bu subkolleksiya kerak: Firestore "list" (query) so'rovlari
+      // uchun qoidani natijalar to'plamining HAMMASI uchun oldindan
+      // isbotlay olishi kerak — u haqiqiy hujjat ma'lumotlarini ishga
+      // tushirib tekshirmaydi. `get()` orqali boshqa (yon) hujjatdan
+      // qiymat olib, uni `resource.data` bilan solishtiruvchi qoida
+      // BUTUN so'rov uchun isbotlab bo'lmaydi va har doim rad etiladi
+      // — hatto ma'lumot haqiqatda mos kelsa ham. Aynan shu sabab bilan
+      // avvalgi `users` kolleksiyasidagi `where('mahallaId', ...)`
+      // so'rovlari "Missing or insufficient permissions" xatosini
+      // berardi (Qo'shnilar, A'zolarni boshqarish, mahalla bo'ylab
+      // bildirishnoma yuborish — hammasi shu bitta muammoning natijasi).
+      //
+      // Yechim: mahallaId'ga bog'liqlikni **yo'l (path)** orqali
+      // ifodalash — `mahallaId` endi `resource.data`da emas, balki
+      // hujjat manzilining o'zida (`/mahallas/{mahallaId}/members/...`).
+      // `isMemberOf(mahallaId)` endi faqat `mahallaId` yo'l parametriga
+      // bog'liq (har bir potentsial hujjat uchun bir xil), `resource`ga
+      // umuman bog'liq emas — shuning uchun Firestore buni butun so'rov
+      // uchun bemalol isbotlay oladi.
+      match /members/{memberUid} {
+        allow read: if isMemberOf(mahallaId) || isSuperAdmin();
+
+        // Har bir foydalanuvchi faqat o'z markerini yozadi — mahallaga
+        // qo'shilganda yoki mahallani almashtirganda. Marker yozuvi
+        // har doim `users/{uid}.mahallaId`ni yangilash bilan bitta
+        // batch ichida amalga oshiriladi (`attachUserToMahalla`), shuning
+        // uchun kim mahallani almashtira olishi haqidagi haqiqiy qoida
+        // (faqat 'citizen') u yerdagi Case B orqali ta'minlanadi — batch
+        // atomik bo'lgani uchun, agar users/{uid} yozuvi rad etilsa,
+        // marker yozuvi ham amalga oshmaydi.
+        allow write: if isSignedIn() && memberUid == myUid();
+      }
+    }
+  }
+}

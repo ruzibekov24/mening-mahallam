@@ -1,0 +1,85 @@
+/* ============================================================
+   Qorong'i rejim. Sahifalarning ichki <style> bloklaridan keyin
+   ulanadi; [data-theme] selektori ustunlik bergani uchun mavjud
+   CSS'ga umuman tegmasdan ishlaydi.
+   ============================================================ */
+
+/* --- palitra --- */
+:root[data-theme="dark"]{--paper:#0E0F13;--ink:#ECECEA;--muted:#9A9AA3;--line:#2A2B32;--blue:#7593FF}
+/* --- oq fonli elementlar --- */
+:root[data-theme="dark"] .btn-ghost{background:#17181E}
+:root[data-theme="dark"] .lang{background:#17181E}
+:root[data-theme="dark"] .m{background:#16171C}
+:root[data-theme="dark"] .m:hover{border-color:#3C3D46;box-shadow:0 10px 24px -14px rgba(0,0,0,.8)}
+:root[data-theme="dark"] .m .mi{background:rgba(117,147,255,.14)}
+:root[data-theme="dark"] .s .n{background:#17181E}
+:root[data-theme="dark"] .guide-box{background:#141519}
+:root[data-theme="dark"] .qm-box{background:#17181E;box-shadow:0 30px 70px -20px rgba(0,0,0,.85)}
+:root[data-theme="dark"] .stat-card{background:#16171C}
+/* --- to'q tugmalar teskarisiga o'giriladi --- */
+:root[data-theme="dark"] .btn-solid{color:#0E0F13}
+:root[data-theme="dark"] .btn-solid:hover{background:#fff}
+:root[data-theme="dark"] .qm-close{color:#0E0F13}
+:root[data-theme="dark"] .qm-close:hover{background:#fff}
+:root[data-theme="dark"] .lang a.on{color:#0E0F13}
+/* --- qorong'i galereya sahifadan to'qroq bo'lib ajralib tursin --- */
+:root[data-theme="dark"] .gallery{background:#08090C}
+/* --- mayda tuzatishlar --- */
+:root[data-theme="dark"] .g .quote{background:#101117;color:#C2C2C9}
+:root[data-theme="dark"] .fineprint{color:#8E8E98}
+:root[data-theme="dark"] .gnote svg{color:#7E7E88}
+:root[data-theme="dark"] .pick.flash{background-color:rgba(117,147,255,.10)}
+:root[data-theme="dark"] .dev{filter:drop-shadow(0 16px 34px rgba(0,0,0,.65))}
+/* --- QR kod oq qolishi shart, aks holda skaner o'qimaydi --- */
+:root[data-theme="dark"] .qm-qr{background:#fff;border-color:#fff}
+
+/* Tizimda qorong'i rejim yoqilgan, foydalanuvchi yorug'ni majburan
+   tanlamagan holat uchun aynan shu qoidalar takrorlanadi. */
+@media (prefers-color-scheme: dark){
+  /* --- palitra --- */
+  :root:not([data-theme="light"]){--paper:#0E0F13;--ink:#ECECEA;--muted:#9A9AA3;--line:#2A2B32;--blue:#7593FF}
+  /* --- oq fonli elementlar --- */
+  :root:not([data-theme="light"]) .btn-ghost{background:#17181E}
+  :root:not([data-theme="light"]) .lang{background:#17181E}
+  :root:not([data-theme="light"]) .m{background:#16171C}
+  :root:not([data-theme="light"]) .m:hover{border-color:#3C3D46;box-shadow:0 10px 24px -14px rgba(0,0,0,.8)}
+  :root:not([data-theme="light"]) .m .mi{background:rgba(117,147,255,.14)}
+  :root:not([data-theme="light"]) .s .n{background:#17181E}
+  :root:not([data-theme="light"]) .guide-box{background:#141519}
+  :root:not([data-theme="light"]) .qm-box{background:#17181E;box-shadow:0 30px 70px -20px rgba(0,0,0,.85)}
+  :root:not([data-theme="light"]) .stat-card{background:#16171C}
+  /* --- to'q tugmalar teskarisiga o'giriladi --- */
+  :root:not([data-theme="light"]) .btn-solid{color:#0E0F13}
+  :root:not([data-theme="light"]) .btn-solid:hover{background:#fff}
+  :root:not([data-theme="light"]) .qm-close{color:#0E0F13}
+  :root:not([data-theme="light"]) .qm-close:hover{background:#fff}
+  :root:not([data-theme="light"]) .lang a.on{color:#0E0F13}
+  /* --- qorong'i galereya sahifadan to'qroq bo'lib ajralib tursin --- */
+  :root:not([data-theme="light"]) .gallery{background:#08090C}
+  /* --- mayda tuzatishlar --- */
+  :root:not([data-theme="light"]) .g .quote{background:#101117;color:#C2C2C9}
+  :root:not([data-theme="light"]) .fineprint{color:#8E8E98}
+  :root:not([data-theme="light"]) .gnote svg{color:#7E7E88}
+  :root:not([data-theme="light"]) .pick.flash{background-color:rgba(117,147,255,.10)}
+  :root:not([data-theme="light"]) .dev{filter:drop-shadow(0 16px 34px rgba(0,0,0,.65))}
+  /* --- QR kod oq qolishi shart, aks holda skaner o'qimaydi --- */
+  :root:not([data-theme="light"]) .qm-qr{background:#fff;border-color:#fff}
+}
+
+/* --- rejim almashtirish tugmasi --- */
+.theme-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;padding:0;flex:0 0 auto;
+  background:transparent;border:1px solid var(--line);border-radius:9px;
+  color:var(--muted);cursor:pointer;transition:color .16s,border-color .16s;
+}
+.theme-btn:hover{color:var(--ink);border-color:var(--muted)}
+.theme-btn svg{width:16px;height:16px}
+.theme-btn .moon{display:none}
+:root[data-theme="dark"] .theme-btn .moon{display:block}
+:root[data-theme="dark"] .theme-btn .sun{display:none}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .theme-btn .moon{display:block}
+  :root:not([data-theme="light"]) .theme-btn .sun{display:none}
+}
+@media (max-width:520px){ .theme-btn{width:29px;height:29px} }

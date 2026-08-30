@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "831011690237",
+    "project_id": "mahallam-d4a93",
+    "storage_bucket": "mahallam-d4a93.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831011690237:android:9db7b4b853498915c8d094",
+        "android_client_info": {
+          "package_name": "com.example.mahallam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEwIETscnljZiNsc4VJRgNvKJghkaAXD0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831011690237:android:ff33cf91fadf3852c8d094",
+        "android_client_info": {
+          "package_name": "uz.mahallam.mahallam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEwIETscnljZiNsc4VJRgNvKJghkaAXD0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831011690237:android:415e9c9805e63d72c8d094",
+        "android_client_info": {
+          "package_name": "uz.meningmahallam.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEwIETscnljZiNsc4VJRgNvKJghkaAXD0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

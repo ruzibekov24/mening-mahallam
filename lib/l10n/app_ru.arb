@@ -1,0 +1,693 @@
+{
+  "@@locale": "ru",
+  "appTitle": "Моя махалля",
+  "splashTagline": "Ваша махалля в одном приложении",
+  "onboardingAnnouncementsTitle": "Будьте в курсе объявлений",
+  "onboardingAnnouncementsDescription": "Все новости и объявления вашей махалли в одном месте",
+  "onboardingEventsTitle": "Будьте в курсе мероприятий",
+  "onboardingEventsDescription": "Участвуйте в собраниях и инициативах махалли",
+  "onboardingRequestsTitle": "Отправьте обращение",
+  "onboardingRequestsDescription": "Сообщите о проблеме и следите за ответом в реальном времени",
+  "onboardingNeighborsTitle": "Свяжитесь с соседями",
+  "onboardingNeighborsDescription": "Общайтесь с жителями махалли, принимайте решения вместе",
+  "previewAnnouncements": "Объявления",
+  "previewEvents": "Мероприятия",
+  "previewRequests": "Обращения",
+  "previewNeighbors": "Соседи",
+  "continueButton": "Продолжить",
+  "skipButton": "Пропустить",
+  "loginButton": "Войти",
+  "registerButton": "Зарегистрироваться",
+  "loginTitle": "Вход",
+  "loginSubtitle": "Введите свои данные",
+  "phoneLabel": "Номер телефона",
+  "passwordLabel": "Пароль",
+  "forgotPassword": "Забыли пароль?",
+  "orDivider": "или",
+  "noAccountQuestion": "Нет аккаунта? ",
+  "phoneValidationError": "Введите номер телефона полностью",
+  "passwordValidationError": "Пароль должен содержать не менее 6 символов",
+  "unexpectedError": "Произошла непредвиденная ошибка",
+  "registerTitle": "Регистрация",
+  "registerSubtitle": "Создать новый аккаунт",
+  "firstNameLabel": "Имя",
+  "lastNameLabel": "Фамилия",
+  "firstNameValidationError": "Введите ваше имя",
+  "lastNameValidationError": "Введите вашу фамилию",
+  "haveAccountQuestion": "Уже есть аккаунт? ",
+  "welcomeGreeting": "Добро пожаловать",
+  "helloUser": "Здравствуйте, {name}!",
+  "@helloUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "helloGeneric": "Здравствуйте!",
+  "guestName": "гость",
+  "searchHint": "Поиск...",
+  "categoryAnnouncements": "Объявления",
+  "categoryEvents": "Мероприятия",
+  "categoryRequests": "Обращения",
+  "categoryNeighbors": "Соседи",
+  "upcomingEventsTitle": "Ближайшие мероприятия",
+  "noUpcomingEvents": "Пока нет ближайших мероприятий",
+  "eventsLoadError": "Ошибка при загрузке мероприятий",
+  "today": "Сегодня",
+  "tomorrow": "Завтра",
+  "profileTitle": "Профиль",
+  "defaultUserName": "Пользователь",
+  "profileLoadError": "Ошибка загрузки данных",
+  "chooseBannerTitle": "Выберите баннер",
+  "premiumBannerLockedMessage": "Этот баннер премиум — пока заблокирован",
+  "premiumTitle": "Премиум",
+  "premiumSettingSubtitle": "Безлимитные обращения, без рекламы и другое",
+  "premiumHeroTitle": "Премиум-подписка",
+  "premiumHeroSubtitle": "Будьте активнее в махалле — без ограничений",
+  "premiumPerMonth": "сум/мес.",
+  "premiumBenefitsTitle": "ЧТО ОТКРЫВАЕТСЯ",
+  "premiumBenefitUnlimited": "Безлимитные обращения — без дневного лимита",
+  "premiumBenefitNoAds": "Реклама не показывается вовсе",
+  "premiumBenefitPriority": "Ваше обращение выше в списке",
+  "premiumBenefitImages": "До 10 фото в одном обращении",
+  "premiumBenefitBanners": "Особые баннеры профиля",
+  "premiumBenefitBadge": "Премиум-значок в профиле",
+  "premiumBuyAction": "Получить премиум",
+  "premiumActiveTitle": "Премиум активен",
+  "premiumActiveUntil": "До {date} — осталось {days} дн.",
+  "premiumTransferHint": "Переведите на карту ниже. Нажмите, чтобы скопировать.",
+  "premiumCardNumber": "Номер карты",
+  "premiumCardHolder": "Владелец карты",
+  "premiumAmount": "Сумма оплаты",
+  "premiumCardCopied": "Номер карты скопирован",
+  "premiumHolderCopied": "Имя владельца скопировано",
+  "premiumAmountCopied": "Сумма скопирована",
+  "premiumPaymentTimeLeft": "На оплату осталось {time}",
+  "premiumPaymentExpired": "Время оплаты истекло — начните заново",
+  "premiumIPaidAction": "Я оплатил",
+  "premiumContactAdmin": "Админ в Telegram",
+  "premiumTelegramHint": "Для более быстрого подтверждения отправьте чек в Telegram — по желанию.",
+  "premiumWaitingTitle": "Ожидает подтверждения",
+  "premiumWaitingSubtitle": "Премиум откроется после проверки оплаты",
+  "premiumRequestsTitle": "Премиум-заявки",
+  "premiumRequestsEmpty": "Нет ожидающих заявок",
+  "premiumRequestMonths": "Подписка на {count} мес.",
+  "premiumApproveAction": "Подтвердить",
+  "premiumRejectAction": "Отклонить",
+  "adLabel": "Реклама",
+  "adManagementTitle": "Реклама услуг",
+  "adAddAction": "Добавить рекламу",
+  "adEmptyTitle": "Пока нет рекламы",
+  "adTitleLabel": "Название услуги",
+  "adDescriptionLabel": "Краткое описание",
+  "adOwnerLabel": "Мастер / организация",
+  "adTitleRequired": "Введите название услуги",
+  "adSaveAction": "Сохранить",
+  "adStatusActive": "Активна",
+  "adStatusExpired": "Истекла",
+  "adActiveUntil": "Активна до {date}",
+  "adExtendAction": "Продлить на 7 дней",
+  "adPromoteTitle": "Прорекламируйте свою услугу",
+  "adPromoteSubtitle": "{price} в неделю — увидит вся махалля",
+  "adPromoteAction": "Заказать рекламу",
+  "noMahallaTitle": "Сначала присоединитесь к махалле",
+  "noMahallaSubtitle": "Отсканируйте QR-код, который даёт раис махалли — после этого здесь появятся объявления, обращения и соседи.",
+  "noMahallaAction": "Сканировать QR-код",
+  "emptyAnnouncementsSubtitle": "Здесь появятся объявления от раиса и сотрудников махалли.",
+  "emptyRequestsSubtitle": "Если в махалле есть проблема, вы можете отправить первое обращение.",
+  "emptyRequestsAction": "Отправить обращение",
+  "emptyNeighborsSubtitle": "Соседи появятся здесь, когда присоединятся к приложению. Пригласите их!",
+  "emptyServicesSubtitle": "Здесь собираются мастера и услуги вашей махалли.",
+  "emptyEventsSubtitle": "Здесь появятся запланированные мероприятия.",
+  "premiumBadgeLabel": "Премиум",
+  "dailyRequestLimitReached": "Вы достигли дневного лимита обращений ({count}). Попробуйте завтра или оформите Premium для безлимитной отправки.",
+  "myInfoMenuItem": "Мои данные",
+  "notificationsMenuItem": "Уведомления",
+  "settingsMenuItem": "Настройки",
+  "helpMenuItem": "Помощь",
+  "logoutMenuItem": "Выйти",
+  "logoutConfirmTitle": "Подтвердите выход",
+  "logoutConfirmMessage": "Вы действительно хотите выйти из системы?",
+  "cancelButton": "Отмена",
+  "settingsTitle": "Настройки",
+  "sectionMahalla": "Махалля",
+  "currentMahalla": "Текущая махалля",
+  "notConnected": "Не подключено",
+  "unknownValue": "Неизвестно",
+  "changeButton": "Изменить",
+  "changeMahallaTitle": "Смена махалли",
+  "changeMahallaMessage": "Вы подключитесь к новой махалле через сканирование QR-кода или ввод кода вручную. Продолжить?",
+  "sectionGeneral": "Общие",
+  "sectionManagement": "Управление",
+  "membersManagementTitle": "Управление участниками",
+  "noMembersYet": "Пока нет участников",
+  "roleUpdated": "Роль обновлена",
+  "selectRoleTitle": "Выберите роль",
+  "languageSettingTitle": "Язык",
+  "appearanceSettingTitle": "Вид",
+  "textSizeSettingTitle": "Размер текста",
+  "sectionAbout": "О приложении",
+  "versionLabel": "Версия",
+  "statActiveRequests": "Активные обращения",
+  "statNewAnnouncements": "Новые объявления",
+  "statUpcomingEvents": "Ближайшие мероприятия",
+  "myRequestsStat": "Мои обращения",
+  "myAnnouncementsStat": "Мои объявления",
+  "myJoinedStat": "Присоединился(-ась)",
+  "myRequestsTitle": "Мои обращения",
+  "recentActivityTitle": "Последние действия",
+  "mahallaStatsTitle": "Статистика махалли",
+  "statsTotalMembers": "Участники",
+  "statsActiveRequests": "Активные обращения",
+  "statsNewAnnouncements": "Новые объявления",
+  "statsUpcomingEvents": "Ближайшие события",
+  "noRecentActivity": "Пока нет активности",
+  "activityLoadError": "Ошибка при загрузке активности",
+  "activityNewAnnouncement": "Новое объявление: {title}",
+  "@activityNewAnnouncement": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "activityNewRequest": "Новое обращение: {title}",
+  "@activityNewRequest": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "activityNewEvent": "Новое мероприятие: {title}",
+  "@activityNewEvent": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesAgo": "{count} мин. назад",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{count} ч. назад",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count} дн. назад",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionAccount": "Аккаунт",
+  "changePasswordTitle": "Изменить пароль",
+  "changePhoneTitle": "Изменить номер телефона",
+  "deleteAccountTitle": "Удалить аккаунт",
+  "deleteAccountConfirmTitle": "Удаление аккаунта",
+  "deleteAccountConfirmMessage": "Это действие необратимо. Все ваши данные будут полностью удалены. Продолжить?",
+  "deleteButton": "Удалить",
+  "editButton": "Редактировать",
+  "sectionDataStorage": "Данные и хранилище",
+  "clearCacheTitle": "Очистить кеш",
+  "clearCacheSubtitle": "Удаляет временно сохранённые файлы",
+  "cacheClearedMessage": "Кеш очищен",
+  "sectionSupport": "Поддержка",
+  "rateAppTitle": "Оценить приложение",
+  "feedbackTitle": "Оставить отзыв",
+  "feedbackSubtitle": "Ваше мнение о приложении важно для нас — оно напрямую попадает к руководству махалли.",
+  "feedbackRatingRequiredError": "Пожалуйста, поставьте оценку звёздами",
+  "feedbackMessageLabel": "Ваш отзыв (необязательно)",
+  "feedbackMessageHint": "Что понравилось, что нужно улучшить?",
+  "feedbackSubmitButton": "Отправить",
+  "feedbackSubmittedMessage": "Спасибо! Ваш отзыв отправлен",
+  "feedbackListTitle": "Отзывы пользователей",
+  "noFeedbackFound": "Пока нет отзывов",
+  "unknownUserLabel": "Неизвестный пользователь",
+  "requestAuthorLabel": "Отправитель",
+  "quickNewRequestTitle": "Отправить новое обращение",
+  "quickNewRequestSubtitle": "Есть проблема? Отправьте за несколько секунд",
+  "openLinkAction": "Открыть ссылку",
+  "linkOpenFailedMessage": "Не удалось открыть ссылку",
+  "bannerManagementTitle": "Баннеры",
+  "addBannerTitle": "Добавить баннер",
+  "bannerTitleLabel": "Заголовок",
+  "bannerDescriptionLabel": "Описание (необязательно)",
+  "bannerLinkLabel": "Ссылка (необязательно, https://...)",
+  "bannerAttributionLabel": "Автор/источник (необязательно)",
+  "bannerImageRequiredError": "Пожалуйста, выберите изображение",
+  "bannerTitleRequiredError": "Пожалуйста, введите заголовок",
+  "noBannersFound": "Пока нет баннеров",
+  "mahallaOnMapTitle": "Ваша махалля на карте",
+  "developerTitle": "Разработчик",
+  "developerSubtitle": "Команда Mahallam",
+  "termsTitle": "Условия использования",
+  "privacyPolicyTitle": "Политика конфиденциальности",
+  "comingSoonMessage": "Эта функция скоро появится",
+  "profileSaved": "Данные сохранены",
+  "saveButton": "Сохранить",
+  "faqTitle": "Часто задаваемые вопросы",
+  "contactUsTitle": "Связаться с нами",
+  "callUs": "По телефону",
+  "telegramUs": "Через Telegram",
+  "faqQ1": "Как присоединиться к махалле?",
+  "faqA1": "После регистрации вы подключитесь к своей махалле, отсканировав QR-код, выданный председателем или ответственным сотрудником.",
+  "faqQ2": "Как отправить обращение?",
+  "faqA2": "Перейдите в раздел \"Обращения\" и создайте новое обращение. Статус будет отображаться как \"Новое\", \"В процессе\" или \"Завершено\".",
+  "faqQ3": "Как посмотреть объявления?",
+  "faqA3": "В разделе \"Объявления\" на главном экране показаны все официальные объявления вашей махалли по категориям.",
+  "faqQ4": "Я забыл пароль, что делать?",
+  "faqA4": "Нажмите «Забыли пароль?» на экране входа. На вашу почту придёт ссылка для восстановления. Если письма нет, проверьте папку «Спам».",
+  "faqQ5": "Безопасны ли мои данные?",
+  "faqA5": "Да, все данные видны только в пределах вашей махалли и хранятся на защищённом сервере.",
+  "callFailedMessage": "Не удалось совершить звонок",
+  "telegramFailedMessage": "Не удалось открыть Telegram",
+  "announcementsTitle": "Объявления",
+  "eventsTitle": "Мероприятия",
+  "newButton": "Новое",
+  "noAnnouncementsYet": "Пока нет объявлений",
+  "noEventsYet": "Пока нет мероприятий",
+  "announcementsLoadError": "Ошибка при загрузке объявлений",
+  "participantsCount": "{count} участников",
+  "@participantsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todayAt": "Сегодня, {time}",
+  "@todayAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryKommunal": "Коммунальные",
+  "categoryXavfsizlik": "Безопасность",
+  "categoryUmumiy": "Общее",
+  "newAnnouncementTitle": "Новое объявление",
+  "pollsTitle": "Опросы",
+  "newPollTitle": "Новый опрос",
+  "pollQuestionHint": "Напишите ваш вопрос...",
+  "pollOptionHint": "Вариант {number}",
+  "@pollOptionHint": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "addOptionButton": "Добавить вариант",
+  "fillPollFields": "Введите вопрос и минимум 2 варианта",
+  "pollPostedMessage": "Опрос опубликован",
+  "noPollsYet": "Пока нет опросов",
+  "pollVotesCount": "{count} голосов",
+  "@pollVotesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "conversationsTitle": "Сообщения",
+  "conversationsMenuItem": "Сообщения",
+  "noConversationsYet": "Пока нет диалогов",
+  "noMessagesYet": "Пока нет сообщений. Напишите первым!",
+  "messageHint": "Напишите сообщение...",
+  "sendMessageAction": "Написать сообщение",
+  "switchMahallaTitle": "Выбор махалли",
+  "switchMahallaMenuItem": "Переключить махаллю (Супер админ)",
+  "switchMahallaMenuItemActive": "Вы управляете другой махаллёй",
+  "exitMahallaModeAction": "Вернуться в свою махаллю",
+  "noMahallasFound": "Махалли не найдены",
+  "broadcastToAllMahallasLabel": "Отправить во все махалли (Супер админ)",
+  "servicesTitle": "Местные услуги",
+  "newServiceTitle": "Добавить услугу",
+  "editServiceTitle": "Редактировать услугу",
+  "serviceCategoryLabel": "Категория",
+  "serviceNameLabel": "Имя или название организации",
+  "serviceNameHint": "Например: Азиз ака (сантехник)",
+  "servicePhoneLabel": "Номер телефона",
+  "serviceDescriptionLabel": "Описание",
+  "serviceDescriptionHint": "Часы работы, цена и т.д...",
+  "fillServiceFields": "Введите имя и номер телефона",
+  "servicePostedMessage": "Услуга добавлена",
+  "serviceUpdatedMessage": "Услуга обновлена",
+  "noServicesYet": "Пока нет услуг",
+  "serviceCategorySantexnik": "Сантехник",
+  "serviceCategoryElektrik": "Электрик",
+  "serviceCategoryDuradgor": "Плотник",
+  "serviceCategoryTozalash": "Уборка",
+  "serviceCategoryQurilish": "Строительство",
+  "serviceCategoryBoshqa": "Другое",
+  "editPollTitle": "Редактировать опрос",
+  "pollUpdatedMessage": "Опрос обновлён",
+  "changeVoteConfirmTitle": "Изменить голос",
+  "changeVoteConfirmMessage": "Вы уже проголосовали за другой вариант. Хотите изменить свой голос?",
+  "changeVoteConfirmButton": "Да, изменить",
+  "editAnnouncementTitle": "Редактировать объявление",
+  "categoryLabel": "Категория",
+  "titleLabel": "Заголовок",
+  "titleHint": "Например: Об отключении воды завтра",
+  "bodyLabel": "Текст",
+  "bodyHint": "Подробно опишите объявление...",
+  "photoLabel": "Фото",
+  "optionalLabel": "(необязательно)",
+  "postButton": "Опубликовать",
+  "fillTitleAndBody": "Заполните заголовок и текст",
+  "announcementPosted": "Объявление успешно опубликовано",
+  "announcementUpdated": "Объявление обновлено",
+  "requestsTitle": "Обращения",
+  "mustVerifyMahallaFirst": "Сначала подтвердите вашу махаллю",
+  "managementPanelBanner": "Панель управления — все обращения",
+  "requestsLoadError": "Ошибка при загрузке обращений",
+  "joinedCount": "{count} присоединились",
+  "@joinedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noRequestsWithStatus": "Нет обращений: {status}",
+  "filterAll": "Все",
+  "noRequestsAtAll": "Пока нет обращений",
+  "@noRequestsWithStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "statusYangi": "Новое",
+  "statusJarayonda": "В процессе",
+  "statusYakunlandi": "Завершено",
+  "typeMaxfiy": "Конфиденциальное",
+  "typeOmmaviy": "Публичное",
+  "priorityPast": "Низкий",
+  "priorityOrtacha": "Средний",
+  "priorityYuqori": "Высокий",
+  "managementPanelTitle": "Панель управления",
+  "changeStatusTitle": "Изменить статус",
+  "statusChangedMessage": "Статус изменён на \"{status}\"",
+  "@statusChangedMessage": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "statusChangeError": "Ошибка при изменении статуса",
+  "allFilter": "Все",
+  "noRequestsFound": "Обращения не найдены",
+  "tapToChangeStatus": "Нажмите, чтобы изменить статус",
+  "stepType": "Тип",
+  "stepDetails": "Детали",
+  "stepLocation": "Местоположение",
+  "stepReview": "Проверка",
+  "stepDone": "Готово",
+  "newRequestTitle": "Новое обращение",
+  "fillTitleAndDescription": "Заполните заголовок и описание",
+  "sendButton": "Отправить",
+  "chooseRequestType": "Выберите тип обращения",
+  "requestTypeExplain": "Это определяет, кто сможет видеть ваше обращение",
+  "typeMaxfiyDescription": "Видят только вы и председатель махалли",
+  "typeOmmaviyDescription": "Видят все в махалле, можно присоединиться",
+  "titleFieldLabel": "Заголовок",
+  "titleFieldHint": "Например: Не работает уличное освещение",
+  "descriptionLabel": "Описание",
+  "descriptionHint": "Подробно опишите проблему...",
+  "attachPhotoLabel": "Прикрепить фото",
+  "priorityLevelLabel": "Уровень важности",
+  "reviewDataTitle": "Проверьте данные",
+  "reviewType": "Тип",
+  "reviewPriority": "Важность",
+  "reviewLocation": "Местоположение",
+  "reviewLocationSet": "Указано",
+  "reviewLocationNotSet": "Не указано",
+  "reviewPhotos": "Фото ({count})",
+  "@reviewPhotos": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestSentTitle": "Обращение отправлено!",
+  "requestSentMessage": "Ваше обращение принято и рассматривается",
+  "backToListButton": "Вернуться к списку",
+  "qrScanInstruction": "Наведите рамку на QR-код у двери махалли",
+  "checkingStatus": "Проверка...",
+  "scanningStatus": "Сканирование...",
+  "enterCodeManually": "Ввести код вручную",
+  "enterMahallaCodeTitle": "Введите код махалли",
+  "mahallaCodeHint": "Например: MFY-00123",
+  "confirmButton": "Подтвердить",
+  "qrGenericError": "Произошла ошибка, попробуйте снова",
+  "confirmError": "Ошибка при подтверждении, попробуйте снова",
+  "mahallaFoundLabel": "Махалля найдена",
+  "rescanButton": "Сканировать снова",
+  "changePhotoLabel": "Изменить фото",
+  "birthDateLabel": "Дата рождения",
+  "addressLabel": "Адрес",
+  "streetLabel": "Улица",
+  "streetHint": "Например: улица Богбон",
+  "houseNumberLabel": "Номер дома",
+  "houseNumberHint": "Например: 15",
+  "genderLabel": "Пол",
+  "genderMale": "Мужской",
+  "genderFemale": "Женский",
+  "notSpecified": "Не указано",
+  "selectDate": "Выберите дату",
+  "photoUploadError": "Ошибка при загрузке фото",
+  "otpTitle": "Код подтверждения",
+  "otpSubtitle": "Введите 6-значный код, отправленный на {phone}",
+  "@otpSubtitle": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "otpInvalidCode": "Неверный код, попробуйте снова",
+  "otpResendCode": "Отправить код повторно",
+  "otpResendCooldown": "Повторно ({seconds}с)",
+  "@otpResendCooldown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "forgotPasswordTitle": "Восстановление пароля",
+  "forgotPasswordSubtitle": "Введите номер телефона, указанный при регистрации, мы отправим код подтверждения",
+  "sendCodeButton": "Отправить код",
+  "newPasswordLabel": "Новый пароль",
+  "newPasswordTitle": "Установите новый пароль",
+  "newPasswordSubtitle": "Придумайте новый пароль для своего аккаунта",
+  "savePasswordButton": "Сохранить пароль",
+  "passwordResetSuccess": "Пароль успешно обновлён",
+  "newEventTitle": "Новое мероприятие",
+  "editEventTitle": "Редактировать мероприятие",
+  "eventTitleHint": "Например: Собрание махалли",
+  "dateLabel": "Дата",
+  "selectTime": "Выберите время",
+  "locationLabel": "Место",
+  "locationHint": "Место проведения мероприятия",
+  "fillEventFields": "Введите название и дату",
+  "eventPosted": "Мероприятие опубликовано",
+  "eventUpdated": "Мероприятие обновлено",
+  "neighborsTitle": "Соседи",
+  "mahalladoshlar": "Жители махалли",
+  "noNeighborsYet": "Пока нет соседей",
+  "onlineNow": "В сети",
+  "lastSeenUnknown": "Последняя активность неизвестна",
+  "lastSeenJustNow": "Только что был(а) активен(на)",
+  "lastSeenMinutesAgo": "{minutes} мин. назад",
+  "@lastSeenMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "lastSeenHoursAgo": "{hours} ч. назад",
+  "@lastSeenHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "lastSeenDaysAgo": "{days} дн. назад",
+  "@lastSeenDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionPrivacy": "Приватность",
+  "showPhoneToNeighborsTitle": "Показывать телефон соседям",
+  "showPhoneToNeighborsSubtitle": "Если включено, ваш номер будет виден в списке соседей",
+  "privacySecurityTitle": "Приватность и безопасность",
+  "privacySecuritySubtitle": "Видимость, заблокированные, пароль",
+  "sectionVisibility": "Видимость",
+  "showLastSeenTitle": "Показывать последнюю активность",
+  "showLastSeenSubtitle": "Если включено, соседи увидят ваш онлайн статус",
+  "sectionBlockedUsers": "Заблокированные пользователи",
+  "blockedUsersTitle": "Заблокированные пользователи",
+  "noBlockedUsers": "Нет заблокированных пользователей",
+  "blockedUsersCount": "Заблокировано: {count}",
+  "@blockedUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "blockUserAction": "Заблокировать",
+  "blockUserConfirmTitle": "Заблокировать пользователя",
+  "blockUserConfirmMessage": "{name} не сможет писать вам и не будет виден в вашем списке. Продолжить?",
+  "@blockUserConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "userBlockedMessage": "{name} заблокирован(а)",
+  "@userBlockedMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "unblockAction": "Разблокировать",
+  "userUnblockedMessage": "{name} разблокирован(а)",
+  "@userUnblockedMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneHiddenByUser": "Этот пользователь скрыл номер телефона",
+  "markAllAsReadAction": "Отметить все как прочитанные",
+  "noNotificationsYet": "Пока нет уведомлений",
+  "searchPromptText": "Найдите объявление, мероприятие или обращение",
+  "searchNoResults": "Ничего не найдено",
+  "requestDetailTitle": "Детали обращения",
+  "requestNotFound": "Обращение не найдено",
+  "joinRequestAction": "Присоединиться",
+  "leaveRequestAction": "Выйти",
+  "mahallaStaffTitle": "Сотрудники махалли",
+  "mahallaMapTitle": "Карта махалли",
+  "locationStepTitle": "Укажите местоположение",
+  "locationStepSubtitle": "Нажмите на карту, чтобы поставить точку, или используйте текущее местоположение (необязательно)",
+  "locationPermissionError": "Доступ к местоположению не предоставлен",
+  "clearLocationAction": "Очистить",
+  "boundaryEditorTitle": "Обозначить границу",
+  "boundaryEditorHint": "Нажмите на карту, чтобы поставить точки вдоль границы махалли (минимум 3)",
+  "boundaryMinPointsError": "Отметьте минимум 3 точки",
+  "boundarySavedMessage": "Граница сохранена",
+  "saveBoundaryAction": "Сохранить границу",
+  "editBoundaryAction": "Редактировать границу",
+  "mapLayerSatellite": "Спутниковый вид",
+  "mapLayerStreets": "Карта улиц",
+  "deleteItemConfirmTitle": "Удалить",
+  "deleteItemConfirmMessage": "«{title}» будет удалено навсегда. Это действие нельзя отменить.",
+  "@deleteItemConfirmMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDeletedMessage": "Удалено",
+  "searchNeighborHint": "Поиск по имени...",
+  "currentPasswordLabel": "Текущий пароль",
+  "confirmPasswordLabel": "Подтвердите пароль",
+  "passwordMismatchError": "Пароли не совпадают",
+  "newPhoneLabel": "Новый номер телефона",
+  "phoneChangedMessage": "Номер телефона успешно изменён",
+  "termsBody": "Используя это приложение, вы соглашаетесь со следующими условиями:\n\n1. Приложение предназначено для облегчения общения между жителями и сотрудниками махалли.\n2. Пользователь обязан указывать достоверную информацию в своём профиле.\n3. Запрещено распространение оскорбительной, незаконной или ложной информации о других пользователях.\n4. Объявления и мероприятия, размещённые администрацией махалли (сотрудник/раис), могут носить официальный характер.\n5. Администрация приложения оставляет за собой право блокировать или удалять аккаунты при нарушении правил.",
+  "privacyPolicyBody": "Как используются ваши данные:\n\n1. Имя, фамилия, номер телефона и данные о махалле используются только для общения внутри махалли.\n2. Ваш номер телефона не виден другим жителям, пока вы не разрешите это в настройках.\n3. Время последней активности можно скрыть в настройках.\n4. Ваши данные не продаются и не передаются третьим лицам.\n5. При запросе удаления аккаунта ваши данные удаляются из базы Firestore.",
+  "deleteAccountRequested": "Запрос отправлен. Администратор скоро удалит вашу учётную запись.",
+  "deleteAccountAlreadyPending": "Ваш запрос на удаление уже рассматривается.",
+  "retryButton": "Повторить",
+  "cameraIntroTitle": "Нужен доступ к камере",
+  "cameraIntroBody": "Чтобы присоединиться к махалле, нужно отсканировать QR-код, выданный председателем или сотрудником. Камера используется только для этого — снимки не сохраняются и не отправляются.",
+  "cameraIntroButton": "Открыть камеру",
+  "cameraErrorPermission": "Доступ к камере не разрешён. Включите его в настройках телефона (Приложения → Mening Mahallam → Разрешения → Камера). Или введите код махалли вручную.",
+  "cameraErrorUnsupported": "На этом устройстве сканирование QR не поддерживается. Введите код махалли вручную.",
+  "cameraErrorGeneric": "Не удалось открыть камеру. Возможно, её использует другое приложение — закройте его и попробуйте снова.",
+  "noAnnouncementsHint": "Как только председатель или сотрудник махалли опубликует объявление, оно появится здесь.",
+  "noRequestsHint": "Отправьте обращение по освещению, уборке, воде или другому вопросу — сотрудники махалли ответят.",
+  "noNeighborsHint": "По мере того как жители махалли присоединяются к приложению, они появятся здесь. Пригласите соседей!",
+  "noPollsHint": "Опросы махалли появятся здесь — голосуйте и участвуйте в принятии решений.",
+  "noServicesHint": "Здесь собираются мастера, магазины и услуги вашей махалли.",
+  "noConversationsHint": "Выберите человека в разделе «Соседи», чтобы написать ему напрямую.",
+  "noNotificationsHint": "Мы сообщим здесь о новых объявлениях, событиях и ответах на ваши обращения.",
+  "currencySom": "сум",
+  "premiumConfigTitle": "Реквизиты оплаты",
+  "premiumConfigHint": "Изменённые здесь значения сразу видны всем пользователям — обновлять приложение не нужно.",
+  "premiumConfigSaved": "Реквизиты сохранены",
+  "premiumCardNumberLabel": "Номер карты",
+  "premiumCardNumberInvalid": "Номер карты должен состоять из 16 цифр",
+  "premiumCardHolderLabel": "Имя владельца карты",
+  "premiumCardHolderInvalid": "Введите имя владельца карты",
+  "premiumPriceLabel": "Цена в месяц",
+  "premiumPriceInvalid": "Введите корректную цену",
+  "premiumTelegramLabel": "Имя пользователя в Telegram",
+  "premiumChoosePlan": "Выберите срок",
+  "premiumPlanMonths": "{count} мес.",
+  "premiumPriceValue": "{amount} сум",
+  "premiumBenefitAdDiscount": "Размещение рекламы услуг на 50% дешевле",
+  "premiumBenefitSupport": "Приоритетная поддержка — ваше обращение смотрят первым",
+  "premiumBenefitAvatar": "Золотое премиум-кольцо на фото профиля",
+  "premiumBenefitEarlyAccess": "Новые возможности открываются вам первым",
+  "premiumPerMonthAmount": "{amount} сум в месяц",
+  "advertiseTitle": "Разместите здесь рекламу своей услуги",
+  "advertisePrice": "Всего {amount} сум в неделю",
+  "advertisePremiumDiscount": "Ваша премиум-скидка — обычная цена {amount} сум",
+  "advertiseHowTo": "Для размещения рекламы свяжитесь с председателем махалли или администратором приложения.",
+  "photoTooLarge": "Файл слишком большой. Выберите изображение меньше 5 МБ",
+  "premiumBenefitAnimatedAvatar": "Живое (GIF) фото профиля",
+  "premiumGrantTitle": "Выдать премиум вручную",
+  "premiumGrantSelfAction": "Выдать себе",
+  "premiumGrantPhoneLabel": "Номер телефона",
+  "premiumGrantAction": "Выдать на этот номер",
+  "premiumGrantedSelf": "Вам выдан премиум на {months} мес.",
+  "premiumGrantedTo": "{name} — выдан премиум на {months} мес.",
+  "premiumGrantUserNotFound": "Пользователь с этим номером не найден",
+  "premiumUntilShort": "до {date}",
+  "personalInfoSection": "Личные данные",
+  "addressSection": "Адрес",
+  "mahallaCenterTitle": "Центр махалли",
+  "mahallaCenterHint": "Нажмите на карту, чтобы отметить центр, или введите координаты через кнопку сверху.",
+  "mahallaCenterCoordsHint": "Вставьте координаты, скопированные из Google Maps (широта, долгота).",
+  "mahallaCenterSaved": "Центр махалли сохранён",
+  "boundaryModeLabel": "Граница",
+  "centerModeLabel": "Центр",
+  "saveCenterAction": "Сохранить центр",
+  "appearanceSystemHint": "Следовать настройке телефона",
+  "textSizePreviewTitle": "Собрание махалли",
+  "textSizePreviewBody": "Основной текст будет выглядеть так. Выберите удобный размер.",
+  "okButton": "OK"
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Ilova ochilayotgan paytdagi (native splash) fon rangi.
+         Bu qiymat Flutter tomonidagi `AppColors.lightBg` bilan AYNAN
+         bir xil bo'lishi kerak (lib/core/theme/app_theme.dart) — aks
+         holda ilova ochilganda tizim ekranidan Flutter ekraniga
+         o'tishda rang sakrab, oq "chaqnash" ko'rinadi. -->
+    <color name="splashBackground">#FAF8F6</color>
+</resources>

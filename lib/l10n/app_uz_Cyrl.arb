@@ -1,0 +1,693 @@
+{
+  "@@locale": "uz_Cyrl",
+  "appTitle": "Менинг маҳаллам",
+  "splashTagline": "Сизнинг маҳаллангиз битта иловада",
+  "onboardingAnnouncementsTitle": "Эълонлардан хабардор бўлинг",
+  "onboardingAnnouncementsDescription": "Маҳаллангиздаги барча янгиликлар ва эълонлар бир жойда",
+  "onboardingEventsTitle": "Тадбирлардан хабардор бўлинг",
+  "onboardingEventsDescription": "Маҳалладаги йиғилишлар ва ташаббусларда иштирок этинг",
+  "onboardingRequestsTitle": "Мурожаат юборинг",
+  "onboardingRequestsDescription": "Муаммоингизни билдиринг ва жавобини реал вақтда кузатинг",
+  "onboardingNeighborsTitle": "Қўшни билан боғланинг",
+  "onboardingNeighborsDescription": "Маҳалла аъзолари билан мулоқот қилинг, бирга қарор қабул қилинг",
+  "previewAnnouncements": "Эълонлар",
+  "previewEvents": "Тадбирлар",
+  "previewRequests": "Мурожаатлар",
+  "previewNeighbors": "Қўшнилар",
+  "continueButton": "Давом этиш",
+  "skipButton": "Ўтказиб юбориш",
+  "loginButton": "Кириш",
+  "registerButton": "Рўйхатдан ўтиш",
+  "loginTitle": "Кириш",
+  "loginSubtitle": "Маълумотларингизни киритинг",
+  "phoneLabel": "Телефон рақам",
+  "passwordLabel": "Парол",
+  "forgotPassword": "Паролни унутдингизми?",
+  "orDivider": "ёки",
+  "noAccountQuestion": "Ҳисобингиз йўқми? ",
+  "phoneValidationError": "Телефон рақамни тўлиқ киритинг",
+  "passwordValidationError": "Парол камида 6 та белгидан иборат бўлиши керак",
+  "unexpectedError": "Кутилмаган хатолик юз берди",
+  "registerTitle": "Рўйхатдан ўтиш",
+  "registerSubtitle": "Янги ҳисоб яратиш",
+  "firstNameLabel": "Исм",
+  "lastNameLabel": "Фамилия",
+  "firstNameValidationError": "Исмингизни киритинг",
+  "lastNameValidationError": "Фамилиянгизни киритинг",
+  "haveAccountQuestion": "Ҳисобингиз борми? ",
+  "welcomeGreeting": "Хуш келибсиз",
+  "helloUser": "Ассалому алайкум, {name}!",
+  "@helloUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "helloGeneric": "Ассалому алайкум!",
+  "guestName": "меҳмон",
+  "searchHint": "Қидириш...",
+  "categoryAnnouncements": "Эълонлар",
+  "categoryEvents": "Тадбирлар",
+  "categoryRequests": "Мурожаатлар",
+  "categoryNeighbors": "Қўшнилар",
+  "upcomingEventsTitle": "Яқин тадбирлар",
+  "noUpcomingEvents": "Ҳозирча яқин тадбирлар йўқ",
+  "eventsLoadError": "Тадбирларни юклашда хатолик юз берди",
+  "today": "Бугун",
+  "tomorrow": "Эртага",
+  "profileTitle": "Профил",
+  "defaultUserName": "Фойдаланувчи",
+  "profileLoadError": "Маълумотларни юклашда хатолик",
+  "chooseBannerTitle": "Баннер танланг",
+  "premiumBannerLockedMessage": "Бу баннер премиум — ҳозирча қулфланган",
+  "premiumTitle": "Премиум",
+  "premiumSettingSubtitle": "Чексиз мурожаат, рекламасиз ва бошқа имкониятлар",
+  "premiumHeroTitle": "Премиум обуна",
+  "premiumHeroSubtitle": "Маҳаллангизда фаолроқ бўлинг — чекловларсиз",
+  "premiumPerMonth": "сўм/ой",
+  "premiumBenefitsTitle": "НИМАЛАР ОЧИЛАДИ",
+  "premiumBenefitUnlimited": "Чексиз мурожаат — кунлик лимит йўқ",
+  "premiumBenefitNoAds": "Рекламалар умуман кўринмайди",
+  "premiumBenefitPriority": "Мурожаатингиз рўйхатда тепада туради",
+  "premiumBenefitImages": "Битта мурожаатга 10 тагача расм",
+  "premiumBenefitBanners": "Махсус профил баннерлари",
+  "premiumBenefitBadge": "Профилингизда премиум нишони",
+  "premiumBuyAction": "Премиум олиш",
+  "premiumActiveTitle": "Премиум фаол",
+  "premiumActiveUntil": "{date} гача — {days} кун қолди",
+  "premiumTransferHint": "Қуйидаги картага ўтказма қилинг. Нусха олиш учун устига босинг.",
+  "premiumCardNumber": "Карта рақами",
+  "premiumCardHolder": "Карта эгаси",
+  "premiumAmount": "Тўлов суммаси",
+  "premiumCardCopied": "Карта рақами нусхаланди",
+  "premiumHolderCopied": "Карта эгаси нусхаланди",
+  "premiumAmountCopied": "Сумма нусхаланди",
+  "premiumPaymentTimeLeft": "Тўлов учун {time} қолди",
+  "premiumPaymentExpired": "Тўлов вақти тугади — қайтадан бошланг",
+  "premiumIPaidAction": "Тўладим",
+  "premiumContactAdmin": "Админ билан Телеграмда",
+  "premiumTelegramHint": "Тезроқ тасдиқлаш учун чекни Телеграмга юборинг — ихтиёрий.",
+  "premiumWaitingTitle": "Тасдиқлаш кутилмоқда",
+  "premiumWaitingSubtitle": "Админ тўловни текширгач премиум очилади",
+  "premiumRequestsTitle": "Премиум сўровлари",
+  "premiumRequestsEmpty": "Кутилаётган сўров йўқ",
+  "premiumRequestMonths": "{count} ойлик обуна",
+  "premiumApproveAction": "Тасдиқлаш",
+  "premiumRejectAction": "Рад этиш",
+  "adLabel": "Реклама",
+  "adManagementTitle": "Хизмат рекламалари",
+  "adAddAction": "Реклама қўшиш",
+  "adEmptyTitle": "Ҳозирча реклама йўқ",
+  "adTitleLabel": "Хизмат номи",
+  "adDescriptionLabel": "Қисқача тавсиф",
+  "adOwnerLabel": "Уста / ташкилот номи",
+  "adTitleRequired": "Хизмат номини киритинг",
+  "adSaveAction": "Сақлаш",
+  "adStatusActive": "Фаол",
+  "adStatusExpired": "Тугаган",
+  "adActiveUntil": "{date} гача фаол",
+  "adExtendAction": "7 кунга узайтириш",
+  "adPromoteTitle": "Хизматингизни реклама қилинг",
+  "adPromoteSubtitle": "Ҳафтасига {price} — маҳаллангиз кўради",
+  "adPromoteAction": "Реклама бериш",
+  "noMahallaTitle": "Аввал маҳаллангизга қўшилинг",
+  "noMahallaSubtitle": "Маҳалла раиси берган QR кодни сканерланг — шундан кейин эълонлар, мурожаатлар ва қўшниларингиз шу ерда кўринади.",
+  "noMahallaAction": "QR кодни сканерлаш",
+  "emptyAnnouncementsSubtitle": "Маҳалла раиси ёки ходимлари эълон жойлаганда шу ерда кўринади.",
+  "emptyRequestsSubtitle": "Маҳаллада муаммо бўлса, биринчи мурожаатни сиз юборишингиз мумкин.",
+  "emptyRequestsAction": "Мурожаат юбориш",
+  "emptyNeighborsSubtitle": "Қўшниларингиз иловага қўшилгач шу ерда кўринади. Уларни таклиф қилинг!",
+  "emptyServicesSubtitle": "Маҳалладаги усталар ва хизматлар шу ерда тўпланади.",
+  "emptyEventsSubtitle": "Режалаштирилган тадбирлар шу ерда кўринади.",
+  "premiumBadgeLabel": "Премиум",
+  "dailyRequestLimitReached": "Кунлик мурожаат лимитига ({count} та) етдингиз. Эртага қайта уриниб кўринг ёки Premium билан чексиз юборинг.",
+  "myInfoMenuItem": "Менинг маълумотларим",
+  "notificationsMenuItem": "Билдиришномалар",
+  "settingsMenuItem": "Созламалар",
+  "helpMenuItem": "Ёрдам",
+  "logoutMenuItem": "Чиқиш",
+  "logoutConfirmTitle": "Чиқишни тасдиқланг",
+  "logoutConfirmMessage": "Ҳақиқатан ҳам тизимдан чиқмоқчимисиз?",
+  "cancelButton": "Бекор қилиш",
+  "settingsTitle": "Созламалар",
+  "sectionMahalla": "Маҳалла",
+  "currentMahalla": "Жорий маҳалла",
+  "notConnected": "Боғланмаган",
+  "unknownValue": "Номаълум",
+  "changeButton": "Алмаштириш",
+  "changeMahallaTitle": "Маҳаллани алмаштириш",
+  "changeMahallaMessage": "Янги маҳаллага QR код сканерлаш ёки кодни қўлда киритиш орқали боғланасиз. Давом этасизми?",
+  "sectionGeneral": "Умумий",
+  "sectionManagement": "Бошқарув",
+  "membersManagementTitle": "Аъзоларни бошқариш",
+  "noMembersYet": "Ҳозирча аъзолар йўқ",
+  "roleUpdated": "Рол янгиланди",
+  "selectRoleTitle": "Ролни танланг",
+  "languageSettingTitle": "Тил",
+  "appearanceSettingTitle": "Кўриниш",
+  "textSizeSettingTitle": "Матн катталиги",
+  "sectionAbout": "Илова ҳақида",
+  "versionLabel": "Версия",
+  "statActiveRequests": "Фаол мурожаатлар",
+  "statNewAnnouncements": "Янги эълонлар",
+  "statUpcomingEvents": "Яқин тадбирлар",
+  "myRequestsStat": "Мурожаатларим",
+  "myAnnouncementsStat": "Эълонларим",
+  "myJoinedStat": "Қўшилганларим",
+  "myRequestsTitle": "Менинг мурожаатларим",
+  "recentActivityTitle": "Сўнгги фаолият",
+  "mahallaStatsTitle": "Маҳалла статистикаси",
+  "statsTotalMembers": "Аъзолар",
+  "statsActiveRequests": "Фаол мурожаат",
+  "statsNewAnnouncements": "Янги эълон",
+  "statsUpcomingEvents": "Яқин тадбир",
+  "noRecentActivity": "Ҳозирча фаолият йўқ",
+  "activityLoadError": "Фаолиятни юклашда хатолик юз берди",
+  "activityNewAnnouncement": "Янги эълон: {title}",
+  "@activityNewAnnouncement": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "activityNewRequest": "Янги мурожаат: {title}",
+  "@activityNewRequest": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "activityNewEvent": "Янги тадбир: {title}",
+  "@activityNewEvent": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesAgo": "{count} дақиқа олдин",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{count} соат олдин",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count} кун олдин",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionAccount": "Ҳисоб",
+  "changePasswordTitle": "Паролни ўзгартириш",
+  "changePhoneTitle": "Телефон рақамни ўзгартириш",
+  "deleteAccountTitle": "Ҳисобни ўчириш",
+  "deleteAccountConfirmTitle": "Ҳисобни ўчириш",
+  "deleteAccountConfirmMessage": "Бу амални ортга қайтариб бўлмайди. Барча маълумотларингиз бутунлай ўчирилади. Давом этасизми?",
+  "deleteButton": "Ўчириш",
+  "editButton": "Таҳрирлаш",
+  "sectionDataStorage": "Маълумотлар ва хотира",
+  "clearCacheTitle": "Кешни тозалаш",
+  "clearCacheSubtitle": "Вақтинчалик сақланган файлларни ўчиради",
+  "cacheClearedMessage": "Кеш тозаланди",
+  "sectionSupport": "Ёрдам ва қўллаб-қувватлаш",
+  "rateAppTitle": "Иловани баҳолаш",
+  "feedbackTitle": "Фикр билдириш",
+  "feedbackSubtitle": "Илова ҳақидаги фикрингиз биз учун муҳим — маҳалла раҳбариятига тўғридан-тўғри етади.",
+  "feedbackRatingRequiredError": "Илтимос, юлдузча билан баҳо беринг",
+  "feedbackMessageLabel": "Фикрингиз (ихтиёрий)",
+  "feedbackMessageHint": "Нима ёқди, нимани яхшилаш керак?",
+  "feedbackSubmitButton": "Юбориш",
+  "feedbackSubmittedMessage": "Раҳмат! Фикрингиз юборилди",
+  "feedbackListTitle": "Фойдаланувчи фикрлари",
+  "noFeedbackFound": "Ҳозирча фикрлар йўқ",
+  "unknownUserLabel": "Номаълум фойдаланувчи",
+  "requestAuthorLabel": "Юборган",
+  "quickNewRequestTitle": "Янги мурожаат юбориш",
+  "quickNewRequestSubtitle": "Муаммо борми? Бир неча сонияда юборинг",
+  "openLinkAction": "Ҳаволани очиш",
+  "linkOpenFailedMessage": "Ҳаволани очиб бўлмади",
+  "bannerManagementTitle": "Баннерлар",
+  "addBannerTitle": "Янги баннер қўшиш",
+  "bannerTitleLabel": "Сарлавҳа",
+  "bannerDescriptionLabel": "Тавсиф (ихтиёрий)",
+  "bannerLinkLabel": "Ҳавола (ихтиёрий, https://...)",
+  "bannerAttributionLabel": "Муаллиф/манба (ихтиёрий)",
+  "bannerImageRequiredError": "Илтимос, расм танланг",
+  "bannerTitleRequiredError": "Илтимос, сарлавҳа киритинг",
+  "noBannersFound": "Ҳозирча баннерлар йўқ",
+  "mahallaOnMapTitle": "Маҳаллангиз харитада",
+  "developerTitle": "Ривожлантирувчи",
+  "developerSubtitle": "Маҳаллам жамоаси",
+  "termsTitle": "Фойдаланиш шартлари",
+  "privacyPolicyTitle": "Махфийлик сиёсати",
+  "comingSoonMessage": "Бу функция тез орада қўшилади",
+  "profileSaved": "Маълумотлар сақланди",
+  "saveButton": "Сақлаш",
+  "faqTitle": "Кўп бериладиган саволлар",
+  "contactUsTitle": "Биз билан боғланинг",
+  "callUs": "Телефон орқали",
+  "telegramUs": "Телеграм орқали",
+  "faqQ1": "Маҳаллага қандай қўшиламан?",
+  "faqA1": "Рўйхатдан ўтгандан сўнг, маҳалла раиси ёки масъул ходим томонидан берилган QR кодни сканерлаш орқали маҳаллангизга боғланасиз.",
+  "faqQ2": "Мурожаат қандай юбораман?",
+  "faqA2": "\"Мурожаат\" бўлимига ўтинг ва янги мурожаат яратинг. Мурожаатингиз ҳолати \"Янги\", \"Жараёнда\" ёки \"Якунланди\" сифатида кўрсатилади.",
+  "faqQ3": "Эълонларни қандай кўраман?",
+  "faqA3": "Бош экрандаги \"Эълонлар\" бўлимида маҳаллангизга оид барча расмий эълонлар категориялар бўйича кўрсатилади.",
+  "faqQ4": "Паролимни унутдим, нима қиламан?",
+  "faqA4": "Кириш экранидаги «Паролни унутдингизми?» тугмасини босинг. Электрон почтангизга тиклаш ҳаволаси юборилади. Хат келмаса, «Спам» папкасини ҳам текширинг.",
+  "faqQ5": "Маълумотларим хавфсизми?",
+  "faqA5": "Ҳа, барча маълумотлар фақат маҳаллангиз доирасида кўринади ва ҳимояланган серверда сақланади.",
+  "callFailedMessage": "Қўнғироқ қилиб бўлмади",
+  "telegramFailedMessage": "Телеграм очиб бўлмади",
+  "announcementsTitle": "Эълонлар",
+  "eventsTitle": "Тадбирлар",
+  "newButton": "Янги",
+  "noAnnouncementsYet": "Ҳозирча эълонлар йўқ",
+  "noEventsYet": "Ҳозирча тадбирлар йўқ",
+  "announcementsLoadError": "Эълонларни юклашда хатолик юз берди",
+  "participantsCount": "{count} қатнашувчи",
+  "@participantsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todayAt": "Бугун, {time}",
+  "@todayAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryKommunal": "Коммунал",
+  "categoryXavfsizlik": "Хавфсизлик",
+  "categoryUmumiy": "Умумий",
+  "newAnnouncementTitle": "Янги эълон",
+  "pollsTitle": "Сўровномалар",
+  "newPollTitle": "Янги сўровнома",
+  "pollQuestionHint": "Саволингизни ёзинг...",
+  "pollOptionHint": "{number}-вариант",
+  "@pollOptionHint": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "addOptionButton": "Вариант қўшиш",
+  "fillPollFields": "Савол ва камида 2 та вариант киритинг",
+  "pollPostedMessage": "Сўровнома жойланди",
+  "noPollsYet": "Ҳозирча сўровномалар йўқ",
+  "pollVotesCount": "{count} овоз",
+  "@pollVotesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "conversationsTitle": "Хабарлар",
+  "conversationsMenuItem": "Хабарлар",
+  "noConversationsYet": "Ҳозирча суҳбатлар йўқ",
+  "noMessagesYet": "Ҳозирча хабарлар йўқ. Биринчи бўлиб ёзинг!",
+  "messageHint": "Хабар ёзинг...",
+  "sendMessageAction": "Хабар ёзиш",
+  "switchMahallaTitle": "Маҳалла танлаш",
+  "switchMahallaMenuItem": "Маҳалла алмаштириш (Супер Админ)",
+  "switchMahallaMenuItemActive": "Бошқа маҳаллани бошқаряпсиз",
+  "exitMahallaModeAction": "Ўз маҳалламга қайтиш",
+  "noMahallasFound": "Маҳаллалар топилмади",
+  "broadcastToAllMahallasLabel": "Барча маҳаллаларга юбориш (Супер Админ)",
+  "servicesTitle": "Маҳаллий хизматлар",
+  "newServiceTitle": "Хизмат қўшиш",
+  "editServiceTitle": "Хизматни таҳрирлаш",
+  "serviceCategoryLabel": "Тоифа",
+  "serviceNameLabel": "Исм ёки ташкилот номи",
+  "serviceNameHint": "Масалан: Азиз ака (сантехник)",
+  "servicePhoneLabel": "Телефон рақами",
+  "serviceDescriptionLabel": "Тавсиф",
+  "serviceDescriptionHint": "Иш вақти, нархи ва ҳ.к...",
+  "fillServiceFields": "Исм ва телефон рақамини киритинг",
+  "servicePostedMessage": "Хизмат қўшилди",
+  "serviceUpdatedMessage": "Хизмат янгиланди",
+  "noServicesYet": "Ҳозирча хизматлар йўқ",
+  "serviceCategorySantexnik": "Сантехник",
+  "serviceCategoryElektrik": "Электрик",
+  "serviceCategoryDuradgor": "Дурадгор",
+  "serviceCategoryTozalash": "Тозалаш",
+  "serviceCategoryQurilish": "Қурилиш",
+  "serviceCategoryBoshqa": "Бошқа",
+  "editPollTitle": "Сўровномани таҳрирлаш",
+  "pollUpdatedMessage": "Сўровнома янгиланди",
+  "changeVoteConfirmTitle": "Овозни алмаштириш",
+  "changeVoteConfirmMessage": "Сиз аллақачон бошқа вариантга овоз бергансиз. Овозингизни алмаштирмоқчимисиз?",
+  "changeVoteConfirmButton": "Ҳа, алмаштириш",
+  "editAnnouncementTitle": "Эълонни таҳрирлаш",
+  "categoryLabel": "Категория",
+  "titleLabel": "Сарлавҳа",
+  "titleHint": "Масалан: Эртага сув ўчирилиши ҳақида",
+  "bodyLabel": "Матн",
+  "bodyHint": "Эълон матнини батафсил ёзинг...",
+  "photoLabel": "Расм",
+  "optionalLabel": "(ихтиёрий)",
+  "postButton": "Жойлаш",
+  "fillTitleAndBody": "Сарлавҳа ва матнни тўлдиринг",
+  "announcementPosted": "Эълон муваффақиятли жойланди",
+  "announcementUpdated": "Эълон янгиланди",
+  "requestsTitle": "Мурожаатлар",
+  "mustVerifyMahallaFirst": "Аввал маҳаллангизни тасдиқлашингиз керак",
+  "managementPanelBanner": "Бошқарув панели — барча мурожаатлар",
+  "requestsLoadError": "Мурожаатларни юклашда хатолик юз берди",
+  "joinedCount": "{count} киши қўшилди",
+  "@joinedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noRequestsWithStatus": "{status} мурожаатлар йўқ",
+  "filterAll": "Ҳаммаси",
+  "noRequestsAtAll": "Ҳозирча мурожаатлар йўқ",
+  "@noRequestsWithStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "statusYangi": "Янги",
+  "statusJarayonda": "Жараёнда",
+  "statusYakunlandi": "Якунланди",
+  "typeMaxfiy": "Махфий",
+  "typeOmmaviy": "Оммавий",
+  "priorityPast": "Паст",
+  "priorityOrtacha": "Ўртача",
+  "priorityYuqori": "Юқори",
+  "managementPanelTitle": "Бошқарув панели",
+  "changeStatusTitle": "Ҳолатни ўзгартириш",
+  "statusChangedMessage": "Ҳолат \"{status}\" га ўзгартирилди",
+  "@statusChangedMessage": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "statusChangeError": "Ҳолатни ўзгартиришда хатолик юз берди",
+  "allFilter": "Барчаси",
+  "noRequestsFound": "Мурожаатлар топилмади",
+  "tapToChangeStatus": "Ҳолатни ўзгартириш учун босинг",
+  "stepType": "Тури",
+  "stepDetails": "Тафсилотлар",
+  "stepLocation": "Жойлашув",
+  "stepReview": "Кўриб чиқиш",
+  "stepDone": "Тайёр",
+  "newRequestTitle": "Янги мурожаат",
+  "fillTitleAndDescription": "Сарлавҳа ва тавсифни тўлдиринг",
+  "sendButton": "Юбориш",
+  "chooseRequestType": "Мурожаат турини танланг",
+  "requestTypeExplain": "Бу мурожаатингизни ким кўра олишини белгилайди",
+  "typeMaxfiyDescription": "Фақат сиз ва маҳалла раиси кўради",
+  "typeOmmaviyDescription": "Маҳалладаги ҳамма кўради ва қўшилиши мумкин",
+  "titleFieldLabel": "Сарлавҳа",
+  "titleFieldHint": "Масалан: Кўча ёритилиши ишламаяпти",
+  "descriptionLabel": "Тавсиф",
+  "descriptionHint": "Муаммони батафсил тасвирлаб беринг...",
+  "attachPhotoLabel": "Расм бириктириш",
+  "priorityLevelLabel": "Муҳимлик даражаси",
+  "reviewDataTitle": "Маълумотларни текширинг",
+  "reviewType": "Тури",
+  "reviewPriority": "Муҳимлик",
+  "reviewLocation": "Жойлашув",
+  "reviewLocationSet": "Белгиланган",
+  "reviewLocationNotSet": "Белгиланмаган",
+  "reviewPhotos": "Расмлар ({count})",
+  "@reviewPhotos": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestSentTitle": "Мурожаат юборилди!",
+  "requestSentMessage": "Мурожаатингиз қабул қилинди ва кўриб чиқилмоқда",
+  "backToListButton": "Рўйхатга қайтиш",
+  "qrScanInstruction": "Маҳалла эшигидаги QR кодни рамка ичига жойлаштиринг",
+  "checkingStatus": "Текширилмоқда...",
+  "scanningStatus": "Сканерланмоқда...",
+  "enterCodeManually": "Кодни қўлда киритиш",
+  "enterMahallaCodeTitle": "Маҳалла кодини киритинг",
+  "mahallaCodeHint": "Масалан: MFY-00123",
+  "confirmButton": "Тасдиқлаш",
+  "qrGenericError": "Хатолик юз берди, қайта уриниб кўринг",
+  "confirmError": "Тасдиқлашда хатолик юз берди, қайта уриниб кўринг",
+  "mahallaFoundLabel": "Маҳалла топилди",
+  "rescanButton": "Қайта сканерлаш",
+  "changePhotoLabel": "Расмни ўзгартириш",
+  "birthDateLabel": "Туғилган сана",
+  "addressLabel": "Манзил",
+  "streetLabel": "Кўча",
+  "streetHint": "Масалан: Боғбон кўчаси",
+  "houseNumberLabel": "Уй рақами",
+  "houseNumberHint": "Масалан: 15",
+  "genderLabel": "Жинси",
+  "genderMale": "Эркак",
+  "genderFemale": "Аёл",
+  "notSpecified": "Кўрсатилмаган",
+  "selectDate": "Санани танланг",
+  "photoUploadError": "Расм юклашда хатолик юз берди",
+  "otpTitle": "Тасдиқлаш коди",
+  "otpSubtitle": "{phone} рақамига юборилган 6 хонали кодни киритинг",
+  "@otpSubtitle": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "otpInvalidCode": "Код нотўғри, қайтадан киритинг",
+  "otpResendCode": "Кодни қайта юбориш",
+  "otpResendCooldown": "Қайта юбориш ({seconds}с)",
+  "@otpResendCooldown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "forgotPasswordTitle": "Паролни тиклаш",
+  "forgotPasswordSubtitle": "Рўйхатдан ўтган телефон рақамингизни киритинг, унга тасдиқлаш коди юборамиз",
+  "sendCodeButton": "Код юбориш",
+  "newPasswordLabel": "Янги парол",
+  "newPasswordTitle": "Янги парол ўрнатинг",
+  "newPasswordSubtitle": "Ҳисобингиз учун янги парол ўйлаб топинг",
+  "savePasswordButton": "Паролни сақлаш",
+  "passwordResetSuccess": "Паролингиз муваффақиятли янгиланди",
+  "newEventTitle": "Янги тадбир",
+  "editEventTitle": "Тадбирни таҳрирлаш",
+  "eventTitleHint": "Масалан: Маҳалла йиғилиши",
+  "dateLabel": "Сана",
+  "selectTime": "Вақтни танланг",
+  "locationLabel": "Манзил",
+  "locationHint": "Тадбир ўтказиладиган жой",
+  "fillEventFields": "Сарлавҳа ва санани киритинг",
+  "eventPosted": "Тадбир жойланди",
+  "eventUpdated": "Тадбир янгиланди",
+  "neighborsTitle": "Қўшнилар",
+  "mahalladoshlar": "Маҳалладошлар",
+  "noNeighborsYet": "Ҳозирча қўшнилар йўқ",
+  "onlineNow": "Онлайн",
+  "lastSeenUnknown": "Охирги фаоллик номаълум",
+  "lastSeenJustNow": "Ҳозиргина фаол эди",
+  "lastSeenMinutesAgo": "{minutes} дақиқа олдин",
+  "@lastSeenMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "lastSeenHoursAgo": "{hours} соат олдин",
+  "@lastSeenHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "lastSeenDaysAgo": "{days} кун олдин",
+  "@lastSeenDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionPrivacy": "Махфийлик",
+  "showPhoneToNeighborsTitle": "Телефонни қўшниларга кўрсатиш",
+  "showPhoneToNeighborsSubtitle": "Ёқилса, Қўшнилар рўйхатида рақамингиз кўринади",
+  "privacySecurityTitle": "Махфийлик ва хавфсизлик",
+  "privacySecuritySubtitle": "Кўриниш, блокланганлар, парол",
+  "sectionVisibility": "Кўриниш",
+  "showLastSeenTitle": "Охирги фаолликни кўрсатиш",
+  "showLastSeenSubtitle": "Ёқилса, қўшнилар онлайн ҳолатингизни кўради",
+  "sectionBlockedUsers": "Блокланган фойдаланувчилар",
+  "blockedUsersTitle": "Блокланган фойдаланувчилар",
+  "noBlockedUsers": "Блокланган фойдаланувчилар йўқ",
+  "blockedUsersCount": "{count} та блокланган",
+  "@blockedUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "blockUserAction": "Блоклаш",
+  "blockUserConfirmTitle": "Фойдаланувчини блоклаш",
+  "blockUserConfirmMessage": "{name} сизга хабар ёза олмайди ва рўйхатингизда кўринмайди. Розимисиз?",
+  "@blockUserConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "userBlockedMessage": "{name} блокланди",
+  "@userBlockedMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "unblockAction": "Блокдан чиқариш",
+  "userUnblockedMessage": "{name} блокдан чиқарилди",
+  "@userUnblockedMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneHiddenByUser": "Бу фойдаланувчи телефонини яширган",
+  "markAllAsReadAction": "Барчасини ўқилган деб белгилаш",
+  "noNotificationsYet": "Ҳозирча билдиришномалар йўқ",
+  "searchPromptText": "Эълон, тадбир ёки мурожаат қидиринг",
+  "searchNoResults": "Ҳеч нарса топилмади",
+  "requestDetailTitle": "Мурожаат тафсилотлари",
+  "requestNotFound": "Мурожаат топилмади",
+  "joinRequestAction": "Қўшилиш",
+  "leaveRequestAction": "Чиқиш",
+  "mahallaStaffTitle": "Маҳалла ходимлари",
+  "mahallaMapTitle": "Маҳалла харитаси",
+  "locationStepTitle": "Жойлашувни белгиланг",
+  "locationStepSubtitle": "Харитани босиб нуқта қўйинг ёки жорий жойлашувингизни ишлатинг (ихтиёрий)",
+  "locationPermissionError": "Жойлашувга рухсат берилмади",
+  "clearLocationAction": "Тозалаш",
+  "boundaryEditorTitle": "Чегарани белгилаш",
+  "boundaryEditorHint": "Харитани босиб маҳалла чегараси бўйлаб нуқталар қўйинг (камида 3 та)",
+  "boundaryMinPointsError": "Камида 3 та нуқта белгиланг",
+  "boundarySavedMessage": "Чегара сақланди",
+  "saveBoundaryAction": "Чегарани сақлаш",
+  "editBoundaryAction": "Чегарани таҳрирлаш",
+  "mapLayerSatellite": "Спутник кўриниши",
+  "mapLayerStreets": "Кўча харитаси",
+  "deleteItemConfirmTitle": "Ўчириш",
+  "deleteItemConfirmMessage": "\"{title}\" бутунлай ўчирилади. Бу амални ортга қайтариб бўлмайди.",
+  "@deleteItemConfirmMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDeletedMessage": "Ўчирилди",
+  "searchNeighborHint": "Исм бўйича қидириш...",
+  "currentPasswordLabel": "Жорий парол",
+  "confirmPasswordLabel": "Паролни тасдиқланг",
+  "passwordMismatchError": "Пароллар мос келмади",
+  "newPhoneLabel": "Янги телефон рақам",
+  "phoneChangedMessage": "Телефон рақам муваффақиятли ўзгартирилди",
+  "termsBody": "Ушбу иловадан фойдаланиш орқали сиз қуйидаги шартларга розилик билдирасиз:\n\n1. Илова маҳалла аҳолиси ва ходимлари ўртасида мулоқотни осонлаштириш учун мўлжалланган.\n2. Фойдаланувчи ўз профилида тўғри ва ҳақиқий маълумот киритиши шарт.\n3. Бошқа фойдаланувчиларга нисбатан ҳақоратли, ноқонуний ёки ёлғон маълумот тарқатиш тақиқланади.\n4. Маҳалла маъмурияти (ходим/раис) томонидан жойлаштирилган эълон ва тадбирлар расмий характерга эга бўлиши мумкин.\n5. Илова маъмурияти қоидабузарлик аниқланган ҳисобларни блоклаш ёки ўчириш ҳуқуқини ўзида сақлаб қолади.",
+  "privacyPolicyBody": "Сизнинг маълумотларингиз қандай ишлатилади:\n\n1. Исм, фамилия, телефон рақам ва маҳалла маълумотлари фақат маҳалла ичидаги мулоқот учун ишлатилади.\n2. Телефон рақамингиз созламаларда рухсат бермагунингизча бошқа аҳолига кўринмайди.\n3. Охирги фаоллик вақти созламаларда ўчирилиши мумкин.\n4. Маълумотларингиз учинчи томонларга сотилмайди ёки уларга узатилмайди.\n5. Ҳисобингизни ўчиришни сўрасангиз, маълумотларингиз Firestore базасидан олиб ташланади.",
+  "deleteAccountRequested": "Сўровингиз юборилди. Администратор тез орада ҳисобингизни ўчиради.",
+  "deleteAccountAlreadyPending": "Сизнинг ўчириш сўровингиз аллақачон кўриб чиқилмоқда.",
+  "retryButton": "Қайта уриниш",
+  "cameraIntroTitle": "Камерага рухсат керак",
+  "cameraIntroBody": "Маҳаллангизга қўшилиш учун раис ёки ходим берган QR кодни сканерлаш керак. Камера фақат шу мақсадда ишлатилади — ҳеч қандай расм сақланмайди ва юборилмайди.",
+  "cameraIntroButton": "Камерани очиш",
+  "cameraErrorPermission": "Камерага рухсат берилмаган. Рухсатни телефон созламаларида (Иловалар → Mening Mahallam → Рухсатлар → Камера) ёқишингиз мумкин. Ёки маҳалла кодини қўлда киритинг.",
+  "cameraErrorUnsupported": "Бу қурилмада QR сканерлаш қўллаб-қувватланмайди. Маҳалла кодини қўлда киритинг.",
+  "cameraErrorGeneric": "Камера очилмади. Бошқа илова камерани ишлатаётган бўлиши мумкин — уни ёпинг ва қайта уриниб кўринг.",
+  "noAnnouncementsHint": "Маҳалла раиси ёки ходимлари эълон жойлаганда, у шу ерда биринчи бўлиб пайдо бўлади.",
+  "noRequestsHint": "Кўча ёритгичи, тозалик, сув ёки бошқа масала бўйича мурожаат юборинг — маҳалла ходимлари жавоб беради.",
+  "noNeighborsHint": "Маҳалладошларингиз иловага қўшилган сари улар шу ерда кўринади. Қўшниларингизни таклиф қилинг!",
+  "noPollsHint": "Маҳалла сўровномалари шу ерда чиқади — овоз бериб, қарор қабул қилишда иштирок этасиз.",
+  "noServicesHint": "Маҳалладаги усталар, дўконлар ва хизматлар шу ерда тўпланади.",
+  "noConversationsHint": "Қўшнилар бўлимидан бирор кишини танлаб, унга тўғридан-тўғри ёзишингиз мумкин.",
+  "noNotificationsHint": "Янги эълон, тадбир ёки мурожаатингизга жавоб келганда шу ерда хабар берамиз.",
+  "currencySom": "сўм",
+  "premiumConfigTitle": "Тўлов реквизитлари",
+  "premiumConfigHint": "Бу ерда ўзгартирилган қийматлар барча фойдаланувчиларга дарҳол кўринади — иловани янгилаш шарт эмас.",
+  "premiumConfigSaved": "Реквизитлар сақланди",
+  "premiumCardNumberLabel": "Карта рақами",
+  "premiumCardNumberInvalid": "Карта рақами 16 та рақамдан иборат бўлиши керак",
+  "premiumCardHolderLabel": "Карта эгасининг исми",
+  "premiumCardHolderInvalid": "Карта эгасининг исмини киритинг",
+  "premiumPriceLabel": "Ойлик нарх",
+  "premiumPriceInvalid": "Тўғри нарх киритинг",
+  "premiumTelegramLabel": "Telegram фойдаланувчи номи",
+  "premiumChoosePlan": "Муддатни танланг",
+  "premiumPlanMonths": "{count} ой",
+  "premiumPriceValue": "{amount} сўм",
+  "premiumBenefitAdDiscount": "Хизмат рекламасини жойлаштириш 50% арзон",
+  "premiumBenefitSupport": "Устувор қўллаб-қувватлаш — мурожаатингиз биринчи кўрилади",
+  "premiumBenefitAvatar": "Профил суратида олтин премиум ҳалқа",
+  "premiumBenefitEarlyAccess": "Янги имкониятлар биринчи бўлиб сизга очилади",
+  "premiumPerMonthAmount": "ойига {amount} сўм",
+  "advertiseTitle": "Хизматингизни шу ерда реклама қилинг",
+  "advertisePrice": "Ҳафтасига атиги {amount} сўм",
+  "advertisePremiumDiscount": "Премиум чегирмангиз — оддий нарх {amount} сўм",
+  "advertiseHowTo": "Реклама жойлаштириш учун маҳалла раиси ёки илова администратори билан боғланинг.",
+  "photoTooLarge": "Файл жуда катта. 5 МБ дан кичик расм танланг",
+  "premiumBenefitAnimatedAvatar": "Жонли (GIF) профил сурати",
+  "premiumGrantTitle": "Премиумни қўлда бериш",
+  "premiumGrantSelfAction": "Ўзимга бериш",
+  "premiumGrantPhoneLabel": "Телефон рақами",
+  "premiumGrantAction": "Шу рақамга бериш",
+  "premiumGrantedSelf": "Сизга {months} ойлик премиум берилди",
+  "premiumGrantedTo": "{name} — {months} ойлик премиум берилди",
+  "premiumGrantUserNotFound": "Бу рақам билан фойдаланувчи топилмади",
+  "premiumUntilShort": "{date} гача",
+  "personalInfoSection": "Шахсий маълумотлар",
+  "addressSection": "Манзил",
+  "mahallaCenterTitle": "Маҳалла маркази",
+  "mahallaCenterHint": "Харитага босиб марказни белгиланг ёки тепадаги нишон тугмаси орқали координатани киритинг.",
+  "mahallaCenterCoordsHint": "Google Maps'дан нусхалаган координатани қўйинг (кенглик, узунлик).",
+  "mahallaCenterSaved": "Маҳалла маркази сақланди",
+  "boundaryModeLabel": "Чегара",
+  "centerModeLabel": "Марказ",
+  "saveCenterAction": "Марказни сақлаш",
+  "appearanceSystemHint": "Телефон созламасига эргашади",
+  "textSizePreviewTitle": "Маҳалла йиғилиши",
+  "textSizePreviewBody": "Асосий матн шундай кўринади. Сизга қулай ўлчамни танланг.",
+  "okButton": "OK"
+}
