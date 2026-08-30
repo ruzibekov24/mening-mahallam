@@ -136,8 +136,15 @@ export async function listCollection(env, collection, { pageSize = 300 } = {}) {
  * `premiumRequests` filtered by `status`. `structuredQuery` follows
  * Firestore's StructuredQuery REST shape; `parentPath` defaults to the
  * documents root (top-level collections).
+ *
+ * Pass `{ includeMahallaId: true }` in `opts` for collection-group
+ * queries (`allDescendants: true`) run at the documents root — each
+ * returned doc gets a `mahallaId` field parsed out of the full
+ * `mahallas/{mahallaId}/...` resource path, since `decodeDoc` alone only
+ * keeps the trailing document id and would otherwise lose which mahalla
+ * the doc came from.
  */
-export async function runQuery(env, structuredQuery, parentPath = '') {
+export async function runQuery(env, structuredQuery, parentPath = '', opts = {}) {
   const url = `${BASE}/${documentsRoot(env)}${parentPath ? '/' + parentPath : ''}:runQuery`;
   const res = await fsFetch(env, url, {
     method: 'POST',
@@ -145,7 +152,16 @@ export async function runQuery(env, structuredQuery, parentPath = '') {
   });
   if (!res.ok) throw new Error(`Firestore runQuery failed: ${res.status}`);
   const rows = await res.json();
-  return rows.filter((r) => r.document).map((r) => decodeDoc(r.document));
+  return rows
+    .filter((r) => r.document)
+    .map((r) => {
+      const doc = decodeDoc(r.document);
+      if (opts.includeMahallaId) {
+        const match = r.document.name.match(/\/mahallas\/([^/]+)\//);
+        doc.mahallaId = match ? match[1] : null;
+      }
+      return doc;
+    });
 }
 
 /**

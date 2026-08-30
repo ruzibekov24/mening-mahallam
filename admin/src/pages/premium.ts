@@ -52,7 +52,7 @@ function renderRow(r: PremiumRequest): string {
   return `
     <tr data-row-id="${escapeHtml(r.id)}">
       <td>${escapeHtml(name)}</td>
-      <td>${escapeHtml(r.uid)}</td>
+      <td class="mono">${escapeHtml(r.uid)}</td>
       <td>${formatDate(r.createdAt)}</td>
       <td><span class="badge badge-pending">${escapeHtml(r.status)}</span></td>
       <td class="actions-cell">

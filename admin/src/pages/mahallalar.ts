@@ -45,7 +45,7 @@ function renderRow(m: Mahalla): string {
   const members = (m['membersCount'] as number) ?? (m['memberCount'] as number);
   return `
     <tr>
-      <td>${escapeHtml(m.id)}</td>
+      <td class="mono">${escapeHtml(m.id)}</td>
       <td>${escapeHtml(m.name ?? '—')}</td>
       <td>${escapeHtml(region)}</td>
       <td>${members != null ? escapeHtml(members) : '—'}</td>

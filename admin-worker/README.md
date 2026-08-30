@@ -224,6 +224,236 @@ admin's uid.
 Response: `{ "report": {...updated doc} }`. `400` if `outcome` is
 missing/invalid, `404` if the report doesn't exist.
 
+### `GET /api/announcements?mahallaId=<id>`
+
+Lists `mahallas/{mahallaId}/announcements` docs, newest first
+(`createdAt` descending). Matches
+`lib/features/announcements/data/announcement_repository.dart`'s
+`Announcement.fromFirestore`.
+
+If `mahallaId` is omitted, runs a Firestore **collection group** query
+across every mahalla's `announcements` subcollection instead — each doc
+in the response then carries a `mahallaId` field so the frontend knows
+which mahalla it belongs to (needed for the delete route below, since
+these are subcollection docs, not top-level). When `mahallaId` is
+provided, the response docs also carry `mahallaId` (just the value you
+passed) for a consistent shape either way.
+
+```json
+{
+  "announcements": [
+    {
+      "id": "...", "mahallaId": "...", "title": "...", "body": "...",
+      "category": "kommunal", "createdAt": "...", "imageUrl": "...",
+      "authorUid": "...", "reactedUids": { "uid1": "👍" }
+    }
+  ]
+}
+```
+
+`category` ∈ `kommunal | xavfsizlik | umumiy`. `body` may be Quill
+Delta JSON (rich text) rather than plain text — see
+`Announcement.plainTextPreview` in the Dart source if you need a plain
+preview client-side.
+
+### `DELETE /api/announcements/:mahallaId/:id`
+
+`200 { "ok": true }`. Succeeds even if the doc doesn't already exist
+(matches `deleteDoc`'s existing silent-404 behavior).
+
+### `GET /api/events?mahallaId=<id>`
+
+Lists `mahallas/{mahallaId}/events` docs, newest first (`dateTime`
+descending — note this orders by the event's scheduled date/time, not
+`createdAt`, matching `EventRepository.watchEvents`). Same
+`mahallaId`-omitted collection-group behavior as `/api/announcements`.
+
+```json
+{
+  "events": [
+    {
+      "id": "...", "mahallaId": "...", "title": "...", "dateTime": "...",
+      "location": "...", "participantsCount": 0, "createdAt": "...",
+      "authorUid": "..."
+    }
+  ]
+}
+```
+
+### `DELETE /api/events/:mahallaId/:id`
+
+`200 { "ok": true }`.
+
+### `GET /api/requests?mahallaId=<id>&status=<value>`
+
+Lists `mahallas/{mahallaId}/requests` docs (the "murojaat" feature),
+newest first. Both query params are optional and independent:
+`mahallaId` scopes to one mahalla vs. a collection-group query across
+all of them (same pattern as above); `status` filters by exact match.
+
+```json
+{
+  "requests": [
+    {
+      "id": "...", "mahallaId": "...", "title": "...", "description": "...",
+      "status": "yangi", "type": "maxfiy", "priority": "ortacha",
+      "joinedCount": 0, "joinedUids": [], "createdAt": "...",
+      "authorUid": "...", "imageUrls": [], "latitude": null,
+      "longitude": null, "authorWasPremium": false
+    }
+  ]
+}
+```
+
+- `status` ∈ `yangi | jarayonda | yakunlandi`.
+- `type` ∈ `maxfiy` (private — only the author + rais see it) `| ommaviy`
+  (public — visible to the whole mahalla).
+- `priority` ∈ `past | ortacha | yuqori`.
+- `description` may be Quill Delta JSON, same caveat as announcements'
+  `body`.
+
+Matches `lib/features/requests/data/requests_repository.dart`'s
+`MahallaRequest.fromFirestore`.
+
+### `POST /api/requests/:mahallaId/:id/status`
+
+Body: `{ "status": "yangi" | "jarayonda" | "yakunlandi" }` (required).
+
+Response: `{ "request": {...updated doc, with mahallaId} }`. `400` if
+`status` is missing/invalid, `404` if the request doesn't exist.
+
+**Note**: unlike `RequestsRepository.updateRequestStatus` in the
+Flutter app, this endpoint does **not** send the author a push
+notification — same out-of-scope caveat as the premium
+approve/reject endpoints (`NotificationRepository` is
+Dart/Firebase-Admin-SDK-based).
+
+### `GET /api/polls?mahallaId=<id>`
+
+Lists `mahallas/{mahallaId}/polls` docs, newest first. Same
+`mahallaId`-omitted collection-group behavior as above. Each poll
+includes both the **raw doc** (so nothing is lost/reshaped) and a
+computed `results` object with vote counts, so the frontend doesn't
+need to re-implement `Poll.voteCounts`/`Poll.totalVotes` from
+`lib/features/polls/data/poll_repository.dart`.
+
+```json
+{
+  "polls": [
+    {
+      "id": "...", "mahallaId": "...", "question": "...",
+      "options": ["A", "B", "C"], "authorUid": "...", "createdAt": "...",
+      "allowMultiple": false, "isAnonymous": false, "closesAt": null,
+      "votes": { "uid1": [0], "uid2": [0, 2] },
+      "results": { "voteCounts": [2, 0, 1], "totalVotes": 2 }
+    }
+  ]
+}
+```
+
+`results.voteCounts[i]` is the number of voters who selected option `i`
+(a voter with `allowMultiple` can count toward multiple options).
+`results.totalVotes` is the number of voters with at least one
+selection (matches `Poll.totalVotes`, i.e. it's *voters*, not
+*selections*). `votes` is the raw `uid -> [optionIndex, ...]` map,
+already normalized to the "new" list format even for legacy
+single-int-per-uid docs — see `decodeValue`/the Dart-side
+`Poll._parseVotes` comment; **this Worker's decode does NOT do that
+legacy-int normalization**, so if any pre-v1.2 poll docs with a bare
+integer vote value still exist, that voter's raw `votes` entry here
+will be a plain number rather than `[number]`, and it's excluded from
+`results` (only array values are counted). In practice this only
+matters for very old, unmigrated poll docs.
+
+### `GET /api/service-ads?mahallaId=<id>`
+
+Lists `mahallas/{mahallaId}/serviceAds` docs (paid classified ads),
+newest first (`createdAt` descending — includes expired ads, unlike
+the Flutter app's `watchActiveAds`; this mirrors
+`ServiceAdRepository.watchAllAds`, the admin-facing stream). Same
+`mahallaId`-omitted collection-group behavior as above.
+
+```json
+{
+  "serviceAds": [
+    {
+      "id": "...", "mahallaId": "...", "title": "...", "description": "...",
+      "phone": "...", "ownerName": "...", "activeUntil": "...",
+      "createdAt": "..."
+    }
+  ]
+}
+```
+
+### `DELETE /api/service-ads/:mahallaId/:id`
+
+`200 { "ok": true }`.
+
+### `GET /api/users?search=<value>`
+
+Searches the top-level `users` collection. **Limitation: exact-prefix
+match only, case-sensitive, on a single field — not a full substring
+search.** Firestore's REST API has no native substring/full-text query,
+so this uses the standard Firestore "prefix range" trick
+(`field >= search AND field < search + ''`, ordered by that same
+field) rather than building something more elaborate (e.g. a separate
+search index) that felt out of scope here.
+
+Field choice: if `search` looks like it could be a phone number (starts
+with a digit or `+`, and the rest is digits/spaces/dashes), it queries
+the `phone` field; otherwise it queries `firstName`. There's no
+combined "full name" field on the user doc
+(`lib/features/home/data/home_repository.dart`'s `UserProfile` only has
+separate `firstName`/`lastName`), so a search for someone's last name
+alone won't match — search by first name or phone. The response's
+`searchedField` tells you which field was used. Results are capped at
+50.
+
+```json
+{
+  "users": [
+    {
+      "id": "...", "firstName": "...", "lastName": "...", "phone": "...",
+      "mahallaId": "...", "role": "citizen", "staffTitle": null,
+      "verifiedBadge": false, "premiumUntil": null, "...": "...other UserProfile fields"
+    }
+  ],
+  "searchedField": "phone"
+}
+```
+
+`400` if `search` is missing/empty.
+
+### `POST /api/users/:uid/role`
+
+Body: `{ "role": "citizen" | "staff" | "rais" | "superAdmin" }`
+(required). Sets the user doc's `role` field directly.
+
+Response: `{ "user": {...updated doc} }`. `400` if `role` is
+missing/invalid, `404` if the user doesn't exist.
+
+**Security-relevant, deliberate design decision — `superAdmin` grant is
+allowed here.** Per `firestore.rules` and the comment on `UserRole` in
+`lib/features/home/data/home_repository.dart`, the mobile app's own
+security rules **never** allow granting `superAdmin` — it's meant to be
+set by hand via Firebase Console only. This Worker's service-account
+credentials bypass Firestore Security Rules entirely (same as the
+Admin SDK), so this endpoint *can* technically grant `superAdmin`
+through the dashboard.
+
+This was kept intentional rather than blocked: the rules restriction
+exists to stop a compromised/malicious **mobile client** from
+self-granting the role — it's a client-trust boundary, not a
+statement that superAdmin grants should never happen through any
+programmatic path. A superAdmin acting through this already
+auth-gated (`requireSuperAdmin`) admin panel, promoting another
+trusted person to superAdmin, is a legitimate, intentional admin
+action — arguably the whole point of having this endpoint instead of
+requiring a trip to Firebase Console. **Reconsider this if it turns out
+to be too permissive** — e.g. by carving `superAdmin` out into a
+separate, more locked-down endpoint, or requiring some extra
+confirmation step in the frontend before this call is made.
+
 ## CORS
 
 All routes (including error responses) send CORS headers allowing
@@ -281,6 +511,31 @@ serving the last-known row, or zeros if none exists yet.
    returns a 400 with a direct "create it here" link the first time this
    happens — check `firestore.indexes.json` and deploy it there too if
    you want it version-controlled).
+
+   The same applies, more broadly, to the new `mahallaId`-omitted
+   (collection-group) modes of `GET /api/announcements`, `/api/events`,
+   `/api/requests`, `/api/polls`, and `/api/service-ads`: each is a
+   collection-group query with an `orderBy` (plus, for `/api/requests`,
+   an optional equality filter on `status` too), which needs a
+   **collection-group** composite index (not the regular per-collection
+   index the Flutter app's own per-mahalla queries already have) the
+   first time it's called without `mahallaId`. Firestore's 400 response
+   includes a direct "create it here" link the first time each shape is
+   hit — same as above, add to `firestore.indexes.json` if you want
+   these version-controlled. The `mahallaId`-scoped mode of each of
+   these endpoints reuses the exact same query shape the Flutter app
+   already runs per-mahalla (e.g. `AnnouncementRepository.
+   watchAnnouncements`), so those should already have indexes (simple
+   single-field `orderBy` doesn't need a composite index at all, except
+   `/api/requests?status=...&mahallaId=...` which needs the same
+   `status` + `createdAt` composite as `/api/premium-requests`).
+
+   `GET /api/users?search=...`'s prefix-range query (`>=`/`<` on
+   `phone` or `firstName`, ordered by the same field) also needs a
+   single-field index on whichever field is queried — Firestore
+   auto-creates single-field indexes by default, so this should work
+   out of the box unless single-field indexing has been explicitly
+   disabled for `phone`/`firstName` in `firestore.indexes.json`.
 6. **Firestore `IN` query limits** — the collection-group "active
    requests" count uses an `IN` filter with 2 values, well under
    Firestore's 30-value cap, so no pagination/batching concerns there.

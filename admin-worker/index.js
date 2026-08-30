@@ -236,6 +236,168 @@ async function route(request, env, pathname, searchParams, uid) {
     return jsonResponse({ report: updated }, 200, env);
   }
 
+  // GET /api/announcements?mahallaId=X
+  if (method === 'GET' && pathname === '/api/announcements') {
+    const mahallaId = searchParams.get('mahallaId');
+    const docs = await listMahallaSubcollection(env, 'announcements', mahallaId, 'createdAt');
+    return jsonResponse({ announcements: docs }, 200, env);
+  }
+
+  // DELETE /api/announcements/:mahallaId/:id
+  const announcementDeleteMatch = pathname.match(/^\/api\/announcements\/([^/]+)\/([^/]+)$/);
+  if (method === 'DELETE' && announcementDeleteMatch) {
+    const [, mahallaId, id] = announcementDeleteMatch;
+    await deleteDoc(env, `mahallas/${mahallaId}/announcements`, id);
+    return jsonResponse({ ok: true }, 200, env);
+  }
+
+  // GET /api/events?mahallaId=X
+  if (method === 'GET' && pathname === '/api/events') {
+    const mahallaId = searchParams.get('mahallaId');
+    const docs = await listMahallaSubcollection(env, 'events', mahallaId, 'dateTime');
+    return jsonResponse({ events: docs }, 200, env);
+  }
+
+  // DELETE /api/events/:mahallaId/:id
+  const eventDeleteMatch = pathname.match(/^\/api\/events\/([^/]+)\/([^/]+)$/);
+  if (method === 'DELETE' && eventDeleteMatch) {
+    const [, mahallaId, id] = eventDeleteMatch;
+    await deleteDoc(env, `mahallas/${mahallaId}/events`, id);
+    return jsonResponse({ ok: true }, 200, env);
+  }
+
+  // GET /api/requests?mahallaId=X&status=Y
+  if (method === 'GET' && pathname === '/api/requests') {
+    const mahallaId = searchParams.get('mahallaId');
+    const status = searchParams.get('status');
+    const where = status
+      ? {
+          fieldFilter: {
+            field: { fieldPath: 'status' },
+            op: 'EQUAL',
+            value: { stringValue: status },
+          },
+        }
+      : undefined;
+    const docs = await listMahallaSubcollection(env, 'requests', mahallaId, 'createdAt', where);
+    return jsonResponse({ requests: docs }, 200, env);
+  }
+
+  // POST /api/requests/:mahallaId/:id/status  { status: "yangi" | "jarayonda" | "yakunlandi" }
+  const requestStatusMatch = pathname.match(/^\/api\/requests\/([^/]+)\/([^/]+)\/status$/);
+  if (method === 'POST' && requestStatusMatch) {
+    const [, mahallaId, id] = requestStatusMatch;
+    const body = await safeJson(request);
+    const status = body?.status;
+    if (!['yangi', 'jarayonda', 'yakunlandi'].includes(status)) {
+      throw new HttpError(400, 'status must be one of "yangi", "jarayonda", "yakunlandi"');
+    }
+    const existing = await getDoc(env, `mahallas/${mahallaId}/requests`, id);
+    if (!existing) throw new HttpError(404, 'Request not found');
+    const updated = await patchDoc(env, `mahallas/${mahallaId}/requests`, id, { status });
+    updated.mahallaId = mahallaId;
+    return jsonResponse({ request: updated }, 200, env);
+  }
+
+  // GET /api/polls?mahallaId=X
+  //
+  // Returns each poll's raw doc plus a computed `results` summary
+  // (per-option vote counts + total voters) so the frontend doesn't have
+  // to replicate the `votes` map -> counts logic from
+  // lib/features/polls/data/poll_repository.dart's `Poll.voteCounts` /
+  // `Poll.totalVotes` getters.
+  if (method === 'GET' && pathname === '/api/polls') {
+    const mahallaId = searchParams.get('mahallaId');
+    const docs = await listMahallaSubcollection(env, 'polls', mahallaId, 'createdAt');
+    const polls = docs.map((doc) => ({ ...doc, results: computePollResults(doc) }));
+    return jsonResponse({ polls }, 200, env);
+  }
+
+  // GET /api/service-ads?mahallaId=X
+  if (method === 'GET' && pathname === '/api/service-ads') {
+    const mahallaId = searchParams.get('mahallaId');
+    const docs = await listMahallaSubcollection(env, 'serviceAds', mahallaId, 'createdAt');
+    return jsonResponse({ serviceAds: docs }, 200, env);
+  }
+
+  // DELETE /api/service-ads/:mahallaId/:id
+  const serviceAdDeleteMatch = pathname.match(/^\/api\/service-ads\/([^/]+)\/([^/]+)$/);
+  if (method === 'DELETE' && serviceAdDeleteMatch) {
+    const [, mahallaId, id] = serviceAdDeleteMatch;
+    await deleteDoc(env, `mahallas/${mahallaId}/serviceAds`, id);
+    return jsonResponse({ ok: true }, 200, env);
+  }
+
+  // GET /api/users?search=X
+  //
+  // Firestore REST doesn't support arbitrary substring search, so this
+  // does the standard Firestore "prefix range" trick
+  // (`field >= search AND field < search + ''`) against either
+  // `phone` or `firstName`, picked by whether `search` looks numeric.
+  // This means **exact-prefix-match only**, case-sensitive, and only
+  // against the start of one field — not a full substring/fuzzy search.
+  if (method === 'GET' && pathname === '/api/users') {
+    const search = searchParams.get('search');
+    if (!search) throw new HttpError(400, 'search is required');
+    const field = /^[+\d][\d\s-]*$/.test(search) ? 'phone' : 'firstName';
+    const structuredQuery = {
+      from: [{ collectionId: 'users' }],
+      where: {
+        compositeFilter: {
+          op: 'AND',
+          filters: [
+            {
+              fieldFilter: {
+                field: { fieldPath: field },
+                op: 'GREATER_THAN_OR_EQUAL',
+                value: { stringValue: search },
+              },
+            },
+            {
+              fieldFilter: {
+                field: { fieldPath: field },
+                op: 'LESS_THAN',
+                value: { stringValue: search + '' },
+              },
+            },
+          ],
+        },
+      },
+      orderBy: [{ field: { fieldPath: field }, direction: 'ASCENDING' }],
+      limit: 50,
+    };
+    const docs = await runQuery(env, structuredQuery);
+    return jsonResponse({ users: docs, searchedField: field }, 200, env);
+  }
+
+  // POST /api/users/:uid/role  { role: "citizen" | "staff" | "rais" | "superAdmin" }
+  //
+  // **Security-relevant, deliberate**: `firestore.rules` never allows the
+  // mobile client to grant `superAdmin` (see the comment on `UserRole` in
+  // lib/features/home/data/home_repository.dart) — but this Worker's
+  // service-account credentials bypass Firestore rules entirely (same as
+  // the Admin SDK), so this endpoint technically CAN grant it. That's
+  // treated as intentional here: a superAdmin acting through this
+  // trusted admin panel promoting someone else to superAdmin is a
+  // legitimate admin action; the client-side rule exists to stop a
+  // compromised/malicious mobile client from self-granting the role, not
+  // to stop the admin backend itself. See README "Assumptions/TODOs" if
+  // this should be reconsidered (e.g. requiring a second confirmation
+  // step, or disallowing superAdmin grants here too).
+  const userRoleMatch = pathname.match(/^\/api\/users\/([^/]+)\/role$/);
+  if (method === 'POST' && userRoleMatch) {
+    const uidToUpdate = userRoleMatch[1];
+    const body = await safeJson(request);
+    const role = body?.role;
+    if (!['citizen', 'staff', 'rais', 'superAdmin'].includes(role)) {
+      throw new HttpError(400, 'role must be one of "citizen", "staff", "rais", "superAdmin"');
+    }
+    const existing = await getDoc(env, 'users', uidToUpdate);
+    if (!existing) throw new HttpError(404, 'User not found');
+    const updated = await patchDoc(env, 'users', uidToUpdate, { role });
+    return jsonResponse({ user: updated }, 200, env);
+  }
+
   throw new HttpError(404, 'Not found');
 }
 
@@ -245,6 +407,54 @@ async function safeJson(request) {
   } catch {
     return null;
   }
+}
+
+/**
+ * Lists a `mahallas/{mahallaId}/{collectionId}` subcollection.
+ *
+ * If `mahallaId` is given, queries just that mahalla's subcollection
+ * (`parentPath = mahallas/{mahallaId}`). If omitted, runs a Firestore
+ * *collection group* query (`allDescendants: true`) across every
+ * mahalla's subcollection of that name, at the documents root — same
+ * pattern as `computeAndStoreStats`'s "active requests" count. Results
+ * are ordered by `orderByField` descending, newest first, and each doc
+ * carries a `mahallaId` field either way.
+ */
+async function listMahallaSubcollection(env, collectionId, mahallaId, orderByField, where) {
+  const structuredQuery = {
+    from: [{ collectionId, ...(mahallaId ? {} : { allDescendants: true }) }],
+    ...(where ? { where } : {}),
+    orderBy: [{ field: { fieldPath: orderByField }, direction: 'DESCENDING' }],
+  };
+  if (mahallaId) {
+    const docs = await runQuery(env, structuredQuery, `mahallas/${mahallaId}`);
+    return docs.map((doc) => ({ ...doc, mahallaId }));
+  }
+  return runQuery(env, structuredQuery, '', { includeMahallaId: true });
+}
+
+/**
+ * Computes per-option vote counts + total voter count from a poll doc's
+ * `votes` map (`uid -> [optionIndex, ...]`), mirroring
+ * `Poll.voteCounts` / `Poll.totalVotes` in
+ * lib/features/polls/data/poll_repository.dart. Returns the raw doc
+ * unmodified elsewhere — this is purely additive.
+ */
+function computePollResults(pollDoc) {
+  const options = Array.isArray(pollDoc.options) ? pollDoc.options : [];
+  const votes = pollDoc.votes && typeof pollDoc.votes === 'object' ? pollDoc.votes : {};
+  const voteCounts = new Array(options.length).fill(0);
+  let totalVotes = 0;
+  for (const selected of Object.values(votes)) {
+    const indexes = Array.isArray(selected) ? selected : [];
+    if (indexes.length > 0) totalVotes += 1;
+    for (const optionIndex of indexes) {
+      if (Number.isInteger(optionIndex) && optionIndex >= 0 && optionIndex < voteCounts.length) {
+        voteCounts[optionIndex] += 1;
+      }
+    }
+  }
+  return { voteCounts, totalVotes };
 }
 
 /**

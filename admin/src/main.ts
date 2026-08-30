@@ -6,6 +6,11 @@ import { renderMahallalar } from './pages/mahallalar';
 import { renderPremium } from './pages/premium';
 import { renderBannerlar } from './pages/bannerlar';
 import { renderShikoyatlar } from './pages/shikoyatlar';
+import { renderAnnouncements } from './pages/announcements';
+import { renderMurojaatlar } from './pages/murojaatlar';
+import { renderFoydalanuvchilar } from './pages/foydalanuvchilar';
+import { renderSorovnomalar } from './pages/sorovnomalar';
+import { renderXizmatlar } from './pages/xizmatlar';
 
 const root = document.getElementById('app')!;
 
@@ -17,6 +22,11 @@ const ROUTES: Record<string, PageRenderer> = {
   '#/premium': renderPremium,
   '#/bannerlar': renderBannerlar,
   '#/shikoyatlar': renderShikoyatlar,
+  '#/announcements': renderAnnouncements,
+  '#/murojaatlar': renderMurojaatlar,
+  '#/foydalanuvchilar': renderFoydalanuvchilar,
+  '#/sorovnomalar': renderSorovnomalar,
+  '#/xizmatlar': renderXizmatlar,
 };
 
 let currentUser: User | null = null;

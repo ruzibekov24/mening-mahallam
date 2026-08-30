@@ -11,6 +11,11 @@ export const NAV_ITEMS: NavItem[] = [
   { path: '#/premium', label: "Premium so'rovlar" },
   { path: '#/bannerlar', label: 'Bannerlar' },
   { path: '#/shikoyatlar', label: 'Shikoyatlar' },
+  { path: '#/announcements', label: "E'lonlar" },
+  { path: '#/murojaatlar', label: 'Murojaatlar' },
+  { path: '#/foydalanuvchilar', label: 'Foydalanuvchilar' },
+  { path: '#/sorovnomalar', label: "So'rovnomalar" },
+  { path: '#/xizmatlar', label: 'Xizmatlar' },
 ];
 
 export function renderLayout(root: HTMLElement, userEmail: string | null): HTMLElement {
@@ -28,7 +33,7 @@ export function renderLayout(root: HTMLElement, userEmail: string | null): HTMLE
         </nav>
         <div class="sidebar-footer">
           <div class="user-email">${userEmail ?? ''}</div>
-          <button class="btn btn-secondary btn-block" id="logout-btn">Chiqish</button>
+          <button class="btn btn-ghost btn-block" id="logout-btn">Chiqish</button>
         </div>
       </aside>
       <main class="main" id="main-content"></main>
