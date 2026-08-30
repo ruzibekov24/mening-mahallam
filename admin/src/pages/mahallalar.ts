@@ -35,6 +35,12 @@ export async function renderMahallalar(container: HTMLElement): Promise<void> {
         </table>
       </div>
     `;
+    body.querySelectorAll<HTMLTableRowElement>('tr.row-clickable').forEach((row) => {
+      row.addEventListener('click', () => {
+        const href = row.dataset.href;
+        if (href) window.location.hash = href;
+      });
+    });
   } catch (err) {
     renderError(body, err);
   }
@@ -44,7 +50,7 @@ function renderRow(m: Mahalla): string {
   const region = (m['region'] as string) ?? (m['district'] as string) ?? '—';
   const members = (m['membersCount'] as number) ?? (m['memberCount'] as number);
   return `
-    <tr>
+    <tr class="row-clickable" data-href="#/mahallalar/${encodeURIComponent(m.id)}">
       <td class="mono">${escapeHtml(m.id)}</td>
       <td>${escapeHtml(m.name ?? '—')}</td>
       <td>${escapeHtml(region)}</td>

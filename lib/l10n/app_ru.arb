@@ -712,5 +712,8 @@
   "reportSubmitAction": "Отправить",
   "reportSubmittedMessage": "Ваша жалоба принята, мы её рассмотрим",
   "reportErrorMessage": "Ошибка при отправке жалобы",
-  "reportChooseReasonError": "Пожалуйста, выберите причину"
+  "reportChooseReasonError": "Пожалуйста, выберите причину",
+  "serviceRatingCount": "{count} оценок",
+  "serviceNoRatingsYet": "Пока нет оценок",
+  "yourRatingLabel": "Ваша оценка"
 }

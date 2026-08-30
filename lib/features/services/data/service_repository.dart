@@ -70,6 +70,12 @@ class LocalService {
   final String authorUid;
   final DateTime createdAt;
 
+  /// uid -> tanlagan yulduz bahosi (1-5). `Announcement.reactedUids`
+  /// bilan bir xil naqsh: subcollection emas, to'g'ridan-to'g'ri
+  /// hujjat maydonida saqlanadi va targeted field-path yozuv orqali
+  /// yangilanadi.
+  final Map<String, int> ratings;
+
   LocalService({
     required this.id,
     required this.name,
@@ -78,10 +84,22 @@ class LocalService {
     required this.description,
     required this.authorUid,
     required this.createdAt,
+    this.ratings = const {},
   });
+
+  /// O'rtacha baho (0 dan 5 gacha). Hali baho bo'lmasa 0.
+  double get averageRating {
+    if (ratings.isEmpty) return 0;
+    final sum = ratings.values.fold<int>(0, (acc, v) => acc + v);
+    return sum / ratings.length;
+  }
+
+  /// Nechta odam baho berganini bildiradi.
+  int get ratingCount => ratings.length;
 
   factory LocalService.fromFirestore(String id, Map<String, dynamic> data) {
     final timestamp = data['createdAt'] as Timestamp?;
+    final rawRatings = data['ratings'] as Map<String, dynamic>?;
     return LocalService(
       id: id,
       name: data['name'] ?? '',
@@ -90,6 +108,9 @@ class LocalService {
       description: data['description'] ?? '',
       authorUid: data['authorUid'] ?? '',
       createdAt: timestamp?.toDate() ?? DateTime.now(),
+      ratings: rawRatings == null
+          ? const {}
+          : rawRatings.map((uid, value) => MapEntry(uid, (value as num).toInt())),
     );
   }
 }
@@ -175,5 +196,25 @@ class ServiceRepository {
         .collection('services')
         .doc(serviceId)
         .delete();
+  }
+
+  /// Foydalanuvchining yulduz bahosini yozadi yoki ustidan yozadi
+  /// (1-5). `Announcement.toggleReaction` bilan bir xil naqsh —
+  /// targeted field-path yozuv, butun hujjatni qayta yozmaydi.
+  Future<void> rateService({
+    required String mahallaId,
+    required String serviceId,
+    required String uid,
+    required int stars,
+  }) async {
+    if (stars < 1 || stars > 5) {
+      throw ArgumentError.value(stars, 'stars', 'Baho 1 dan 5 gacha bo\'lishi kerak');
+    }
+    await _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('services')
+        .doc(serviceId)
+        .update({'ratings.$uid': stars});
   }
 }

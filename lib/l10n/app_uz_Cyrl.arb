@@ -712,5 +712,8 @@
   "reportSubmitAction": "Юбориш",
   "reportSubmittedMessage": "Шикоятингиз қабул қилинди, кўриб чиқамиз",
   "reportErrorMessage": "Шикоят юборишда хатолик юз берди",
-  "reportChooseReasonError": "Илтимос, сабабни танланг"
+  "reportChooseReasonError": "Илтимос, сабабни танланг",
+  "serviceRatingCount": "{count} баҳо",
+  "serviceNoRatingsYet": "Ҳали баҳо йўқ",
+  "yourRatingLabel": "Сизнинг баҳойингиз"
 }

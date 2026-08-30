@@ -24,7 +24,8 @@ import {
   deleteDoc,
   FieldDelete,
 } from './lib/firestore.js';
-import { getStats, upsertStats } from './lib/supabase.js';
+import { getStats, upsertStats, insertStatsHistory, getStatsHistory } from './lib/supabase.js';
+import { logAudit } from './lib/audit.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -94,10 +95,52 @@ async function route(request, env, pathname, searchParams, uid) {
     );
   }
 
+  // GET /api/stats/history?days=30
+  //
+  // Trend-chart data from the append-only `admin_stats_history` table
+  // (one row per cron run, every 30 min — see `computeAndStoreStats`).
+  // `days` defaults to 30, capped at 90 to keep the response bounded.
+  if (method === 'GET' && pathname === '/api/stats/history') {
+    let days = parseInt(searchParams.get('days'), 10);
+    if (!Number.isFinite(days) || days <= 0) days = 30;
+    days = Math.min(days, 90);
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    const rows = await getStatsHistory(env, since);
+    return jsonResponse(
+      {
+        history: rows.map((row) => ({
+          totalMahallas: row.total_mahallas,
+          totalUsers: row.total_users,
+          totalActiveRequests: row.total_active_requests,
+          totalPendingPremium: row.total_pending_premium,
+          recordedAt: row.recorded_at,
+        })),
+      },
+      200,
+      env,
+    );
+  }
+
   // GET /api/mahallas
   if (method === 'GET' && pathname === '/api/mahallas') {
     const docs = await listCollection(env, 'mahallas');
     return jsonResponse({ mahallas: docs }, 200, env);
+  }
+
+  // GET /api/mahallas/:id/detail
+  //
+  // One mahalla's own fields (name/district/extra/latitude/longitude/
+  // boundary — matches lib/features/qr/data/mahalla_repository.dart's
+  // `MahallaInfo.fromFirestore`; the `mahallas` doc has no "rais info"
+  // field of its own, so the rais is looked up separately below) plus
+  // aggregate counts scoped to just this mahalla's subcollections.
+  const mahallaDetailMatch = pathname.match(/^\/api\/mahallas\/([^/]+)\/detail$/);
+  if (method === 'GET' && mahallaDetailMatch) {
+    const mahallaId = mahallaDetailMatch[1];
+    const doc = await getDoc(env, 'mahallas', mahallaId);
+    if (!doc) throw new HttpError(404, 'Mahalla not found');
+    const detail = await computeMahallaDetail(env, mahallaId, doc);
+    return jsonResponse({ mahalla: detail }, 200, env);
   }
 
   // GET /api/premium-requests?status=tolandi
@@ -180,6 +223,7 @@ async function route(request, env, pathname, searchParams, uid) {
       fields.attribution = body.attribution;
     }
     const doc = await createDoc(env, 'promoBanners', fields);
+    await logAudit(env, uid, 'banner.create', { bannerId: doc.id });
     return jsonResponse({ banner: doc }, 201, env);
   }
 
@@ -224,6 +268,7 @@ async function route(request, env, pathname, searchParams, uid) {
     const existing = await getDoc(env, 'promoBanners', id);
     if (!existing) throw new HttpError(404, 'Banner not found');
     const updated = await patchDoc(env, 'promoBanners', id, fields);
+    await logAudit(env, uid, 'banner.update', { bannerId: id, fields: Object.keys(fields) });
     return jsonResponse({ banner: updated }, 200, env);
   }
 
@@ -231,6 +276,7 @@ async function route(request, env, pathname, searchParams, uid) {
   const bannerDeleteMatch = pathname.match(/^\/api\/banners\/([^/]+)$/);
   if (method === 'DELETE' && bannerDeleteMatch) {
     await deleteDoc(env, 'promoBanners', bannerDeleteMatch[1]);
+    await logAudit(env, uid, 'banner.delete', { bannerId: bannerDeleteMatch[1] });
     return jsonResponse({ ok: true }, 200, env);
   }
 
@@ -278,6 +324,7 @@ async function route(request, env, pathname, searchParams, uid) {
       reviewedAt: new Date(),
       reviewedBy: uid,
     });
+    await logAudit(env, uid, 'report.resolve', { reportId, outcome });
     return jsonResponse({ report: updated }, 200, env);
   }
 
@@ -321,6 +368,10 @@ async function route(request, env, pathname, searchParams, uid) {
     if (typeof body.imageUrl === 'string' && body.imageUrl) fields.imageUrl = body.imageUrl;
     const doc = await createDoc(env, `mahallas/${body.mahallaId}/announcements`, fields);
     doc.mahallaId = body.mahallaId;
+    await logAudit(env, uid, 'announcement.create', {
+      announcementId: doc.id,
+      mahallaId: body.mahallaId,
+    });
     return jsonResponse({ announcement: doc }, 201, env);
   }
 
@@ -360,6 +411,11 @@ async function route(request, env, pathname, searchParams, uid) {
     if (!existing) throw new HttpError(404, 'Announcement not found');
     const updated = await patchDoc(env, `mahallas/${mahallaId}/announcements`, id, fields);
     updated.mahallaId = mahallaId;
+    await logAudit(env, uid, 'announcement.update', {
+      announcementId: id,
+      mahallaId,
+      fields: Object.keys(fields),
+    });
     return jsonResponse({ announcement: updated }, 200, env);
   }
 
@@ -368,6 +424,7 @@ async function route(request, env, pathname, searchParams, uid) {
   if (method === 'DELETE' && announcementDeleteMatch) {
     const [, mahallaId, id] = announcementDeleteMatch;
     await deleteDoc(env, `mahallas/${mahallaId}/announcements`, id);
+    await logAudit(env, uid, 'announcement.delete', { announcementId: id, mahallaId });
     return jsonResponse({ ok: true }, 200, env);
   }
 
@@ -407,6 +464,7 @@ async function route(request, env, pathname, searchParams, uid) {
     };
     const doc = await createDoc(env, `mahallas/${body.mahallaId}/events`, fields);
     doc.mahallaId = body.mahallaId;
+    await logAudit(env, uid, 'event.create', { eventId: doc.id, mahallaId: body.mahallaId });
     return jsonResponse({ event: doc }, 201, env);
   }
 
@@ -444,6 +502,11 @@ async function route(request, env, pathname, searchParams, uid) {
     if (!existing) throw new HttpError(404, 'Event not found');
     const updated = await patchDoc(env, `mahallas/${mahallaId}/events`, id, fields);
     updated.mahallaId = mahallaId;
+    await logAudit(env, uid, 'event.update', {
+      eventId: id,
+      mahallaId,
+      fields: Object.keys(fields),
+    });
     return jsonResponse({ event: updated }, 200, env);
   }
 
@@ -452,6 +515,7 @@ async function route(request, env, pathname, searchParams, uid) {
   if (method === 'DELETE' && eventDeleteMatch) {
     const [, mahallaId, id] = eventDeleteMatch;
     await deleteDoc(env, `mahallas/${mahallaId}/events`, id);
+    await logAudit(env, uid, 'event.delete', { eventId: id, mahallaId });
     return jsonResponse({ ok: true }, 200, env);
   }
 
@@ -485,6 +549,7 @@ async function route(request, env, pathname, searchParams, uid) {
     if (!existing) throw new HttpError(404, 'Request not found');
     const updated = await patchDoc(env, `mahallas/${mahallaId}/requests`, id, { status });
     updated.mahallaId = mahallaId;
+    await logAudit(env, uid, 'request.status', { requestId: id, mahallaId, status });
     return jsonResponse({ request: updated }, 200, env);
   }
 
@@ -539,6 +604,7 @@ async function route(request, env, pathname, searchParams, uid) {
     const doc = await createDoc(env, `mahallas/${body.mahallaId}/polls`, fields);
     doc.mahallaId = body.mahallaId;
     doc.results = computePollResults(doc);
+    await logAudit(env, uid, 'poll.create', { pollId: doc.id, mahallaId: body.mahallaId });
     return jsonResponse({ poll: doc }, 201, env);
   }
 
@@ -587,6 +653,11 @@ async function route(request, env, pathname, searchParams, uid) {
     const updated = await patchDoc(env, `mahallas/${mahallaId}/polls`, id, fields);
     updated.mahallaId = mahallaId;
     updated.results = computePollResults(updated);
+    await logAudit(env, uid, 'poll.update', {
+      pollId: id,
+      mahallaId,
+      fields: Object.keys(fields),
+    });
     return jsonResponse({ poll: updated }, 200, env);
   }
 
@@ -595,6 +666,7 @@ async function route(request, env, pathname, searchParams, uid) {
   if (method === 'DELETE' && pollDeleteMatch) {
     const [, mahallaId, id] = pollDeleteMatch;
     await deleteDoc(env, `mahallas/${mahallaId}/polls`, id);
+    await logAudit(env, uid, 'poll.delete', { pollId: id, mahallaId });
     return jsonResponse({ ok: true }, 200, env);
   }
 
@@ -644,6 +716,7 @@ async function route(request, env, pathname, searchParams, uid) {
     };
     const doc = await createDoc(env, `mahallas/${body.mahallaId}/serviceAds`, fields);
     doc.mahallaId = body.mahallaId;
+    await logAudit(env, uid, 'serviceAd.create', { serviceAdId: doc.id, mahallaId: body.mahallaId });
     return jsonResponse({ serviceAd: doc }, 201, env);
   }
 
@@ -700,6 +773,11 @@ async function route(request, env, pathname, searchParams, uid) {
     if (!existing) throw new HttpError(404, 'Service ad not found');
     const updated = await patchDoc(env, `mahallas/${mahallaId}/serviceAds`, id, fields);
     updated.mahallaId = mahallaId;
+    await logAudit(env, uid, 'serviceAd.update', {
+      serviceAdId: id,
+      mahallaId,
+      fields: Object.keys(fields),
+    });
     return jsonResponse({ serviceAd: updated }, 200, env);
   }
 
@@ -708,6 +786,7 @@ async function route(request, env, pathname, searchParams, uid) {
   if (method === 'DELETE' && serviceAdDeleteMatch) {
     const [, mahallaId, id] = serviceAdDeleteMatch;
     await deleteDoc(env, `mahallas/${mahallaId}/serviceAds`, id);
+    await logAudit(env, uid, 'serviceAd.delete', { serviceAdId: id, mahallaId });
     return jsonResponse({ ok: true }, 200, env);
   }
 
@@ -754,6 +833,7 @@ async function route(request, env, pathname, searchParams, uid) {
     };
     const doc = await createDoc(env, `mahallas/${body.mahallaId}/services`, fields);
     doc.mahallaId = body.mahallaId;
+    await logAudit(env, uid, 'service.create', { serviceId: doc.id, mahallaId: body.mahallaId });
     return jsonResponse({ service: doc }, 201, env);
   }
 
@@ -798,6 +878,11 @@ async function route(request, env, pathname, searchParams, uid) {
     if (!existing) throw new HttpError(404, 'Service not found');
     const updated = await patchDoc(env, `mahallas/${mahallaId}/services`, id, fields);
     updated.mahallaId = mahallaId;
+    await logAudit(env, uid, 'service.update', {
+      serviceId: id,
+      mahallaId,
+      fields: Object.keys(fields),
+    });
     return jsonResponse({ service: updated }, 200, env);
   }
 
@@ -806,6 +891,7 @@ async function route(request, env, pathname, searchParams, uid) {
   if (method === 'DELETE' && serviceDeleteMatch) {
     const [, mahallaId, id] = serviceDeleteMatch;
     await deleteDoc(env, `mahallas/${mahallaId}/services`, id);
+    await logAudit(env, uid, 'service.delete', { serviceId: id, mahallaId });
     return jsonResponse({ ok: true }, 200, env);
   }
 
@@ -876,6 +962,7 @@ async function route(request, env, pathname, searchParams, uid) {
     const existing = await getDoc(env, 'users', uidToUpdate);
     if (!existing) throw new HttpError(404, 'User not found');
     const updated = await patchDoc(env, 'users', uidToUpdate, { role });
+    await logAudit(env, uid, 'user.role.update', { targetUid: uidToUpdate, role });
     return jsonResponse({ user: updated }, 200, env);
   }
 
@@ -898,6 +985,7 @@ async function route(request, env, pathname, searchParams, uid) {
     const existing = await getDoc(env, 'users', uidToGrant);
     if (!existing) throw new HttpError(404, 'User not found');
     const updated = await grantUserPremium(env, uidToGrant, months);
+    await logAudit(env, uid, 'premium.grant', { targetUid: uidToGrant, months });
     return jsonResponse({ user: updated }, 200, env);
   }
 
@@ -912,7 +1000,25 @@ async function route(request, env, pathname, searchParams, uid) {
     const existing = await getDoc(env, 'users', uidToRevoke);
     if (!existing) throw new HttpError(404, 'User not found');
     const updated = await patchDoc(env, 'users', uidToRevoke, { premiumUntil: FieldDelete });
+    await logAudit(env, uid, 'premium.revoke', { targetUid: uidToRevoke });
     return jsonResponse({ user: updated }, 200, env);
+  }
+
+  // GET /api/audit-log?limit=50
+  //
+  // Recent adminAuditLog docs, newest first. Only ever written by this
+  // Worker (see lib/audit.js / firestore.rules `adminAuditLog`).
+  if (method === 'GET' && pathname === '/api/audit-log') {
+    let limit = parseInt(searchParams.get('limit'), 10);
+    if (!Number.isFinite(limit) || limit <= 0) limit = 50;
+    limit = Math.min(limit, 200);
+    const structuredQuery = {
+      from: [{ collectionId: 'adminAuditLog' }],
+      orderBy: [{ field: { fieldPath: 'timestamp' }, direction: 'DESCENDING' }],
+      limit,
+    };
+    const docs = await runQuery(env, structuredQuery);
+    return jsonResponse({ auditLog: docs }, 200, env);
   }
 
   throw new HttpError(404, 'Not found');
@@ -1030,6 +1136,12 @@ async function approvePremiumRequest(env, requestId, adminUid) {
     decidedBy: adminUid,
   });
 
+  await logAudit(env, adminUid, 'premium.approve', {
+    premiumRequestId: requestId,
+    targetUid: request.uid,
+    months,
+  });
+
   return { premiumRequest: updatedRequest };
 }
 
@@ -1046,7 +1158,132 @@ async function rejectPremiumRequest(env, requestId, adminUid, reason) {
   if (typeof reason === 'string' && reason) fields.rejectReason = reason;
 
   const updated = await patchDoc(env, 'premiumRequests', requestId, fields);
+  await logAudit(env, adminUid, 'premium.reject', {
+    premiumRequestId: requestId,
+    targetUid: existing.uid,
+    reason: fields.rejectReason,
+  });
   return { premiumRequest: updated };
+}
+
+/**
+ * Computes the `GET /api/mahallas/:id/detail` response: the mahalla
+ * doc's own fields plus counts scoped to just this one mahalla.
+ *
+ * Membership: per `lib/features/qr/data/mahalla_repository.dart`'s
+ * `attachUserToMahalla` and `lib/features/home/data/home_repository.dart`'s
+ * comment on `watchMahallaMembers`, the app does NOT query
+ * `users where mahallaId == X` directly (Firestore "list" query rules
+ * can't be proven against a value read from a different doc) — instead
+ * membership is tracked via a `mahallas/{mahallaId}/members/{uid}`
+ * marker subcollection, one doc per member. This Worker's service
+ * account bypasses Firestore rules entirely, so it *could* query `users`
+ * directly, but counting the `members` marker subcollection instead
+ * mirrors what the app itself treats as the source of truth for "who is
+ * in this mahalla" (and excludes the superAdmin technical account, which
+ * `watchMahallaMembers` filters out of every member list — no marker
+ * doc is ever written for a superAdmin in the first place, since
+ * `attachUserToMahalla`/`_ensureMembershipMarker` only run for the
+ * signed-in user attaching themselves, and a superAdmin never goes
+ * through the QR-join flow).
+ *
+ * Rais info: there's no `raisUid`/`rais` field on the `mahallas` doc
+ * itself (see `MahallaInfo.fromFirestore` — just
+ * name/district/extra/latitude/longitude/boundary), so "rais info" is
+ * resolved by querying `users` for `mahallaId == X AND role == 'rais'`.
+ * Normally at most one such user exists per mahalla, but this doesn't
+ * assume it — it returns the first match (if any) as `rais`, plus the
+ * raw count found (`raisCount`) in case more than one somehow exists.
+ */
+async function computeMahallaDetail(env, mahallaId, mahallaDoc) {
+  const raisQuery = {
+    from: [{ collectionId: 'users' }],
+    where: {
+      compositeFilter: {
+        op: 'AND',
+        filters: [
+          {
+            fieldFilter: {
+              field: { fieldPath: 'mahallaId' },
+              op: 'EQUAL',
+              value: { stringValue: mahallaId },
+            },
+          },
+          {
+            fieldFilter: {
+              field: { fieldPath: 'role' },
+              op: 'EQUAL',
+              value: { stringValue: 'rais' },
+            },
+          },
+        ],
+      },
+    },
+    limit: 5,
+  };
+
+  const requestsStatusCount = (status) =>
+    runAggregationQuery(
+      env,
+      {
+        from: [{ collectionId: 'requests' }],
+        where: {
+          fieldFilter: {
+            field: { fieldPath: 'status' },
+            op: 'EQUAL',
+            value: { stringValue: status },
+          },
+        },
+      },
+      `mahallas/${mahallaId}`,
+    );
+
+  const subcollectionCount = (collectionId) =>
+    runAggregationQuery(env, { from: [{ collectionId }] }, `mahallas/${mahallaId}`);
+
+  const [
+    raisUsers,
+    memberCount,
+    yangiCount,
+    jarayondaCount,
+    yakunlandiCount,
+    announcementsCount,
+    eventsCount,
+    pollsCount,
+    serviceAdsCount,
+    servicesCount,
+  ] = await Promise.all([
+    runQuery(env, raisQuery),
+    subcollectionCount('members'),
+    requestsStatusCount('yangi'),
+    requestsStatusCount('jarayonda'),
+    requestsStatusCount('yakunlandi'),
+    subcollectionCount('announcements'),
+    subcollectionCount('events'),
+    subcollectionCount('polls'),
+    subcollectionCount('serviceAds'),
+    subcollectionCount('services'),
+  ]);
+
+  return {
+    id: mahallaId,
+    ...mahallaDoc,
+    rais: raisUsers[0] || null,
+    raisCount: raisUsers.length,
+    memberCount,
+    requestsByStatus: {
+      yangi: yangiCount,
+      jarayonda: jarayondaCount,
+      yakunlandi: yakunlandiCount,
+    },
+    counts: {
+      announcements: announcementsCount,
+      events: eventsCount,
+      polls: pollsCount,
+      serviceAds: serviceAdsCount,
+      services: servicesCount,
+    },
+  };
 }
 
 /**
@@ -1095,12 +1332,22 @@ async function computeAndStoreStats(env) {
         }),
       ]);
 
-    await upsertStats(env, {
+    const statsRow = {
       total_mahallas: totalMahallas,
       total_users: totalUsers,
       total_active_requests: totalActiveRequests,
       total_pending_premium: totalPendingPremium,
-    });
+    };
+
+    await upsertStats(env, statsRow);
+    // Append-only trend log — separate from the single-row cache above.
+    // A failure here shouldn't block the cache upsert (already done by
+    // this point) or throw uncaught, so it's wrapped independently.
+    try {
+      await insertStatsHistory(env, statsRow);
+    } catch (err) {
+      console.error('Stats history insert failed:', err);
+    }
   } catch (err) {
     // Cron failures shouldn't throw uncaught — just log; the next run
     // (30 min later) will retry, and /api/stats degrades gracefully to

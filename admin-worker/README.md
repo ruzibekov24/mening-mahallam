@@ -22,13 +22,21 @@ Google service-account OAuth2, and Firestore/Supabase REST calls.
   exports `FieldDelete`, a sentinel passed as a `patchDoc` field value
   to delete that field entirely (mirrors the Flutter app's
   `FieldValue.delete()`) — used by `POST /api/users/:uid/premium/revoke`.
-- `lib/supabase.js` — reads/upserts the single `admin_stats` row via
-  Supabase PostgREST.
+- `lib/supabase.js` — reads/upserts the single `admin_stats` row, and
+  inserts/reads the append-only `admin_stats_history` log, via Supabase
+  PostgREST.
 - `lib/auth.js` — `requireSuperAdmin()`: verifies the bearer token, then
   checks `users/{uid}.role == 'superAdmin'` in Firestore.
 - `lib/http.js` — CORS headers, JSON responses, `HttpError`.
-- `supabase-schema.sql` — the `admin_stats` table definition. Run once in
-  the Supabase SQL editor.
+- `lib/audit.js` — `logAudit()`: writes a doc to the top-level
+  `adminAuditLog` Firestore collection after every mutating admin
+  action. Failures are caught and logged, never thrown — an audit-log
+  write failure must never break the actual admin action.
+- `supabase-schema.sql` — the `admin_stats` and `admin_stats_history`
+  table definitions. Run once in the Supabase SQL editor (re-run if
+  you're adding `admin_stats_history` to an already-provisioned
+  project — `create table if not exists` makes it safe to re-run the
+  whole file).
 
 ## Setup (for you to run — not done by this agent)
 
@@ -54,7 +62,19 @@ Google service-account OAuth2, and Firestore/Supabase REST calls.
   `lib/http.js`.
 
 **Supabase**: run `supabase-schema.sql` once in the Supabase SQL editor
-for project `dsbnguwyokxcxfcbeaym`.
+for project `dsbnguwyokxcxfcbeaym` (safe to re-run — every statement is
+`create table if not exists`).
+
+**Firestore rules**: the repo-root `firestore.rules` has a new
+`adminAuditLog` block (`allow read: if isSuperAdmin(); allow write: if
+false;`) — deploy it (`firebase deploy --only firestore:rules` from the
+repo root, or via the Firebase Console) so `GET /api/audit-log` is
+actually readable and so no mobile client can ever write to that
+collection. The Worker itself doesn't need this deployed to *write*
+audit-log entries (its service-account credentials bypass rules
+entirely, same as every other Firestore write it makes) — it's only
+needed for the `isSuperAdmin()` read check to apply to any other
+caller.
 
 **Firestore rules**: the service account calls Firestore via a Google
 OAuth2 access token with the `datastore` scope, which — for a service
@@ -106,6 +126,29 @@ min). If the cron hasn't run yet, returns zeros/nulls with a `note`.
 }
 ```
 
+### `GET /api/stats/history?days=<n>`
+
+Trend-chart data from the append-only `admin_stats_history` table (one
+row inserted per cron run, every 30 min — see "Stats aggregation (cron)"
+below). `days` is optional, defaults to `30`, capped at `90`. Returns
+rows with `recorded_at >= now() - days`, oldest first (natural x-axis
+order for a chart).
+
+```json
+{
+  "history": [
+    {
+      "totalMahallas": 12, "totalUsers": 340, "totalActiveRequests": 27,
+      "totalPendingPremium": 3, "recordedAt": "2026-08-01T06:30:00.000Z"
+    }
+  ]
+}
+```
+
+If the cron job hasn't run (enough times) yet, `history` may be an empty
+array — this endpoint never synthesizes fallback zero rows the way
+`GET /api/stats` does.
+
 ### `GET /api/mahallas`
 
 Lists all documents in the `mahallas` collection, unfiltered.
@@ -113,6 +156,59 @@ Lists all documents in the `mahallas` collection, unfiltered.
 ```json
 { "mahallas": [ { "id": "...", ...allFieldsFromTheDoc }, ... ] }
 ```
+
+### `GET /api/mahallas/:id/detail`
+
+One mahalla's own doc fields plus counts scoped to just that mahalla —
+built for a mahalla detail/drill-down screen. `404` if the mahalla
+doesn't exist.
+
+```json
+{
+  "mahalla": {
+    "id": "...", "name": "...", "district": "...", "extra": "...",
+    "latitude": 41.0, "longitude": 69.0, "boundary": [ { "lat": 41.0, "lng": 69.0 } ],
+    "rais": { "id": "...", "firstName": "...", "lastName": "...", "phone": "...", "...": "...other user fields" },
+    "raisCount": 1,
+    "memberCount": 214,
+    "requestsByStatus": { "yangi": 3, "jarayonda": 1, "yakunlandi": 40 },
+    "counts": { "announcements": 12, "events": 4, "polls": 2, "serviceAds": 6, "services": 9 }
+  }
+}
+```
+
+Field-name notes (verified against the actual Flutter/Dart source, not
+assumed):
+
+- The `mahallas` doc itself has **no** rais/admin field —
+  `lib/features/qr/data/mahalla_repository.dart`'s `MahallaInfo` only
+  has `name`/`district`/`extra`/`latitude`/`longitude`/`boundary`. "Rais
+  info" is resolved separately, by querying `users` for `mahallaId ==
+  :id AND role == 'rais'`. `rais` is the first match (raw user doc,
+  same shape as `GET /api/users`'s items), or `null` if no rais is
+  currently assigned. `raisCount` is included in case more than one
+  user somehow has `role: 'rais'` for this mahalla (normally exactly 0
+  or 1).
+- `memberCount` is **not** a count of `users where mahallaId == :id`.
+  Per `lib/features/home/data/home_repository.dart`'s extensive comment
+  on `watchMahallaMembers`, the app can't run that query client-side at
+  all (Firestore "list" query rules can't be proven against a value
+  read from a different doc) — membership is instead tracked via a
+  `mahallas/{id}/members/{uid}` marker subcollection, one doc per
+  member, kept in sync by `MahallaRepository.attachUserToMahalla`. This
+  endpoint counts that marker subcollection, matching what the app
+  itself treats as the source of truth. It also naturally excludes the
+  superAdmin technical account (no marker doc is ever written for one —
+  a superAdmin never goes through the QR-join flow).
+- `requestsByStatus` counts `mahallas/{id}/requests` docs by `status`
+  (`yangi`/`jarayonda`/`yakunlandi`), scoped to just this mahalla (not a
+  collection-group query).
+- `counts.*` are simple per-mahalla subcollection counts (`announcements`,
+  `events`, `polls`, `serviceAds`, `services`), computed the same way
+  `computeAndStoreStats` computes the global stats, via Firestore
+  aggregation (`count()`) queries — just scoped to one mahalla's
+  subcollections instead of a collection-group query across all of
+  them.
 
 ### `GET /api/premium-requests?status=<value>`
 
@@ -734,6 +830,67 @@ see `FieldDelete` in `lib/firestore.js`), not merely setting it to
 No body. `200 { "user": {...updated doc, without premiumUntil} }`.
 `404` if the user doesn't exist.
 
+### `GET /api/audit-log?limit=<n>`
+
+Lists recent `adminAuditLog` docs, newest first (`timestamp` descending).
+`limit` is optional, defaults to `50`, capped at `200`.
+
+This collection is written **only** by this Worker (via `lib/audit.js`'s
+`logAudit()`), after every mutating (POST/PATCH/DELETE) admin action —
+see the full list of `action` values below. `firestore.rules` has a
+matching `adminAuditLog` block with `allow write: if false` (the Worker's
+service-account credentials bypass rules entirely, same as everywhere
+else in this API — that `false` exists purely to guarantee no mobile
+client can ever forge an entry) and `allow read: if isSuperAdmin()`.
+
+```json
+{
+  "auditLog": [
+    {
+      "id": "...", "actorUid": "...", "action": "banner.delete",
+      "details": { "bannerId": "..." }, "timestamp": "2026-08-30T10:00:00.000Z"
+    }
+  ]
+}
+```
+
+`action` values currently written, one per mutating endpoint (`details`
+always includes at least the target id, plus `mahallaId` where
+applicable):
+
+| Endpoint | `action` |
+| --- | --- |
+| `POST /api/premium-requests/:id/approve` | `premium.approve` |
+| `POST /api/premium-requests/:id/reject` | `premium.reject` |
+| `POST /api/banners` | `banner.create` |
+| `PATCH /api/banners/:id` | `banner.update` |
+| `DELETE /api/banners/:id` | `banner.delete` |
+| `POST /api/reports/:id/resolve` | `report.resolve` |
+| `POST /api/announcements` | `announcement.create` |
+| `PATCH /api/announcements/:mahallaId/:id` | `announcement.update` |
+| `DELETE /api/announcements/:mahallaId/:id` | `announcement.delete` |
+| `POST /api/events` | `event.create` |
+| `PATCH /api/events/:mahallaId/:id` | `event.update` |
+| `DELETE /api/events/:mahallaId/:id` | `event.delete` |
+| `POST /api/requests/:mahallaId/:id/status` | `request.status` |
+| `POST /api/polls` | `poll.create` |
+| `PATCH /api/polls/:mahallaId/:id` | `poll.update` |
+| `DELETE /api/polls/:mahallaId/:id` | `poll.delete` |
+| `POST /api/service-ads` | `serviceAd.create` |
+| `PATCH /api/service-ads/:mahallaId/:id` | `serviceAd.update` |
+| `DELETE /api/service-ads/:mahallaId/:id` | `serviceAd.delete` |
+| `POST /api/services` | `service.create` |
+| `PATCH /api/services/:mahallaId/:id` | `service.update` |
+| `DELETE /api/services/:mahallaId/:id` | `service.delete` |
+| `POST /api/users/:uid/role` | `user.role.update` |
+| `POST /api/users/:uid/premium/grant` | `premium.grant` |
+| `POST /api/users/:uid/premium/revoke` | `premium.revoke` |
+
+**Note**: a failed audit-log write never fails the underlying admin
+action — it's logged server-side (`console.error`) and swallowed. So the
+absence of an expected audit-log entry doesn't necessarily mean the
+action itself failed; check the resource's own state.
+
 ## CORS
 
 All routes (including error responses) send CORS headers allowing
@@ -754,9 +911,17 @@ via Firestore aggregation (`count()`) queries:
   `status == 'tolandi'`.
 
 Upserts these into Supabase `admin_stats` (id=1, single row, via
-`Prefer: resolution=merge-duplicates` on-conflict upsert). A cron
-failure is logged and swallowed (not thrown) — `/api/stats` degrades to
-serving the last-known row, or zeros if none exists yet.
+`Prefer: resolution=merge-duplicates` on-conflict upsert), then
+**inserts** the same four numbers as a new row into the append-only
+`admin_stats_history` table (used by `GET /api/stats/history` for trend
+charts — unlike `admin_stats`, this table is never overwritten in
+place, so every 30-min run adds one more data point). The history
+insert is wrapped in its own try/catch, separate from the `admin_stats`
+upsert — a failure there is logged and swallowed without affecting the
+`admin_stats` cache write that already succeeded. A failure in the
+outer aggregation itself (the Firestore queries) is likewise logged and
+swallowed (not thrown) — `/api/stats` degrades to serving the
+last-known row, or zeros if none exists yet.
 
 ## Assumptions / TODOs
 
@@ -829,3 +994,17 @@ serving the last-known row, or zeros if none exists yet.
    certs, the live OAuth2 token exchange, real Firestore/Supabase calls)
    has not been exercised end-to-end. `wrangler deploy --dry-run`
    confirms the Worker bundles and the `wrangler.toml` config is valid.
+8. **`GET /api/mahallas/:id/detail`'s rais lookup needs a composite
+   index** — it queries `users` for `mahallaId == X AND role == 'rais'`,
+   an equality-equality composite filter with no `orderBy`. Firestore
+   auto-creates single-field indexes but not composite ones; the first
+   call will 400 with a direct "create it here" link if this exact
+   composite doesn't already exist (it may already, if some other
+   query in the app uses the same `mahallaId` + `role` shape — not
+   confirmed either way). Add to `firestore.indexes.json` if you want
+   it version-controlled, same as the other composite-index notes above.
+9. **`admin_stats_history` unbounded growth** — the table is
+   append-only and nothing here prunes it (one row every 30 min is
+   ~17,520 rows/year — small, but worth a retention policy or a
+   scheduled cleanup query in Supabase eventually if this runs for
+   years unattended).

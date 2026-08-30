@@ -1774,6 +1774,17 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get reportChooseReasonError => 'Iltimos, sababni tanlang';
+
+  @override
+  String serviceRatingCount(int count) {
+    return '$count baho';
+  }
+
+  @override
+  String get serviceNoRatingsYet => 'Hali baho yo\'q';
+
+  @override
+  String get yourRatingLabel => 'Sizning bahoyingiz';
 }
 
 /// The translations for Uzbek, using the Cyrillic script (`uz_Cyrl`).
@@ -3539,4 +3550,15 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get reportChooseReasonError => 'Илтимос, сабабни танланг';
+
+  @override
+  String serviceRatingCount(int count) {
+    return '$count баҳо';
+  }
+
+  @override
+  String get serviceNoRatingsYet => 'Ҳали баҳо йўқ';
+
+  @override
+  String get yourRatingLabel => 'Сизнинг баҳойингиз';
 }
