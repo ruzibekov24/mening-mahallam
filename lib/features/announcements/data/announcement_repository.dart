@@ -53,6 +53,11 @@ class Announcement {
   final String? imageUrl;
   final String authorUid;
 
+  /// uid -> tanlagan emoji. Subcollection emas, to'g'ridan-to'g'ri
+  /// hujjat maydonida — e'lonlar yuqori hajmli emas, shuning uchun
+  /// subcollection darajasidagi murakkablik shart emas.
+  final Map<String, String> reactedUids;
+
   Announcement({
     required this.id,
     required this.title,
@@ -61,7 +66,12 @@ class Announcement {
     required this.createdAt,
     required this.imageUrl,
     required this.authorUid,
+    this.reactedUids = const {},
   });
+
+  /// Berilgan emoji bo'yicha nechta odam reaksiya bildirganini sanaydi.
+  int reactionCount(String emoji) =>
+      reactedUids.values.where((e) => e == emoji).length;
 
   /// [body] endi Quill Delta JSON saqlaydi (rich text). Ro'yxat
   /// ko'rinishidagi qisqa preview uchun formatlashsiz oddiy matnga
@@ -89,6 +99,7 @@ class Announcement {
       createdAt: timestamp?.toDate() ?? DateTime.now(),
       imageUrl: data['imageUrl'] as String?,
       authorUid: data['authorUid'] ?? '',
+      reactedUids: Map<String, String>.from(data['reactedUids'] ?? const {}),
     );
   }
 }
@@ -190,5 +201,28 @@ class AnnouncementRepository {
         .collection('announcements')
         .doc(announcementId)
         .delete();
+  }
+
+  /// Foydalanuvchining reaksiyasini almashtiradi: hali reaksiya
+  /// bildirmagan bo'lsa qo'shadi, xuddi shu emojini qayta bossa
+  /// olib tashlaydi, boshqa emojini bossa almashtiradi.
+  Future<void> toggleReaction({
+    required String mahallaId,
+    required String announcementId,
+    required String uid,
+    required String emoji,
+    required String? currentEmoji,
+  }) async {
+    final docRef = _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('announcements')
+        .doc(announcementId);
+
+    if (currentEmoji == emoji) {
+      await docRef.update({'reactedUids.$uid': FieldValue.delete()});
+    } else {
+      await docRef.update({'reactedUids.$uid': emoji});
+    }
   }
 }

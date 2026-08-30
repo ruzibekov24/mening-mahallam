@@ -1,0 +1,19 @@
+name = "mahallam-admin-api"
+main = "index.js"
+compatibility_date = "2026-08-20"
+
+# Non-secret configuration. Secrets (FIREBASE_CLIENT_EMAIL,
+# FIREBASE_PRIVATE_KEY, SUPABASE_SERVICE_ROLE_KEY) are set separately via
+# `wrangler secret put` — see README.md.
+[vars]
+FIREBASE_PROJECT_ID = "mahallam-d4a93"
+SUPABASE_PROJECT_REF = "dsbnguwyokxcxfcbeaym"
+# Tighten this to the real Cloudflare Pages domain once the admin
+# frontend is deployed (see CORS comment in lib/http.js).
+ALLOWED_ORIGIN = "*"
+
+# Runs the stats aggregation job every 30 minutes — see `scheduled()` in
+# index.js. Writes aggregate counts into Supabase's `admin_stats` table so
+# GET /api/stats can serve a cheap read instead of recomputing live.
+[triggers]
+crons = ["*/30 * * * *"]

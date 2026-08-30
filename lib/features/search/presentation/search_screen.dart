@@ -10,6 +10,8 @@ import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../polls/presentation/polls_screen.dart';
+import '../../services/presentation/services_screen.dart';
 import '../data/search_repository.dart';
 
 extension on SearchResultKind {
@@ -21,6 +23,10 @@ extension on SearchResultKind {
         return PhosphorIconsFill.calendarCheck;
       case SearchResultKind.request:
         return PhosphorIconsFill.chatCircleDots;
+      case SearchResultKind.service:
+        return PhosphorIconsFill.toolbox;
+      case SearchResultKind.poll:
+        return PhosphorIconsFill.chartBar;
     }
   }
 
@@ -32,6 +38,10 @@ extension on SearchResultKind {
         return AppAccents.events;
       case SearchResultKind.request:
         return AppAccents.requests;
+      case SearchResultKind.service:
+        return AppAccents.neighbors;
+      case SearchResultKind.poll:
+        return AppAccents.neighbors;
     }
   }
 }
@@ -90,6 +100,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         return l10n.categoryEvents;
       case SearchResultKind.request:
         return l10n.categoryRequests;
+      case SearchResultKind.service:
+        return l10n.categoryServices;
+      case SearchResultKind.poll:
+        return l10n.categoryPolls;
     }
   }
 
@@ -284,6 +298,26 @@ class _SearchResultTile extends StatelessWidget {
     required this.kindLabel,
   });
 
+  VoidCallback? _onTap(BuildContext context) {
+    switch (result.kind) {
+      case SearchResultKind.service:
+        return () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ServicesScreen()),
+            );
+      case SearchResultKind.poll:
+        return () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const PollsScreen()),
+            );
+      case SearchResultKind.announcement:
+      case SearchResultKind.event:
+      case SearchResultKind.request:
+        // E'lon/tadbir/murojaat uchun hozircha aniq detail ekrani yo'q —
+        // bu turlar tarixan bosilganda hech qayerga o'tmagan, shu bilan
+        // izchillik saqlanadi.
+        return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppListCard(
@@ -291,6 +325,7 @@ class _SearchResultTile extends StatelessWidget {
       accent: color,
       title: result.title,
       subtitle: result.subtitle.isNotEmpty ? result.subtitle : null,
+      onTap: _onTap(context),
       trailing: Container(
         padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.xs, vertical: 2),

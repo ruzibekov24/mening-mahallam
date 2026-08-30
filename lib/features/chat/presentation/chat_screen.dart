@@ -9,6 +9,8 @@ import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../home/data/home_repository.dart';
 import '../../home/presentation/neighbor_profile_screen.dart';
+import '../../moderation/data/report_repository.dart';
+import '../../moderation/presentation/report_sheet.dart';
 import '../data/chat_providers.dart';
 import '../data/chat_repository.dart';
 
@@ -26,12 +28,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _textController = TextEditingController();
   bool _isSending = false;
 
-  String get _conversationId => ref
-      .read(chatRepositoryProvider)
-      .conversationIdFor(
-        FirebaseAuth.instance.currentUser?.uid ?? '',
-        widget.otherUid,
-      );
+  String get _conversationId =>
+      ref.read(chatRepositoryProvider).conversationIdFor(
+            FirebaseAuth.instance.currentUser?.uid ?? '',
+            widget.otherUid,
+          );
 
   @override
   void initState() {
@@ -164,13 +165,33 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     itemBuilder: (context, index) {
                       final message = messages[index];
                       final isMine = message.senderUid == myUid;
-                      return _MessageBubble(message: message, isMine: isMine);
+                      return _MessageBubble(
+                        message: message,
+                        isMine: isMine,
+                        onReport: isMine
+                            ? null
+                            : () {
+                                final mahallaId = ref
+                                    .read(currentUserProfileProvider)
+                                    .valueOrNull
+                                    ?.mahallaId;
+                                showReportSheet(
+                                  context,
+                                  ref,
+                                  targetType: ReportTargetType.chatMessage,
+                                  targetId: message.id,
+                                  targetSnippet: message.text,
+                                  mahallaId: mahallaId,
+                                );
+                              },
+                      );
                     },
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (_, __) => Center(
-                  child: Text(l10n.unexpectedError, style: context.secondaryStyle),
+                  child:
+                      Text(l10n.unexpectedError, style: context.secondaryStyle),
                 ),
               ),
             ),
@@ -242,7 +263,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 class _MessageBubble extends StatelessWidget {
   final ChatMessage message;
   final bool isMine;
-  const _MessageBubble({required this.message, required this.isMine});
+
+  /// Boshqa foydalanuvchining xabarini uzoq bosganda shikoyat qilish
+  /// uchun chaqiriladi. O'z xabaringiz uchun `null` — o'zingizga
+  /// shikoyat qilish imkoni yo'q.
+  final VoidCallback? onReport;
+
+  const _MessageBubble({
+    required this.message,
+    required this.isMine,
+    this.onReport,
+  });
 
   String _formatTime(DateTime t) =>
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
@@ -251,45 +282,48 @@ class _MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        constraints: BoxConstraints(
-            maxWidth: MediaQuery.sizeOf(context).width * 0.75),
-        margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-        padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-        decoration: BoxDecoration(
-          color: isMine
-              ? AppColors.primary
-              : (context.isDarkMode
-                  ? AppColors.darkSurface
-                  : AppColors.lightBorder),
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(isMine ? 16 : 4),
-            bottomRight: Radius.circular(isMine ? 4 : 16),
+      child: GestureDetector(
+        onLongPress: onReport,
+        child: Container(
+          constraints:
+              BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.75),
+          margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: isMine
+                ? AppColors.primary
+                : (context.isDarkMode
+                    ? AppColors.darkSurface
+                    : AppColors.lightBorder),
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(16),
+              topRight: const Radius.circular(16),
+              bottomLeft: Radius.circular(isMine ? 16 : 4),
+              bottomRight: Radius.circular(isMine ? 4 : 16),
+            ),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              message.text,
-              style: context.bodyStyle.copyWith(
-                color: isMine ? Colors.white : context.textPrimary,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                message.text,
+                style: context.bodyStyle.copyWith(
+                  color: isMine ? Colors.white : context.textPrimary,
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              _formatTime(message.createdAt),
-              style: context.captionStyle.copyWith(
-                color: isMine
-                    ? Colors.white.withValues(alpha: 0.75)
-                    : context.textMuted,
+              const SizedBox(height: 2),
+              Text(
+                _formatTime(message.createdAt),
+                style: context.captionStyle.copyWith(
+                  color: isMine
+                      ? Colors.white.withValues(alpha: 0.75)
+                      : context.textMuted,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

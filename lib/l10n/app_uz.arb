@@ -401,6 +401,15 @@
   "changeVoteConfirmTitle": "Ovozni almashtirish",
   "changeVoteConfirmMessage": "Siz allaqachon boshqa variantga ovoz bergansiz. Ovozingizni almashtirmoqchimisiz?",
   "changeVoteConfirmButton": "Ha, almashtirish",
+  "pollAllowMultipleLabel": "Bir nechta variant tanlashga ruxsat berish",
+  "pollAnonymousLabel": "Anonim so'rovnoma",
+  "pollClosesAtLabel": "Yopilish sanasi (ixtiyoriy)",
+  "pollClosesAtClearButton": "Tozalash",
+  "pollClosedBadge": "Yopilgan",
+  "pollVoteClosedError": "Bu so'rovnoma yopilgan, ovoz berish mumkin emas",
+  "pollSubmitVoteButton": "Ovoz berish",
+  "categoryServices": "Xizmatlar",
+  "categoryPolls": "So'rovnomalar",
   "categoryLabel": "Kategoriya",
   "titleLabel": "Sarlavha",
   "titleHint": "Masalan: Ertaga suv o'chirilishi haqida",
@@ -951,5 +960,19 @@
   "okButton": "OK",
   "@okButton": {
     "description": "Xabar oynasidagi tasdiqlash tugmasi"
-  }
+  },
+  "reportAction": "Shikoyat qilish",
+  "reportSheetTitle": "Shikoyat qilish",
+  "reportReasonLabel": "Sabab",
+  "reportReasonSpam": "Spam",
+  "reportReasonHaqoratOmuhandaslik": "Haqorat yoki tahdid",
+  "reportReasonAldash": "Firibgarlik / aldash",
+  "reportReasonNomunosib": "Nomunosib kontent",
+  "reportReasonBoshqa": "Boshqa",
+  "reportDetailsLabel": "Qo'shimcha izoh",
+  "reportDetailsHint": "Batafsil yozing (ixtiyoriy)",
+  "reportSubmitAction": "Yuborish",
+  "reportSubmittedMessage": "Shikoyatingiz qabul qilindi, ko'rib chiqamiz",
+  "reportErrorMessage": "Shikoyat yuborishda xatolik yuz berdi",
+  "reportChooseReasonError": "Iltimos, sababni tanlang"
 }

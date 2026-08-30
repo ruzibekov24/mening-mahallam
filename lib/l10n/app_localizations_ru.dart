@@ -923,6 +923,33 @@ class AppLocalizationsRu extends AppLocalizations {
   String get changeVoteConfirmButton => 'Да, изменить';
 
   @override
+  String get pollAllowMultipleLabel => 'Разрешить выбор нескольких вариантов';
+
+  @override
+  String get pollAnonymousLabel => 'Анонимный опрос';
+
+  @override
+  String get pollClosesAtLabel => 'Дата закрытия (необязательно)';
+
+  @override
+  String get pollClosesAtClearButton => 'Очистить';
+
+  @override
+  String get pollClosedBadge => 'Закрыт';
+
+  @override
+  String get pollVoteClosedError => 'Этот опрос закрыт, голосование недоступно';
+
+  @override
+  String get pollSubmitVoteButton => 'Проголосовать';
+
+  @override
+  String get categoryServices => 'Услуги';
+
+  @override
+  String get categoryPolls => 'Опросы';
+
+  @override
   String get categoryLabel => 'Категория';
 
   @override
@@ -1697,4 +1724,46 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get okButton => 'OK';
+
+  @override
+  String get reportAction => 'Пожаловаться';
+
+  @override
+  String get reportSheetTitle => 'Пожаловаться';
+
+  @override
+  String get reportReasonLabel => 'Причина';
+
+  @override
+  String get reportReasonSpam => 'Спам';
+
+  @override
+  String get reportReasonHaqoratOmuhandaslik => 'Оскорбление или угроза';
+
+  @override
+  String get reportReasonAldash => 'Мошенничество / обман';
+
+  @override
+  String get reportReasonNomunosib => 'Неприемлемый контент';
+
+  @override
+  String get reportReasonBoshqa => 'Другое';
+
+  @override
+  String get reportDetailsLabel => 'Дополнительный комментарий';
+
+  @override
+  String get reportDetailsHint => 'Опишите подробнее (необязательно)';
+
+  @override
+  String get reportSubmitAction => 'Отправить';
+
+  @override
+  String get reportSubmittedMessage => 'Ваша жалоба принята, мы её рассмотрим';
+
+  @override
+  String get reportErrorMessage => 'Ошибка при отправке жалобы';
+
+  @override
+  String get reportChooseReasonError => 'Пожалуйста, выберите причину';
 }
