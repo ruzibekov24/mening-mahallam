@@ -1785,6 +1785,144 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get yourRatingLabel => 'Sizning bahoyingiz';
+
+  @override
+  String get assignStaffTitle => 'Xodimga biriktirish';
+
+  @override
+  String get noStaffFoundLabel => 'Mahallada xodim topilmadi';
+
+  @override
+  String get cancelAssignmentAction => 'Biriktirishni bekor qilish';
+
+  @override
+  String get requestAssignedMessage => 'Murojaat biriktirildi';
+
+  @override
+  String get dueDateSetMessage => 'Muddat belgilandi';
+
+  @override
+  String get assignAction => 'Biriktirish';
+
+  @override
+  String get setDueDateAction => 'Muddat belgilash';
+
+  @override
+  String assignedToLabel(String fullName) {
+    return 'Biriktirilgan: $fullName';
+  }
+
+  @override
+  String dueDateLabel(String date) {
+    return 'Muddat: $date';
+  }
+
+  @override
+  String get dueDateOverdueSuffix => ' — muddati o\'tdi';
+
+  @override
+  String get commentsTitle => 'Izohlar';
+
+  @override
+  String get noCommentsYet => 'Hozircha izohlar yo\'q';
+
+  @override
+  String get commentHint => 'Izoh yozing...';
+
+  @override
+  String get createGroupAction => 'Guruh yaratish';
+
+  @override
+  String get groupNameLabel => 'Guruh nomi';
+
+  @override
+  String get groupNameHint => 'Masalan: Ko\'cha faollari';
+
+  @override
+  String get selectMembersLabel => 'A\'zolarni tanlang';
+
+  @override
+  String selectMembersLabelWithCount(int count) {
+    return 'A\'zolarni tanlang ($count)';
+  }
+
+  @override
+  String get enterGroupNameError => 'Guruh nomini kiriting';
+
+  @override
+  String get selectAtLeastOneMemberError => 'Kamida bitta a\'zo tanlang';
+
+  @override
+  String get groupCreateError => 'Guruh yaratishda xatolik yuz berdi';
+
+  @override
+  String get groupsSectionTitle => 'Guruhlar';
+
+  @override
+  String get locationFieldLabel => 'Joylashuv';
+
+  @override
+  String get locationSetLabel => 'Joylashuv belgilandi';
+
+  @override
+  String get setLocationLabel => 'Joylashuvni belgilash';
+
+  @override
+  String get locationDetectError =>
+      'Joylashuvni aniqlab bo\'lmadi. Ruxsat yoki GPS holatini tekshiring.';
+
+  @override
+  String get tapMapHint => 'Xaritani bosib nuqta belgilang';
+
+  @override
+  String get assistantScreenTitle => 'AI Yordamchi';
+
+  @override
+  String get assistantInputHint => 'Savolingizni yozing...';
+
+  @override
+  String get assistantGreetingTitle => 'Salom! Men AI yordamchiman';
+
+  @override
+  String get assistantGreetingSubtitle =>
+      'Mahalla haqida savollaringizga javob berishga, ilovadan foydalanishga yordam berishga tayyorman.';
+
+  @override
+  String get assistantSuggestion1 => 'Mahallamda qanday xizmatlar bor?';
+
+  @override
+  String get assistantSuggestion2 => 'Murojaat qanday yuboriladi?';
+
+  @override
+  String get assistantSuggestion3 => 'Ilovadan qanday foydalanaman?';
+
+  @override
+  String get notificationPreferencesTitle => 'Bildirishnoma sozlamalari';
+
+  @override
+  String get notificationPreferencesSubtitle =>
+      'Qaysi turdagi xabarlarni olishni tanlang';
+
+  @override
+  String get notificationPreferencesSectionHeader => 'Qaysi xabarlarni olasiz';
+
+  @override
+  String get notificationTypeAnnouncementLabel => 'Yangi e\'lonlar';
+
+  @override
+  String get notificationTypeEventLabel => 'Yangi tadbirlar';
+
+  @override
+  String get notificationTypePollLabel => 'Yangi so\'rovnomalar';
+
+  @override
+  String get notificationTypeMessageLabel => 'Yangi xabarlar';
+
+  @override
+  String get notificationTypeRequestStatusLabel => 'Murojaat holati';
+
+  @override
+  String get offlineBannerMessage => 'Oflayn — internet yo\'q';
 }
 
 /// The translations for Uzbek, using the Cyrillic script (`uz_Cyrl`).
@@ -3561,4 +3699,142 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get yourRatingLabel => 'Сизнинг баҳойингиз';
+
+  @override
+  String get assignStaffTitle => 'Ходимга бириктириш';
+
+  @override
+  String get noStaffFoundLabel => 'Маҳаллада ходим топилмади';
+
+  @override
+  String get cancelAssignmentAction => 'Бириктиришни бекор қилиш';
+
+  @override
+  String get requestAssignedMessage => 'Мурожаат бириктирилди';
+
+  @override
+  String get dueDateSetMessage => 'Муддат белгиланди';
+
+  @override
+  String get assignAction => 'Бириктириш';
+
+  @override
+  String get setDueDateAction => 'Муддат белгилаш';
+
+  @override
+  String assignedToLabel(String fullName) {
+    return 'Бириктирилган: $fullName';
+  }
+
+  @override
+  String dueDateLabel(String date) {
+    return 'Муддат: $date';
+  }
+
+  @override
+  String get dueDateOverdueSuffix => ' — муддати ўтди';
+
+  @override
+  String get commentsTitle => 'Изоҳлар';
+
+  @override
+  String get noCommentsYet => 'Ҳозирча изоҳлар йўқ';
+
+  @override
+  String get commentHint => 'Изоҳ ёзинг...';
+
+  @override
+  String get createGroupAction => 'Гуруҳ яратиш';
+
+  @override
+  String get groupNameLabel => 'Гуруҳ номи';
+
+  @override
+  String get groupNameHint => 'Масалан: Кўча фаоллари';
+
+  @override
+  String get selectMembersLabel => 'Аъзоларни танланг';
+
+  @override
+  String selectMembersLabelWithCount(int count) {
+    return 'Аъзоларни танланг ($count)';
+  }
+
+  @override
+  String get enterGroupNameError => 'Гуруҳ номини киритинг';
+
+  @override
+  String get selectAtLeastOneMemberError => 'Камида битта аъзо танланг';
+
+  @override
+  String get groupCreateError => 'Гуруҳ яратишда хатолик юз берди';
+
+  @override
+  String get groupsSectionTitle => 'Гуруҳлар';
+
+  @override
+  String get locationFieldLabel => 'Жойлашув';
+
+  @override
+  String get locationSetLabel => 'Жойлашув белгиланди';
+
+  @override
+  String get setLocationLabel => 'Жойлашувни белгилаш';
+
+  @override
+  String get locationDetectError =>
+      'Жойлашувни аниқлаб бўлмади. Рухсат ёки GPS ҳолатини текширинг.';
+
+  @override
+  String get tapMapHint => 'Харитани босиб нуқта белгиланг';
+
+  @override
+  String get assistantScreenTitle => 'AI Ёрдамчи';
+
+  @override
+  String get assistantInputHint => 'Саволингизни ёзинг...';
+
+  @override
+  String get assistantGreetingTitle => 'Салом! Мен AI ёрдамчиман';
+
+  @override
+  String get assistantGreetingSubtitle =>
+      'Маҳалла ҳақида саволларингизга жавоб беришга, иловадан фойдаланишга ёрдам беришга тайёрман.';
+
+  @override
+  String get assistantSuggestion1 => 'Маҳалламда қандай хизматлар бор?';
+
+  @override
+  String get assistantSuggestion2 => 'Мурожаат қандай юборилади?';
+
+  @override
+  String get assistantSuggestion3 => 'Иловадан қандай фойдаланаман?';
+
+  @override
+  String get notificationPreferencesTitle => 'Билдиришнома созламалари';
+
+  @override
+  String get notificationPreferencesSubtitle =>
+      'Қайси турдаги хабарларни олишни танланг';
+
+  @override
+  String get notificationPreferencesSectionHeader => 'Қайси хабарларни оласиз';
+
+  @override
+  String get notificationTypeAnnouncementLabel => 'Янги эълонлар';
+
+  @override
+  String get notificationTypeEventLabel => 'Янги тадбирлар';
+
+  @override
+  String get notificationTypePollLabel => 'Янги сўровномалар';
+
+  @override
+  String get notificationTypeMessageLabel => 'Янги хабарлар';
+
+  @override
+  String get notificationTypeRequestStatusLabel => 'Мурожаат ҳолати';
+
+  @override
+  String get offlineBannerMessage => 'Офлайн — интернет йўқ';
 }

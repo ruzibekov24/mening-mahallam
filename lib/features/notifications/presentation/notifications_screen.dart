@@ -15,6 +15,8 @@ extension on NotificationType {
     switch (this) {
       case NotificationType.requestStatusChanged:
         return PhosphorIconsFill.chatCircleDots;
+      case NotificationType.requestOverdue:
+        return PhosphorIconsFill.clockCountdown;
       case NotificationType.newAnnouncement:
         return PhosphorIconsFill.megaphone;
       case NotificationType.newEvent:
@@ -36,6 +38,8 @@ extension on NotificationType {
     switch (this) {
       case NotificationType.requestStatusChanged:
         return AppAccents.requests;
+      case NotificationType.requestOverdue:
+        return AppColors.danger;
       case NotificationType.newAnnouncement:
         return AppAccents.announcements;
       case NotificationType.newEvent:

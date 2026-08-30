@@ -140,6 +140,19 @@ class MahallaRequest {
   /// kutilmaganda o'zgarib ketmaydi.
   final bool authorWasPremium;
 
+  /// Murojaat biriktirilgan xodim/rais'ning uid'i — `null` bo'lsa hech
+  /// kimga biriktirilmagan.
+  final String? assignedToUid;
+
+  /// Murojaatni bajarish muddati (SLA) — faqat xodim/rais belgilaydi,
+  /// ixtiyoriy.
+  final DateTime? dueAt;
+
+  /// "Muddati o'tdi" bildirishnomasi allaqachon yuborilgan bo'lsa,
+  /// qachon yuborilgani — har safar ekran ochilganda qayta
+  /// yubormaslik uchun.
+  final DateTime? overdueNotifiedAt;
+
   MahallaRequest({
     required this.id,
     required this.title,
@@ -155,9 +168,19 @@ class MahallaRequest {
     this.latitude,
     this.longitude,
     this.authorWasPremium = false,
+    this.assignedToUid,
+    this.dueAt,
+    this.overdueNotifiedAt,
   });
 
   bool get hasLocation => latitude != null && longitude != null;
+
+  /// Muddat o'tib ketgan va murojaat hali yakunlanmaganmi — vizual
+  /// "overdue" signal va bildirishnoma trigger'i uchun.
+  bool get isOverdue =>
+      dueAt != null &&
+      status != RequestStatus.yakunlandi &&
+      dueAt!.isBefore(DateTime.now());
 
   /// [description] endi Quill Delta JSON saqlaydi (rich text).
   /// Ro'yxat ko'rinishidagi qisqa preview uchun formatlashsiz
@@ -197,6 +220,35 @@ class MahallaRequest {
       latitude: (data['latitude'] as num?)?.toDouble(),
       longitude: (data['longitude'] as num?)?.toDouble(),
       authorWasPremium: data['authorWasPremium'] == true,
+      assignedToUid: data['assignedToUid'] as String?,
+      dueAt: (data['dueAt'] as Timestamp?)?.toDate(),
+      overdueNotifiedAt: (data['overdueNotifiedAt'] as Timestamp?)?.toDate(),
+    );
+  }
+}
+
+/// Bitta murojaat komentariyasi — `mahallas/{mahallaId}/requests/{requestId}/comments`
+/// sub-kolleksiyasida saqlanadi.
+class RequestComment {
+  final String id;
+  final String authorUid;
+  final String text;
+  final DateTime createdAt;
+
+  RequestComment({
+    required this.id,
+    required this.authorUid,
+    required this.text,
+    required this.createdAt,
+  });
+
+  factory RequestComment.fromFirestore(String id, Map<String, dynamic> data) {
+    final timestamp = data['createdAt'] as Timestamp?;
+    return RequestComment(
+      id: id,
+      authorUid: data['authorUid'] ?? '',
+      text: data['text'] ?? '',
+      createdAt: timestamp?.toDate() ?? DateTime.now(),
     );
   }
 }
@@ -424,6 +476,82 @@ class RequestsRepository {
         .delete();
   }
 
+  /// Murojaatni xodim/rais'ga biriktiradi (yoki [staffUid] `null` bo'lsa
+  /// biriktirishni bekor qiladi). Faqat xodim/rais/super admin
+  /// chaqirishi kerak (UI darajasida tekshiriladi, Firestore Rules
+  /// bilan mustahkamlanadi).
+  Future<void> assignRequest({
+    required String mahallaId,
+    required String requestId,
+    required String? staffUid,
+  }) async {
+    await _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('requests')
+        .doc(requestId)
+        .update({'assignedToUid': staffUid});
+  }
+
+  /// Murojaatning bajarish muddatini (SLA) belgilaydi yoki [dueAt]
+  /// `null` bo'lsa bekor qiladi. Faqat xodim/rais/super admin
+  /// chaqirishi kerak.
+  Future<void> setRequestDueDate({
+    required String mahallaId,
+    required String requestId,
+    required DateTime? dueAt,
+  }) async {
+    await _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('requests')
+        .doc(requestId)
+        .update({
+      'dueAt': dueAt == null ? FieldValue.delete() : Timestamp.fromDate(dueAt),
+    });
+  }
+
+  /// Muddati o'tgani haqida bildirishnoma yuborilgani belgilanadi —
+  /// har safar ekran ochilganda qayta yuborilmasligi uchun. Bir vaqtda
+  /// bir nechta ekran shu tekshiruvni bajarishi mumkin bo'lgani uchun
+  /// bu yerda tranzaksiya ishlatilmaydi: eng yomon holatda bir nechta
+  /// bildirishnoma yuborilishi mumkin, bu qabul qilinadigan xavf.
+  Future<void> markOverdueNotified({
+    required String mahallaId,
+    required String requestId,
+  }) async {
+    await _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('requests')
+        .doc(requestId)
+        .update({'overdueNotifiedAt': FieldValue.serverTimestamp()});
+  }
+
+  /// Muddati o'tgan, hali yakunlanmagan va biriktirilgan murojaatni
+  /// tekshiradi — agar hali bildirishnoma yuborilmagan bo'lsa,
+  /// biriktirilgan xodimga "muddati o'tdi" bildirishnomasini yuboradi
+  /// va [overdueNotifiedAt]ni belgilaydi. Ekran ochilganda
+  /// (`request_detail_screen.dart` / `requests_management_screen.dart`)
+  /// imkoniyat sifatida chaqiriladi — alohida fon/cron jarayoni yo'q.
+  Future<void> checkAndNotifyOverdue(
+    String mahallaId,
+    MahallaRequest request,
+  ) async {
+    if (!request.isOverdue) return;
+    if (request.assignedToUid == null) return;
+    if (request.overdueNotifiedAt != null) return;
+
+    await markOverdueNotified(mahallaId: mahallaId, requestId: request.id);
+    await NotificationRepository().sendToUser(
+      uid: request.assignedToUid!,
+      type: NotificationType.requestOverdue,
+      title: 'Murojaat muddati o\'tdi',
+      body: '"${request.title}" — bajarish muddati o\'tib ketdi',
+      relatedId: request.id,
+    );
+  }
+
   /// Bitta murojaatni ID bo'yicha real vaqtda kuzatadi — tafsilotlar
   /// ekranida holat/qo'shilganlar soni jonli yangilanib turishi uchun.
   Stream<MahallaRequest?> watchRequestById({
@@ -476,6 +604,50 @@ class RequestsRepository {
     await ref.update({
       'joinedUids': FieldValue.arrayRemove([uid]),
       'joinedCount': FieldValue.increment(-1),
+    });
+  }
+
+  /// Murojaat ostidagi komentariyalarni eng eskisidan boshlab kuzatadi.
+  /// Ko'rish huquqi — murojaatning o'zini ko'ra oladigan har kim
+  /// (maxfiy/ommaviy qoidasi bilan bir xil, Firestore Rules'da
+  /// mustahkamlangan).
+  Stream<List<RequestComment>> watchComments({
+    required String mahallaId,
+    required String requestId,
+  }) {
+    return _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('requests')
+        .doc(requestId)
+        .collection('comments')
+        .orderBy('createdAt')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => RequestComment.fromFirestore(doc.id, doc.data()))
+            .toList());
+  }
+
+  /// Yangi komentariya qo'shadi — muallif doim joriy foydalanuvchi.
+  Future<void> addComment({
+    required String mahallaId,
+    required String requestId,
+    required String text,
+  }) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) {
+      throw Exception('Foydalanuvchi tizimga kirmagan');
+    }
+    await _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('requests')
+        .doc(requestId)
+        .collection('comments')
+        .add({
+      'authorUid': uid,
+      'text': text,
+      'createdAt': FieldValue.serverTimestamp(),
     });
   }
 }
@@ -540,3 +712,20 @@ final allRequestsForManagementProvider =
     error: (_, __) => Stream.value([]),
   );
 });
+
+/// Bitta murojaat ostidagi komentariyalarni kuzatadi. Parametr —
+/// `mahallaId:requestId` shaklidagi birlashtirilgan kalit (Riverpod
+/// family bitta primitiv qiymat talab qiladi, record ishlatmaslik
+/// uchun oddiyroq yechim — bu kodda boshqa joyda ham shu naqsh
+/// ishlatiladi).
+final requestCommentsProvider =
+    StreamProvider.autoDispose.family<List<RequestComment>, String>(
+  (ref, compositeKey) {
+    final parts = compositeKey.split(':');
+    final mahallaId = parts.first;
+    final requestId = parts.length > 1 ? parts.sublist(1).join(':') : '';
+    return ref
+        .watch(requestsRepositoryProvider)
+        .watchComments(mahallaId: mahallaId, requestId: requestId);
+  },
+);

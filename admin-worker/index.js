@@ -1021,6 +1021,40 @@ async function route(request, env, pathname, searchParams, uid) {
     return jsonResponse({ auditLog: docs }, 200, env);
   }
 
+  // GET /api/assistant-config
+  //
+  // Reads `appConfig/assistant` — currently just `geminiApiKey`, the
+  // Gemini API key used by `assistant-worker`'s AI chat feature. Stored
+  // in Firestore (rather than only as a Worker secret) so a super-admin
+  // can swap the key from the web panel when the free-tier daily quota
+  // runs out, without needing a redeploy. `assistant-worker` reads this
+  // same doc directly (falling back to its own `GEMINI_API_KEY` secret
+  // if unset) — see its `resolveGeminiApiKey` in index.js.
+  //
+  // The key is masked in the response (only the last 4 characters are
+  // shown) so it isn't exposed in full to the admin panel UI/network
+  // tab after the first time it's set.
+  if (method === 'GET' && pathname === '/api/assistant-config') {
+    const doc = await getDoc(env, 'appConfig', 'assistant');
+    const key = doc?.geminiApiKey || null;
+    const masked = key ? `••••${key.slice(-4)}` : null;
+    return jsonResponse({ geminiApiKeyMasked: masked, hasKey: !!key }, 200, env);
+  }
+
+  // POST /api/assistant-config  { geminiApiKey: string }
+  if (method === 'POST' && pathname === '/api/assistant-config') {
+    const body = await safeJson(request);
+    if (!body || typeof body.geminiApiKey !== 'string' || !body.geminiApiKey.trim()) {
+      throw new HttpError(400, 'geminiApiKey is required');
+    }
+    await patchDoc(env, 'appConfig', 'assistant', {
+      geminiApiKey: body.geminiApiKey.trim(),
+      updatedAt: new Date(),
+    });
+    await logAudit(env, uid, 'assistant.geminiKey.update', {});
+    return jsonResponse({ ok: true }, 200, env);
+  }
+
   throw new HttpError(404, 'Not found');
 }
 

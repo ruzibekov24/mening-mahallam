@@ -109,6 +109,23 @@ class UserProfile {
   final bool lastSeenVisible;
   final List<String> blockedUids;
 
+  /// Bildirishnoma turlari bo'yicha foydalanuvchi tanlovi — kalit
+  /// `NotificationType.storageValue` (masalan `newAnnouncement`),
+  /// qiymat `true`/`false`. Xaritada YO'Q tur — ya'ni foydalanuvchi
+  /// hali hech qachon o'zgartirmagan tur — YOQILGAN deb hisoblanadi
+  /// (mavjud foydalanuvchilar hech narsa qilmasdan bildirishnomalarni
+  /// yo'qotib qo'ymasligi uchun). Faqat `NotificationType`dagi
+  /// "oddiy" turlar shu yerda boshqariladi (`newAnnouncement`,
+  /// `newEvent`, `newPoll`, `newMessage`, `requestStatusChanged`) —
+  /// premium/hisobni o'chirish kabi tizim xabarlari har doim
+  /// yuboriladi, ular bu xaritada ishtirok etmaydi.
+  final Map<String, bool> notificationPrefs;
+
+  /// Berilgan bildirishnoma turi (`NotificationType.storageValue`)
+  /// yoqilganmi — xaritada bo'lmasa, standart holat YOQILGAN.
+  bool isNotificationEnabled(String typeKey) =>
+      notificationPrefs[typeKey] != false;
+
   /// Profil ekranidagi ism/rasm orqasida ko'rsatiladigan banner —
   /// `profile_banners.dart`dagi katalogdan bitta `id`.
   final String? profileBannerId;
@@ -142,6 +159,7 @@ class UserProfile {
     this.phoneVisible = false,
     this.lastSeenVisible = true,
     this.blockedUids = const [],
+    this.notificationPrefs = const {},
     this.profileBannerId,
     this.premiumUntil,
   });
@@ -149,6 +167,7 @@ class UserProfile {
   factory UserProfile.fromFirestore(Map<String, dynamic> data) {
     final birthTimestamp = data['birthDate'] as Timestamp?;
     final premiumTimestamp = data['premiumUntil'] as Timestamp?;
+    final rawPrefs = data['notificationPrefs'] as Map<String, dynamic>?;
     return UserProfile(
       firstName: data['firstName'] ?? '',
       lastName: data['lastName'] ?? '',
@@ -166,6 +185,9 @@ class UserProfile {
       phoneVisible: data['phoneVisible'] == true,
       lastSeenVisible: data['lastSeenVisible'] != false,
       blockedUids: List<String>.from(data['blockedUids'] ?? const []),
+      notificationPrefs: rawPrefs == null
+          ? const {}
+          : rawPrefs.map((key, value) => MapEntry(key, value == true)),
       profileBannerId: data['profileBannerId'] as String?,
       premiumUntil: premiumTimestamp?.toDate(),
     );
@@ -207,6 +229,7 @@ class UserProfile {
       phoneVisible: phoneVisible,
       lastSeenVisible: lastSeenVisible,
       blockedUids: blockedUids,
+      notificationPrefs: notificationPrefs,
       profileBannerId: profileBannerId,
       premiumUntil: premiumUntil,
     );
@@ -508,6 +531,22 @@ class HomeRepository {
     if (uid == null) return;
     await _firestore.collection('users').doc(uid).update({
       'lastSeenVisible': visible,
+    });
+  }
+
+  /// Joriy foydalanuvchining bitta bildirishnoma turi bo'yicha
+  /// tanlovini o'zgartiradi — butun xaritani qayta yozish o'rniga
+  /// nuqta-yo'l (`notificationPrefs.<typeKey>`) orqali faqat shu
+  /// maydonni yozadi (`AnnouncementRepository.toggleReaction`dagi
+  /// kabi maqsadli yozuv uslubi).
+  Future<void> updateNotificationPref({
+    required String typeKey,
+    required bool enabled,
+  }) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+    await _firestore.collection('users').doc(uid).update({
+      'notificationPrefs.$typeKey': enabled,
     });
   }
 

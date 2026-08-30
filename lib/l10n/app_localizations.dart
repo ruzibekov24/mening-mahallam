@@ -3346,6 +3346,264 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Sizning bahoyingiz'**
   String get yourRatingLabel;
+
+  /// Murojaatni xodimga biriktirish varag'ining sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodimga biriktirish'**
+  String get assignStaffTitle;
+
+  /// Biriktirish varag'ida mahallada xodim bo'lmaganda ko'rsatiladi
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahallada xodim topilmadi'**
+  String get noStaffFoundLabel;
+
+  /// Murojaatga biriktirilgan xodimni bekor qilish tugmasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Biriktirishni bekor qilish'**
+  String get cancelAssignmentAction;
+
+  /// Murojaat xodimga muvaffaqiyatli biriktirilganda chiqadigan xabar
+  ///
+  /// In uz, this message translates to:
+  /// **'Murojaat biriktirildi'**
+  String get requestAssignedMessage;
+
+  /// Murojaat bajarish muddati belgilanganda chiqadigan xabar
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddat belgilandi'**
+  String get dueDateSetMessage;
+
+  /// Murojaatni xodimga biriktirish tugmasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Biriktirish'**
+  String get assignAction;
+
+  /// Murojaat bajarish muddatini belgilash tugmasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddat belgilash'**
+  String get setDueDateAction;
+
+  /// Murojaat biriktirilgan xodimning ismi ko'rsatiladigan yorliq
+  ///
+  /// In uz, this message translates to:
+  /// **'Biriktirilgan: {fullName}'**
+  String assignedToLabel(String fullName);
+
+  /// Murojaat bajarish muddati sanasi ko'rsatiladigan yorliq
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddat: {date}'**
+  String dueDateLabel(String date);
+
+  /// Muddati o'tgan murojaatlar uchun sana yorlig'iga qo'shiladigan qo'shimcha
+  ///
+  /// In uz, this message translates to:
+  /// **' — muddati o\'tdi'**
+  String get dueDateOverdueSuffix;
+
+  /// Murojaat tafsilotlari ekranidagi izohlar bo'limi sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Izohlar'**
+  String get commentsTitle;
+
+  /// Murojaat ostida hali izoh yozilmagan bo'lsa ko'rsatiladi
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha izohlar yo\'q'**
+  String get noCommentsYet;
+
+  /// Izoh yozish maydonining placeholder matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Izoh yozing...'**
+  String get commentHint;
+
+  /// Yangi guruh chati yaratish ekrani sarlavhasi/tugmasi/FAB yorlig'i
+  ///
+  /// In uz, this message translates to:
+  /// **'Guruh yaratish'**
+  String get createGroupAction;
+
+  /// Yangi guruh yaratish formasidagi guruh nomi maydoni yorlig'i
+  ///
+  /// In uz, this message translates to:
+  /// **'Guruh nomi'**
+  String get groupNameLabel;
+
+  /// Guruh nomi maydonining placeholder matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalan: Ko\'cha faollari'**
+  String get groupNameHint;
+
+  /// Guruhga a'zolarni tanlash bo'limining sarlavhasi (hech kim tanlanmagan holat)
+  ///
+  /// In uz, this message translates to:
+  /// **'A\'zolarni tanlang'**
+  String get selectMembersLabel;
+
+  /// Guruhga a'zolarni tanlash bo'limining sarlavhasi, tanlangan a'zolar soni bilan
+  ///
+  /// In uz, this message translates to:
+  /// **'A\'zolarni tanlang ({count})'**
+  String selectMembersLabelWithCount(int count);
+
+  /// Guruh nomi kiritilmasdan yaratishga urinilganda chiqadigan xatolik
+  ///
+  /// In uz, this message translates to:
+  /// **'Guruh nomini kiriting'**
+  String get enterGroupNameError;
+
+  /// Hech qanday a'zo tanlanmasdan guruh yaratishga urinilganda chiqadigan xatolik
+  ///
+  /// In uz, this message translates to:
+  /// **'Kamida bitta a\'zo tanlang'**
+  String get selectAtLeastOneMemberError;
+
+  /// Guruh yaratishda server xatoligi yuz berganda chiqadigan xabar
+  ///
+  /// In uz, this message translates to:
+  /// **'Guruh yaratishda xatolik yuz berdi'**
+  String get groupCreateError;
+
+  /// Suhbatlar ekranidagi guruh chatlari bo'limining sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Guruhlar'**
+  String get groupsSectionTitle;
+
+  /// Yangi xizmat formasidagi ixtiyoriy joylashuv maydoni yorlig'i
+  ///
+  /// In uz, this message translates to:
+  /// **'Joylashuv'**
+  String get locationFieldLabel;
+
+  /// Joylashuv tanlanganda ko'rsatiladigan matn
+  ///
+  /// In uz, this message translates to:
+  /// **'Joylashuv belgilandi'**
+  String get locationSetLabel;
+
+  /// Joylashuv tanlanmagan holatda ko'rsatiladigan matn va joylashuv tanlash ekrani sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Joylashuvni belgilash'**
+  String get setLocationLabel;
+
+  /// GPS orqali joriy joylashuvni aniqlab bo'lmaganda chiqadigan xatolik
+  ///
+  /// In uz, this message translates to:
+  /// **'Joylashuvni aniqlab bo\'lmadi. Ruxsat yoki GPS holatini tekshiring.'**
+  String get locationDetectError;
+
+  /// Joylashuv tanlash xaritasi ustidagi ko'rsatma matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaritani bosib nuqta belgilang'**
+  String get tapMapHint;
+
+  /// AI Yordamchi ekrani sarlavhasi; shu matn Sozlamalar ekranidagi menyu bandida ham ishlatiladi
+  ///
+  /// In uz, this message translates to:
+  /// **'AI Yordamchi'**
+  String get assistantScreenTitle;
+
+  /// AI Yordamchi ekranidagi xabar kiritish maydonining placeholder matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Savolingizni yozing...'**
+  String get assistantInputHint;
+
+  /// AI Yordamchi ekrani hali xabar yo'q holatidagi salomlashuv sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Salom! Men AI yordamchiman'**
+  String get assistantGreetingTitle;
+
+  /// AI Yordamchi ekrani hali xabar yo'q holatidagi salomlashuv tavsifi
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahalla haqida savollaringizga javob berishga, ilovadan foydalanishga yordam berishga tayyorman.'**
+  String get assistantGreetingSubtitle;
+
+  /// AI Yordamchi ekranidagi tezkor savol taklifi (1-chi)
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahallamda qanday xizmatlar bor?'**
+  String get assistantSuggestion1;
+
+  /// AI Yordamchi ekranidagi tezkor savol taklifi (2-chi)
+  ///
+  /// In uz, this message translates to:
+  /// **'Murojaat qanday yuboriladi?'**
+  String get assistantSuggestion2;
+
+  /// AI Yordamchi ekranidagi tezkor savol taklifi (3-chi)
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilovadan qanday foydalanaman?'**
+  String get assistantSuggestion3;
+
+  /// Bildirishnoma turlari sozlash ekrani sarlavhasi; Sozlamalar ekranidagi shu ekranga o'tish bandining sarlavhasi sifatida ham ishlatiladi
+  ///
+  /// In uz, this message translates to:
+  /// **'Bildirishnoma sozlamalari'**
+  String get notificationPreferencesTitle;
+
+  /// Sozlamalar ekranidagi 'Bildirishnoma sozlamalari' bandining tavsif matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaysi turdagi xabarlarni olishni tanlang'**
+  String get notificationPreferencesSubtitle;
+
+  /// Bildirishnoma turlari sozlash ekranidagi bo'lim sarlavhasi (ekranda katta harflar bilan ko'rsatiladi)
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaysi xabarlarni olasiz'**
+  String get notificationPreferencesSectionHeader;
+
+  /// Bildirishnoma turlari sozlash ekranidagi 'yangi e'lon' turi yorlig'i
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi e\'lonlar'**
+  String get notificationTypeAnnouncementLabel;
+
+  /// Bildirishnoma turlari sozlash ekranidagi 'yangi tadbir' turi yorlig'i
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi tadbirlar'**
+  String get notificationTypeEventLabel;
+
+  /// Bildirishnoma turlari sozlash ekranidagi 'yangi so'rovnoma' turi yorlig'i
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi so\'rovnomalar'**
+  String get notificationTypePollLabel;
+
+  /// Bildirishnoma turlari sozlash ekranidagi 'yangi xabar' turi yorlig'i
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi xabarlar'**
+  String get notificationTypeMessageLabel;
+
+  /// Bildirishnoma turlari sozlash ekranidagi 'murojaat holati o'zgarishi' turi yorlig'i
+  ///
+  /// In uz, this message translates to:
+  /// **'Murojaat holati'**
+  String get notificationTypeRequestStatusLabel;
+
+  /// Internet aloqasi yo'qligida ilova bo'ylab ko'rinadigan banner matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Oflayn — internet yo\'q'**
+  String get offlineBannerMessage;
 }
 
 class _AppLocalizationsDelegate

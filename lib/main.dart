@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui' show PlatformDispatcher;
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -103,6 +104,34 @@ Future<bool> _initFirebase() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     ).timeout(const Duration(seconds: 20));
+
+    // ---------------------------------------------------------------
+    // Firestore oflayn keshi ANIQ sozlanadi.
+    //
+    // Mobil SDK'da bu funksiya standart holda YOQILGAN — shuning
+    // uchun ilova hozir ham (sozlamasiz) oflaynda oxirgi ko'rilgan
+    // ma'lumotlarni ko'rsatib turibdi. Lekin standart kesh hajmi
+    // 40MB — mahalla ilovasida ko'plab rasm/URL maydonlari bo'lgan
+    // hujjatlar (e'lonlar, murojaatlar) uchun bu tez to'lib, eski
+    // yozuvlarni chetlab tashlashi mumkin. Cheksiz (`CACHE_SIZE_
+    // UNLIMITED`) o'rniga katta-lekin-chegaralangan 200MB tanlandi:
+    // Firestore matn/metama'lumot saqlaydi (rasmning o'zi emas, faqat
+    // Supabase Storage URL'i) — 200MB minglab hujjat uchun yetarli,
+    // shu bilan birga qurilma xotirasini cheksiz eyishning oldi
+    // olinadi.
+    //
+    // MUHIM: bu sozlama Firestore'dan BIRINCHI o'qishdan OLDIN
+    // o'rnatilishi kerak, aks holda `setState was called after...`
+    // emas, balki jimgina e'tiborsiz qoldiriladi (yoki xato tashlaydi
+    // agar Firestore instance allaqachon ishga tushgan bo'lsa).
+    // Shuning uchun aynan shu yerda — Firebase ishga tushgach, lekin
+    // hali biror ekran yoki provider Firestore'ni chaqirmasdan turib.
+    // ---------------------------------------------------------------
+    FirebaseFirestore.instance.settings = const Settings(
+      persistenceEnabled: true,
+      cacheSizeBytes: 200 * 1024 * 1024,
+    );
+
     return true;
   } catch (e, s) {
     debugPrint('Firebase ishga tushmadi: $e\n$s');

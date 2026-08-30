@@ -78,6 +78,28 @@ ro'yxatidan 4 punkt (report, bildirishnoma, reaksiya, so'rovnoma+qidiruv).
 - Ko'p super-admin qo'llab-quvvatlash — **rad etildi**, hozircha kerak
   emas deb topildi
 
+## v1.4.0 — Murojaat/chat/xarita chuqurlashtirish + AI yordamchi (tayyor, `v1.4-dev` branch)
+
+v2.0 ro'yxatidan to'lovdan tashqari 4 punkt + 2 yangi g'oya:
+
+- [x] Murojaatlar oqimini chuqurlashtirish — xodimga biriktirish, izoh
+      thread (`mahallas/*/requests/*/comments`), muddat (SLA), muddati
+      o'tganda bildirishnoma
+- [x] Guruh chat — yangi `groupChats` kolleksiyasi, mavjud 1:1 chatga
+      tegilmagan
+- [x] Xarita boyitish — `LocalService`ga ixtiyoriy joylashuv, xaritada
+      xizmat ko'rsatuvchi pinlari
+- [x] **AI chat-yordamchi** — `assistant-worker/` (yangi Cloudflare
+      Worker, Gemini API, kunlik so'rov cheklovi bilan), Gemini kaliti
+      Firestore orqali (`appConfig/assistant`) super-admin panelidan
+      almashtiriladi — kvota tugasa yangi kalitni qo'lda kod
+      o'zgartirmasdan qo'yish mumkin
+- [x] Bildirishnoma sozlamalari — har bir tur uchun alohida yoqish/
+      o'chirish (`notificationPrefs`), avvalgi global bayroq hech
+      qanday ta'sirga ega emas edi — bu birinchi marta haqiqatan ishlaydi
+- [x] Offline keshlash — Firestore kesh aniq sozlandi, `connectivity_plus`
+      orqali oflayn banner
+
 ## v2.0 — Katta yangilanish: to'lov integratsiyasi (rejalashtirish bosqichida, `v2-dev` branch)
 
 Markazida real to'lov shlyuzi turadi (hozir premium/e'lon to'lovi qo'lda,
@@ -85,14 +107,7 @@ admin tasdiqlaydi — kodda ochiq izoh bilan qayd etilgan).
 
 - [ ] Click/Payme (va/yoki Play Billing) integratsiyasi — premium va
       xizmat e'lonlari uchun
-- [ ] Murojaatlar oqimini chuqurlashtirish — xodimga biriktirish, izoh/
-      thread, SLA/muddat, eskalatsiya
-- [ ] Guruh chat (hozir faqat 1:1)
-- [ ] Xarita boyitish — xizmat ko'rsatuvchilar uchun pinlar
 - [ ] Xizmatlar bozorini peer-to-peer qilish + to'lov orqali buyurtma
-- [ ] **AI chat-yordamchi** — alohida ekran/bo'lim sifatida, foydalanuvchi
-      savol-javob qila oladigan yagona suhbat interfeysi (ilova bo'ylab
-      hali tarqalmagan, birinchi AI bosqichi)
 
 ## v3.0 — Uzoq muddatli, tasdiqlanmagan g'oyalar
 

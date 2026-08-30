@@ -1,0 +1,27 @@
+name = "mahallam-assistant-api"
+main = "index.js"
+compatibility_date = "2026-08-20"
+
+# Non-secret configuration. The only secret (GEMINI_API_KEY) is set
+# separately via `wrangler secret put` — see README.md.
+[vars]
+FIREBASE_PROJECT_ID = "mahallam-d4a93"
+# This Worker is called directly by the Flutter mobile app (not a
+# browser), so CORS is mostly a no-op — kept permissive for consistency
+# with admin-worker's pattern and in case a web client is added later.
+ALLOWED_ORIGIN = "*"
+# Gemini free-tier model. See README.md for notes on picking a newer
+# model name if one becomes available.
+GEMINI_MODEL = "gemini-3.6-flash"
+
+# Per-user daily rate limit (POST /chat), enforced via KV — see
+# lib/rateLimit.js and README.md.
+RATE_LIMIT_PER_DAY = "20"
+
+# KV namespace holding per-uid/day message counters
+# (key: "ratelimit:{uid}:{date}", value: count, TTL ~2 days).
+# Create with: wrangler kv namespace create RATE_LIMIT_KV
+# then fill in the id below.
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "01265200ff9e4b6bb33b2663e61efe8a"

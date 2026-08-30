@@ -13,6 +13,7 @@ import '../theme/app_tokens.dart';
 import 'app_feedback.dart';
 import 'glass_bottom_nav.dart';
 import 'no_mahalla_view.dart';
+import 'offline_banner.dart';
 
 /// Joriy faol tab indeksi.
 final mainTabIndexProvider = StateProvider<int>((ref) => 0);
@@ -101,39 +102,49 @@ class MainShell extends ConsumerWidget {
       // foni) haqiqiy, litsenziyalangan (CC0) o'zbek to'qimachilik
       // suratlari bilan hal qilinadi (pastga qarang: HomeScreen,
       // OnboardingScreen). Shu yerda umumiy soxta tekstura kerak emas.
-      body: Stack(
+      body: Column(
         children: [
-          Positioned.fill(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 220),
-              switchInCurve: Curves.easeOut,
-              switchOutCurve: Curves.easeIn,
-              transitionBuilder: (child, animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0, 0.02),
-                      end: Offset.zero,
-                    ).animate(animation),
-                    child: child,
+          // Barcha bo'limlar ustida, ekranlar almashsa ham doim
+          // ko'rinadigan joyda — foydalanuvchi qaysi tabda bo'lishidan
+          // qat'iy nazar oflayn holatini bilib turishi kerak.
+          const OfflineBanner(),
+          Expanded(
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 220),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    transitionBuilder: (child, animation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0, 0.02),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: KeyedSubtree(
+                      key: ValueKey(currentIndex),
+                      child: _screens[currentIndex],
+                    ),
                   ),
-                );
-              },
-              child: KeyedSubtree(
-                key: ValueKey(currentIndex),
-                child: _screens[currentIndex],
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: GlassBottomNav(
-              items: _items,
-              currentIndex: currentIndex,
-              onTap: selectIndex,
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: GlassBottomNav(
+                    items: _items,
+                    currentIndex: currentIndex,
+                    onTap: selectIndex,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

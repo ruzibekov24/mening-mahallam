@@ -88,8 +88,17 @@ class RequestDetailScreen extends ConsumerWidget {
             // qo'ng'iroq qilish uchun. Oddiy fuqaro uchun bu ko'rinmaydi.
             final canSeeAuthor = profile?.role.canManageRequests == true ||
                 profile?.role.isSuperAdmin == true;
+            // Biriktirish/muddat belgilash — holat o'zgartirish bilan
+            // bir xil ruxsat darajasi (faqat xodim/rais/super admin).
+            final canManage = profile?.role.canManageRequests == true;
 
-            return Column(
+            // Muddati o'tgan va biriktirilgan murojaatlar uchun
+            // imkoniyat sifatida (fon jarayonisiz) bildirishnoma
+            // tekshiruvi — ekran ochilganda bir marta ishga tushadi.
+            return _OverdueCheckEffect(
+              mahallaId: mahallaId,
+              request: request,
+              child: Column(
               children: [
                 _BackHeader(
                   title: l10n.requestDetailTitle,
@@ -181,7 +190,7 @@ class RequestDetailScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(width: AppSpacing.xs),
-                          Text(request.priority.label,
+                          Text(priorityLabel(l10n, request.priority),
                               style: context.secondaryStyle),
                         ],
                       ),
@@ -248,10 +257,24 @@ class RequestDetailScreen extends ConsumerWidget {
                           request: request,
                         ),
                       ],
+
+                      const SizedBox(height: AppSpacing.xl),
+                      _AssignmentAndDueSection(
+                        mahallaId: mahallaId,
+                        request: request,
+                        canManage: canManage,
+                      ),
+
+                      const SizedBox(height: AppSpacing.xl),
+                      _CommentsSection(
+                        mahallaId: mahallaId,
+                        requestId: requestId,
+                      ),
                     ],
                   ),
                 ),
               ],
+              ),
             );
           },
         ),
@@ -447,3 +470,502 @@ class _JoinSectionState extends ConsumerState<_JoinSection> {
 /// foydalanuvchi uid'ini FirebaseAuth orqali to'g'ridan-to'g'ri
 /// olamiz.
 String? _currentUid() => FirebaseAuth.instance.currentUser?.uid;
+
+/// Ko'rinmas "yon effekt" widget'i — murojaat muddati o'tgan va
+/// biriktirilgan bo'lsa, birinchi marta build bo'lganda (ekran
+/// ochilganda) bildirishnoma tekshiruvini ishga tushiradi. Alohida
+/// fon jarayoni yo'qligi sababli bu eng oddiy to'g'ri yechim: ekran
+/// ochilganda bir martalik tekshiruv, `overdueNotifiedAt` maydoni esa
+/// qayta yuborilishning oldini oladi.
+class _OverdueCheckEffect extends ConsumerStatefulWidget {
+  final String mahallaId;
+  final MahallaRequest request;
+  final Widget child;
+
+  const _OverdueCheckEffect({
+    required this.mahallaId,
+    required this.request,
+    required this.child,
+  });
+
+  @override
+  ConsumerState<_OverdueCheckEffect> createState() =>
+      _OverdueCheckEffectState();
+}
+
+class _OverdueCheckEffectState extends ConsumerState<_OverdueCheckEffect> {
+  bool _checked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _maybeCheck();
+  }
+
+  @override
+  void didUpdateWidget(covariant _OverdueCheckEffect oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.request.id != widget.request.id) _checked = false;
+    _maybeCheck();
+  }
+
+  void _maybeCheck() {
+    if (_checked) return;
+    _checked = true;
+    ref
+        .read(requestsRepositoryProvider)
+        .checkAndNotifyOverdue(widget.mahallaId, widget.request);
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
+
+/// Murojaatga biriktirilgan xodim va bajarish muddatini (SLA)
+/// ko'rsatadi; [canManage] bo'lsa, ularni belgilash/o'zgartirish
+/// tugmalari ham chiqadi.
+class _AssignmentAndDueSection extends ConsumerWidget {
+  final String mahallaId;
+  final MahallaRequest request;
+  final bool canManage;
+
+  const _AssignmentAndDueSection({
+    required this.mahallaId,
+    required this.request,
+    required this.canManage,
+  });
+
+  String _formatDate(DateTime dt) {
+    return '${dt.day.toString().padLeft(2, '0')}.'
+        '${dt.month.toString().padLeft(2, '0')}.${dt.year}';
+  }
+
+  Future<void> _openAssignSheet(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final staffAsync = ref.read(staffMembersProvider(mahallaId));
+    final result = await showModalBottomSheet<String?>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, AppSpacing.sm),
+                child:
+                    Text(l10n.assignStaffTitle, style: sheetContext.sectionStyle),
+              ),
+              staffAsync.when(
+                data: (members) {
+                  if (members.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.all(AppSpacing.xl),
+                      child: Text(l10n.noStaffFoundLabel,
+                          style: sheetContext.secondaryStyle),
+                    );
+                  }
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (request.assignedToUid != null)
+                        ListTile(
+                          leading: const Icon(PhosphorIconsRegular.xCircle,
+                              color: AppColors.danger),
+                          title: Text(l10n.cancelAssignmentAction),
+                          onTap: () => Navigator.of(sheetContext).pop(''),
+                        ),
+                      ...members.map((member) {
+                        final fullName =
+                            '${member.firstName} ${member.lastName}'.trim();
+                        return ListTile(
+                          leading: UserAvatar(
+                            size: 32,
+                            firstName: member.firstName,
+                            lastName: member.lastName,
+                            photoUrl: member.photoUrl,
+                            seed: member.uid,
+                          ),
+                          title: Text(fullName),
+                          subtitle: Text(member.role.label),
+                          trailing: request.assignedToUid == member.uid
+                              ? const Icon(PhosphorIconsFill.checkCircle,
+                                  color: AppColors.primary)
+                              : null,
+                          onTap: () => Navigator.of(sheetContext).pop(member.uid),
+                        );
+                      }),
+                    ],
+                  );
+                },
+                loading: () => const Padding(
+                  padding: EdgeInsets.all(AppSpacing.xl),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (result == null) return;
+    if (!context.mounted) return;
+    try {
+      await ref.read(requestsRepositoryProvider).assignRequest(
+            mahallaId: mahallaId,
+            requestId: request.id,
+            staffUid: result.isEmpty ? null : result,
+          );
+      if (!context.mounted) return;
+      showAppAlert(context, AppLocalizations.of(context).requestAssignedMessage);
+    } catch (_) {
+      if (!context.mounted) return;
+      showAppAlert(context, AppLocalizations.of(context).statusChangeError,
+          kind: AppAlertKind.error);
+    }
+  }
+
+  Future<void> _pickDueDate(BuildContext context, WidgetRef ref) async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: request.dueAt ?? now,
+      firstDate: now.subtract(const Duration(days: 1)),
+      lastDate: now.add(const Duration(days: 365)),
+    );
+    if (picked == null) return;
+    if (!context.mounted) return;
+    try {
+      await ref.read(requestsRepositoryProvider).setRequestDueDate(
+            mahallaId: mahallaId,
+            requestId: request.id,
+            dueAt: picked,
+          );
+      if (!context.mounted) return;
+      showAppAlert(context, AppLocalizations.of(context).dueDateSetMessage);
+    } catch (_) {
+      if (!context.mounted) return;
+      showAppAlert(context, AppLocalizations.of(context).statusChangeError,
+          kind: AppAlertKind.error);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    if (request.assignedToUid == null && request.dueAt == null && !canManage) {
+      return const SizedBox.shrink();
+    }
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (request.assignedToUid != null)
+            Consumer(builder: (context, ref, _) {
+              final assigneeAsync =
+                  ref.watch(chatUserBriefProvider(request.assignedToUid!));
+              return assigneeAsync.when(
+                data: (member) {
+                  final fullName = member == null
+                      ? AppLocalizations.of(context).unknownUserLabel
+                      : '${member.firstName} ${member.lastName}'.trim();
+                  return Row(
+                    children: [
+                      Icon(PhosphorIconsRegular.userSwitch,
+                          size: 16, color: context.textSecondary),
+                      const SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        child: Text(l10n.assignedToLabel(fullName),
+                            style: context.secondaryStyle),
+                      ),
+                    ],
+                  );
+                },
+                loading: () => const SizedBox(
+                    height: 18, child: ShimmerBox(height: 18, width: 120)),
+                error: (_, __) => const SizedBox.shrink(),
+              );
+            }),
+          if (request.dueAt != null) ...[
+            if (request.assignedToUid != null)
+              const SizedBox(height: AppSpacing.xs),
+            Row(
+              children: [
+                Icon(PhosphorIconsRegular.clockCountdown,
+                    size: 16,
+                    color:
+                        request.isOverdue ? AppColors.danger : context.textSecondary),
+                const SizedBox(width: AppSpacing.xs),
+                Expanded(
+                  child: Text(
+                    '${l10n.dueDateLabel(_formatDate(request.dueAt!))}'
+                    '${request.isOverdue ? l10n.dueDateOverdueSuffix : ''}',
+                    style: context.secondaryStyle.copyWith(
+                      color: request.isOverdue
+                          ? AppColors.danger
+                          : context.textSecondary,
+                      fontWeight:
+                          request.isOverdue ? FontWeight.w600 : null,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          if (canManage) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Row(
+              children: [
+                Expanded(
+                  child: TapScale(
+                    onTap: () => _openAssignSheet(context, ref),
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding:
+                          const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: context.textSecondary.withValues(alpha: 0.3)),
+                        borderRadius: AppRadius.xsAll,
+                      ),
+                      child:
+                          Text(l10n.assignAction, style: context.captionStyle),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: TapScale(
+                    onTap: () => _pickDueDate(context, ref),
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding:
+                          const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: context.textSecondary.withValues(alpha: 0.3)),
+                        borderRadius: AppRadius.xsAll,
+                      ),
+                      child: Text(l10n.setDueDateAction,
+                          style: context.captionStyle),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Murojaat ostidagi izohlar bo'limi — oddiy ro'yxat + pastda yozish
+/// maydoni (chat pufakchasi naqshidan farqli, chunki bu yerda "mening
+/// tomonim" tushunchasi kam ahamiyatga ega — asosiysi kim va qachon
+/// yozgani).
+class _CommentsSection extends ConsumerStatefulWidget {
+  final String mahallaId;
+  final String requestId;
+
+  const _CommentsSection({required this.mahallaId, required this.requestId});
+
+  @override
+  ConsumerState<_CommentsSection> createState() => _CommentsSectionState();
+}
+
+class _CommentsSectionState extends ConsumerState<_CommentsSection> {
+  final _controller = TextEditingController();
+  bool _isSending = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _send() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty || _isSending) return;
+    setState(() => _isSending = true);
+    try {
+      await ref.read(requestsRepositoryProvider).addComment(
+            mahallaId: widget.mahallaId,
+            requestId: widget.requestId,
+            text: text,
+          );
+      _controller.clear();
+    } catch (_) {
+      if (mounted) {
+        showAppAlert(context, AppLocalizations.of(context).unexpectedError,
+            kind: AppAlertKind.error);
+      }
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
+  }
+
+  String _formatTime(DateTime t) =>
+      '${t.day.toString().padLeft(2, '0')}.${t.month.toString().padLeft(2, '0')} '
+      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final commentsAsync = ref.watch(
+        requestCommentsProvider('${widget.mahallaId}:${widget.requestId}'));
+    final myUid = _currentUid();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.commentsTitle, style: context.sectionStyle),
+        const SizedBox(height: AppSpacing.sm),
+        commentsAsync.when(
+          data: (comments) {
+            if (comments.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                child: Text(l10n.noCommentsYet,
+                    style: context.secondaryStyle),
+              );
+            }
+            return Column(
+              children: comments.map((comment) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: _CommentBubble(
+                    comment: comment,
+                    isMine: comment.authorUid == myUid,
+                    formattedTime: _formatTime(comment.createdAt),
+                  ),
+                );
+              }).toList(),
+            );
+          },
+          loading: () => const Padding(
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+            child: ShimmerListTile(),
+          ),
+          error: (_, __) => const SizedBox.shrink(),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: context.isDarkMode
+                      ? AppColors.darkSurface
+                      : AppColors.lightBorder,
+                  borderRadius: AppRadius.pillAll,
+                ),
+                child: TextField(
+                  controller: _controller,
+                  minLines: 1,
+                  maxLines: 4,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: InputDecoration(
+                    hintText: l10n.commentHint,
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  style: context.bodyStyle,
+                ),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Material(
+              color: AppColors.primary,
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: _isSending ? null : _send,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: _isSending
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Icon(PhosphorIconsFill.paperPlaneRight,
+                          size: 18, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _CommentBubble extends ConsumerWidget {
+  final RequestComment comment;
+  final bool isMine;
+  final String formattedTime;
+
+  const _CommentBubble({
+    required this.comment,
+    required this.isMine,
+    required this.formattedTime,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authorAsync = ref.watch(chatUserBriefProvider(comment.authorUid));
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: isMine
+            ? AppColors.primary.withValues(alpha: 0.1)
+            : (context.isDarkMode
+                ? AppColors.darkSurface
+                : AppColors.lightBorder),
+        borderRadius: AppRadius.smAll,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              authorAsync.when(
+                data: (member) {
+                  final fullName = member == null
+                      ? AppLocalizations.of(context).unknownUserLabel
+                      : '${member.firstName} ${member.lastName}'.trim();
+                  return Expanded(
+                    child: Text(
+                      fullName,
+                      style: context.captionStyle
+                          .copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  );
+                },
+                loading: () => const SizedBox(
+                    height: 14, child: ShimmerBox(height: 14, width: 80)),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
+              Text(formattedTime, style: context.captionStyle),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xxs),
+          Text(comment.text, style: context.bodyStyle),
+        ],
+      ),
+    );
+  }
+}

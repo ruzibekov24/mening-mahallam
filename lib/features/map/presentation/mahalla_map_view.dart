@@ -5,11 +5,39 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/shimmer.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../requests/data/requests_repository.dart';
+import '../../services/data/service_repository.dart';
 import '../data/map_providers.dart';
+
+String _serviceCategoryLabel(AppLocalizations l10n, ServiceCategory category) {
+  switch (category) {
+    case ServiceCategory.santexnik:
+      return l10n.serviceCategorySantexnik;
+    case ServiceCategory.elektrik:
+      return l10n.serviceCategoryElektrik;
+    case ServiceCategory.duradgor:
+      return l10n.serviceCategoryDuradgor;
+    case ServiceCategory.tozalash:
+      return l10n.serviceCategoryTozalash;
+    case ServiceCategory.qurilish:
+      return l10n.serviceCategoryQurilish;
+    case ServiceCategory.boshqa:
+      return l10n.serviceCategoryBoshqa;
+  }
+}
+
+Future<void> _launchServiceCall(String phone) async {
+  final uri = Uri(scheme: 'tel', path: phone);
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri);
+  }
+}
 
 /// Mahalla xaritasi — har doim sputnik (aerofoto) tasviri + joy
 /// nomlari (Esri "hybrid" ikki qatlami: World_Imagery + Reference/
@@ -28,6 +56,11 @@ class MahallaMapView extends ConsumerStatefulWidget {
   /// markazi ko'rsatiladi, to'liq murojaatlar ro'yxati emas.
   final bool showRequestMarkers;
 
+  /// Xaritada joylashuvi belgilangan mahalliy xizmat ko'rsatuvchi
+  /// markerlarini ko'rsatish. `showRequestMarkers` bilan bir xil
+  /// mantiq — kichik preview'larda `false`.
+  final bool showServiceMarkers;
+
   /// Joriy foydalanuvchi joylashuvini ko'rsatuvchi tugma (faqat
   /// interaktiv, to'liq ekranli xaritada mantiqiy).
   final bool showMyLocationButton;
@@ -39,6 +72,7 @@ class MahallaMapView extends ConsumerStatefulWidget {
     this.height = 200,
     this.interactive = true,
     this.showRequestMarkers = true,
+    this.showServiceMarkers = true,
     this.showMyLocationButton = false,
     this.onMarkerTap,
   });
@@ -101,11 +135,21 @@ class _MahallaMapViewState extends ConsumerState<MahallaMapView> {
     }
   }
 
+  void _showServiceInfo(ServiceMapMarker marker) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _ServiceMarkerSheet(marker: marker),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final centerAsync = ref.watch(mahallaMapCenterProvider(widget.mahallaId));
     final markersAsync =
         ref.watch(requestMapMarkersProvider(widget.mahallaId));
+    final serviceMarkersAsync =
+        ref.watch(serviceMapMarkersProvider(widget.mahallaId));
     final boundaryAsync = ref.watch(mahallaBoundaryProvider(widget.mahallaId));
     final mahallaName =
         ref.watch(mahallaMapNameProvider(widget.mahallaId)).valueOrNull;
@@ -119,6 +163,9 @@ class _MahallaMapViewState extends ConsumerState<MahallaMapView> {
             final markers = widget.showRequestMarkers
                 ? (markersAsync.valueOrNull ?? [])
                 : const <RequestMapMarker>[];
+            final serviceMarkers = widget.showServiceMarkers
+                ? (serviceMarkersAsync.valueOrNull ?? [])
+                : const <ServiceMapMarker>[];
             final boundary = boundaryAsync.valueOrNull;
             return Stack(
               children: [
@@ -247,6 +294,42 @@ class _MahallaMapViewState extends ConsumerState<MahallaMapView> {
                             ),
                           ),
                         ),
+                        // Xizmat ko'rsatuvchi markerlari — murojaat
+                        // holati ranglaridan (qizil/to'q sariq/yashil)
+                        // aniq ajratish uchun binafsha (`AppAccents.
+                        // neighbors`) va boshqa ikonka (usta asbobi)
+                        // ishlatiladi.
+                        ...serviceMarkers.map(
+                          (marker) => Marker(
+                            point: marker.position,
+                            width: 34,
+                            height: 34,
+                            child: GestureDetector(
+                              onTap: () => _showServiceInfo(marker),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: AppAccents.neighbors,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: Colors.white, width: 2.5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          Colors.black.withValues(alpha: 0.25),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  marker.category.icon,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -361,6 +444,71 @@ class _MahallaCenterMarker extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// Xizmat markerini bosganda chiqadigan qisqa ma'lumot varag'i — nomi,
+/// toifasi va qo'ng'iroq qilish tugmasi. `services_screen.dart`
+/// dagi to'liq kartochkadan farqli o'laroq, faqat xaritadan
+/// tezkor ma'lumot olish uchun mo'ljallangan minimal ko'rinish.
+class _ServiceMarkerSheet extends StatelessWidget {
+  final ServiceMapMarker marker;
+
+  const _ServiceMarkerSheet({required this.marker});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return SafeArea(
+      child: Container(
+        margin: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: context.surfaceColor,
+          borderRadius: AppRadius.lgAll,
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppAccents.neighbors.withValues(alpha: 0.14),
+                borderRadius: AppRadius.smAll,
+              ),
+              child: Icon(marker.category.icon,
+                  size: 20, color: AppAccents.neighbors),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(marker.name, style: context.cardTitleStyle),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(_serviceCategoryLabel(l10n, marker.category),
+                      style: context.secondaryStyle),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            InkWell(
+              borderRadius: AppRadius.smAll,
+              onTap: () => _launchServiceCall(marker.phone),
+              child: Container(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: AppRadius.smAll,
+                ),
+                child: const Icon(PhosphorIconsFill.phone,
+                    size: 18, color: AppColors.primary),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -10,6 +10,7 @@ import '../../../core/widgets/shimmer.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../chat/data/chat_providers.dart';
+import '../../home/data/home_repository.dart';
 import '../data/requests_labels.dart';
 import '../data/requests_repository.dart';
 import '../../../core/widgets/app_alert.dart';
@@ -77,6 +78,126 @@ class _RequestsManagementScreenState
     } catch (_) {
       if (!mounted) return;
       showAppAlert(context, l10n.statusChangeError, kind: AppAlertKind.error);
+    }
+  }
+
+  /// Murojaatni mahalla xodimlaridan biriga biriktirish uchun tanlov
+  /// varag'i — `staffMembersProvider` orqali (Home ekranidagi bilan
+  /// bir xil manba) mahalla xodimlari/raisi ro'yxatini ko'rsatadi.
+  Future<void> _openAssignSheet(MahallaRequest request) async {
+    final staffAsync = ref.read(staffMembersProvider(widget.mahallaId));
+    final result = await showModalBottomSheet<String?>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, AppSpacing.sm),
+                child: Text(AppLocalizations.of(context).assignStaffTitle,
+                    style: sheetContext.sectionStyle),
+              ),
+              staffAsync.when(
+                data: (members) {
+                  if (members.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.all(AppSpacing.xl),
+                      child: Text(AppLocalizations.of(context).noStaffFoundLabel,
+                          style: sheetContext.secondaryStyle),
+                    );
+                  }
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (request.assignedToUid != null)
+                        ListTile(
+                          leading: const Icon(PhosphorIconsRegular.xCircle,
+                              color: AppColors.danger),
+                          title: Text(
+                              AppLocalizations.of(context).cancelAssignmentAction),
+                          onTap: () => Navigator.of(sheetContext).pop(''),
+                        ),
+                      ...members.map((member) {
+                        final fullName =
+                            '${member.firstName} ${member.lastName}'.trim();
+                        return ListTile(
+                          leading: UserAvatar(
+                            size: 32,
+                            firstName: member.firstName,
+                            lastName: member.lastName,
+                            photoUrl: member.photoUrl,
+                            seed: member.uid,
+                          ),
+                          title: Text(fullName),
+                          subtitle: Text(member.role.label),
+                          trailing: request.assignedToUid == member.uid
+                              ? const Icon(PhosphorIconsFill.checkCircle,
+                                  color: AppColors.primary)
+                              : null,
+                          onTap: () => Navigator.of(sheetContext).pop(member.uid),
+                        );
+                      }),
+                    ],
+                  );
+                },
+                loading: () => const Padding(
+                  padding: EdgeInsets.all(AppSpacing.xl),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
+          ),
+        );
+      },
+    );
+
+    // `null` — sheet yopildi (hech narsa tanlanmadi). `''` — biriktirishni
+    // bekor qilish tanlandi (staffUid `null`ga o'rnatiladi).
+    if (result == null) return;
+    try {
+      await ref.read(requestsRepositoryProvider).assignRequest(
+            mahallaId: widget.mahallaId,
+            requestId: request.id,
+            staffUid: result.isEmpty ? null : result,
+          );
+      if (!mounted) return;
+      showAppAlert(context, AppLocalizations.of(context).requestAssignedMessage);
+    } catch (_) {
+      if (!mounted) return;
+      showAppAlert(context, AppLocalizations.of(context).statusChangeError,
+          kind: AppAlertKind.error);
+    }
+  }
+
+  /// Murojaatning bajarish muddatini (SLA) belgilash uchun sana tanlash.
+  Future<void> _pickDueDate(MahallaRequest request) async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: request.dueAt ?? now,
+      firstDate: now.subtract(const Duration(days: 1)),
+      lastDate: now.add(const Duration(days: 365)),
+    );
+    if (picked == null) return;
+    try {
+      await ref.read(requestsRepositoryProvider).setRequestDueDate(
+            mahallaId: widget.mahallaId,
+            requestId: request.id,
+            dueAt: picked,
+          );
+      if (!mounted) return;
+      showAppAlert(context, AppLocalizations.of(context).dueDateSetMessage);
+    } catch (_) {
+      if (!mounted) return;
+      showAppAlert(context, AppLocalizations.of(context).statusChangeError,
+          kind: AppAlertKind.error);
     }
   }
 
@@ -161,6 +282,8 @@ class _RequestsManagementScreenState
                         return _ManagementRequestCard(
                           request: request,
                           onTap: () => _openStatusSheet(request),
+                          onAssign: () => _openAssignSheet(request),
+                          onSetDueDate: () => _pickDueDate(request),
                         );
                       },
                     );
@@ -214,8 +337,15 @@ extension on RequestPriority {
 class _ManagementRequestCard extends ConsumerWidget {
   final MahallaRequest request;
   final VoidCallback onTap;
+  final VoidCallback onAssign;
+  final VoidCallback onSetDueDate;
 
-  const _ManagementRequestCard({required this.request, required this.onTap});
+  const _ManagementRequestCard({
+    required this.request,
+    required this.onTap,
+    required this.onAssign,
+    required this.onSetDueDate,
+  });
 
   String _formatDate(DateTime dt) {
     return '${dt.day.toString().padLeft(2, '0')}.'
@@ -316,6 +446,55 @@ class _ManagementRequestCard extends ConsumerWidget {
                     height: 20, child: ShimmerBox(height: 20, width: 100)),
                 error: (_, __) => const SizedBox.shrink(),
               ),
+              if (request.assignedToUid != null) ...[
+                const SizedBox(height: AppSpacing.xs),
+                Consumer(builder: (context, ref, _) {
+                  final assigneeAsync = ref.watch(
+                      chatUserBriefProvider(request.assignedToUid!));
+                  return assigneeAsync.when(
+                    data: (member) {
+                      final fullName = member == null
+                          ? l10n.unknownUserLabel
+                          : '${member.firstName} ${member.lastName}'.trim();
+                      return Row(
+                        children: [
+                          Icon(PhosphorIconsRegular.userSwitch,
+                              size: 13, color: context.textSecondary),
+                          const SizedBox(width: AppSpacing.xs),
+                          Text(l10n.assignedToLabel(fullName),
+                              style: context.captionStyle),
+                        ],
+                      );
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
+                  );
+                }),
+              ],
+              if (request.dueAt != null) ...[
+                const SizedBox(height: AppSpacing.xs),
+                Row(
+                  children: [
+                    Icon(PhosphorIconsRegular.clockCountdown,
+                        size: 13,
+                        color: request.isOverdue
+                            ? AppColors.danger
+                            : context.textSecondary),
+                    const SizedBox(width: AppSpacing.xs),
+                    Text(
+                      '${l10n.dueDateLabel(_formatDate(request.dueAt!))}'
+                      '${request.isOverdue ? l10n.dueDateOverdueSuffix : ''}',
+                      style: context.captionStyle.copyWith(
+                        color: request.isOverdue
+                            ? AppColors.danger
+                            : context.textSecondary,
+                        fontWeight:
+                            request.isOverdue ? FontWeight.w600 : null,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
               const SizedBox(height: AppSpacing.sm),
               Row(
                 children: [
@@ -323,6 +502,47 @@ class _ManagementRequestCard extends ConsumerWidget {
                       size: 13, color: context.textSecondary),
                   const SizedBox(width: AppSpacing.xs),
                   Text(l10n.tapToChangeStatus, style: context.captionStyle),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Row(
+                children: [
+                  Expanded(
+                    child: TapScale(
+                      onTap: onAssign,
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.xs),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color:
+                                  context.textSecondary.withValues(alpha: 0.3)),
+                          borderRadius: AppRadius.xsAll,
+                        ),
+                        child: Text(l10n.assignAction, style: context.captionStyle),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: TapScale(
+                      onTap: onSetDueDate,
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.xs),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color:
+                                  context.textSecondary.withValues(alpha: 0.3)),
+                          borderRadius: AppRadius.xsAll,
+                        ),
+                        child: Text(l10n.setDueDateAction,
+                            style: context.captionStyle),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ],

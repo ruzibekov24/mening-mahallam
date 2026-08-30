@@ -19,17 +19,6 @@ import 'request_styles.dart';
 import 'requests_management_screen.dart';
 import '../../../core/widgets/app_alert.dart';
 
-String priorityLabel(AppLocalizations l10n, RequestPriority priority) {
-  switch (priority) {
-    case RequestPriority.past:
-      return l10n.priorityPast;
-    case RequestPriority.ortacha:
-      return l10n.priorityOrtacha;
-    case RequestPriority.yuqori:
-      return l10n.priorityYuqori;
-  }
-}
-
 /// 12. MUROJAATLAR ekrani.
 class RequestsScreen extends ConsumerStatefulWidget {
   const RequestsScreen({super.key});

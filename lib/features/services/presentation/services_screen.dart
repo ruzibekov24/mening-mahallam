@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -15,6 +16,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../ads/data/service_ad_repository.dart';
 import '../../ads/presentation/service_ad_card.dart';
 import '../../home/data/home_repository.dart';
+import '../../map/presentation/location_picker_screen.dart';
 import '../../moderation/data/report_repository.dart';
 import '../../moderation/presentation/report_sheet.dart';
 import '../data/service_repository.dart';
@@ -405,9 +407,27 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
       TextEditingController(text: widget.existing?.description ?? '');
   late ServiceCategory _category =
       widget.existing?.category ?? ServiceCategory.santexnik;
+  late LatLng? _location = widget.existing?.hasLocation == true
+      ? LatLng(widget.existing!.latitude!, widget.existing!.longitude!)
+      : null;
   bool _isSubmitting = false;
 
   bool get _isEditing => widget.existing != null;
+
+  Future<void> _pickLocation() async {
+    final result = await Navigator.of(context).push<LatLng?>(
+      MaterialPageRoute(
+        builder: (_) => LocationPickerScreen(initialLocation: _location),
+      ),
+    );
+    // `push` `null` ni ham "hech narsa tanlanmadi" (orqaga qaytish),
+    // ham "joylashuv tozalandi" (tasdiqlash tugmasi `null` bilan)
+    // ma'nosida qaytarishi mumkin — ikkalasini ham xavfsiz qabul
+    // qilamiz, chunki natija har doim ekrandagi joriy holatni
+    // aks ettiradi.
+    if (!mounted) return;
+    setState(() => _location = result);
+  }
 
   @override
   void dispose() {
@@ -438,6 +458,8 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
           category: _category,
           phone: phone,
           description: _descriptionController.text.trim(),
+          latitude: _location?.latitude,
+          longitude: _location?.longitude,
         );
       } else {
         await repo.createService(
@@ -446,6 +468,8 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
           category: _category,
           phone: phone,
           description: _descriptionController.text.trim(),
+          latitude: _location?.latitude,
+          longitude: _location?.longitude,
         );
       }
       if (!mounted) return;
@@ -528,6 +552,57 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
                   keyboardType: TextInputType.phone,
                   decoration:
                       const InputDecoration(hintText: '+998 90 123 45 67'),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Row(
+                  children: [
+                    Text(l10n.locationFieldLabel, style: context.captionStyle),
+                    const SizedBox(width: AppSpacing.xs),
+                    Text(l10n.optionalLabel, style: context.captionStyle),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                TapScale(
+                  onTap: _pickLocation,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                    decoration: BoxDecoration(
+                      color: AppAccents.events.withValues(alpha: 0.1),
+                      borderRadius: AppRadius.smAll,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _location != null
+                              ? PhosphorIconsFill.mapPin
+                              : PhosphorIconsRegular.mapPin,
+                          size: 18,
+                          color: AppAccents.events,
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: Text(
+                            _location != null
+                                ? l10n.locationSetLabel
+                                : l10n.setLocationLabel,
+                            style: context.bodyStyle
+                                .copyWith(color: AppAccents.events),
+                          ),
+                        ),
+                        if (_location != null)
+                          TapScale(
+                            onTap: () => setState(() => _location = null),
+                            child: Icon(
+                              PhosphorIconsBold.x,
+                              size: 16,
+                              color: context.textMuted,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Row(

@@ -168,6 +168,7 @@ class PushNotificationService {
         break;
 
       case NotificationType.requestStatusChanged:
+      case NotificationType.requestOverdue:
         container.read(mainTabIndexProvider.notifier).state = 2;
         if (relatedId == null) break;
         try {

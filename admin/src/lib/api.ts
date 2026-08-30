@@ -483,6 +483,13 @@ export const api = {
     request<{ user: AdminUser }>(`/api/users/${encodeURIComponent(uid)}/premium/revoke`, {
       method: 'POST',
     }),
+  getAssistantConfig: () =>
+    request<{ geminiApiKeyMasked: string | null; hasKey: boolean }>('/api/assistant-config'),
+  setAssistantGeminiKey: (geminiApiKey: string) =>
+    request<void>('/api/assistant-config', {
+      method: 'POST',
+      body: JSON.stringify({ geminiApiKey }),
+    }),
 };
 
 export function currentUserEmail(): string | null {

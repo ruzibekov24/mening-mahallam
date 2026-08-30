@@ -70,6 +70,14 @@ class LocalService {
   final String authorUid;
   final DateTime createdAt;
 
+  /// Xizmat ko'rsatuvchining joylashuvi — ixtiyoriy (masalan uyiga
+  /// chaqiriladigan santexnik uchun shart emas, lekin do'kon/ustaxona
+  /// kabi doimiy manzili bor xizmatlar uchun xaritada ko'rsatiladi).
+  /// `MahallaRequest` bilan bir xil naqsh: alohida `GeoPoint` emas,
+  /// oddiy `latitude`/`longitude` maydonlari.
+  final double? latitude;
+  final double? longitude;
+
   /// uid -> tanlagan yulduz bahosi (1-5). `Announcement.reactedUids`
   /// bilan bir xil naqsh: subcollection emas, to'g'ridan-to'g'ri
   /// hujjat maydonida saqlanadi va targeted field-path yozuv orqali
@@ -84,8 +92,12 @@ class LocalService {
     required this.description,
     required this.authorUid,
     required this.createdAt,
+    this.latitude,
+    this.longitude,
     this.ratings = const {},
   });
+
+  bool get hasLocation => latitude != null && longitude != null;
 
   /// O'rtacha baho (0 dan 5 gacha). Hali baho bo'lmasa 0.
   double get averageRating {
@@ -108,6 +120,8 @@ class LocalService {
       description: data['description'] ?? '',
       authorUid: data['authorUid'] ?? '',
       createdAt: timestamp?.toDate() ?? DateTime.now(),
+      latitude: (data['latitude'] as num?)?.toDouble(),
+      longitude: (data['longitude'] as num?)?.toDouble(),
       ratings: rawRatings == null
           ? const {}
           : rawRatings.map((uid, value) => MapEntry(uid, (value as num).toInt())),
@@ -146,6 +160,8 @@ class ServiceRepository {
     required ServiceCategory category,
     required String phone,
     required String description,
+    double? latitude,
+    double? longitude,
   }) async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) {
@@ -162,6 +178,8 @@ class ServiceRepository {
       'description': description,
       'authorUid': uid,
       'createdAt': FieldValue.serverTimestamp(),
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
     });
   }
 
@@ -172,6 +190,8 @@ class ServiceRepository {
     required ServiceCategory category,
     required String phone,
     required String description,
+    double? latitude,
+    double? longitude,
   }) async {
     await _firestore
         .collection('mahallas')
@@ -183,6 +203,11 @@ class ServiceRepository {
       'category': category.firestoreValue,
       'phone': phone,
       'description': description,
+      // `null` yozib "location'ni tozalash" ni ham qo'llab-quvvatlaymiz:
+      // FieldValue.delete() maydonni butunlay olib tashlaydi, `hasLocation`
+      // esa buni yo'q joylashuv sifatida to'g'ri o'qiydi.
+      'latitude': latitude ?? FieldValue.delete(),
+      'longitude': longitude ?? FieldValue.delete(),
     });
   }
 

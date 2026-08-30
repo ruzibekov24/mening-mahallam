@@ -991,5 +991,192 @@
   "yourRatingLabel": "Sizning bahoyingiz",
   "@yourRatingLabel": {
     "description": "Xizmatga yulduzcha baho berish qatorining sarlavhasi"
+  },
+  "assignStaffTitle": "Xodimga biriktirish",
+  "@assignStaffTitle": {
+    "description": "Murojaatni xodimga biriktirish varag'ining sarlavhasi"
+  },
+  "noStaffFoundLabel": "Mahallada xodim topilmadi",
+  "@noStaffFoundLabel": {
+    "description": "Biriktirish varag'ida mahallada xodim bo'lmaganda ko'rsatiladi"
+  },
+  "cancelAssignmentAction": "Biriktirishni bekor qilish",
+  "@cancelAssignmentAction": {
+    "description": "Murojaatga biriktirilgan xodimni bekor qilish tugmasi"
+  },
+  "requestAssignedMessage": "Murojaat biriktirildi",
+  "@requestAssignedMessage": {
+    "description": "Murojaat xodimga muvaffaqiyatli biriktirilganda chiqadigan xabar"
+  },
+  "dueDateSetMessage": "Muddat belgilandi",
+  "@dueDateSetMessage": {
+    "description": "Murojaat bajarish muddati belgilanganda chiqadigan xabar"
+  },
+  "assignAction": "Biriktirish",
+  "@assignAction": {
+    "description": "Murojaatni xodimga biriktirish tugmasi"
+  },
+  "setDueDateAction": "Muddat belgilash",
+  "@setDueDateAction": {
+    "description": "Murojaat bajarish muddatini belgilash tugmasi"
+  },
+  "assignedToLabel": "Biriktirilgan: {fullName}",
+  "@assignedToLabel": {
+    "description": "Murojaat biriktirilgan xodimning ismi ko'rsatiladigan yorliq",
+    "placeholders": {
+      "fullName": {
+        "type": "String"
+      }
+    }
+  },
+  "dueDateLabel": "Muddat: {date}",
+  "@dueDateLabel": {
+    "description": "Murojaat bajarish muddati sanasi ko'rsatiladigan yorliq",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "dueDateOverdueSuffix": " — muddati o'tdi",
+  "@dueDateOverdueSuffix": {
+    "description": "Muddati o'tgan murojaatlar uchun sana yorlig'iga qo'shiladigan qo'shimcha"
+  },
+  "commentsTitle": "Izohlar",
+  "@commentsTitle": {
+    "description": "Murojaat tafsilotlari ekranidagi izohlar bo'limi sarlavhasi"
+  },
+  "noCommentsYet": "Hozircha izohlar yo'q",
+  "@noCommentsYet": {
+    "description": "Murojaat ostida hali izoh yozilmagan bo'lsa ko'rsatiladi"
+  },
+  "commentHint": "Izoh yozing...",
+  "@commentHint": {
+    "description": "Izoh yozish maydonining placeholder matni"
+  },
+  "createGroupAction": "Guruh yaratish",
+  "@createGroupAction": {
+    "description": "Yangi guruh chati yaratish ekrani sarlavhasi/tugmasi/FAB yorlig'i"
+  },
+  "groupNameLabel": "Guruh nomi",
+  "@groupNameLabel": {
+    "description": "Yangi guruh yaratish formasidagi guruh nomi maydoni yorlig'i"
+  },
+  "groupNameHint": "Masalan: Ko'cha faollari",
+  "@groupNameHint": {
+    "description": "Guruh nomi maydonining placeholder matni"
+  },
+  "selectMembersLabel": "A'zolarni tanlang",
+  "@selectMembersLabel": {
+    "description": "Guruhga a'zolarni tanlash bo'limining sarlavhasi (hech kim tanlanmagan holat)"
+  },
+  "selectMembersLabelWithCount": "A'zolarni tanlang ({count})",
+  "@selectMembersLabelWithCount": {
+    "description": "Guruhga a'zolarni tanlash bo'limining sarlavhasi, tanlangan a'zolar soni bilan",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "enterGroupNameError": "Guruh nomini kiriting",
+  "@enterGroupNameError": {
+    "description": "Guruh nomi kiritilmasdan yaratishga urinilganda chiqadigan xatolik"
+  },
+  "selectAtLeastOneMemberError": "Kamida bitta a'zo tanlang",
+  "@selectAtLeastOneMemberError": {
+    "description": "Hech qanday a'zo tanlanmasdan guruh yaratishga urinilganda chiqadigan xatolik"
+  },
+  "groupCreateError": "Guruh yaratishda xatolik yuz berdi",
+  "@groupCreateError": {
+    "description": "Guruh yaratishda server xatoligi yuz berganda chiqadigan xabar"
+  },
+  "groupsSectionTitle": "Guruhlar",
+  "@groupsSectionTitle": {
+    "description": "Suhbatlar ekranidagi guruh chatlari bo'limining sarlavhasi"
+  },
+  "locationFieldLabel": "Joylashuv",
+  "@locationFieldLabel": {
+    "description": "Yangi xizmat formasidagi ixtiyoriy joylashuv maydoni yorlig'i"
+  },
+  "locationSetLabel": "Joylashuv belgilandi",
+  "@locationSetLabel": {
+    "description": "Joylashuv tanlanganda ko'rsatiladigan matn"
+  },
+  "setLocationLabel": "Joylashuvni belgilash",
+  "@setLocationLabel": {
+    "description": "Joylashuv tanlanmagan holatda ko'rsatiladigan matn va joylashuv tanlash ekrani sarlavhasi"
+  },
+  "locationDetectError": "Joylashuvni aniqlab bo'lmadi. Ruxsat yoki GPS holatini tekshiring.",
+  "@locationDetectError": {
+    "description": "GPS orqali joriy joylashuvni aniqlab bo'lmaganda chiqadigan xatolik"
+  },
+  "tapMapHint": "Xaritani bosib nuqta belgilang",
+  "@tapMapHint": {
+    "description": "Joylashuv tanlash xaritasi ustidagi ko'rsatma matni"
+  },
+  "assistantScreenTitle": "AI Yordamchi",
+  "@assistantScreenTitle": {
+    "description": "AI Yordamchi ekrani sarlavhasi; shu matn Sozlamalar ekranidagi menyu bandida ham ishlatiladi"
+  },
+  "assistantInputHint": "Savolingizni yozing...",
+  "@assistantInputHint": {
+    "description": "AI Yordamchi ekranidagi xabar kiritish maydonining placeholder matni"
+  },
+  "assistantGreetingTitle": "Salom! Men AI yordamchiman",
+  "@assistantGreetingTitle": {
+    "description": "AI Yordamchi ekrani hali xabar yo'q holatidagi salomlashuv sarlavhasi"
+  },
+  "assistantGreetingSubtitle": "Mahalla haqida savollaringizga javob berishga, ilovadan foydalanishga yordam berishga tayyorman.",
+  "@assistantGreetingSubtitle": {
+    "description": "AI Yordamchi ekrani hali xabar yo'q holatidagi salomlashuv tavsifi"
+  },
+  "assistantSuggestion1": "Mahallamda qanday xizmatlar bor?",
+  "@assistantSuggestion1": {
+    "description": "AI Yordamchi ekranidagi tezkor savol taklifi (1-chi)"
+  },
+  "assistantSuggestion2": "Murojaat qanday yuboriladi?",
+  "@assistantSuggestion2": {
+    "description": "AI Yordamchi ekranidagi tezkor savol taklifi (2-chi)"
+  },
+  "assistantSuggestion3": "Ilovadan qanday foydalanaman?",
+  "@assistantSuggestion3": {
+    "description": "AI Yordamchi ekranidagi tezkor savol taklifi (3-chi)"
+  },
+  "notificationPreferencesTitle": "Bildirishnoma sozlamalari",
+  "@notificationPreferencesTitle": {
+    "description": "Bildirishnoma turlari sozlash ekrani sarlavhasi; Sozlamalar ekranidagi shu ekranga o'tish bandining sarlavhasi sifatida ham ishlatiladi"
+  },
+  "notificationPreferencesSubtitle": "Qaysi turdagi xabarlarni olishni tanlang",
+  "@notificationPreferencesSubtitle": {
+    "description": "Sozlamalar ekranidagi 'Bildirishnoma sozlamalari' bandining tavsif matni"
+  },
+  "notificationPreferencesSectionHeader": "Qaysi xabarlarni olasiz",
+  "@notificationPreferencesSectionHeader": {
+    "description": "Bildirishnoma turlari sozlash ekranidagi bo'lim sarlavhasi (ekranda katta harflar bilan ko'rsatiladi)"
+  },
+  "notificationTypeAnnouncementLabel": "Yangi e'lonlar",
+  "@notificationTypeAnnouncementLabel": {
+    "description": "Bildirishnoma turlari sozlash ekranidagi 'yangi e'lon' turi yorlig'i"
+  },
+  "notificationTypeEventLabel": "Yangi tadbirlar",
+  "@notificationTypeEventLabel": {
+    "description": "Bildirishnoma turlari sozlash ekranidagi 'yangi tadbir' turi yorlig'i"
+  },
+  "notificationTypePollLabel": "Yangi so'rovnomalar",
+  "@notificationTypePollLabel": {
+    "description": "Bildirishnoma turlari sozlash ekranidagi 'yangi so'rovnoma' turi yorlig'i"
+  },
+  "notificationTypeMessageLabel": "Yangi xabarlar",
+  "@notificationTypeMessageLabel": {
+    "description": "Bildirishnoma turlari sozlash ekranidagi 'yangi xabar' turi yorlig'i"
+  },
+  "notificationTypeRequestStatusLabel": "Murojaat holati",
+  "@notificationTypeRequestStatusLabel": {
+    "description": "Bildirishnoma turlari sozlash ekranidagi 'murojaat holati o'zgarishi' turi yorlig'i"
+  },
+  "offlineBannerMessage": "Oflayn — internet yo'q",
+  "@offlineBannerMessage": {
+    "description": "Internet aloqasi yo'qligida ilova bo'ylab ko'rinadigan banner matni"
   }
 }
