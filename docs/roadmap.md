@@ -54,12 +54,19 @@ admin tasdiqlaydi — kodda ochiq izoh bilan qayd etilgan).
 - [ ] Web admin panel asosi — ko'p mahallani boshqaruvchi super-adminlar
       uchun (hozir admin funksiyalari faqat mobil ilova ichida tarqoq)
 - [ ] Xizmatlar bozorini peer-to-peer qilish + to'lov orqali buyurtma
+- [ ] **AI chat-yordamchi** — alohida ekran/bo'lim sifatida, foydalanuvchi
+      savol-javob qila oladigan yagona suhbat interfeysi (ilova bo'ylab
+      hali tarqalmagan, birinchi AI bosqichi)
 
 ## v3.0 — Uzoq muddatli, tasdiqlanmagan g'oyalar
 
+- **AI butun ilova bo'ylab** — v2.0dagi alohida chat-yordamchidan farqli
+  o'laroq, AI turli modullarga singdiriladi: murojaatlarni avtomatik
+  kategoriyalash/muhimlik darajasini baholash, so'rovnoma/e'lon
+  tavsiyalari, qidiruvda tabiiy til bilan so'rash, va h.k. (raqobatchi
+  "Mahalla AI" ilovasiga javob sifatida ham qaraladi)
 - Usage analytics / BI dashboard (hozir kod bazasida hech qanday
   analitika yo'q)
-- AI-yordamchi (murojaat kategoriyalash, FAQ-bot)
 - Kommunal xizmat integratsiyasi (davlat tizimlariga bog'liq, yuqori
   murakkablik/huquqiy tomon — faqat imkoniyat, majburiy emas)
 - Ko'p-mintaqa/ko'p-shahar miqyoslash
