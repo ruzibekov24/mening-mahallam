@@ -14,6 +14,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../ads/data/service_ad_repository.dart';
 import '../../ads/presentation/service_ad_card.dart';
 import '../../home/data/home_repository.dart';
+import '../../moderation/data/report_repository.dart';
+import '../../moderation/presentation/report_sheet.dart';
 import '../data/service_repository.dart';
 import '../data/services_providers.dart';
 import '../../../core/widgets/app_alert.dart';
@@ -76,8 +78,8 @@ class ServicesScreen extends ConsumerWidget {
                   ),
                   Expanded(
                     child: Text(l10n.servicesTitle,
-                        style: context.titleStyle
-                            .copyWith(color: Colors.white)),
+                        style:
+                            context.titleStyle.copyWith(color: Colors.white)),
                   ),
                   profileAsync.when(
                     data: (profile) {
@@ -178,8 +180,8 @@ class _ServiceCard extends ConsumerWidget {
               color: AppAccents.events.withValues(alpha: 0.14),
               borderRadius: AppRadius.smAll,
             ),
-            child: Icon(service.category.icon,
-                size: 20, color: AppAccents.events),
+            child:
+                Icon(service.category.icon, size: 20, color: AppAccents.events),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
@@ -211,16 +213,40 @@ class _ServiceCard extends ConsumerWidget {
                       size: 18, color: AppColors.primary),
                 ),
               ),
-              if (canManage)
-                PopupMenuButton<void>(
-                  icon: Icon(PhosphorIconsBold.dotsThreeVertical,
-                      size: 16, color: context.textMuted),
-                  padding: EdgeInsets.zero,
-                  iconSize: 16,
-                  tooltip: '',
-                  shape:
-                      const RoundedRectangleBorder(borderRadius: AppRadius.smAll),
-                  itemBuilder: (context) => [
+              PopupMenuButton<void>(
+                icon: Icon(PhosphorIconsBold.dotsThreeVertical,
+                    size: 16, color: context.textMuted),
+                padding: EdgeInsets.zero,
+                iconSize: 16,
+                tooltip: '',
+                shape:
+                    const RoundedRectangleBorder(borderRadius: AppRadius.smAll),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    onTap: () async {
+                      await Future.delayed(const Duration(milliseconds: 1));
+                      if (!context.mounted) return;
+                      showReportSheet(
+                        context,
+                        ref,
+                        targetType: ReportTargetType.serviceAd,
+                        targetId: service.id,
+                        targetSnippet: service.name,
+                        mahallaId: profile?.mahallaId,
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        const Icon(PhosphorIconsRegular.flag,
+                            size: 18, color: AppColors.danger),
+                        const SizedBox(width: AppSpacing.sm),
+                        Text(l10n.reportAction,
+                            style: context.bodyStyle
+                                .copyWith(color: AppColors.danger)),
+                      ],
+                    ),
+                  ),
+                  if (canManage)
                     PopupMenuItem(
                       onTap: () async {
                         await Future.delayed(const Duration(milliseconds: 1));
@@ -244,6 +270,7 @@ class _ServiceCard extends ConsumerWidget {
                         ],
                       ),
                     ),
+                  if (canManage)
                     PopupMenuItem(
                       onTap: () async {
                         await Future.delayed(const Duration(milliseconds: 1));
@@ -272,8 +299,8 @@ class _ServiceCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-                  ],
-                ),
+                ],
+              ),
             ],
           ),
         ],
@@ -345,9 +372,8 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
       }
       if (!mounted) return;
       Navigator.of(context).pop();
-      showAppAlert(context, _isEditing
-                ? l10n.serviceUpdatedMessage
-                : l10n.servicePostedMessage);
+      showAppAlert(context,
+          _isEditing ? l10n.serviceUpdatedMessage : l10n.servicePostedMessage);
     } catch (_) {
       if (!mounted) return;
       setState(() => _isSubmitting = false);
@@ -376,8 +402,7 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                    _isEditing ? l10n.editServiceTitle : l10n.newServiceTitle,
+                Text(_isEditing ? l10n.editServiceTitle : l10n.newServiceTitle,
                     style: context.titleStyle),
                 const SizedBox(height: AppSpacing.md),
                 Text(l10n.serviceCategoryLabel, style: context.captionStyle),
@@ -423,7 +448,8 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
                 TextField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(hintText: '+998 90 123 45 67'),
+                  decoration:
+                      const InputDecoration(hintText: '+998 90 123 45 67'),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Row(
@@ -514,8 +540,8 @@ class _AdvertiseYourServiceCard extends ConsumerWidget {
                     size: 18, color: AppAccents.events),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
-                  child: Text(l10n.advertiseTitle,
-                      style: context.cardTitleStyle),
+                  child:
+                      Text(l10n.advertiseTitle, style: context.cardTitleStyle),
                 ),
               ],
             ),

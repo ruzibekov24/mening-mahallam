@@ -30,19 +30,40 @@ Asos: [`FRONTEND_AUDIT.md`](../FRONTEND_AUDIT.md).
       naqshi, 2 tasi `Radio` API eskirishi — alohida refaktoring talab
       qiladi)
 
-## v1.5 — Jamoat faolligi, xavfsizlik, to'liqlik (rejalashtirish bosqichida, `v1.5-dev` branch)
+## v1.2.0 — Web super-admin panel + jamoat faolligi (tayyor, `v1.2-dev` branch)
 
-Yangi to'lov infratuzilmasisiz — mavjud arxitekturani to'ldirish va
-kengaytirish.
+Ikki qism: (A) ilovaga bog'langan to'liq web super-admin panel, (B) v1.5
+ro'yxatidan 4 punkt (report, bildirishnoma, reaksiya, so'rovnoma+qidiruv).
 
-- [ ] Report (shikoyat) mexanizmi — hozir faqat `block` bor, foydalanuvchi/
-      kontent ustidan shikoyat qilish yo'q
-- [ ] Bildirishnoma turlarini to'liq ulash — `newEvent`/`newPoll`/
-      `newMessage` enum'da e'lon qilingan, lekin repository'larda
-      chaqirilmagan
-- [ ] E'lonlarga reaksiya/izoh qo'shish
-- [ ] So'rovnomani yaxshilash — ko'p tanlovli, anonim, tugash muddati
-- [ ] Qidiruvni kengaytirish — `services/` va `polls/` ni qo'shish
+**A-qism — Web admin panel:**
+- [x] `admin-worker/` — Cloudflare Worker backend (Firebase ID token
+      tekshirish, `role == superAdmin` tasdiqlash, Firestore REST orqali
+      imtiyozli amallar: premium tasdiqlash/rad etish, banner CRUD,
+      shikoyatlarni ko'rib chiqish)
+- [x] Statistika sinxronizatsiyasi — Cloudflare Cron Trigger, Firestore
+      `count()` agregatsiya so'rovlari, natija Supabase Postgres'ga
+      yoziladi (Firebase Spark rejada qoladi, Cloud Functions kerak emas)
+- [x] `admin/` — Vite + TypeScript frontend (Firebase Auth login,
+      dashboard, mahallalar, premium so'rovlar, bannerlar, shikoyatlar)
+- [ ] Deploy: `wrangler secret put` (Firebase/Supabase sirlari),
+      `wrangler deploy`, Cloudflare Pages'ga frontend, Supabase SQL
+      sxemasini ishga tushirish
+
+**B-qism — Mobil ilova:**
+- [x] Report (shikoyat) mexanizmi — `lib/features/moderation/` yangi
+      modul, chat xabari/e'lon/xizmat/profil uchun shikoyat tugmasi
+- [x] Bildirishnoma turlarini to'liq ulash — `newEvent`/`newMessage`
+      ulandi (`newPoll` allaqachon ulangan ekan)
+- [x] E'lonlarga reaksiya qo'shish — 4 ta emoji, `reactedUids` maydoni
+- [x] So'rovnoma yaxshilash — ko'p tanlovli, anonim, tugash muddati
+      (eski formatdagi ovozlar bilan orqaga moslik saqlangan)
+- [x] Qidiruvni kengaytirish — `services/` va `polls/` endi qidiruvda
+
+## v1.3 — Til va xizmatlar (rejalashtirish bosqichida)
+
+Avval v1.5 deb nomlangan ro'yxatdan qolgan 2 punkt (qolganlari v1.2.0'ga
+ko'chirildi):
+
 - [ ] Ingliz tili (`l10n/`ga 4-til)
 - [ ] Xizmatlar (`services/`) bo'limiga reyting/sharh (to'lovsiz)
 
@@ -57,8 +78,6 @@ admin tasdiqlaydi — kodda ochiq izoh bilan qayd etilgan).
       thread, SLA/muddat, eskalatsiya
 - [ ] Guruh chat (hozir faqat 1:1)
 - [ ] Xarita boyitish — xizmat ko'rsatuvchilar uchun pinlar
-- [ ] Web admin panel asosi — ko'p mahallani boshqaruvchi super-adminlar
-      uchun (hozir admin funksiyalari faqat mobil ilova ichida tarqoq)
 - [ ] Xizmatlar bozorini peer-to-peer qilish + to'lov orqali buyurtma
 - [ ] **AI chat-yordamchi** — alohida ekran/bo'lim sifatida, foydalanuvchi
       savol-javob qila oladigan yagona suhbat interfeysi (ilova bo'ylab

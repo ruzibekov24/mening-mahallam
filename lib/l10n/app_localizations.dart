@@ -1797,6 +1797,60 @@ abstract class AppLocalizations {
   /// **'Ha, almashtirish'**
   String get changeVoteConfirmButton;
 
+  /// No description provided for @pollAllowMultipleLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bir nechta variant tanlashga ruxsat berish'**
+  String get pollAllowMultipleLabel;
+
+  /// No description provided for @pollAnonymousLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Anonim so\'rovnoma'**
+  String get pollAnonymousLabel;
+
+  /// No description provided for @pollClosesAtLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yopilish sanasi (ixtiyoriy)'**
+  String get pollClosesAtLabel;
+
+  /// No description provided for @pollClosesAtClearButton.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tozalash'**
+  String get pollClosesAtClearButton;
+
+  /// No description provided for @pollClosedBadge.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yopilgan'**
+  String get pollClosedBadge;
+
+  /// No description provided for @pollVoteClosedError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu so\'rovnoma yopilgan, ovoz berish mumkin emas'**
+  String get pollVoteClosedError;
+
+  /// No description provided for @pollSubmitVoteButton.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ovoz berish'**
+  String get pollSubmitVoteButton;
+
+  /// No description provided for @categoryServices.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmatlar'**
+  String get categoryServices;
+
+  /// No description provided for @categoryPolls.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rovnomalar'**
+  String get categoryPolls;
+
   /// No description provided for @categoryLabel.
   ///
   /// In uz, this message translates to:
@@ -3188,6 +3242,90 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'OK'**
   String get okButton;
+
+  /// No description provided for @reportAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shikoyat qilish'**
+  String get reportAction;
+
+  /// No description provided for @reportSheetTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shikoyat qilish'**
+  String get reportSheetTitle;
+
+  /// No description provided for @reportReasonLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab'**
+  String get reportReasonLabel;
+
+  /// No description provided for @reportReasonSpam.
+  ///
+  /// In uz, this message translates to:
+  /// **'Spam'**
+  String get reportReasonSpam;
+
+  /// No description provided for @reportReasonHaqoratOmuhandaslik.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haqorat yoki tahdid'**
+  String get reportReasonHaqoratOmuhandaslik;
+
+  /// No description provided for @reportReasonAldash.
+  ///
+  /// In uz, this message translates to:
+  /// **'Firibgarlik / aldash'**
+  String get reportReasonAldash;
+
+  /// No description provided for @reportReasonNomunosib.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomunosib kontent'**
+  String get reportReasonNomunosib;
+
+  /// No description provided for @reportReasonBoshqa.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqa'**
+  String get reportReasonBoshqa;
+
+  /// No description provided for @reportDetailsLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'shimcha izoh'**
+  String get reportDetailsLabel;
+
+  /// No description provided for @reportDetailsHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Batafsil yozing (ixtiyoriy)'**
+  String get reportDetailsHint;
+
+  /// No description provided for @reportSubmitAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yuborish'**
+  String get reportSubmitAction;
+
+  /// No description provided for @reportSubmittedMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shikoyatingiz qabul qilindi, ko\'rib chiqamiz'**
+  String get reportSubmittedMessage;
+
+  /// No description provided for @reportErrorMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shikoyat yuborishda xatolik yuz berdi'**
+  String get reportErrorMessage;
+
+  /// No description provided for @reportChooseReasonError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Iltimos, sababni tanlang'**
+  String get reportChooseReasonError;
 }
 
 class _AppLocalizationsDelegate

@@ -10,6 +10,8 @@ import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../chat/presentation/chat_screen.dart';
+import '../../moderation/data/report_repository.dart';
+import '../../moderation/presentation/report_sheet.dart';
 import '../../profile/data/profile_banners.dart';
 import '../data/home_repository.dart';
 import 'role_styles.dart';
@@ -37,7 +39,8 @@ class NeighborProfileScreen extends ConsumerWidget {
             color: AppColors.danger.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
-          child: const Icon(PhosphorIconsFill.prohibit, color: AppColors.danger),
+          child:
+              const Icon(PhosphorIconsFill.prohibit, color: AppColors.danger),
         ),
         title: Text(l10n.blockUserConfirmTitle),
         content: Text(l10n.blockUserConfirmMessage(fullName)),
@@ -108,16 +111,45 @@ class NeighborProfileScreen extends ConsumerWidget {
                       ),
                       const Spacer(),
                       PopupMenuButton<String>(
-                        icon: const Icon(PhosphorIconsRegular.dotsThreeVertical),
+                        icon:
+                            const Icon(PhosphorIconsRegular.dotsThreeVertical),
                         shape: const RoundedRectangleBorder(
                           borderRadius: AppRadius.smAll,
                         ),
                         onSelected: (value) {
                           if (value == 'block') {
                             _confirmBlock(context, ref, l10n);
+                          } else if (value == 'report') {
+                            final mahallaId = ref
+                                .read(currentUserProfileProvider)
+                                .valueOrNull
+                                ?.mahallaId;
+                            showReportSheet(
+                              context,
+                              ref,
+                              targetType: ReportTargetType.user,
+                              targetId: member.uid,
+                              targetSnippet: fullName,
+                              mahallaId: mahallaId,
+                            );
                           }
                         },
                         itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'report',
+                            child: Row(
+                              children: [
+                                const Icon(PhosphorIconsRegular.flag,
+                                    size: 18, color: AppColors.danger),
+                                const SizedBox(width: AppSpacing.sm),
+                                Text(
+                                  l10n.reportAction,
+                                  style: context.bodyStyle
+                                      .copyWith(color: AppColors.danger),
+                                ),
+                              ],
+                            ),
+                          ),
                           PopupMenuItem(
                             value: 'block',
                             child: Row(
@@ -140,8 +172,8 @@ class NeighborProfileScreen extends ConsumerWidget {
                 ),
                 Expanded(
                   child: ListView(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xxl),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
                     children: [
                       const SizedBox(height: AppSpacing.sm),
                       Center(
@@ -156,7 +188,7 @@ class NeighborProfileScreen extends ConsumerWidget {
                             photoUrl: member.photoUrl,
                             seed: member.uid,
                             ringColor: avatarRingColor(member.role,
-                isPremium: member.isPremiumActive),
+                                isPremium: member.isPremiumActive),
                             isOnline: member.isOnline,
                           ),
                         ),
@@ -212,7 +244,6 @@ class NeighborProfileScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xxl),
-
                       AppListCard(
                         icon: PhosphorIconsFill.chatDots,
                         accent: AppColors.primary,
@@ -224,7 +255,6 @@ class NeighborProfileScreen extends ConsumerWidget {
                         ),
                         margin: const EdgeInsets.only(bottom: AppSpacing.md),
                       ),
-
                       if (member.phoneVisible && member.phone.isNotEmpty)
                         AppListCard(
                           icon: PhosphorIconsFill.phone,

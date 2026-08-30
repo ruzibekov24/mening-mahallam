@@ -55,4 +55,8 @@ android/*.jks
 .wrangler/
 landing/.wrangler/
 landing-worker/.wrangler/
+admin-worker/.wrangler/
+
+# Claude Code local session state
+.claude/
 

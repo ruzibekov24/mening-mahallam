@@ -124,20 +124,68 @@ class _AddPollButton extends StatelessWidget {
   }
 }
 
-class _PollCard extends ConsumerWidget {
+class _PollCard extends ConsumerStatefulWidget {
   final Poll poll;
   const _PollCard({required this.poll});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_PollCard> createState() => _PollCardState();
+}
+
+class _PollCardState extends ConsumerState<_PollCard> {
+  /// Ko'p variantli so'rovnomada hali serverga yuborilmagan tanlov —
+  /// checkbox bosilganda darhol yozilmaydi, foydalanuvchi "Ovoz berish"
+  /// tugmasini bosishi kerak.
+  Set<int>? _pendingSelection;
+  bool _isVoting = false;
+
+  Poll get poll => widget.poll;
+
+  bool _setEquals(Set<int> a, Set<int> b) =>
+      a.length == b.length && a.every(b.contains);
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final myUid = FirebaseAuth.instance.currentUser?.uid;
-    final myVote = poll.myVote(myUid);
+    final myVotes = poll.myVotes(myUid).toSet();
     final counts = poll.voteCounts;
     final total = poll.totalVotes;
     final profile = ref.watch(currentUserProfileProvider).valueOrNull;
     final canDelete =
         profile?.role.canPost == true && profile?.mahallaId != null;
+    final isClosed = poll.isClosed;
+    final selection = _pendingSelection ?? myVotes;
+    final hasPendingChange = poll.allowMultiple &&
+        _pendingSelection != null &&
+        !_setEquals(_pendingSelection!, myVotes);
+
+    Future<void> submitVote(List<int> optionIndexes) async {
+      if (profile?.mahallaId == null || isClosed || _isVoting) return;
+      setState(() => _isVoting = true);
+      try {
+        await ref.read(pollRepositoryProvider).vote(
+              mahallaId: profile!.mahallaId!,
+              pollId: poll.id,
+              optionIndexes: optionIndexes,
+              allowMultiple: poll.allowMultiple,
+              closesAt: poll.closesAt,
+            );
+        if (mounted) setState(() => _pendingSelection = null);
+      } on PollClosedException {
+        if (mounted) {
+          showAppAlert(context, l10n.pollVoteClosedError,
+              kind: AppAlertKind.error);
+        }
+      } catch (_) {
+        if (mounted) {
+          showAppAlert(context, l10n.unexpectedError,
+              kind: AppAlertKind.error);
+        }
+      } finally {
+        if (mounted) setState(() => _isVoting = false);
+      }
+    }
 
     return AppCard(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
@@ -150,6 +198,19 @@ class _PollCard extends ConsumerWidget {
               Expanded(
                 child: Text(poll.question, style: context.cardTitleStyle),
               ),
+              if (isClosed)
+                Container(
+                  margin: const EdgeInsets.only(left: AppSpacing.sm),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: context.textMuted.withValues(alpha: 0.15),
+                    borderRadius: AppRadius.xsAll,
+                  ),
+                  child: Text(l10n.pollClosedBadge,
+                      style:
+                          context.captionStyle.copyWith(color: context.textMuted)),
+                ),
               if (canDelete)
                 PopupMenuButton<void>(
                   icon: Icon(PhosphorIconsBold.dotsThreeVertical,
@@ -219,49 +280,59 @@ class _PollCard extends ConsumerWidget {
           ...List.generate(poll.options.length, (index) {
             final optionVotes = counts[index];
             final ratio = total == 0 ? 0.0 : optionVotes / total;
-            final isMyVote = myVote == index;
+            final isSelected = selection.contains(index);
+            final canInteract = profile?.mahallaId != null &&
+                !isClosed &&
+                !_isVoting &&
+                (poll.allowMultiple || !isSelected);
+
+            void onTap() {
+              if (!canInteract) return;
+              if (poll.allowMultiple) {
+                setState(() {
+                  final next = Set<int>.from(selection);
+                  if (!next.add(index)) next.remove(index);
+                  _pendingSelection = next;
+                });
+                return;
+              }
+              () async {
+                if (myVotes.isNotEmpty) {
+                  // Foydalanuvchi allaqachon boshqa variantga ovoz
+                  // bergan — ovozni osonlikcha almashtira olmasligi
+                  // uchun tasdiqlash so'raladi.
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      shape:
+                          const RoundedRectangleBorder(borderRadius: AppRadius.pillAll),
+                      title: Text(l10n.changeVoteConfirmTitle),
+                      content: Text(l10n.changeVoteConfirmMessage),
+                      actionsAlignment: MainAxisAlignment.spaceBetween,
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(l10n.cancelButton),
+                        ),
+                        FilledButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: Text(l10n.changeVoteConfirmButton),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (confirmed != true) return;
+                }
+                if (!context.mounted) return;
+                await submitVote([index]);
+              }();
+            }
+
             return Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: InkWell(
                 borderRadius: AppRadius.smAll,
-                onTap: profile?.mahallaId == null || isMyVote
-                    ? null
-                    : () async {
-                        if (myVote != null) {
-                          // Foydalanuvchi allaqachon boshqa variantga
-                          // ovoz bergan — ovozni osonlikcha almashtira
-                          // olmasligi uchun tasdiqlash so'raladi.
-                          final confirmed = await showDialog<bool>(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: AppRadius.pillAll),
-                              title: Text(l10n.changeVoteConfirmTitle),
-                              content: Text(l10n.changeVoteConfirmMessage),
-                              actionsAlignment: MainAxisAlignment.spaceBetween,
-                              actions: [
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(false),
-                                  child: Text(l10n.cancelButton),
-                                ),
-                                FilledButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(true),
-                                  child: Text(l10n.changeVoteConfirmButton),
-                                ),
-                              ],
-                            ),
-                          );
-                          if (confirmed != true) return;
-                        }
-                        if (!context.mounted) return;
-                        await ref.read(pollRepositoryProvider).vote(
-                              mahallaId: profile!.mahallaId!,
-                              pollId: poll.id,
-                              optionIndex: index,
-                            );
-                      },
+                onTap: canInteract ? onTap : null,
                 child: Stack(
                   children: [
                     ClipRRect(
@@ -276,7 +347,7 @@ class _PollCard extends ConsumerWidget {
                           alignment: Alignment.centerLeft,
                           widthFactor: ratio,
                           child: Container(
-                            color: (isMyVote
+                            color: (isSelected
                                     ? AppColors.primary
                                     : AppAccents.neighbors)
                                 .withValues(alpha: 0.35),
@@ -290,18 +361,28 @@ class _PollCard extends ConsumerWidget {
                             const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                         child: Row(
                           children: [
-                            if (isMyVote)
-                              const Padding(
-                                padding: EdgeInsets.only(right: AppSpacing.xs),
-                                child: Icon(PhosphorIconsFill.checkCircle,
-                                    size: 16, color: AppColors.primary),
+                            Padding(
+                              padding: const EdgeInsets.only(right: AppSpacing.xs),
+                              child: Icon(
+                                isSelected
+                                    ? (poll.allowMultiple
+                                        ? PhosphorIconsFill.checkSquare
+                                        : PhosphorIconsFill.checkCircle)
+                                    : (poll.allowMultiple
+                                        ? PhosphorIconsRegular.square
+                                        : PhosphorIconsRegular.circle),
+                                size: 16,
+                                color: isSelected
+                                    ? AppColors.primary
+                                    : context.textMuted,
                               ),
+                            ),
                             Expanded(
                               child: Text(
                                 poll.options[index],
                                 overflow: TextOverflow.ellipsis,
                                 style: context.bodyStyle.copyWith(
-                                  fontWeight: isMyVote
+                                  fontWeight: isSelected
                                       ? FontWeight.w700
                                       : FontWeight.w500,
                                 ),
@@ -321,7 +402,19 @@ class _PollCard extends ConsumerWidget {
             );
           }),
           const SizedBox(height: AppSpacing.xs),
-          Text(l10n.pollVotesCount(total), style: context.captionStyle),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(l10n.pollVotesCount(total), style: context.captionStyle),
+              if (hasPendingChange)
+                TextButton(
+                  onPressed: _isVoting
+                      ? null
+                      : () => submitVote(selection.toList()),
+                  child: Text(l10n.pollSubmitVoteButton),
+                ),
+            ],
+          ),
         ],
       ),
     );
@@ -347,8 +440,48 @@ class _NewPollSheetState extends ConsumerState<_NewPollSheet> {
               .toList()
           : [TextEditingController(), TextEditingController()];
   bool _isSubmitting = false;
+  late bool _allowMultiple = widget.existing?.allowMultiple ?? false;
+  late bool _isAnonymous = widget.existing?.isAnonymous ?? false;
+  late DateTime? _closesAtDate = widget.existing?.closesAt;
+  late TimeOfDay? _closesAtTime = widget.existing?.closesAt != null
+      ? TimeOfDay.fromDateTime(widget.existing!.closesAt!)
+      : null;
 
   bool get _isEditing => widget.existing != null;
+
+  DateTime? get _combinedClosesAt {
+    if (_closesAtDate == null) return null;
+    final time = _closesAtTime ?? const TimeOfDay(hour: 23, minute: 59);
+    return DateTime(
+      _closesAtDate!.year,
+      _closesAtDate!.month,
+      _closesAtDate!.day,
+      time.hour,
+      time.minute,
+    );
+  }
+
+  String _formatDate(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
+
+  Future<void> _pickClosesAtDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _closesAtDate ?? now,
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 3650)),
+    );
+    if (picked != null) setState(() => _closesAtDate = picked);
+  }
+
+  Future<void> _pickClosesAtTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _closesAtTime ?? TimeOfDay.now(),
+    );
+    if (picked != null) setState(() => _closesAtTime = picked);
+  }
 
   @override
   void dispose() {
@@ -386,6 +519,9 @@ class _NewPollSheetState extends ConsumerState<_NewPollSheet> {
           pollId: widget.existing!.id,
           question: question,
           options: options,
+          allowMultiple: _allowMultiple,
+          isAnonymous: _isAnonymous,
+          closesAt: _combinedClosesAt,
         );
         if (!mounted) return;
         Navigator.of(context).pop();
@@ -396,6 +532,9 @@ class _NewPollSheetState extends ConsumerState<_NewPollSheet> {
             mahallaId: widget.mahallaId,
             question: question,
             options: options,
+            allowMultiple: _allowMultiple,
+            isAnonymous: _isAnonymous,
+            closesAt: _combinedClosesAt,
           );
       if (!mounted) return;
       Navigator.of(context).pop();
@@ -452,6 +591,53 @@ class _NewPollSheetState extends ConsumerState<_NewPollSheet> {
                     icon: const Icon(PhosphorIconsRegular.plus, size: 18),
                     label: Text(l10n.addOptionButton),
                   ),
+                const SizedBox(height: AppSpacing.sm),
+                SwitchListTile.adaptive(
+                  contentPadding: EdgeInsets.zero,
+                  value: _allowMultiple,
+                  onChanged: (value) => setState(() => _allowMultiple = value),
+                  title: Text(l10n.pollAllowMultipleLabel, style: context.bodyStyle),
+                ),
+                SwitchListTile.adaptive(
+                  contentPadding: EdgeInsets.zero,
+                  value: _isAnonymous,
+                  onChanged: (value) => setState(() => _isAnonymous = value),
+                  title: Text(l10n.pollAnonymousLabel, style: context.bodyStyle),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(l10n.pollClosesAtLabel, style: context.secondaryStyle),
+                const SizedBox(height: AppSpacing.xs),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: _pickClosesAtDate,
+                        child: Text(_closesAtDate == null
+                            ? l10n.selectDate
+                            : _formatDate(_closesAtDate!)),
+                      ),
+                    ),
+                    if (_closesAtDate != null) ...[
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: _pickClosesAtTime,
+                          child: Text(_closesAtTime == null
+                              ? l10n.selectTime
+                              : _closesAtTime!.format(context)),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => setState(() {
+                          _closesAtDate = null;
+                          _closesAtTime = null;
+                        }),
+                        icon: const Icon(PhosphorIconsRegular.xCircle),
+                        tooltip: l10n.pollClosesAtClearButton,
+                      ),
+                    ],
+                  ],
+                ),
                 const SizedBox(height: AppSpacing.md),
                 SizedBox(
                   width: double.infinity,

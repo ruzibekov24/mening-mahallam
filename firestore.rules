@@ -175,6 +175,23 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // ---------- reports/{reportId} (shikoyatlar/murojaatlar navbati) ----------
+    // Yuqori darajadagi (mahallaga bog'lanmagan) kolleksiya — kelajakdagi
+    // admin paneli hamma mahallalar bo'ylab birgalikda so'rov qila oladi.
+    // Har bir foydalanuvchi FAQAT o'z nomidan shikoyat yarata oladi
+    // (`reporterUid == myUid()`), ko'rish/o'zgartirish esa faqat super
+    // admin uchun — oddiy foydalanuvchi na o'z, na boshqalarning
+    // shikoyatlarini o'qiy olmaydi (bu `appFeedback`dan farqi: u yerda
+    // ham xuddi shunday, chin fikr sifatida saqlanadi, tahrirlanmaydi).
+    match /reports/{reportId} {
+      allow read: if isSuperAdmin();
+
+      allow create: if isSignedIn() &&
+        request.resource.data.reporterUid == myUid();
+
+      allow update, delete: if isSuperAdmin();
+    }
+
     // ---------- promoBanners/{bannerId} (bosh ekran bannerlari) ----------
     // Mahallaga bog'lanmagan, butun ilova bo'ylab bir xil aylanuvchi
     // banner (e'lon/reklama/konkurs/tashqi havola) — faqat super

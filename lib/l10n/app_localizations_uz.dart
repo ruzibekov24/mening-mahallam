@@ -925,6 +925,35 @@ class AppLocalizationsUz extends AppLocalizations {
   String get changeVoteConfirmButton => 'Ha, almashtirish';
 
   @override
+  String get pollAllowMultipleLabel =>
+      'Bir nechta variant tanlashga ruxsat berish';
+
+  @override
+  String get pollAnonymousLabel => 'Anonim so\'rovnoma';
+
+  @override
+  String get pollClosesAtLabel => 'Yopilish sanasi (ixtiyoriy)';
+
+  @override
+  String get pollClosesAtClearButton => 'Tozalash';
+
+  @override
+  String get pollClosedBadge => 'Yopilgan';
+
+  @override
+  String get pollVoteClosedError =>
+      'Bu so\'rovnoma yopilgan, ovoz berish mumkin emas';
+
+  @override
+  String get pollSubmitVoteButton => 'Ovoz berish';
+
+  @override
+  String get categoryServices => 'Xizmatlar';
+
+  @override
+  String get categoryPolls => 'So\'rovnomalar';
+
+  @override
   String get categoryLabel => 'Kategoriya';
 
   @override
@@ -1702,6 +1731,49 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get okButton => 'OK';
+
+  @override
+  String get reportAction => 'Shikoyat qilish';
+
+  @override
+  String get reportSheetTitle => 'Shikoyat qilish';
+
+  @override
+  String get reportReasonLabel => 'Sabab';
+
+  @override
+  String get reportReasonSpam => 'Spam';
+
+  @override
+  String get reportReasonHaqoratOmuhandaslik => 'Haqorat yoki tahdid';
+
+  @override
+  String get reportReasonAldash => 'Firibgarlik / aldash';
+
+  @override
+  String get reportReasonNomunosib => 'Nomunosib kontent';
+
+  @override
+  String get reportReasonBoshqa => 'Boshqa';
+
+  @override
+  String get reportDetailsLabel => 'Qo\'shimcha izoh';
+
+  @override
+  String get reportDetailsHint => 'Batafsil yozing (ixtiyoriy)';
+
+  @override
+  String get reportSubmitAction => 'Yuborish';
+
+  @override
+  String get reportSubmittedMessage =>
+      'Shikoyatingiz qabul qilindi, ko\'rib chiqamiz';
+
+  @override
+  String get reportErrorMessage => 'Shikoyat yuborishda xatolik yuz berdi';
+
+  @override
+  String get reportChooseReasonError => 'Iltimos, sababni tanlang';
 }
 
 /// The translations for Uzbek, using the Cyrillic script (`uz_Cyrl`).
@@ -2621,6 +2693,35 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
   String get changeVoteConfirmButton => 'Ҳа, алмаштириш';
 
   @override
+  String get pollAllowMultipleLabel =>
+      'Бир нечта вариант танлашга рухсат бериш';
+
+  @override
+  String get pollAnonymousLabel => 'Аноним сўровнома';
+
+  @override
+  String get pollClosesAtLabel => 'Ёпилиш санаси (ихтиёрий)';
+
+  @override
+  String get pollClosesAtClearButton => 'Тозалаш';
+
+  @override
+  String get pollClosedBadge => 'Ёпилган';
+
+  @override
+  String get pollVoteClosedError =>
+      'Бу сўровнома ёпилган, овоз бериш мумкин эмас';
+
+  @override
+  String get pollSubmitVoteButton => 'Овоз бериш';
+
+  @override
+  String get categoryServices => 'Хизматлар';
+
+  @override
+  String get categoryPolls => 'Сўровномалар';
+
+  @override
   String get categoryLabel => 'Категория';
 
   @override
@@ -3395,4 +3496,47 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get okButton => 'OK';
+
+  @override
+  String get reportAction => 'Шикоят қилиш';
+
+  @override
+  String get reportSheetTitle => 'Шикоят қилиш';
+
+  @override
+  String get reportReasonLabel => 'Сабаб';
+
+  @override
+  String get reportReasonSpam => 'Спам';
+
+  @override
+  String get reportReasonHaqoratOmuhandaslik => 'Ҳақорат ёки таҳдид';
+
+  @override
+  String get reportReasonAldash => 'Фирибгарлик / алдаш';
+
+  @override
+  String get reportReasonNomunosib => 'Номуносиб контент';
+
+  @override
+  String get reportReasonBoshqa => 'Бошқа';
+
+  @override
+  String get reportDetailsLabel => 'Қўшимча изоҳ';
+
+  @override
+  String get reportDetailsHint => 'Батафсил ёзинг (ихтиёрий)';
+
+  @override
+  String get reportSubmitAction => 'Юбориш';
+
+  @override
+  String get reportSubmittedMessage =>
+      'Шикоятингиз қабул қилинди, кўриб чиқамиз';
+
+  @override
+  String get reportErrorMessage => 'Шикоят юборишда хатолик юз берди';
+
+  @override
+  String get reportChooseReasonError => 'Илтимос, сабабни танланг';
 }
