@@ -50,21 +50,39 @@ const FORMATTING_HINT_EN =
   'helps, and lines starting with "1. ", "2. " or "* " for lists (these ' +
   'render correctly in the app).';
 
+// Open models like Llama tend to be over-eager: asked one narrow
+// question, they'll volunteer a wall of loosely-related information
+// "just in case" (e.g. answering "who owns this app" and listing every
+// feature when only asked "how do I use the app"). This line exists
+// specifically to curb that — without it, both `withAppContext`'s facts
+// and `actionBlockHintFor`'s premium capability kept leaking into
+// completely unrelated answers as unsolicited asides.
+const FOCUS_HINT_UZ =
+  "Faqat foydalanuvchi ANIQ so'ragan savolga javob ber — javobingga " +
+  "so'ralmagan qo'shimcha mavzular, faktlar yoki takliflarni o'zingdan " +
+  "qo'shib yubormaslikka harakat qil.";
+const FOCUS_HINT_RU =
+  'Отвечай ТОЛЬКО на то, о чём именно спросил пользователь — не добавляй ' +
+  'от себя посторонние темы, факты или предложения, о которых не спрашивали.';
+const FOCUS_HINT_EN =
+  "Answer ONLY what the user actually asked — don't volunteer unrelated " +
+  'topics, facts, or suggestions they didn\'t ask about.';
+
 const SYSTEM_INSTRUCTIONS = {
   uz:
     "Sen \"Mening Mahallam\" ilovasining AI yordamchisisan — bu O'zbekistondagi " +
     "mahalla jamoasi ilovasi (e'lonlar, tadbirlar, murojaatlar, so'rovnomalar, " +
     "qo'shnilar bilan aloqa, mahalliy xizmatlar kabi bo'limlari bor). Foydalanuvchilarga " +
-    `aniq va foydali javob ber. ${FORMATTING_HINT_UZ} Javoblaringni o'zbek tilida yoz.`,
+    `aniq va foydali javob ber. ${FOCUS_HINT_UZ} ${FORMATTING_HINT_UZ} Javoblaringni o'zbek tilida yoz.`,
   ru:
     "Ты — ИИ-помощник приложения \"Mening Mahallam\" — это приложение для " +
     "махаллинского (соседского) сообщества в Узбекистане (объявления, события, " +
-    `обращения, опросы, общение с соседями, местные услуги). ${FORMATTING_HINT_RU} ` +
+    `обращения, опросы, общение с соседями, местные услуги). ${FOCUS_HINT_RU} ${FORMATTING_HINT_RU} ` +
     'Отвечай на русском языке.',
   en:
     'You are the AI assistant for "Mening Mahallam" — a neighborhood community app ' +
     'for Uzbekistan (announcements, events, resident requests, polls, neighbor chat, ' +
-    `local services). ${FORMATTING_HINT_EN} Answer in English.`,
+    `local services). ${FOCUS_HINT_EN} ${FORMATTING_HINT_EN} Answer in English.`,
 };
 
 function systemInstructionFor(locale) {
@@ -95,7 +113,10 @@ const ACTION_BLOCK_HINT_UZ =
   "```\n" +
   "Bu blokni FAQAT foydalanuvchi ANIQ ravishda murojaat/shikoyat yozib " +
   "berishingni so'raganda va yetarli tafsilot to'plaganingdan keyin qo'sh " +
-  "— oddiy savol-javoblarda hech qachon qo'shma.";
+  "— oddiy savol-javoblarda hech qachon qo'shma. Bu imkoniyat haqida " +
+  "foydalanuvchi o'zi so'ramaguncha, boshqa mavzudagi javoblaringda HECH " +
+  "QACHON eslatib o'tirma yoki taklif qilma — bu \"qo'shimcha eslatma\" " +
+  "emas, faqat aniq so'ralgandagina ishlatiladigan maxfiy imkoniyat.";
 const ACTION_BLOCK_HINT_RU =
   'У тебя есть ещё одна особая возможность (только для премиум-' +
   'пользователей): если пользователь просит тебя составить от его имени ' +
@@ -108,7 +129,9 @@ const ACTION_BLOCK_HINT_RU =
   '"type":"ommaviy или maxfiy","priority":"past, ortacha или yuqori"}\n' +
   '```\n' +
   'Добавляй этот блок ТОЛЬКО когда пользователь явно просит составить ' +
-  'обращение и достаточно деталей собрано — никогда в обычных вопросах-ответах.';
+  'обращение и достаточно деталей собрано — никогда в обычных вопросах-ответах. ' +
+  'Никогда не упоминай и не предлагай эту возможность сама, пока пользователь ' +
+  'сам не попросит об этом.';
 const ACTION_BLOCK_HINT_EN =
   "You also have one special capability (premium users only): if the user " +
   "asks you to draft a murojaat (resident request/complaint/suggestion) on " +
@@ -121,7 +144,9 @@ const ACTION_BLOCK_HINT_EN =
   '"type":"ommaviy or maxfiy","priority":"past, ortacha or yuqori"}\n' +
   "```\n" +
   "Only add this block when the user explicitly asks you to draft a " +
-  "request and you've gathered enough detail — never during normal Q&A.";
+  "request and you've gathered enough detail — never during normal Q&A. " +
+  "Never mention or offer this capability yourself unless the user brings " +
+  "it up first.";
 
 function actionBlockHintFor(locale) {
   const key = ['uz', 'ru', 'en'].includes(locale) ? locale : 'uz';
@@ -138,19 +163,23 @@ function withAppContext(baseInstruction, appContext) {
   if (!appContext) return baseInstruction;
   const { ownerName, mahallaCount, mahallaNames } = appContext;
   const facts = [
-    `Ilovaning egasi/asoschisi: ${ownerName}. Kimdir "ilova egasi kim", ` +
-      `"buni kim yaratgan" kabi savol bersa, aynan shu ismni ayt — ` +
-      `"rasmiy tashkilot" yoki umumiy javob berma.`,
+    `Ilovaning egasi/asoschisi: ${ownerName}. FAQAT kimdir aniq "ilova egasi ` +
+      `kim", "buni kim yaratgan" kabi savol bersa, aynan shu ismni ayt.`,
     mahallaNames
-      ? `Hozirda ilovada ro'yxatdan o'tgan mahallalar soni: ${mahallaCount} ta. ` +
-        `Ularning nomlari: ${mahallaNames.join(', ')}. Kimdir "nechta mahalla bor" ` +
-        `yoki ro'yxatini so'rasa, shu ma'lumotdan foydalan.`
-      : `Hozirda ilovada ro'yxatdan o'tgan mahallalar soni: ${mahallaCount} ta ` +
-        `(soni juda ko'p bo'lgani uchun ro'yxati bu yerda berilmagan — kimdir ` +
-        `ro'yxatini so'rasa, mahallalar sonini ayt va aniq bir mahallani ilova ` +
-        `ichidagi qidiruv orqali topishni tavsiya qil).`,
+      ? `Ilovada ro'yxatdan o'tgan mahallalar soni: ${mahallaCount} ta, ` +
+        `nomlari: ${mahallaNames.join(', ')}. FAQAT kimdir aniq "nechta mahalla ` +
+        `bor" yoki ro'yxatini so'rasa, shu ma'lumotdan foydalan.`
+      : `Ilovada ro'yxatdan o'tgan mahallalar soni: ${mahallaCount} ta (soni ` +
+        `juda ko'p bo'lgani uchun ro'yxati berilmagan). FAQAT kimdir aniq ` +
+        `"nechta mahalla bor" deb so'rasa shu sonni ayt.`,
   ].join('\n');
-  return `${baseInstruction}\n\nQuyidagi haqiqiy ma'lumotlarga tayanib javob ber:\n${facts}`;
+  return (
+    `${baseInstruction}\n\n` +
+    `MUHIM: quyida faqat KERAK BO'LGANDA ishlatadigan qo'shimcha ma'lumotlar ` +
+    `berilgan — bularni faqat aynan mos savol berilganda ishlat, boshqa ` +
+    `har qanday javobingda bu ma'lumotlarni o'zingdan qo'shib, tilga olib ` +
+    `o'tirma:\n${facts}`
+  );
 }
 
 /**
