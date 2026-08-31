@@ -36,12 +36,8 @@ class AssistantTurn {
 /// sifatida saqlanadi. Aks holda APK ichidan kalitni chiqarib olish
 /// mumkin bo'lardi.
 class AssistantRepository {
-  // TODO: haqiqiy `wrangler deploy`dan keyingi manzilga almashtiring —
-  // odatda `https://mahallam-assistant-api.<hisob-subdomeni>.workers.dev`
-  // ko'rinishida bo'ladi (aniq subdomen shu Worker joylashtirilgandan
-  // keyin `wrangler deploy` chiqishida ko'rinadi), yoki agar maxsus
-  // domen bog'langan bo'lsa o'sha domenga.
-  static const String _baseUrl = 'https://mahallam-assistant-api.workers.dev';
+  static const String _baseUrl =
+      'https://mahallam-assistant-api.ilyosbek41624.workers.dev';
 
   final FirebaseAuth _auth;
 

@@ -1,7 +1,7 @@
 name: mening_mahallam
 description: "Mening mahallam — mahalla aholisi uchun mobil ilova"
 publish_to: 'none'
-version: 1.4.0+10
+version: 1.4.1+11
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -71,11 +71,6 @@ dependencies:
   flutter_map: ^7.0.2
   latlong2: ^0.9.1
   geolocator: ^13.0.1
-
-  # Qurilmaning internetga ulanish holatini kuzatish (oflayn banner
-  # uchun). Firestore keshi allaqachon oflayn o'qishni ta'minlaydi —
-  # bu paket faqat foydalanuvchiga KO'RINADIGAN signal beradi.
-  connectivity_plus: ^7.3.1
 
 dev_dependencies:
   flutter_test:

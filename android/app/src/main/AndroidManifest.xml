@@ -8,6 +8,9 @@
          "Mening joylashuvim" tugmasi uchun (geolocator paketi). -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Oflayn banner (connectivity_plus) — qurilmaning joriy tarmoq
+         holatini so'rash uchun. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:label="Mening Mahallam"
