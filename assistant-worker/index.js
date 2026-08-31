@@ -2,43 +2,53 @@
 //
 // Pure REST API (single route). Any signed-in Firebase user may call
 // `POST /chat` (no role check, unlike admin-worker's superAdmin gate) —
-// see lib/auth.js. The Gemini API key never reaches the client: this
-// Worker calls Google's Generative Language API server-side with a
-// secret set via `wrangler secret put GEMINI_API_KEY`.
+// see lib/auth.js. Chat completion runs on Cloudflare Workers AI (the
+// `env.AI` binding below) — no external API key to provision or leak-
+// proof, and no per-model daily request cap shared across the whole
+// project the way Gemini's free tier was (see lib/workersAi.js for the
+// full story on why this replaced the earlier Gemini integration).
 
 import { requireAuthedUser } from './lib/auth.js';
 import { corsHeaders, jsonResponse, handleOptions, HttpError } from './lib/http.js';
 import { enforceRateLimit } from './lib/rateLimit.js';
-import { generateReply } from './lib/gemini.js';
-import { getDoc } from './lib/firestore.js';
+import { generateReply } from './lib/workersAi.js';
+import { getDoc, listCollection } from './lib/firestore.js';
 
-// Gemini API key resolution: prefer a super-admin-set key stored in
-// Firestore `appConfig/assistant.geminiApiKey` (editable from the web
-// admin panel — see admin-worker's `/api/assistant-config` — so the key
-// can be swapped without a redeploy when the free-tier quota runs out),
-// falling back to the `GEMINI_API_KEY` Worker secret if no Firestore
-// override is set. Cached in-memory per isolate for a few minutes so
-// every chat message doesn't cost an extra Firestore read.
-let keyCache = { value: null, fetchedAt: 0 };
-const KEY_CACHE_TTL_MS = 5 * 60 * 1000;
+// Real, live facts about the app/deployment for the AI to ground its
+// answers in — without this, the model has no idea it's "Mening
+// Mahallam" beyond the static system instruction text, and hallucinates
+// generic answers ("rasmiy tashkilotlar bilan bog'laning") for questions
+// like "who owns this app" or "how many mahallas are registered".
+// Cached per-isolate since `mahallas` rarely changes and we don't want a
+// Firestore list call on every single chat message.
+const APP_OWNER_NAME = 'Ilyos Ruzibekov';
+// Above this count, naming every mahalla would bloat the prompt (and
+// eventually blow past Gemini's context window) for no real benefit —
+// switch to just reporting the total.
+const MAX_MAHALLA_NAMES_IN_PROMPT = 40;
 
-async function resolveGeminiApiKey(env) {
+let appContextCache = { value: null, fetchedAt: 0 };
+const APP_CONTEXT_CACHE_TTL_MS = 5 * 60 * 1000;
+
+async function resolveAppContext(env) {
   const now = Date.now();
-  if (keyCache.value && now - keyCache.fetchedAt < KEY_CACHE_TTL_MS) {
-    return keyCache.value;
+  if (appContextCache.value && now - appContextCache.fetchedAt < APP_CONTEXT_CACHE_TTL_MS) {
+    return appContextCache.value;
   }
-  let firestoreKey = null;
+  let mahallas = [];
   try {
-    const doc = await getDoc(env, 'appConfig', 'assistant');
-    firestoreKey = doc?.geminiApiKey || null;
+    mahallas = await listCollection(env, 'mahallas');
   } catch (err) {
-    // Firestore unreachable/misconfigured — fall back to the secret
-    // rather than failing the whole request.
-    console.error('assistant config lookup failed:', err);
+    console.error('assistant app-context: mahallas lookup failed:', err);
   }
-  const resolved = firestoreKey || env.GEMINI_API_KEY || null;
-  keyCache = { value: resolved, fetchedAt: now };
-  return resolved;
+  const names = mahallas.map((m) => m.name).filter((n) => typeof n === 'string' && n);
+  const context = {
+    ownerName: APP_OWNER_NAME,
+    mahallaCount: mahallas.length,
+    mahallaNames: names.length <= MAX_MAHALLA_NAMES_IN_PROMPT ? names : null,
+  };
+  appContextCache = { value: context, fetchedAt: now };
+  return context;
 }
 
 export default {
@@ -76,7 +86,18 @@ async function handleChat(request, env) {
   // admin-worker's `requireSuperAdmin` pattern.
   const uid = await requireAuthedUser(request);
 
-  await enforceRateLimit(env, uid);
+  let isPremium = false;
+  try {
+    const userDoc = await getDoc(env, 'users', uid);
+    const premiumUntil = userDoc?.premiumUntil ? new Date(userDoc.premiumUntil) : null;
+    isPremium = !!premiumUntil && premiumUntil.getTime() > Date.now();
+  } catch (err) {
+    // Premium lookup failing shouldn't block chat entirely — just treat
+    // as non-premium (the safe/conservative default) for this request.
+    console.error('assistant: premium lookup failed:', err);
+  }
+
+  await enforceRateLimit(env, uid, isPremium);
 
   const body = await safeJson(request);
   if (!body || typeof body.message !== 'string' || !body.message.trim()) {
@@ -89,19 +110,20 @@ async function handleChat(request, env) {
     throw new HttpError(400, 'locale must be a string if provided');
   }
 
-  const apiKey = await resolveGeminiApiKey(env);
-  if (!apiKey) {
-    throw new HttpError(500, 'AI yordamchi hozircha sozlanmagan');
-  }
+  const appContext = await resolveAppContext(env);
 
-  const reply = await generateReply(
-    { ...env, GEMINI_API_KEY: apiKey },
-    {
-      message: body.message.trim(),
-      history: body.history,
-      locale: body.locale,
-    },
-  );
+  const reply = await generateReply(env, {
+    message: body.message.trim(),
+    history: body.history,
+    locale: body.locale,
+    appContext,
+    // isPremium gates the "draft a murojaat for me" action-block
+    // capability (see lib/workersAi.js) — kept as its own parameter
+    // rather than folded into `appContext`, since appContext is cached
+    // and shared across every user's request, while premium status is
+    // per-request/per-uid.
+    isPremium,
+  });
 
   return jsonResponse({ reply }, 200, env);
 }

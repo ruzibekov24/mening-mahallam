@@ -35,7 +35,25 @@ String _typeDescription(AppLocalizations l10n, RequestType type) {
 /// 1. Turi → 2. Tafsilotlar → 3. Joylashuv → 4. Ko'rib chiqish → 5. Yuborildi
 class NewRequestFlowScreen extends ConsumerStatefulWidget {
   final String mahallaId;
-  const NewRequestFlowScreen({super.key, required this.mahallaId});
+
+  /// AI Yordamchi (premium, "murojaat yozib ber" so'rovi) tomonidan
+  /// oldindan to'ldirilgan qoralama — berilsa, forma shu qiymatlar bilan
+  /// ochiladi, lekin foydalanuvchi baribir har bir bosqichni ko'rib
+  /// chiqib, o'zi yuborishi kerak (AI hech qachon to'g'ridan-to'g'ri
+  /// murojaat yaratmaydi).
+  final String? initialTitle;
+  final String? initialDescription;
+  final RequestType? initialType;
+  final RequestPriority? initialPriority;
+
+  const NewRequestFlowScreen({
+    super.key,
+    required this.mahallaId,
+    this.initialTitle,
+    this.initialDescription,
+    this.initialType,
+    this.initialPriority,
+  });
 
   @override
   ConsumerState<NewRequestFlowScreen> createState() =>
@@ -46,12 +64,26 @@ class _NewRequestFlowScreenState extends ConsumerState<NewRequestFlowScreen> {
   int _currentStep = 0;
   bool _isSubmitting = false;
 
-  RequestType _type = RequestType.maxfiy;
-  RequestPriority _priority = RequestPriority.ortacha;
-  final _titleController = TextEditingController();
-  final QuillController _descriptionController = QuillController.basic();
+  late RequestType _type;
+  late RequestPriority _priority;
+  late final TextEditingController _titleController;
+  late final QuillController _descriptionController;
   List<MediaFile> _images = [];
   LatLng? _location;
+
+  @override
+  void initState() {
+    super.initState();
+    _type = widget.initialType ?? RequestType.maxfiy;
+    _priority = widget.initialPriority ?? RequestPriority.ortacha;
+    _titleController = TextEditingController(text: widget.initialTitle ?? '');
+    _descriptionController = widget.initialDescription == null
+        ? QuillController.basic()
+        : QuillController(
+            document: Document()..insert(0, widget.initialDescription!),
+            selection: const TextSelection.collapsed(offset: 0),
+          );
+  }
 
   @override
   void dispose() {

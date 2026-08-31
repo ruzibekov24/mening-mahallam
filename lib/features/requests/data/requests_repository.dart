@@ -348,21 +348,31 @@ class RequestsRepository {
         publicSub = requestsCol
             .where('type', isEqualTo: 'ommaviy')
             .snapshots()
-            .listen((snapshot) {
-          publicList = snapshot.docs
-              .map((doc) => MahallaRequest.fromFirestore(doc.id, doc.data()))
-              .toList();
-          emit();
-        });
+            .listen(
+          (snapshot) {
+            publicList = snapshot.docs
+                .map((doc) => MahallaRequest.fromFirestore(doc.id, doc.data()))
+                .toList();
+            emit();
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            if (!controller.isClosed) controller.addError(error, stackTrace);
+          },
+        );
         mineSub = requestsCol
             .where('authorUid', isEqualTo: myUid)
             .snapshots()
-            .listen((snapshot) {
-          mineList = snapshot.docs
-              .map((doc) => MahallaRequest.fromFirestore(doc.id, doc.data()))
-              .toList();
-          emit();
-        });
+            .listen(
+          (snapshot) {
+            mineList = snapshot.docs
+                .map((doc) => MahallaRequest.fromFirestore(doc.id, doc.data()))
+                .toList();
+            emit();
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            if (!controller.isClosed) controller.addError(error, stackTrace);
+          },
+        );
       },
       onCancel: () async {
         await publicSub?.cancel();

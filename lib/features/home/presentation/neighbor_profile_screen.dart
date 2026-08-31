@@ -12,6 +12,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../chat/presentation/chat_screen.dart';
 import '../../moderation/data/report_repository.dart';
 import '../../moderation/presentation/report_sheet.dart';
+import '../../premium/presentation/premium_badge.dart';
 import '../../profile/data/profile_banners.dart';
 import '../data/home_repository.dart';
 import 'role_styles.dart';
@@ -208,11 +209,7 @@ class NeighborProfileScreen extends ConsumerWidget {
                             ),
                             if (member.isPremiumActive) ...[
                               const SizedBox(width: AppSpacing.xs),
-                              Tooltip(
-                                message: l10n.premiumBadgeLabel,
-                                child: const Icon(PhosphorIconsFill.crown,
-                                    size: 18, color: Color(0xFFE0A526)),
-                              ),
+                              const PremiumBadge(),
                             ],
                           ],
                         ),

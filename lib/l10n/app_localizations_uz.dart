@@ -1672,6 +1672,22 @@ class AppLocalizationsUz extends AppLocalizations {
   String get premiumGrantAction => 'Shu raqamga berish';
 
   @override
+  String get premiumRevokeAction => 'Shu raqamdan bekor qilish';
+
+  @override
+  String get premiumRevokeConfirmTitle => 'Premiumni bekor qilish';
+
+  @override
+  String premiumRevokeConfirmMessage(String name) {
+    return '$name uchun premium obunani muddatidan oldin bekor qilmoqchimisiz?';
+  }
+
+  @override
+  String premiumRevokedFrom(String name) {
+    return '$name uchun premium bekor qilindi';
+  }
+
+  @override
   String premiumGrantedSelf(int months) {
     return 'Sizga $months oylik premium berildi';
   }
@@ -3584,6 +3600,22 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get premiumGrantAction => 'Шу рақамга бериш';
+
+  @override
+  String get premiumRevokeAction => 'Шу рақамдан бекор қилиш';
+
+  @override
+  String get premiumRevokeConfirmTitle => 'Премиумни бекор қилиш';
+
+  @override
+  String premiumRevokeConfirmMessage(String name) {
+    return '$name учун премиум обунани муддатидан олдин бекор қилмоқчимисиз?';
+  }
+
+  @override
+  String premiumRevokedFrom(String name) {
+    return '$name учун премиум бекор қилинди';
+  }
 
   @override
   String premiumGrantedSelf(int months) {

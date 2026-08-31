@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -48,25 +46,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
       if (!mounted) return;
 
-      // Foydalanuvchi allaqachon biror mahallaga bog'langanmi — shuni
-      // tekshirib, mos ekranga yo'naltiramiz (har safar qayta QR
-      // skanerlashni so'ramaslik uchun).
-      final uid = FirebaseAuth.instance.currentUser?.uid;
-      String? mahallaId;
-      if (uid != null) {
-        final doc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(uid)
-            .get();
-        mahallaId = doc.data()?['mahallaId'] as String?;
-      }
-
-      if (!mounted) return;
-      if (mahallaId != null && mahallaId.isNotEmpty) {
-        context.go(AppRoutes.home);
-      } else {
-        context.go(AppRoutes.qrScan);
-      }
+      // Foydalanuvchi allaqachon biror mahallaga bog'langanmi degan
+      // tekshiruv (va Home/QR skanerlashga yo'naltirish) ATAYLAB shu
+      // yerda takrorlanmaydi — `app_router.dart`dagi `redirect` MANA SHU
+      // BITTA joyda (yagona haqiqat manbai) hal qiladi, keshdan
+      // qaytarib olish bilan birga. Agar bu yerda ikkinchi marta
+      // (mustaqil, keshsiz) tekshirilsa, ikkalasi bir-biridan
+      // farqli natija berishi mumkin — masalan bu yerdagi `.get()`
+      // vaqtinchalik xato bersa, foydalanuvchi mahallasi bor bo'lsa
+      // ham QR skanerlashga yuborilardi. `splash`ga o'tish shunchaki
+      // routerni qaytadan ishga tushiradi.
+      context.go(AppRoutes.splash);
     } on AuthException catch (e) {
       _showError(e.message);
     } catch (_) {

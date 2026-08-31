@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
@@ -187,6 +188,11 @@ class AppErrorView extends StatelessWidget {
   /// Qo'shimcha tushuntirish (ixtiyoriy) — masalan aniq sabab.
   final String? subtitle;
 
+  /// Texnik xato kodi (masalan `permission-denied`), kichik va xira
+  /// matn sifatida pastda ko'rsatiladi — foydalanuvchi buni ekran
+  /// suratini olib yuborsa, sababni logga kirmasdan aniqlash mumkin.
+  final String? debugCode;
+
   /// Bosilganda qayta urinish uchun chaqiriladi. Berilmasa,
   /// "Qayta urinish" tugmasi ko'rsatilmaydi.
   final VoidCallback? onRetry;
@@ -195,6 +201,7 @@ class AppErrorView extends StatelessWidget {
     super.key,
     this.message,
     this.subtitle,
+    this.debugCode,
     this.onRetry,
   });
 
@@ -205,8 +212,21 @@ class AppErrorView extends StatelessWidget {
     Object error, {
     VoidCallback? onRetry,
   }) {
+    // Xato kodi darhol foydalanuvchiga ko'rsatilmaydi (matn tushunarsiz
+    // bo'lardi), lekin log orqali chiqadi — shu tufayli "Nimadir xato
+    // ketdi" chiqqanda, uning haqiqiy sababi (masalan
+    // `permission-denied` va `unavailable`/`deadline-exceeded` orasidagi
+    // farq — biri qoidalar xatosi, ikkinchisi tarmoq muammosi) logdan
+    // ko'rinadi.
+    final code = error is FirebaseException ? error.code : null;
+    debugPrint(
+      'AppErrorView.fromError: ${error.runtimeType}'
+      '${code != null ? ' code=$code' : ''} — $error',
+    );
     final text = error.toString().toLowerCase();
-    final isNetwork = text.contains('socket') ||
+    final isNetwork = code == 'unavailable' ||
+        code == 'deadline-exceeded' ||
+        text.contains('socket') ||
         text.contains('network') ||
         text.contains('failed host lookup') ||
         text.contains('connection');
@@ -214,6 +234,7 @@ class AppErrorView extends StatelessWidget {
       message: isNetwork ? "Internet aloqasi yo'q" : null,
       subtitle:
           isNetwork ? "Tarmoqni tekshirib, qayta urinib ko'ring" : null,
+      debugCode: code,
       onRetry: onRetry,
     );
   }
@@ -247,6 +268,18 @@ class AppErrorView extends StatelessWidget {
                 subtitle!,
                 textAlign: TextAlign.center,
                 style: context.secondaryStyle,
+              ),
+            ],
+            if (debugCode != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                'Texnik kod: $debugCode',
+                textAlign: TextAlign.center,
+                style: context.secondaryStyle.copyWith(
+                  fontSize: 11,
+                  fontFamily: 'monospace',
+                  color: context.secondaryStyle.color?.withValues(alpha: 0.6),
+                ),
               ),
             ],
             if (onRetry != null) ...[

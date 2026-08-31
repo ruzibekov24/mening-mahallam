@@ -878,6 +878,32 @@
   "@premiumGrantAction": {
     "description": "Premium / profil"
   },
+  "premiumRevokeAction": "Shu raqamdan bekor qilish",
+  "@premiumRevokeAction": {
+    "description": "Premium / profil"
+  },
+  "premiumRevokeConfirmTitle": "Premiumni bekor qilish",
+  "@premiumRevokeConfirmTitle": {
+    "description": "Premium / profil"
+  },
+  "premiumRevokeConfirmMessage": "{name} uchun premium obunani muddatidan oldin bekor qilmoqchimisiz?",
+  "@premiumRevokeConfirmMessage": {
+    "description": "Premium / profil",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumRevokedFrom": "{name} uchun premium bekor qilindi",
+  "@premiumRevokedFrom": {
+    "description": "Premium / profil",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "premiumGrantedSelf": "Sizga {months} oylik premium berildi",
   "@premiumGrantedSelf": {
     "placeholders": {

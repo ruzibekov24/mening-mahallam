@@ -1662,6 +1662,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumGrantAction => 'Grant to this number';
 
   @override
+  String get premiumRevokeAction => 'Revoke from this number';
+
+  @override
+  String get premiumRevokeConfirmTitle => 'Revoke premium';
+
+  @override
+  String premiumRevokeConfirmMessage(String name) {
+    return 'Revoke $name\'s premium subscription early?';
+  }
+
+  @override
+  String premiumRevokedFrom(String name) {
+    return 'Premium revoked for $name';
+  }
+
+  @override
   String premiumGrantedSelf(int months) {
     return 'You\'ve been granted $months months of premium';
   }

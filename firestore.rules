@@ -121,6 +121,21 @@ service cloud.firestore {
         // the recipient themself.
         allow create: if isSignedIn() && uid != myUid();
       }
+
+      // ---------- users/{uid}/assistantChats/{chatId} (AI Yordamchi tarixi) ----------
+      // To'liq shaxsiy — faqat egasining o'zi o'qiy/yoza oladi (boshqa
+      // a'zolar, hatto xodim/rais ham emas). AI Worker (Cloudflare)
+      // o'zining Admin SDK ekvivalenti (service-account) orqali
+      // Firestore'ga kirgani uchun bu qoidalar bilan cheklanmaydi —
+      // xabarlarni yozish/o'qish klient tomonida (Flutter) amalga
+      // oshiriladi, Worker faqat Gemini javobini qaytaradi.
+      match /assistantChats/{chatId} {
+        allow read, write: if isSignedIn() && uid == myUid();
+
+        match /messages/{messageId} {
+          allow read, write: if isSignedIn() && uid == myUid();
+        }
+      }
     }
 
     // ---------- conversations/{conversationId} (qo'shnilar chat) ----------

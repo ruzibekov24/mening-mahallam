@@ -39,5 +39,57 @@
       ]
     }
   ],
-  "fieldOverrides": []
+  "_fieldOverrides_comment": "Production'da bu maydonlar uchun faqat COLLECTION_GROUP qamrovli fieldOverride mavjud edi (ehtimol admin panel/worker'ning mahallalar bo'ylab so'rovlari uchun qo'lda, Firebase Console orqali qo'shilgan). Firestore'da fieldOverride mavjud bo'lsa, u standart avtomatik COLLECTION qamrovli indeksni ALMASHTIRADI, o'chirmaydi. Natijada asosiy ilovaning har-bir-mahalla ichidagi (`.collection('mahallas/{id}/announcements').orderBy('createdAt')` kabi) so'rovlari uchun kerakli COLLECTION qamrovli indeks yo'qolgan va FAILED_PRECONDITION bilan rad etilgan (Home/E'lonlar/Murojaat ekranlaridagi 'Nimadir xato ketdi'). Quyida COLLECTION qamrovini qaytarib, COLLECTION_GROUP qamrovini ham (admin panel kerak bo'lsa) saqlab qolamiz.",
+  "fieldOverrides": [
+    {
+      "collectionGroup": "announcements",
+      "fieldPath": "createdAt",
+      "ttl": false,
+      "indexes": [
+        { "order": "ASCENDING", "queryScope": "COLLECTION" },
+        { "order": "DESCENDING", "queryScope": "COLLECTION" },
+        { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" }
+      ]
+    },
+    {
+      "collectionGroup": "events",
+      "fieldPath": "dateTime",
+      "ttl": false,
+      "indexes": [
+        { "order": "ASCENDING", "queryScope": "COLLECTION" },
+        { "order": "DESCENDING", "queryScope": "COLLECTION" },
+        { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" }
+      ]
+    },
+    {
+      "collectionGroup": "polls",
+      "fieldPath": "createdAt",
+      "ttl": false,
+      "indexes": [
+        { "order": "ASCENDING", "queryScope": "COLLECTION" },
+        { "order": "DESCENDING", "queryScope": "COLLECTION" },
+        { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" }
+      ]
+    },
+    {
+      "collectionGroup": "requests",
+      "fieldPath": "createdAt",
+      "ttl": false,
+      "indexes": [
+        { "order": "ASCENDING", "queryScope": "COLLECTION" },
+        { "order": "DESCENDING", "queryScope": "COLLECTION" },
+        { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" }
+      ]
+    },
+    {
+      "collectionGroup": "serviceAds",
+      "fieldPath": "createdAt",
+      "ttl": false,
+      "indexes": [
+        { "order": "ASCENDING", "queryScope": "COLLECTION" },
+        { "order": "DESCENDING", "queryScope": "COLLECTION" },
+        { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" }
+      ]
+    }
+  ]
 }

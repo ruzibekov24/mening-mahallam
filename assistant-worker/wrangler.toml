@@ -2,21 +2,28 @@ name = "mahallam-assistant-api"
 main = "index.js"
 compatibility_date = "2026-08-20"
 
-# Non-secret configuration. The only secret (GEMINI_API_KEY) is set
-# separately via `wrangler secret put` — see README.md.
+# Non-secret configuration. No API-key secret is needed anymore — chat
+# completion runs on Workers AI (the [ai] binding below), which is
+# authenticated implicitly via this Worker's own Cloudflare account.
 [vars]
 FIREBASE_PROJECT_ID = "mahallam-d4a93"
 # This Worker is called directly by the Flutter mobile app (not a
 # browser), so CORS is mostly a no-op — kept permissive for consistency
 # with admin-worker's pattern and in case a web client is added later.
 ALLOWED_ORIGIN = "*"
-# Gemini free-tier model. See README.md for notes on picking a newer
-# model name if one becomes available.
-GEMINI_MODEL = "gemini-3.6-flash"
+# Workers AI model — a small instruct model, deliberately: smaller
+# models cost fewer Neurons per request, stretching the shared daily
+# free Neuron allowance across more users/messages. See lib/workersAi.js
+# for why this replaced the earlier Gemini integration (its free tier
+# was capped per-project-per-model-per-day, not per API key — rotating
+# the key never helped once that project-wide cap was hit).
+WORKERS_AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
 
 # Per-user daily rate limit (POST /chat), enforced via KV — see
-# lib/rateLimit.js and README.md.
+# lib/rateLimit.js and README.md. Premium users (users/{uid}.premiumUntil
+# in the future) get the higher PREMIUM limit instead.
 RATE_LIMIT_PER_DAY = "20"
+RATE_LIMIT_PER_DAY_PREMIUM = "100"
 
 # KV namespace holding per-uid/day message counters
 # (key: "ratelimit:{uid}:{date}", value: count, TTL ~2 days).
@@ -25,3 +32,8 @@ RATE_LIMIT_PER_DAY = "20"
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
 id = "01265200ff9e4b6bb33b2663e61efe8a"
+
+# Cloudflare Workers AI — no API key needed, billed against this
+# account's free Neuron allowance (see README.md "AI provider").
+[ai]
+binding = "AI"

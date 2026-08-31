@@ -20,12 +20,17 @@ function todayKey() {
 }
 
 /**
- * Throws `HttpError(429, ...)` if `uid` has already hit
- * `env.RATE_LIMIT_PER_DAY` messages today; otherwise increments the
- * counter and lets the caller proceed.
+ * Throws `HttpError(429, ...)` if `uid` has already hit the daily
+ * message limit; otherwise increments the counter and lets the caller
+ * proceed. `isPremium` selects `RATE_LIMIT_PER_DAY_PREMIUM` instead of
+ * the default `RATE_LIMIT_PER_DAY` — premium users get a higher quota
+ * rather than unlimited, since Workers AI's free daily Neuron allowance
+ * is shared across every user of the app.
  */
-export async function enforceRateLimit(env, uid) {
-  const limit = parseInt(env.RATE_LIMIT_PER_DAY, 10) || 20;
+export async function enforceRateLimit(env, uid, isPremium = false) {
+  const limit = isPremium
+    ? parseInt(env.RATE_LIMIT_PER_DAY_PREMIUM, 10) || 100
+    : parseInt(env.RATE_LIMIT_PER_DAY, 10) || 20;
   const key = `ratelimit:${uid}:${todayKey()}`;
 
   const raw = await env.RATE_LIMIT_KV.get(key);

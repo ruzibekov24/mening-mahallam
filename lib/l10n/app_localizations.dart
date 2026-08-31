@@ -3143,6 +3143,30 @@ abstract class AppLocalizations {
   /// **'Shu raqamga berish'**
   String get premiumGrantAction;
 
+  /// Premium / profil
+  ///
+  /// In uz, this message translates to:
+  /// **'Shu raqamdan bekor qilish'**
+  String get premiumRevokeAction;
+
+  /// Premium / profil
+  ///
+  /// In uz, this message translates to:
+  /// **'Premiumni bekor qilish'**
+  String get premiumRevokeConfirmTitle;
+
+  /// Premium / profil
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} uchun premium obunani muddatidan oldin bekor qilmoqchimisiz?'**
+  String premiumRevokeConfirmMessage(String name);
+
+  /// Premium / profil
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} uchun premium bekor qilindi'**
+  String premiumRevokedFrom(String name);
+
   /// No description provided for @premiumGrantedSelf.
   ///
   /// In uz, this message translates to:

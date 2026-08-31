@@ -17,6 +17,7 @@ import '../../feedback/presentation/feedback_list_screen.dart';
 import '../../home/data/home_repository.dart';
 import '../../home/presentation/role_styles.dart';
 import '../../requests/presentation/request_detail_screen.dart';
+import '../../premium/presentation/premium_badge.dart';
 import '../../premium/presentation/premium_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../data/profile_activity_providers.dart';
@@ -373,11 +374,7 @@ class _ProfileBannerHeader extends StatelessWidget {
                         ],
                         if (profile?.isPremiumActive == true) ...[
                           const SizedBox(width: AppSpacing.xs),
-                          Tooltip(
-                            message: l10n.premiumBadgeLabel,
-                            child: const Icon(PhosphorIconsFill.crown,
-                                size: 18, color: Color(0xFFFFC94A)),
-                          ),
+                          const PremiumBadge(onDark: true),
                         ],
                       ],
                     ),

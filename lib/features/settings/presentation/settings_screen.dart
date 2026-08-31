@@ -20,7 +20,7 @@ import '../../language/data/language_repository.dart';
 import '../../language/presentation/language_screen.dart';
 import '../../premium/presentation/premium_config_screen.dart';
 import '../../premium/presentation/premium_requests_screen.dart';
-import '../../assistant/presentation/assistant_screen.dart';
+import '../../assistant/presentation/assistant_chats_list_screen.dart';
 import '../../premium/presentation/premium_screen.dart';
 import '../../profile/presentation/edit_profile_screen.dart';
 import '../../profile/presentation/help_screen.dart';
@@ -406,7 +406,8 @@ class SettingsScreen extends ConsumerWidget {
                   iconColor: AppColors.primary,
                   title: l10n.assistantScreenTitle,
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const AssistantScreen()),
+                    MaterialPageRoute(
+                        builder: (_) => const AssistantChatsListScreen()),
                   ),
                   showDivider: false,
                 ),

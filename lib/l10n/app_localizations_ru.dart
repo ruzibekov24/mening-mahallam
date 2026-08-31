@@ -1665,6 +1665,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String get premiumGrantAction => 'Выдать на этот номер';
 
   @override
+  String get premiumRevokeAction => 'Отозвать с этого номера';
+
+  @override
+  String get premiumRevokeConfirmTitle => 'Отменить премиум';
+
+  @override
+  String premiumRevokeConfirmMessage(String name) {
+    return 'Досрочно отменить премиум-подписку для $name?';
+  }
+
+  @override
+  String premiumRevokedFrom(String name) {
+    return 'Премиум для $name отменён';
+  }
+
+  @override
   String premiumGrantedSelf(int months) {
     return 'Вам выдан премиум на $months мес.';
   }

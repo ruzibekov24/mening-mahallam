@@ -12,6 +12,7 @@ import '../../../core/widgets/shimmer.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../announcements/data/announcements_providers.dart';
+import '../../assistant/presentation/assistant_chats_list_screen.dart';
 import '../../banners/data/promo_banner_repository.dart';
 import '../../banners/presentation/promo_banner_carousel.dart';
 import '../../chat/data/chat_providers.dart';
@@ -130,6 +131,28 @@ class HomeScreen extends ConsumerWidget {
                             error: (_, __) => const SizedBox.shrink(),
                           ),
                         ],
+                      ),
+                    ),
+                    TapScale(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const AssistantChatsListScreen(),
+                        ),
+                      ),
+                      borderRadius: AppRadius.smAll,
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        margin: const EdgeInsets.only(right: AppSpacing.sm),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.18),
+                          borderRadius: AppRadius.smAll,
+                        ),
+                        child: const Icon(
+                          PhosphorIconsFill.sparkle,
+                          color: Colors.white,
+                          size: 22,
+                        ),
                       ),
                     ),
                     TapScale(

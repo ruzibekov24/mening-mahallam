@@ -457,25 +457,33 @@ class HomeRepository {
           }
           emit();
         },
+        onError: (Object error, StackTrace stackTrace) {
+          if (!controller.isClosed) controller.addError(error, stackTrace);
+        },
       );
     }
 
     controller = StreamController<List<MahallaMember>>.broadcast(
       onListen: () {
-        markerSub = membersCol.snapshots().listen((snapshot) {
-          final uids = snapshot.docs.map((d) => d.id).toSet();
+        markerSub = membersCol.snapshots().listen(
+          (snapshot) {
+            final uids = snapshot.docs.map((d) => d.id).toSet();
 
-          for (final uid in userSubs.keys.toList()) {
-            if (!uids.contains(uid)) {
-              userSubs.remove(uid)?.cancel();
-              latest.remove(uid);
+            for (final uid in userSubs.keys.toList()) {
+              if (!uids.contains(uid)) {
+                userSubs.remove(uid)?.cancel();
+                latest.remove(uid);
+              }
             }
-          }
-          for (final uid in uids) {
-            if (!userSubs.containsKey(uid)) listenToUser(uid);
-          }
-          emit();
-        });
+            for (final uid in uids) {
+              if (!userSubs.containsKey(uid)) listenToUser(uid);
+            }
+            emit();
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            if (!controller.isClosed) controller.addError(error, stackTrace);
+          },
+        );
       },
       onCancel: () async {
         await markerSub?.cancel();

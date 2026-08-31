@@ -126,24 +126,38 @@ final routerProvider = Provider<GoRouter>((ref) {
       // ketmasligi kerak — mahallaga bog'langan-bog'lanmaganiga qarab
       // to'g'ridan-to'g'ri Home yoki QR skanerlashga yo'naltiramiz.
       if (_preAuthPaths.contains(path) && user != null) {
+        final userDocRef =
+            FirebaseFirestore.instance.collection('users').doc(user.uid);
         try {
           // MUDDAT SHART: GoRouter async `redirect` tugaguncha HECH
           // QANDAY sahifa chizmaydi — ekran bo'sh qoladi. Firestore
           // `.get()` internet bo'lmaganda uzoq kutishi mumkin,
           // shuning uchun muddatsiz qoldirish "oq ekranda muzlab
           // qolgan ilova" degani.
-          final doc = await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get()
-              .timeout(const Duration(seconds: 10));
+          final doc = await userDocRef.get().timeout(const Duration(seconds: 10));
           final mahallaId = doc.data()?['mahallaId'];
           return (mahallaId != null && mahallaId != '')
               ? AppRoutes.home
               : AppRoutes.qrScan;
-        } catch (_) {
-          // Firestore o'qishda xatolik bo'lsa, xavfsiz tomonga —
-          // QR skanerlashga yo'naltiramiz.
+        } catch (e) {
+          debugPrint('app_router: users/${user.uid} server read failed: $e');
+          // Server o'qish muvaffaqiyatsiz bo'ldi (tarmoq/timeout). Foydalanuvchi
+          // avval muvaffaqiyatli login qilgan bo'lsa, mahallaId odatda mahalliy
+          // Firestore keshida bor — uni QR skanerlashga qaytarishdan oldin
+          // tekshiramiz, aks holda vaqtinchalik tarmoq muammosi tufayli
+          // allaqachon bog'langan mahallasi "yo'qolib qoladi".
+          try {
+            final cached = await userDocRef.get(
+              const GetOptions(source: Source.cache),
+            );
+            final cachedMahallaId = cached.data()?['mahallaId'];
+            if (cachedMahallaId != null && cachedMahallaId != '') {
+              return AppRoutes.home;
+            }
+          } catch (cacheError) {
+            debugPrint(
+                'app_router: users/${user.uid} cache read failed: $cacheError');
+          }
           return AppRoutes.qrScan;
         }
       }

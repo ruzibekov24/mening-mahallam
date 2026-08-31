@@ -246,6 +246,81 @@ class _ManualGrantCardState extends ConsumerState<_ManualGrantCard> {
     }
   }
 
+  /// Telefon raqami bo'yicha foydalanuvchini topadi — `_grantByPhone`
+  /// bilan bir xil ("oxirgi 9 raqam" solishtirish) mantiq, faqat topilgan
+  /// hujjatning o'zini qaytaradi, chunki chaqiruvchi (grant/revoke) bu
+  /// yerdan keyin turlicha davom etadi.
+  Future<QueryDocumentSnapshot<Map<String, dynamic>>?> _findUserByPhone() async {
+    final raw = _phoneController.text.replaceAll(RegExp(r'\D'), '');
+    if (raw.length < 9) return null;
+    final tail = raw.substring(raw.length - 9);
+    final snapshot = await FirebaseFirestore.instance.collection('users').get();
+    final match = snapshot.docs.where((d) {
+      final phone =
+          (d.data()['phone'] as String? ?? '').replaceAll(RegExp(r'\D'), '');
+      return phone.length >= 9 && phone.endsWith(tail);
+    }).toList();
+    return match.isEmpty ? null : match.first;
+  }
+
+  Future<void> _revokeByPhone() async {
+    final l10n = AppLocalizations.of(context);
+    final raw = _phoneController.text.replaceAll(RegExp(r'\D'), '');
+    if (raw.length < 9) {
+      _toast(l10n.phoneValidationError, error: true);
+      return;
+    }
+
+    setState(() => _busy = true);
+    try {
+      final doc = await _findUserByPhone();
+      if (doc == null) {
+        if (mounted) _toast(l10n.premiumGrantUserNotFound, error: true);
+        return;
+      }
+
+      final name = [
+        doc.data()['firstName'] as String? ?? '',
+        doc.data()['lastName'] as String? ?? '',
+      ].where((p) => p.isNotEmpty).join(' ');
+      final displayName = name.isEmpty ? raw.substring(raw.length - 9) : name;
+
+      if (!mounted) return;
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillAll),
+          title: Text(l10n.premiumRevokeConfirmTitle),
+          content: Text(l10n.premiumRevokeConfirmMessage(displayName)),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l10n.premiumRevokeAction,
+                  style: const TextStyle(color: AppColors.danger)),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true) return;
+
+      await ref.read(premiumRepositoryProvider).revokePremium(doc.id);
+
+      if (mounted) {
+        _phoneController.clear();
+        _toast(l10n.premiumRevokedFrom(displayName));
+      }
+    } catch (_) {
+      if (mounted) _toast(l10n.unexpectedError, error: true);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   Future<void> _grantByPhone() async {
     final l10n = AppLocalizations.of(context);
     final raw = _phoneController.text.replaceAll(RegExp(r'\D'), '');
@@ -256,24 +331,12 @@ class _ManualGrantCardState extends ConsumerState<_ManualGrantCard> {
 
     setState(() => _busy = true);
     try {
-      // Telefon raqami turli ko'rinishda saqlangan bo'lishi mumkin
-      // ("+998901234567", "901234567"). Oxirgi 9 raqam bo'yicha
-      // solishtiramiz — bu O'zbekiston raqamlari uchun yagona.
-      final tail = raw.substring(raw.length - 9);
-      final snapshot =
-          await FirebaseFirestore.instance.collection('users').get();
-      final match = snapshot.docs.where((d) {
-        final phone =
-            (d.data()['phone'] as String? ?? '').replaceAll(RegExp(r'\D'), '');
-        return phone.length >= 9 && phone.endsWith(tail);
-      }).toList();
-
-      if (match.isEmpty) {
+      final doc = await _findUserByPhone();
+      if (doc == null) {
         if (mounted) _toast(l10n.premiumGrantUserNotFound, error: true);
         return;
       }
 
-      final doc = match.first;
       await ref
           .read(premiumRepositoryProvider)
           .grantPremium(doc.id, months: _months);
@@ -291,7 +354,8 @@ class _ManualGrantCardState extends ConsumerState<_ManualGrantCard> {
           doc.data()['firstName'] as String? ?? '',
           doc.data()['lastName'] as String? ?? '',
         ].where((p) => p.isNotEmpty).join(' ');
-        _toast(l10n.premiumGrantedTo(name.isEmpty ? tail : name, _months));
+        _toast(l10n.premiumGrantedTo(
+            name.isEmpty ? raw.substring(raw.length - 9) : name, _months));
       }
     } catch (_) {
       if (mounted) _toast(l10n.unexpectedError, error: true);
@@ -358,23 +422,38 @@ class _ManualGrantCardState extends ConsumerState<_ManualGrantCard> {
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: _busy ? null : _grantByPhone,
-              style: FilledButton.styleFrom(
-                shape:
-                    const RoundedRectangleBorder(borderRadius: AppRadius.smAll),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton(
+                  onPressed: _busy ? null : _grantByPhone,
+                  style: FilledButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: AppRadius.smAll),
+                  ),
+                  child: _busy
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : Text(l10n.premiumGrantAction),
+                ),
               ),
-              child: _busy
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
-                    )
-                  : Text(l10n.premiumGrantAction),
-            ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: _busy ? null : _revokeByPhone,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.danger,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: AppRadius.smAll),
+                  ),
+                  child: Text(l10n.premiumRevokeAction),
+                ),
+              ),
+            ],
           ),
         ],
       ),
