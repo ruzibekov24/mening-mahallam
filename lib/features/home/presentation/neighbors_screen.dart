@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/router/app_page_route.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
@@ -11,25 +12,176 @@ import '../../../core/widgets/girih_header.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../home/data/home_repository.dart';
+import '../../chat/presentation/chat_screen.dart';
+import '../../chat/presentation/conversations_screen.dart';
+import '../../chat/presentation/new_group_screen.dart';
 import '../../services/presentation/services_screen.dart';
-import 'neighbor_profile_screen.dart';
+import '../data/home_repository.dart';
 import 'role_styles.dart';
 
-/// Qo'shnilar ekrani: ikkita bo'lim ko'rsatadi —
-/// "Qo'shnilar" (joriy foydalanuvchi bilan bir xil ko'chada
-/// yashovchilar) va "Mahalladoshlar" (butun mahalladagi qolgan
-/// barcha a'zolar). Har birining online/offline holati va, agar
-/// o'sha kishi ruxsat bergan bo'lsa, telefon raqami ko'rinadi.
-class NeighborsScreen extends ConsumerStatefulWidget {
+/// "Qo'shni" bo'limi ichida qaysi segment ko'rsatilishini boshqaradi —
+/// `announcementsShowEventsProvider` bilan bir xil naqsh
+/// (`announcements_screen.dart`ga qarang).
+final neighborsShowConversationsProvider = StateProvider<bool>((ref) => false);
+
+/// Qo'shnilar ekrani: ikkita segment — "Qo'shnilar" (mahalla a'zolari
+/// ro'yxati, ko'chaga qarab guruhlangan) va "Yozishmalar" (shaxsiy va
+/// guruh suhbatlari, ilgari alohida `ConversationsScreen` sifatida
+/// ochilardi). Qo'shni bosilganda endi to'g'ridan-to'g'ri u bilan
+/// suhbat ochiladi (Telegram uslubi) — profilni ko'rish uchun esa
+/// suhbat ichidagi ism/rasmga bosiladi (`ChatScreen`da allaqachon bor).
+class NeighborsScreen extends ConsumerWidget {
   final String mahallaId;
   const NeighborsScreen({super.key, required this.mahallaId});
 
   @override
-  ConsumerState<NeighborsScreen> createState() => _NeighborsScreenState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final showConversations = ref.watch(neighborsShowConversationsProvider);
+
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            GirihHeader(
+              color: AppAccents.neighbors,
+              image: 'assets/images/patterns/abstract_purple.png',
+              watermarkIcon: PhosphorIconsFill.usersThree,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      showConversations
+                          ? l10n.yozishmalarTitle
+                          : l10n.neighborsTitle,
+                      style:
+                          context.titleStyle.copyWith(color: Colors.white),
+                    ),
+                  ),
+                  if (showConversations)
+                    IconButton(
+                      onPressed: () =>
+                          AppPageRoute.push(context, const NewGroupScreen()),
+                      icon: const Icon(PhosphorIconsFill.usersThree,
+                          color: Colors.white),
+                      tooltip: l10n.createGroupAction,
+                    )
+                  else
+                    IconButton(
+                      onPressed: () => AppPageRoute.push(
+                          context, const ServicesScreen()),
+                      icon: const Icon(PhosphorIconsFill.toolbox,
+                          color: Colors.white),
+                      tooltip: l10n.servicesTitle,
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              child: Container(
+                padding: const EdgeInsets.all(AppSpacing.xs),
+                decoration: BoxDecoration(
+                  color: context.isDarkMode
+                      ? AppColors.darkSurface
+                      : AppColors.lightBorder,
+                  borderRadius: AppRadius.smAll,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _SegmentButton(
+                        label: l10n.neighborsTitle,
+                        isActive: !showConversations,
+                        onTap: () => ref
+                            .read(neighborsShowConversationsProvider.notifier)
+                            .state = false,
+                      ),
+                    ),
+                    Expanded(
+                      child: _SegmentButton(
+                        label: l10n.yozishmalarTitle,
+                        isActive: showConversations,
+                        onTap: () => ref
+                            .read(neighborsShowConversationsProvider.notifier)
+                            .state = true,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Expanded(
+              child: showConversations
+                  ? const ConversationsListBody()
+                  : _NeighborsList(mahallaId: mahallaId),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _NeighborsScreenState extends ConsumerState<NeighborsScreen> {
+/// `AnnouncementsScreen._SegmentButton` bilan vizual jihatdan bir xil —
+/// ikkalasi ham juda kichik widget bo'lgani uchun umumiy fayl
+/// chiqarish o'rniga shu yerda alohida nusxasi saqlangan
+/// (`feedback_screen.dart`dagi `_FeedbackModeButton` bilan bir xil
+/// qaror).
+class _SegmentButton extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _SegmentButton({
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TapScale(
+      onTap: onTap,
+      haptic: false,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isActive ? AppColors.primary : Colors.transparent,
+          borderRadius: AppRadius.xsAll,
+          boxShadow: isActive
+              ? AppShadows.accent(AppColors.primary, context.isDarkMode)
+              : null,
+        ),
+        child: Text(
+          label,
+          style: context.secondaryStyle.copyWith(
+            fontWeight: FontWeight.w600,
+            color: isActive ? Colors.white : context.textSecondary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// "Qo'shnilar" segmentining tanasi — qidiruv maydoni + a'zolar
+/// ro'yxati. Avval `NeighborsScreen`ning butun tanasi shu edi.
+class _NeighborsList extends ConsumerStatefulWidget {
+  final String mahallaId;
+  const _NeighborsList({required this.mahallaId});
+
+  @override
+  ConsumerState<_NeighborsList> createState() => _NeighborsListState();
+}
+
+class _NeighborsListState extends ConsumerState<_NeighborsList> {
   final _searchController = TextEditingController();
   String _query = '';
 
@@ -46,185 +198,155 @@ class _NeighborsScreenState extends ConsumerState<NeighborsScreen> {
     final myProfileAsync = ref.watch(currentUserProfileProvider);
     final myStreet = myProfileAsync.valueOrNull?.street?.trim();
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            GirihHeader(
-              color: AppAccents.neighbors,
-              image: 'assets/images/patterns/abstract_purple.png',
-              watermarkIcon: PhosphorIconsFill.usersThree,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(l10n.neighborsTitle,
-                        style: context.titleStyle
-                            .copyWith(color: Colors.white)),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (_) => const ServicesScreen()),
-                    ),
-                    icon: const Icon(PhosphorIconsFill.toolbox,
-                        color: Colors.white),
-                    tooltip: l10n.servicesTitle,
-                  ),
-                ],
-              ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.xl, 0, AppSpacing.xl, AppSpacing.sm),
+          child: Container(
+            height: 50,
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            decoration: BoxDecoration(
+              color: context.isDarkMode
+                  ? AppColors.darkSurface
+                  : AppColors.lightBorder,
+              borderRadius: AppRadius.smAll,
             ),
-            const SizedBox(height: AppSpacing.md),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.xl, 0, AppSpacing.xl, AppSpacing.sm),
-              child: Container(
-                height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                decoration: BoxDecoration(
-                  color: context.isDarkMode
-                      ? AppColors.darkSurface
-                      : AppColors.lightBorder,
-                  borderRadius: AppRadius.smAll,
+            child: Row(
+              children: [
+                Icon(PhosphorIconsBold.magnifyingGlass,
+                    size: 18, color: context.textSecondary),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (v) =>
+                        setState(() => _query = v.trim().toLowerCase()),
+                    decoration: InputDecoration(
+                      hintText: l10n.searchNeighborHint,
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    style: context.bodyStyle,
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    Icon(PhosphorIconsBold.magnifyingGlass,
+                if (_query.isNotEmpty)
+                  TapScale(
+                    onTap: () {
+                      _searchController.clear();
+                      setState(() => _query = '');
+                    },
+                    child: Icon(PhosphorIconsFill.xCircle,
                         size: 18, color: context.textSecondary),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        onChanged: (v) =>
-                            setState(() => _query = v.trim().toLowerCase()),
-                        decoration: InputDecoration(
-                          hintText: l10n.searchNeighborHint,
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        style: context.bodyStyle,
-                      ),
-                    ),
-                    if (_query.isNotEmpty)
-                      TapScale(
-                        onTap: () {
-                          _searchController.clear();
-                          setState(() => _query = '');
-                        },
-                        child: Icon(PhosphorIconsFill.xCircle,
-                            size: 18, color: context.textSecondary),
-                      ),
-                  ],
-                ),
-              ),
+                  ),
+              ],
             ),
-            Expanded(
-              child: membersAsync.when(
-                data: (allMembers) {
-                  final members = _query.isEmpty
-                      ? allMembers
-                      : allMembers
-                          .where((m) => '${m.firstName} ${m.lastName}'
-                              .toLowerCase()
-                              .contains(_query))
-                          .toList();
-
-                  if (allMembers.isEmpty) {
-                    return AppEmptyView(
-                      icon: PhosphorIconsFill.usersThree,
-                      title: l10n.noNeighborsYet,
-                      subtitle: l10n.noNeighborsHint,
-                      accent: AppAccents.neighbors,
-                    );
-                  }
-                  if (members.isEmpty) {
-                    return AppEmptyView(
-                      icon: PhosphorIconsFill.magnifyingGlass,
-                      title: l10n.searchNoResults,
-                      accent: AppAccents.neighbors,
-                      scrollable: true,
-                    );
-                  }
-
-                  // Bir xil ko'chada yashovchilar — "Qo'shnilar";
-                  // qolgan mahalla a'zolari — "Mahalladoshlar".
-                  // Agar foydalanuvchi profilida ko'cha kiritilmagan
-                  // bo'lsa, hammasi "Mahalladoshlar" ostida chiqadi.
-                  final hasMyStreet = myStreet != null && myStreet.isNotEmpty;
-                  final neighbors = hasMyStreet
-                      ? members
-                          .where((m) => m.street?.trim() == myStreet)
-                          .toList()
-                      : <MahallaMember>[];
-                  final others = hasMyStreet
-                      ? members
-                          .where((m) => m.street?.trim() != myStreet)
-                          .toList()
-                      : members;
-
-                  void sortByOnlineThenName(List<MahallaMember> list) {
-                    list.sort((a, b) {
-                      if (a.isOnline != b.isOnline) {
-                        return a.isOnline ? -1 : 1;
-                      }
-                      return a.firstName.compareTo(b.firstName);
-                    });
-                  }
-
-                  sortByOnlineThenName(neighbors);
-                  sortByOnlineThenName(others);
-
-                  final sections = <Widget>[];
-                  if (neighbors.isNotEmpty) {
-                    sections.add(AppSectionHeader(
-                      title: l10n.neighborsTitle,
-                      first: true,
-                    ));
-                    sections.addAll(neighbors.asMap().entries.map(
-                          (e) => StaggeredEntrance(
-                            index: e.key,
-                            child: _NeighborTile(member: e.value),
-                          ),
-                        ));
-                  }
-                  if (others.isNotEmpty) {
-                    sections.add(AppSectionHeader(
-                      title: l10n.mahalladoshlar,
-                      first: neighbors.isEmpty,
-                    ));
-                    sections.addAll(others.asMap().entries.map(
-                          (e) => StaggeredEntrance(
-                            index: e.key,
-                            child: _NeighborTile(member: e.value),
-                          ),
-                        ));
-                  }
-
-                  return ListView(
-                    padding: const EdgeInsets.fromLTRB(AppSpacing.xl,
-                      AppSpacing.sm, AppSpacing.xl, AppSpacing.xxl),
-                    children: sections,
-                  );
-                },
-                loading: () => ListView(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.xl,
-                      AppSpacing.sm, AppSpacing.xl, AppSpacing.xxl),
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: const [ShimmerList(count: 6)],
-                ),
-                error: (error, _) => AppErrorView.fromError(
-                  error,
-                  onRetry: () =>
-                      ref.invalidate(neighborsProvider(widget.mahallaId)),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        Expanded(
+          child: membersAsync.when(
+            data: (allMembers) {
+              final members = _query.isEmpty
+                  ? allMembers
+                  : allMembers
+                      .where((m) => '${m.firstName} ${m.lastName}'
+                          .toLowerCase()
+                          .contains(_query))
+                      .toList();
+
+              if (allMembers.isEmpty) {
+                return AppEmptyView(
+                  icon: PhosphorIconsFill.usersThree,
+                  title: l10n.noNeighborsYet,
+                  subtitle: l10n.noNeighborsHint,
+                  accent: AppAccents.neighbors,
+                );
+              }
+              if (members.isEmpty) {
+                return AppEmptyView(
+                  icon: PhosphorIconsFill.magnifyingGlass,
+                  title: l10n.searchNoResults,
+                  accent: AppAccents.neighbors,
+                  scrollable: true,
+                );
+              }
+
+              // Bir xil ko'chada yashovchilar — "Qo'shnilar";
+              // qolgan mahalla a'zolari — "Mahalladoshlar".
+              // Agar foydalanuvchi profilida ko'cha kiritilmagan
+              // bo'lsa, hammasi "Mahalladoshlar" ostida chiqadi.
+              final hasMyStreet = myStreet != null && myStreet.isNotEmpty;
+              final neighbors = hasMyStreet
+                  ? members
+                      .where((m) => m.street?.trim() == myStreet)
+                      .toList()
+                  : <MahallaMember>[];
+              final others = hasMyStreet
+                  ? members
+                      .where((m) => m.street?.trim() != myStreet)
+                      .toList()
+                  : members;
+
+              void sortByOnlineThenName(List<MahallaMember> list) {
+                list.sort((a, b) {
+                  if (a.isOnline != b.isOnline) {
+                    return a.isOnline ? -1 : 1;
+                  }
+                  return a.firstName.compareTo(b.firstName);
+                });
+              }
+
+              sortByOnlineThenName(neighbors);
+              sortByOnlineThenName(others);
+
+              final sections = <Widget>[];
+              if (neighbors.isNotEmpty) {
+                sections.add(AppSectionHeader(
+                  title: l10n.neighborsTitle,
+                  first: true,
+                ));
+                sections.addAll(neighbors.asMap().entries.map(
+                      (e) => StaggeredEntrance(
+                        index: e.key,
+                        child: _NeighborTile(member: e.value),
+                      ),
+                    ));
+              }
+              if (others.isNotEmpty) {
+                sections.add(AppSectionHeader(
+                  title: l10n.mahalladoshlar,
+                  first: neighbors.isEmpty,
+                ));
+                sections.addAll(others.asMap().entries.map(
+                      (e) => StaggeredEntrance(
+                        index: e.key,
+                        child: _NeighborTile(member: e.value),
+                      ),
+                    ));
+              }
+
+              return ListView(
+                padding: const EdgeInsets.fromLTRB(AppSpacing.xl,
+                    AppSpacing.sm, AppSpacing.xl, AppSpacing.xxl),
+                children: sections,
+              );
+            },
+            loading: () => ListView(
+              padding: const EdgeInsets.fromLTRB(AppSpacing.xl,
+                  AppSpacing.sm, AppSpacing.xl, AppSpacing.xxl),
+              physics: const NeverScrollableScrollPhysics(),
+              children: const [ShimmerList(count: 6)],
+            ),
+            error: (error, _) => AppErrorView.fromError(
+              error,
+              onRetry: () =>
+                  ref.invalidate(neighborsProvider(widget.mahallaId)),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -249,11 +371,11 @@ class _NeighborTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return AppCard(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => NeighborProfileScreen(member: member),
-        ),
-      ),
+      // Telegram uslubi: qo'shnini bosish endi to'g'ridan-to'g'ri u
+      // bilan suhbatni ochadi — profilni ko'rish uchun suhbat ichidagi
+      // ism/rasmga bosiladi (`ChatScreen`da allaqachon bor).
+      onTap: () =>
+          AppPageRoute.push(context, ChatScreen(otherUid: member.uid)),
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       child: Row(
         children: [

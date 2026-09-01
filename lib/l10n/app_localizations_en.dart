@@ -668,6 +668,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Have a problem? Send it in a few seconds';
 
   @override
+  String get mahalCardTitle => 'Chat with Mahal';
+
+  @override
+  String get mahalCardSubtitle =>
+      'Get answers to your questions, file a request, or ask about the mahalla';
+
+  @override
   String get openLinkAction => 'Open link';
 
   @override
@@ -1356,6 +1363,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mahalladoshlar => 'Mahalla residents';
+
+  @override
+  String get yozishmalarTitle => 'Chats';
 
   @override
   String get noNeighborsYet => 'No neighbors yet';

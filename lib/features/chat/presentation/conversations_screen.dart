@@ -28,9 +28,6 @@ class ConversationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final conversationsAsync = ref.watch(myConversationsProvider);
-    final groupsAsync = ref.watch(myGroupChatsProvider);
-    final myUid = FirebaseAuth.instance.currentUser?.uid;
 
     return Scaffold(
       // Bu ekran Navigator.push bilan ochiladi — orqasida
@@ -59,66 +56,83 @@ class ConversationsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            Expanded(
-              child: conversationsAsync.when(
-                data: (conversations) {
-                  final groups = groupsAsync.valueOrNull ?? const [];
-                  if (conversations.isEmpty && groups.isEmpty) {
-                    return AppEmptyView(
-                      icon: PhosphorIconsFill.chatDots,
-                      title: l10n.noConversationsYet,
-                      subtitle: l10n.noConversationsHint,
-                      scrollable: true,
-                    );
-                  }
-                  return ListView(
-                    padding: AppSpacing.listPadding,
-                    children: [
-                      if (groups.isNotEmpty) ...[
-                        AppSectionHeader(title: l10n.groupsSectionTitle),
-                        const SizedBox(height: AppSpacing.sm),
-                        ...groups.asMap().entries.map((entry) {
-                          return StaggeredEntrance(
-                            index: entry.key,
-                            child: _GroupChatTile(
-                              group: entry.value,
-                              myUid: myUid ?? '',
-                            ),
-                          );
-                        }),
-                        const SizedBox(height: AppSpacing.lg),
-                        AppSectionHeader(title: l10n.conversationsTitle),
-                        const SizedBox(height: AppSpacing.sm),
-                      ],
-                      ...conversations.asMap().entries.map((entry) {
-                        final conversation = entry.value;
-                        final otherUid = conversation.otherUid(myUid ?? '');
-                        final unread = conversation.unreadCounts[myUid] ?? 0;
-                        return StaggeredEntrance(
-                          index: entry.key,
-                          child: _ConversationTile(
-                            conversation: conversation,
-                            otherUid: otherUid,
-                            unreadCount: unread,
-                          ),
-                        );
-                      }),
-                    ],
-                  );
-                },
-                loading: () => ListView(
-                  padding: AppSpacing.listPadding,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: const [ShimmerList(count: 6)],
-                ),
-                error: (error, _) => AppErrorView.fromError(
-                  error,
-                  onRetry: () => ref.invalidate(myConversationsProvider),
-                ),
-              ),
-            ),
+            const Expanded(child: ConversationsListBody()),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Suhbatlar ro'yxatining "tanasi" — sarlavha/FAB kabi ekran
+/// chizig'isiz, faqat guruh+shaxsiy suhbatlar ro'yxati. `NeighborsScreen`
+/// ichidagi "Yozishmalar" segmentida ham xuddi shu widget ishlatiladi —
+/// alohida ekran sifatida ochilganda (`ConversationsScreen`) va segment
+/// sifatida ko'milganda bir xil natija berish uchun.
+class ConversationsListBody extends ConsumerWidget {
+  const ConversationsListBody({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final conversationsAsync = ref.watch(myConversationsProvider);
+    final groupsAsync = ref.watch(myGroupChatsProvider);
+    final myUid = FirebaseAuth.instance.currentUser?.uid;
+
+    return conversationsAsync.when(
+      data: (conversations) {
+        final groups = groupsAsync.valueOrNull ?? const [];
+        if (conversations.isEmpty && groups.isEmpty) {
+          return AppEmptyView(
+            icon: PhosphorIconsFill.chatDots,
+            title: l10n.noConversationsYet,
+            subtitle: l10n.noConversationsHint,
+            scrollable: true,
+          );
+        }
+        return ListView(
+          padding: AppSpacing.listPadding,
+          children: [
+            if (groups.isNotEmpty) ...[
+              AppSectionHeader(title: l10n.groupsSectionTitle, first: true),
+              const SizedBox(height: AppSpacing.sm),
+              ...groups.asMap().entries.map((entry) {
+                return StaggeredEntrance(
+                  index: entry.key,
+                  child: _GroupChatTile(
+                    group: entry.value,
+                    myUid: myUid ?? '',
+                  ),
+                );
+              }),
+              const SizedBox(height: AppSpacing.lg),
+              AppSectionHeader(title: l10n.conversationsTitle),
+              const SizedBox(height: AppSpacing.sm),
+            ],
+            ...conversations.asMap().entries.map((entry) {
+              final conversation = entry.value;
+              final otherUid = conversation.otherUid(myUid ?? '');
+              final unread = conversation.unreadCounts[myUid] ?? 0;
+              return StaggeredEntrance(
+                index: entry.key,
+                child: _ConversationTile(
+                  conversation: conversation,
+                  otherUid: otherUid,
+                  unreadCount: unread,
+                ),
+              );
+            }),
+          ],
+        );
+      },
+      loading: () => ListView(
+        padding: AppSpacing.listPadding,
+        physics: const NeverScrollableScrollPhysics(),
+        children: const [ShimmerList(count: 6)],
+      ),
+      error: (error, _) => AppErrorView.fromError(
+        error,
+        onRetry: () => ref.invalidate(myConversationsProvider),
       ),
     );
   }

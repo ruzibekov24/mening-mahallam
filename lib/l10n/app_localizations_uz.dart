@@ -670,6 +670,13 @@ class AppLocalizationsUz extends AppLocalizations {
       'Muammo bormi? Bir necha soniyada yuboring';
 
   @override
+  String get mahalCardTitle => 'Mahal bilan suhbat';
+
+  @override
+  String get mahalCardSubtitle =>
+      'Savollaringizga javob oling, murojaat yozib bering yoki mahalla haqida so\'rang';
+
+  @override
   String get openLinkAction => 'Havolani ochish';
 
   @override
@@ -1362,6 +1369,9 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get mahalladoshlar => 'Mahalladoshlar';
+
+  @override
+  String get yozishmalarTitle => 'Yozishmalar';
 
   @override
   String get noNeighborsYet => 'Hozircha qo\'shnilar yo\'q';
@@ -2716,6 +2726,13 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
       'Муаммо борми? Бир неча сонияда юборинг';
 
   @override
+  String get mahalCardTitle => 'Маҳал билан суҳбат';
+
+  @override
+  String get mahalCardSubtitle =>
+      'Саволларингизга жавоб олинг, мурожаат ёзиб беринг ёки маҳалла ҳақида сўранг';
+
+  @override
   String get openLinkAction => 'Ҳаволани очиш';
 
   @override
@@ -3405,6 +3422,9 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get mahalladoshlar => 'Маҳалладошлар';
+
+  @override
+  String get yozishmalarTitle => 'Ёзишмалар';
 
   @override
   String get noNeighborsYet => 'Ҳозирча қўшнилар йўқ';

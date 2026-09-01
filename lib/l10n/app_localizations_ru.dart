@@ -670,6 +670,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Есть проблема? Отправьте за несколько секунд';
 
   @override
+  String get mahalCardTitle => 'Чат с Махал';
+
+  @override
+  String get mahalCardSubtitle =>
+      'Получите ответы на вопросы, отправьте обращение или спросите о махалле';
+
+  @override
   String get openLinkAction => 'Открыть ссылку';
 
   @override
@@ -1355,6 +1362,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get mahalladoshlar => 'Жители махалли';
+
+  @override
+  String get yozishmalarTitle => 'Переписки';
 
   @override
   String get noNeighborsYet => 'Пока нет соседей';

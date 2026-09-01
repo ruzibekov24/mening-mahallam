@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
+import '../../../core/router/app_page_route.dart';
 import '../../../core/services/image_upload_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
@@ -309,11 +310,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         borderRadius: AppRadius.smAll,
                         onTap: member == null
                             ? null
-                            : () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        NeighborProfileScreen(member: member),
-                                  ),
+                            : () => AppPageRoute.push(
+                                  context,
+                                  NeighborProfileScreen(member: member),
                                 ),
                         child: Row(
                           children: [

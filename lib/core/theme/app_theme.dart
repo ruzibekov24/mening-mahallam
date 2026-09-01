@@ -8,7 +8,7 @@ import 'app_tokens.dart';
 class AppColors {
   AppColors._();
 
-  static const primary = Color(0xFF2F5BFF);
+  static const primary = Color(0xFF0752EB);
   static const primaryLight = Color(0xFF6690FF);
   static const primaryDark = Color(0xFF1A3FCC);
 
@@ -39,7 +39,7 @@ class AppColors {
 
   // Dark rejimda quyuq fon ustida yorqinroq ko'rinishi uchun bir oz
   // ochilgan versiyalari.
-  static const primaryDarkMode = Color(0xFF5B82FF);
+  static const primaryDarkMode = Color(0xFF5E8FF2);
   static const successDarkMode = Color(0xFF5CC26E);
   static const dangerDarkMode = Color(0xFFFF6B63);
   static const warningDarkMode = Color(0xFFFFB74D);
@@ -61,66 +61,66 @@ class AppTheme {
   /// Endi har bir pog'ona aniq vazifaga ega va ular orasidagi farq
   /// ko'zga sezilarli (28 → 20 → 17 → 15 → 14 → 13 → 11).
   static TextTheme _textTheme(Color primary, Color secondary) {
-    final base = GoogleFonts.ibmPlexSansTextTheme();
+    final base = GoogleFonts.sourceSans3TextTheme();
 
     return base.copyWith(
       // 28/w800 — onboarding va splash sarlavhalari.
-      displaySmall: GoogleFonts.ibmPlexSans(
+      displaySmall: GoogleFonts.workSans(
         fontSize: 28,
         fontWeight: FontWeight.w800,
         height: 1.25,
         color: primary,
       ),
       // 20/w700 — ekran sarlavhasi (AppBar bilan bir xil).
-      titleLarge: GoogleFonts.ibmPlexSans(
+      titleLarge: GoogleFonts.workSans(
         fontSize: 20,
         fontWeight: FontWeight.w700,
         height: 1.3,
         color: primary,
       ),
       // 17/w700 — bo'lim sarlavhasi ("Yaqin tadbirlar", "Statistika").
-      titleMedium: GoogleFonts.ibmPlexSans(
+      titleMedium: GoogleFonts.workSans(
         fontSize: 17,
         fontWeight: FontWeight.w700,
         height: 1.3,
         color: primary,
       ),
       // 15/w600 — kartochka sarlavhasi.
-      titleSmall: GoogleFonts.ibmPlexSans(
+      titleSmall: GoogleFonts.workSans(
         fontSize: 15,
         fontWeight: FontWeight.w600,
         height: 1.35,
         color: primary,
       ),
       // 14/w400 — asosiy matn.
-      bodyLarge: GoogleFonts.ibmPlexSans(
+      bodyLarge: GoogleFonts.sourceSans3(
         fontSize: 14,
         fontWeight: FontWeight.w400,
         height: 1.45,
         color: primary,
       ),
       // 13/w400 — ikkilamchi matn: sana, tavsif, meta ma'lumot.
-      bodyMedium: GoogleFonts.ibmPlexSans(
+      bodyMedium: GoogleFonts.sourceSans3(
         fontSize: 13,
         fontWeight: FontWeight.w400,
         height: 1.45,
         color: secondary,
       ),
       // 12/w500 — kichik yordamchi matn.
-      bodySmall: GoogleFonts.ibmPlexSans(
+      bodySmall: GoogleFonts.sourceSans3(
         fontSize: 12,
         fontWeight: FontWeight.w500,
         height: 1.4,
         color: secondary,
       ),
       // 15/w700 — tugma matni.
-      labelLarge: GoogleFonts.ibmPlexSans(
+      labelLarge: GoogleFonts.sourceSans3(
         fontSize: 15,
         fontWeight: FontWeight.w700,
         color: primary,
       ),
       // 11/w600 — teg, badge, eng mayda yorliq.
-      labelSmall: GoogleFonts.ibmPlexSans(
+      labelSmall: GoogleFonts.sourceSans3(
         fontSize: 11,
         fontWeight: FontWeight.w600,
         height: 1.2,

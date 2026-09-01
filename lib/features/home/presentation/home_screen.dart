@@ -8,7 +8,6 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/girih_header.dart';
-import '../../../core/widgets/liquid_glass.dart';
 import '../../../core/widgets/no_mahalla_view.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../core/widgets/user_avatar.dart';
@@ -17,8 +16,6 @@ import '../../announcements/data/announcements_providers.dart';
 import '../../assistant/presentation/assistant_screen.dart';
 import '../../banners/data/promo_banner_repository.dart';
 import '../../banners/presentation/promo_banner_carousel.dart';
-import '../../chat/data/chat_providers.dart';
-import '../../chat/presentation/conversations_screen.dart';
 import '../../map/presentation/mahalla_map_screen.dart';
 import '../../map/presentation/mahalla_map_view.dart';
 import '../../notifications/data/notification_repository.dart';
@@ -135,77 +132,17 @@ class HomeScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: AppSpacing.sm),
-                      child: LiquidGlassCircleButton(
-                        icon: PhosphorIconsFill.sparkle,
-                        iconColor: Colors.white,
-                        diameter: 44,
-                        iconSize: 22,
-                        onTap: () => AppPageRoute.push(
-                            context, const AssistantScreen()),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: AppSpacing.sm),
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          LiquidGlassCircleButton(
-                            icon: PhosphorIconsFill.chatDots,
-                            iconColor: Colors.white,
-                            diameter: 44,
-                            iconSize: 22,
-                            onTap: () => AppPageRoute.push(
-                                context, const ConversationsScreen()),
-                          ),
-                          Consumer(
-                            builder: (context, ref, _) {
-                              final unreadAsync =
-                                  ref.watch(totalUnreadMessagesProvider);
-                              final count = unreadAsync.valueOrNull ?? 0;
-                              if (count == 0) return const SizedBox.shrink();
-                              return Positioned(
-                                right: -2,
-                                top: -2,
-                                child: Container(
-                                  padding: const EdgeInsets.all(3),
-                                  constraints: const BoxConstraints(
-                                      minWidth: 16, minHeight: 16),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.danger,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: AppColors.primary,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    count > 9 ? '9+' : '$count',
-                                    style: context.captionStyle.copyWith(
-                                      color: Colors.white,
-                                      fontSize: 9,
-                                      height: 1.0,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
                     Stack(
                       clipBehavior: Clip.none,
                       children: [
-                          LiquidGlassCircleButton(
-                            icon: PhosphorIconsFill.bell,
-                            iconColor: Colors.white,
-                            diameter: 44,
-                            iconSize: 22,
+                          TapScale(
                             onTap: () => AppPageRoute.push(
                                 context, const NotificationsScreen()),
+                            child: const Icon(
+                              PhosphorIconsFill.bell,
+                              color: Colors.white,
+                              size: 22,
+                            ),
                           ),
                           Consumer(
                             builder: (context, ref, _) {
@@ -420,6 +357,22 @@ class HomeScreen extends ConsumerWidget {
                         }
                         return const SizedBox(height: AppSpacing.xl);
                       },
+                    ),
+
+                    // "Mahal" AI yordamchisi bilan suhbatga taklif —
+                    // sarlavhadagi sparkle ikonkasi o'rniga endi shu
+                    // yerda, ko'proq e'tibor tortadigan kartochka
+                    // shaklida.
+                    AppListCard(
+                      icon: PhosphorIconsFill.sparkle,
+                      accent: AppColors.primary,
+                      title: l10n.mahalCardTitle,
+                      subtitle: l10n.mahalCardSubtitle,
+                      margin: const EdgeInsets.only(bottom: AppSpacing.xxl),
+                      onTap: () =>
+                          AppPageRoute.push(context, const AssistantScreen()),
+                      trailing: Icon(PhosphorIconsRegular.caretRight,
+                          size: 18, color: context.textSecondary),
                     ),
 
                     // Mahalla xaritasi — murojaatlar joylashuvi (yangi/

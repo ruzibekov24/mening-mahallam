@@ -480,7 +480,7 @@ class _GlassBottomNavState extends State<GlassBottomNav>
                                             item.label,
                                             maxLines: 1,
                                             softWrap: false,
-                                            style: GoogleFonts.ibmPlexSans(
+                                            style: GoogleFonts.sourceSans3(
                                               fontSize: 9,
                                               fontWeight: selected
                                                   ? FontWeight.w600

@@ -1319,6 +1319,18 @@ abstract class AppLocalizations {
   /// **'Muammo bormi? Bir necha soniyada yuboring'**
   String get quickNewRequestSubtitle;
 
+  /// No description provided for @mahalCardTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahal bilan suhbat'**
+  String get mahalCardTitle;
+
+  /// No description provided for @mahalCardSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savollaringizga javob oling, murojaat yozib bering yoki mahalla haqida so\'rang'**
+  String get mahalCardSubtitle;
+
   /// No description provided for @openLinkAction.
   ///
   /// In uz, this message translates to:
@@ -2626,6 +2638,12 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Mahalladoshlar'**
   String get mahalladoshlar;
+
+  /// No description provided for @yozishmalarTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yozishmalar'**
+  String get yozishmalarTitle;
 
   /// No description provided for @noNeighborsYet.
   ///

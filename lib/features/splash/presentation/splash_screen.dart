@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../core/app_version.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
@@ -180,30 +179,14 @@ class _SplashScreenState extends State<SplashScreen>
                 const SizedBox(height: AppSpacing.lg),
                 Opacity(
                   opacity: _taglineOpacity.value,
-                  child: Column(
-                    children: [
-                      Text(
-                        l10n.splashTagline,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: context.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      // Versiya belgisi — qaysi build o'rnatilgani har
-                      // doim aniq bo'lishi uchun. Sinov paytida "eski
-                      // versiyani sinagan bo'lishim mumkin" degan
-                      // noaniqlikni yo'q qiladi.
-                      Text(
-                        'v$kAppVersion',
-                        style: GoogleFonts.poppins(
-                          fontSize: 11,
-                          color: context.textMuted,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    l10n.splashTagline,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: context.textSecondary,
+                    ),
                   ),
                 ),
               ],
