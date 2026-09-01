@@ -80,6 +80,16 @@ class ChatMessage {
   /// foydalanuvchi bitta xabarga faqat bitta reaksiya qo'yishi mumkin.
   final Map<String, String> reactions;
 
+  /// Xabar tahrirlangan bo'lsa, oxirgi tahrirlash vaqti — bubble'da
+  /// "(tahrirlangan)" belgisi uchun.
+  final DateTime? editedAt;
+
+  /// Yumshoq o'chirish (soft-delete) — `true` bo'lsa [text] bo'sh
+  /// bo'ladi, bubble o'rniga "Xabar o'chirildi" ko'rsatiladi. Hard
+  /// delete emas: shu tufayli suhbatdagi boshqa tomon o'chirilgan
+  /// xabar borligini biladi (Telegram uslubi bilan bir xil).
+  final bool deleted;
+
   ChatMessage({
     required this.id,
     required this.senderUid,
@@ -87,12 +97,15 @@ class ChatMessage {
     required this.createdAt,
     this.imageUrl,
     this.reactions = const {},
+    this.editedAt,
+    this.deleted = false,
   });
 
   bool get isImage => imageUrl != null && imageUrl!.isNotEmpty;
 
   factory ChatMessage.fromFirestore(String id, Map<String, dynamic> data) {
     final timestamp = data['createdAt'] as Timestamp?;
+    final editedTimestamp = data['editedAt'] as Timestamp?;
     return ChatMessage(
       id: id,
       senderUid: data['senderUid'] ?? '',
@@ -100,6 +113,8 @@ class ChatMessage {
       createdAt: timestamp?.toDate() ?? DateTime.now(),
       imageUrl: data['imageUrl'] as String?,
       reactions: Map<String, String>.from(data['reactions'] ?? const {}),
+      editedAt: editedTimestamp?.toDate(),
+      deleted: data['deleted'] == true,
     );
   }
 }
@@ -248,6 +263,76 @@ class ChatRepository {
     } else {
       await messageRef.update({'reactions.$uid': emoji});
     }
+  }
+
+  /// O'z xabarini tahrirlaydi — faqat yuboruvchining o'zi chaqirishi
+  /// mumkin (Firestore Rules bilan mustahkamlangan). Agar bu suhbatdagi
+  /// eng oxirgi xabar bo'lsa, `conversations/{id}.lastMessage` ham
+  /// yangilanadi.
+  Future<void> editMessage({
+    required String conversationId,
+    required String messageId,
+    required String newText,
+  }) async {
+    final trimmed = newText.trim();
+    if (trimmed.isEmpty) return;
+    await _firestore
+        .collection('conversations')
+        .doc(conversationId)
+        .collection('messages')
+        .doc(messageId)
+        .update({
+      'text': trimmed,
+      'editedAt': FieldValue.serverTimestamp(),
+    });
+    await _refreshLastMessageIfNeeded(conversationId, messageId, trimmed);
+  }
+
+  /// O'z xabarini o'chiradi (yumshoq o'chirish — matn bo'shatiladi,
+  /// hujjatning o'zi qolib, `deleted: true` belgilanadi). Faqat
+  /// yuboruvchining o'zi chaqirishi mumkin.
+  Future<void> deleteMessage({
+    required String conversationId,
+    required String messageId,
+  }) async {
+    await _firestore
+        .collection('conversations')
+        .doc(conversationId)
+        .collection('messages')
+        .doc(messageId)
+        .update({
+      'text': '',
+      'deleted': true,
+      'editedAt': FieldValue.delete(),
+    });
+    await _refreshLastMessageIfNeeded(conversationId, messageId, null);
+  }
+
+  /// Tahrirlangan/o'chirilgan xabar shu suhbatdagi eng oxirgi xabar
+  /// bo'lsa, `lastMessage` preview'ini yangilaydi — aks holda hech
+  /// narsa qilmaydi (eski xabarlar preview'ga ta'sir qilmasligi kerak).
+  Future<void> _refreshLastMessageIfNeeded(
+    String conversationId,
+    String editedMessageId,
+    String? newPreviewIfLatest,
+  ) async {
+    final latestSnapshot = await _firestore
+        .collection('conversations')
+        .doc(conversationId)
+        .collection('messages')
+        .orderBy('createdAt', descending: true)
+        .limit(1)
+        .get();
+    if (latestSnapshot.docs.isEmpty) return;
+    final latest = latestSnapshot.docs.first;
+    if (latest.id != editedMessageId) return;
+
+    final preview = newPreviewIfLatest == null || newPreviewIfLatest.isEmpty
+        ? (latest.data()['imageUrl'] != null ? '📷 Rasm' : '')
+        : newPreviewIfLatest;
+    await _firestore.collection('conversations').doc(conversationId).update({
+      'lastMessage': preview,
+    });
   }
 
   /// Joriy foydalanuvchi yozayotganini (yoki to'xtaganini) boshqa

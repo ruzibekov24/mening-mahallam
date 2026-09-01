@@ -297,6 +297,14 @@ class RequestDetailScreen extends ConsumerWidget {
                       ),
 
                       const SizedBox(height: AppSpacing.xl),
+                      _StatusHistorySection(
+                        mahallaId: mahallaId,
+                        requestId: requestId,
+                        request: request,
+                        isDark: isDark,
+                      ),
+
+                      const SizedBox(height: AppSpacing.xl),
                       _CommentsSection(
                         mahallaId: mahallaId,
                         requestId: requestId,
@@ -797,6 +805,102 @@ class _AssignmentAndDueSection extends ConsumerWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// Murojaat holati o'zgarishlar tarixini vertikal timeline sifatida
+/// ko'rsatadi. Hozirgi statusning o'zi tepada allaqachon badge sifatida
+/// ko'rinadi (ekran boshida) — bu bo'lim faqat qachon/qanday o'zgarganini
+/// qo'shimcha ko'rsatadi, shuning uchun tarix bo'sh bo'lsa (eski
+/// murojaatlar, v1.4dan oldin yaratilgan) hech narsa ko'rsatmaydi.
+class _StatusHistorySection extends ConsumerWidget {
+  final String mahallaId;
+  final String requestId;
+  final MahallaRequest request;
+  final bool isDark;
+
+  const _StatusHistorySection({
+    required this.mahallaId,
+    required this.requestId,
+    required this.request,
+    required this.isDark,
+  });
+
+  String _formatDateTime(DateTime dt) {
+    return '${dt.day.toString().padLeft(2, '0')}.'
+        '${dt.month.toString().padLeft(2, '0')}.${dt.year} '
+        '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final historyAsync =
+        ref.watch(requestStatusHistoryProvider('$mahallaId:$requestId'));
+
+    return historyAsync.when(
+      data: (entries) {
+        if (entries.isEmpty) return const SizedBox.shrink();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.statusHistoryTitle, style: context.sectionStyle),
+            const SizedBox(height: AppSpacing.sm),
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var i = 0; i < entries.length; i++)
+                    Padding(
+                      padding: EdgeInsets.only(
+                          bottom: i == entries.length - 1 ? 0 : AppSpacing.sm),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: entries[i].status.badgeText,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              if (i != entries.length - 1)
+                                Container(
+                                  width: 1,
+                                  height: 24,
+                                  color: context.textSecondary
+                                      .withValues(alpha: 0.3),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(statusLabel(l10n, entries[i].status),
+                                    style: context.bodyStyle
+                                        .copyWith(fontWeight: FontWeight.w600)),
+                                Text(_formatDateTime(entries[i].changedAt),
+                                    style: context.captionStyle),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }

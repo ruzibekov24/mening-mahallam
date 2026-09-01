@@ -11,6 +11,12 @@
     <!-- Oflayn banner (connectivity_plus) — qurilmaning joriy tarmoq
          holatini so'rash uchun. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Tadbir eslatmalarini aniq vaqtda rejalashtirish uchun
+         (flutter_local_notifications, Android 12+/API 31+). -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- AI Yordamchiga ovozli kirish (speech_to_text). -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:label="Mening Mahallam"

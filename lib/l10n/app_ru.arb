@@ -800,5 +800,21 @@
   "notificationTypePollLabel": "Новые опросы",
   "notificationTypeMessageLabel": "Новые сообщения",
   "notificationTypeRequestStatusLabel": "Статус обращения",
-  "offlineBannerMessage": "Офлайн — нет интернета"
+  "offlineBannerMessage": "Офлайн — нет интернета",
+  "statusHistoryTitle": "История статуса",
+  "remindMeAction": "Напомнить",
+  "reminderSetMessage": "Напоминание установлено",
+  "reminderCancelledMessage": "Напоминание отменено",
+  "eventReminderNotificationTitle": "Напоминание о мероприятии",
+  "editMessageAction": "Редактировать",
+  "messageDeletedPlaceholder": "Сообщение удалено",
+  "editedLabel": "(изменено)",
+  "recentSearchesTitle": "Недавние запросы",
+  "clearRecentSearchesAction": "Очистить",
+  "microphonePermissionDeniedMessage": "Нет доступа к микрофону",
+  "serviceAvailableLabel": "Доступен",
+  "serviceBusyLabel": "Занят",
+  "markBusyToggleLabel": "Я сейчас свободен",
+  "callAction": "Позвонить",
+  "lastSeenLabel": "Был(а) в сети: {time}"
 }

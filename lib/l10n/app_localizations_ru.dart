@@ -2054,4 +2054,54 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get offlineBannerMessage => 'Офлайн — нет интернета';
+
+  @override
+  String get statusHistoryTitle => 'История статуса';
+
+  @override
+  String get remindMeAction => 'Напомнить';
+
+  @override
+  String get reminderSetMessage => 'Напоминание установлено';
+
+  @override
+  String get reminderCancelledMessage => 'Напоминание отменено';
+
+  @override
+  String get eventReminderNotificationTitle => 'Напоминание о мероприятии';
+
+  @override
+  String get editMessageAction => 'Редактировать';
+
+  @override
+  String get messageDeletedPlaceholder => 'Сообщение удалено';
+
+  @override
+  String get editedLabel => '(изменено)';
+
+  @override
+  String get recentSearchesTitle => 'Недавние запросы';
+
+  @override
+  String get clearRecentSearchesAction => 'Очистить';
+
+  @override
+  String get microphonePermissionDeniedMessage => 'Нет доступа к микрофону';
+
+  @override
+  String get serviceAvailableLabel => 'Доступен';
+
+  @override
+  String get serviceBusyLabel => 'Занят';
+
+  @override
+  String get markBusyToggleLabel => 'Я сейчас свободен';
+
+  @override
+  String get callAction => 'Позвонить';
+
+  @override
+  String lastSeenLabel(String time) {
+    return 'Был(а) в сети: $time';
+  }
 }

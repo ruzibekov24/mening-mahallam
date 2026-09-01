@@ -1319,5 +1319,74 @@
   "offlineBannerMessage": "Oflayn — internet yo'q",
   "@offlineBannerMessage": {
     "description": "Internet aloqasi yo'qligida ilova bo'ylab ko'rinadigan banner matni"
+  },
+  "statusHistoryTitle": "Holat tarixi",
+  "@statusHistoryTitle": {
+    "description": "Murojaat tafsilotlari ekranidagi holat o'zgarishlari tarixi bo'limi sarlavhasi"
+  },
+  "remindMeAction": "Eslatib tur",
+  "@remindMeAction": {
+    "description": "Tadbir tafsiloti ekranidagi eslatma qo'yish tugmasi"
+  },
+  "reminderSetMessage": "Eslatma qo'yildi",
+  "@reminderSetMessage": {
+    "description": "Tadbir eslatmasi muvaffaqiyatli qo'yilganda ko'rsatiladigan xabar"
+  },
+  "reminderCancelledMessage": "Eslatma bekor qilindi",
+  "@reminderCancelledMessage": {
+    "description": "Tadbir eslatmasi bekor qilinganda ko'rsatiladigan xabar"
+  },
+  "eventReminderNotificationTitle": "Tadbir eslatmasi",
+  "@eventReminderNotificationTitle": {
+    "description": "Rejalashtirilgan mahalliy bildirishnomaning sarlavhasi"
+  },
+  "editMessageAction": "Tahrirlash",
+  "@editMessageAction": {
+    "description": "Chatdagi o'z xabarini tahrirlash tugmasi"
+  },
+  "messageDeletedPlaceholder": "Xabar o'chirildi",
+  "@messageDeletedPlaceholder": {
+    "description": "O'chirilgan chat xabari o'rniga ko'rsatiladigan matn"
+  },
+  "editedLabel": "(tahrirlangan)",
+  "@editedLabel": {
+    "description": "Tahrirlangan chat xabari yoniga qo'shiladigan belgi"
+  },
+  "recentSearchesTitle": "So'nggi qidiruvlar",
+  "@recentSearchesTitle": {
+    "description": "Qidiruv ekranida hali so'rov kiritilmaganda ko'rsatiladigan so'nggi qidiruvlar ro'yxati sarlavhasi"
+  },
+  "clearRecentSearchesAction": "Tozalash",
+  "@clearRecentSearchesAction": {
+    "description": "So'nggi qidiruvlar ro'yxatini tozalash tugmasi"
+  },
+  "microphonePermissionDeniedMessage": "Mikrofonga ruxsat berilmadi",
+  "@microphonePermissionDeniedMessage": {
+    "description": "Foydalanuvchi mikrofon ruxsatini rad etganda ko'rsatiladigan xabar"
+  },
+  "serviceAvailableLabel": "Mavjud",
+  "@serviceAvailableLabel": {
+    "description": "Xizmat ko'rsatuvchi hozir mavjud/band emasligini ko'rsatuvchi belgi"
+  },
+  "serviceBusyLabel": "Band",
+  "@serviceBusyLabel": {
+    "description": "Xizmat ko'rsatuvchi hozir band ekanini ko'rsatuvchi belgi"
+  },
+  "markBusyToggleLabel": "Hozir band emasman",
+  "@markBusyToggleLabel": {
+    "description": "Xizmat qo'shish/tahrirlash formasidagi mavjudlik toggle yorlig'i"
+  },
+  "callAction": "Qo'ng'iroq qilish",
+  "@callAction": {
+    "description": "Xizmat ko'rsatuvchiga telefon orqali qo'ng'iroq qilish tugmasi"
+  },
+  "lastSeenLabel": "Oxirgi marta: {time}",
+  "@lastSeenLabel": {
+    "description": "Foydalanuvchining oxirgi faollik vaqtini ko'rsatuvchi yorliq",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
   }
 }

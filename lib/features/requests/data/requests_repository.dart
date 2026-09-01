@@ -254,6 +254,35 @@ class RequestComment {
   }
 }
 
+/// Murojaat holati o'zgarishi tarixidagi bitta yozuv —
+/// `mahallas/{mahallaId}/requests/{requestId}/statusHistory`
+/// sub-kolleksiyasida saqlanadi. O'zgarmas audit log: faqat yaratiladi,
+/// hech qachon o'zgartirilmaydi yoki o'chirilmaydi.
+class RequestStatusHistoryEntry {
+  final String id;
+  final RequestStatus status;
+  final String changedBy;
+  final DateTime changedAt;
+
+  RequestStatusHistoryEntry({
+    required this.id,
+    required this.status,
+    required this.changedBy,
+    required this.changedAt,
+  });
+
+  factory RequestStatusHistoryEntry.fromFirestore(
+      String id, Map<String, dynamic> data) {
+    final timestamp = data['changedAt'] as Timestamp?;
+    return RequestStatusHistoryEntry(
+      id: id,
+      status: RequestStatusX.fromString(data['status'] ?? 'yangi'),
+      changedBy: data['changedBy'] ?? '',
+      changedAt: timestamp?.toDate() ?? DateTime.now(),
+    );
+  }
+}
+
 class RequestsRepository {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
@@ -452,14 +481,22 @@ class RequestsRepository {
     String? authorUid,
     String? requestTitle,
   }) async {
-    await _firestore
+    final requestRef = _firestore
         .collection('mahallas')
         .doc(mahallaId)
         .collection('requests')
-        .doc(requestId)
-        .update({'status': newStatus.firestoreValue});
-
+        .doc(requestId);
     final myUid = _auth.currentUser?.uid;
+
+    final batch = _firestore.batch();
+    batch.update(requestRef, {'status': newStatus.firestoreValue});
+    batch.set(requestRef.collection('statusHistory').doc(), {
+      'status': newStatus.firestoreValue,
+      'changedBy': myUid ?? '',
+      'changedAt': FieldValue.serverTimestamp(),
+    });
+    await batch.commit();
+
     if (authorUid != null && authorUid != myUid) {
       await NotificationRepository().sendToUser(
         uid: authorUid,
@@ -616,6 +653,27 @@ class RequestsRepository {
       'joinedUids': FieldValue.arrayRemove([uid]),
       'joinedCount': FieldValue.increment(-1),
     });
+  }
+
+  /// Murojaat holati o'zgarishlar tarixini eng eskisidan boshlab
+  /// kuzatadi. Ko'rish huquqi — murojaatning o'zini ko'ra oladigan har
+  /// kim (Firestore Rules'da murojaat bilan bir xil ko'rinish qoidasi).
+  Stream<List<RequestStatusHistoryEntry>> watchStatusHistory({
+    required String mahallaId,
+    required String requestId,
+  }) {
+    return _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('requests')
+        .doc(requestId)
+        .collection('statusHistory')
+        .orderBy('changedAt')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) =>
+                RequestStatusHistoryEntry.fromFirestore(doc.id, doc.data()))
+            .toList());
   }
 
   /// Murojaat ostidagi komentariyalarni eng eskisidan boshlab kuzatadi.
@@ -822,6 +880,22 @@ final requestCommentsProvider =
     return ref
         .watch(requestsRepositoryProvider)
         .watchComments(mahallaId: mahallaId, requestId: requestId);
+  },
+);
+
+/// Bitta murojaatning holat o'zgarishlar tarixini kuzatadi. Parametr —
+/// `mahallaId:requestId` (boshqa `family` providerlar bilan bir xil
+/// naqsh, [requestCommentsProvider]ga qarang).
+final requestStatusHistoryProvider =
+    StreamProvider.autoDispose.family<List<RequestStatusHistoryEntry>, String>(
+  (ref, compositeKey) {
+    final parts = compositeKey.split(':');
+    final mahallaId = parts.first;
+    final requestId = parts.length > 1 ? parts.sublist(1).join(':') : '';
+    return ref.watch(requestsRepositoryProvider).watchStatusHistory(
+          mahallaId: mahallaId,
+          requestId: requestId,
+        );
   },
 );
 

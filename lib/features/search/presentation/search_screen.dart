@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
@@ -59,11 +61,15 @@ class SearchScreen extends ConsumerStatefulWidget {
 }
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
+  static const _recentSearchesPrefsKey = 'recent_searches';
+  static const _maxRecentSearches = 5;
+
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
   Timer? _debounce;
   String _query = '';
   SearchResultKind? _selectedKind; // null = hammasi
+  List<String> _recentSearches = [];
 
   @override
   void initState() {
@@ -73,6 +79,43 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
+    _loadRecentSearches();
+  }
+
+  Future<void> _loadRecentSearches() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_recentSearchesPrefsKey);
+    if (raw == null || !mounted) return;
+    try {
+      final list = (jsonDecode(raw) as List).map((e) => e.toString()).toList();
+      setState(() => _recentSearches = list);
+    } catch (_) {
+      // Buzilgan saqlangan qiymat — jimgina bo'sh ro'yxat bilan davom
+      // etamiz.
+    }
+  }
+
+  Future<void> _saveRecentSearch(String query) async {
+    if (query.isEmpty) return;
+    final updated = [
+      query,
+      ..._recentSearches.where((q) => q.toLowerCase() != query.toLowerCase()),
+    ].take(_maxRecentSearches).toList();
+    setState(() => _recentSearches = updated);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_recentSearchesPrefsKey, jsonEncode(updated));
+  }
+
+  Future<void> _clearRecentSearches() async {
+    setState(() => _recentSearches = []);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_recentSearchesPrefsKey);
+  }
+
+  void _applyRecentSearch(String query) {
+    _controller.text = query;
+    _debounce?.cancel();
+    setState(() => _query = query);
   }
 
   @override
@@ -89,7 +132,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     // ishlatmaslik uchun.
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 250), () {
-      if (mounted) setState(() => _query = value.trim());
+      final trimmed = value.trim();
+      if (!mounted) return;
+      setState(() => _query = trimmed);
+      if (trimmed.isNotEmpty) _saveRecentSearch(trimmed);
     });
   }
 
@@ -184,10 +230,41 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             ),
             Expanded(
               child: _query.isEmpty
-                  ? AppEmptyView(
-                      icon: PhosphorIconsFill.magnifyingGlass,
-                      title: l10n.searchPromptText,
-                    )
+                  ? (_recentSearches.isEmpty
+                      ? AppEmptyView(
+                          icon: PhosphorIconsFill.magnifyingGlass,
+                          title: l10n.searchPromptText,
+                        )
+                      : ListView(
+                          padding: const EdgeInsets.fromLTRB(AppSpacing.xl,
+                              AppSpacing.md, AppSpacing.xl, AppSpacing.xxl),
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(l10n.recentSearchesTitle,
+                                      style: context.sectionStyle),
+                                ),
+                                TapScale(
+                                  onTap: _clearRecentSearches,
+                                  child: Text(
+                                    l10n.clearRecentSearchesAction,
+                                    style: context.secondaryStyle
+                                        .copyWith(color: AppColors.primary),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppSpacing.sm),
+                            for (final recent in _recentSearches)
+                              AppListCard(
+                                icon: PhosphorIconsRegular.clockCounterClockwise,
+                                accent: context.textSecondary,
+                                title: recent,
+                                onTap: () => _applyRecentSearch(recent),
+                              ),
+                          ],
+                        ))
                   : resultsAsync!.when(
                       data: (allResults) {
                         if (allResults.isEmpty) {

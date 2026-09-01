@@ -3856,6 +3856,102 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Oflayn — internet yo\'q'**
   String get offlineBannerMessage;
+
+  /// Murojaat tafsilotlari ekranidagi holat o'zgarishlari tarixi bo'limi sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Holat tarixi'**
+  String get statusHistoryTitle;
+
+  /// Tadbir tafsiloti ekranidagi eslatma qo'yish tugmasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Eslatib tur'**
+  String get remindMeAction;
+
+  /// Tadbir eslatmasi muvaffaqiyatli qo'yilganda ko'rsatiladigan xabar
+  ///
+  /// In uz, this message translates to:
+  /// **'Eslatma qo\'yildi'**
+  String get reminderSetMessage;
+
+  /// Tadbir eslatmasi bekor qilinganda ko'rsatiladigan xabar
+  ///
+  /// In uz, this message translates to:
+  /// **'Eslatma bekor qilindi'**
+  String get reminderCancelledMessage;
+
+  /// Rejalashtirilgan mahalliy bildirishnomaning sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Tadbir eslatmasi'**
+  String get eventReminderNotificationTitle;
+
+  /// Chatdagi o'z xabarini tahrirlash tugmasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Tahrirlash'**
+  String get editMessageAction;
+
+  /// O'chirilgan chat xabari o'rniga ko'rsatiladigan matn
+  ///
+  /// In uz, this message translates to:
+  /// **'Xabar o\'chirildi'**
+  String get messageDeletedPlaceholder;
+
+  /// Tahrirlangan chat xabari yoniga qo'shiladigan belgi
+  ///
+  /// In uz, this message translates to:
+  /// **'(tahrirlangan)'**
+  String get editedLabel;
+
+  /// Qidiruv ekranida hali so'rov kiritilmaganda ko'rsatiladigan so'nggi qidiruvlar ro'yxati sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'nggi qidiruvlar'**
+  String get recentSearchesTitle;
+
+  /// So'nggi qidiruvlar ro'yxatini tozalash tugmasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Tozalash'**
+  String get clearRecentSearchesAction;
+
+  /// Foydalanuvchi mikrofon ruxsatini rad etganda ko'rsatiladigan xabar
+  ///
+  /// In uz, this message translates to:
+  /// **'Mikrofonga ruxsat berilmadi'**
+  String get microphonePermissionDeniedMessage;
+
+  /// Xizmat ko'rsatuvchi hozir mavjud/band emasligini ko'rsatuvchi belgi
+  ///
+  /// In uz, this message translates to:
+  /// **'Mavjud'**
+  String get serviceAvailableLabel;
+
+  /// Xizmat ko'rsatuvchi hozir band ekanini ko'rsatuvchi belgi
+  ///
+  /// In uz, this message translates to:
+  /// **'Band'**
+  String get serviceBusyLabel;
+
+  /// Xizmat qo'shish/tahrirlash formasidagi mavjudlik toggle yorlig'i
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozir band emasman'**
+  String get markBusyToggleLabel;
+
+  /// Xizmat ko'rsatuvchiga telefon orqali qo'ng'iroq qilish tugmasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'ng\'iroq qilish'**
+  String get callAction;
+
+  /// Foydalanuvchining oxirgi faollik vaqtini ko'rsatuvchi yorliq
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi marta: {time}'**
+  String lastSeenLabel(String time);
 }
 
 class _AppLocalizationsDelegate

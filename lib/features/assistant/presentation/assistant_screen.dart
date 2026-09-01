@@ -4,11 +4,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../../../core/router/app_page_route.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
+import '../../../core/widgets/app_alert.dart';
 import '../../../core/widgets/liquid_glass.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../feedback/presentation/feedback_screen.dart';
@@ -253,6 +255,12 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  /// Ovozli kirish (qurilmada, serverga audio yuborilmaydi) — faqat
+  /// birinchi mikrofon bosilganda ishga tushiriladi (`_ensureSpeechReady`),
+  /// aks holda har ekran ochilganda ruxsat so'ralmasligi kerak.
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool _isListening = false;
+
   @override
   void initState() {
     super.initState();
@@ -321,7 +329,48 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
   void dispose() {
     _textController.dispose();
     _scrollController.dispose();
+    if (_isListening) _speech.stop();
     super.dispose();
+  }
+
+  /// Mikrofon tugmasi bosilganda: birinchi safar ruxsat so'raydi va
+  /// tinglashni boshlaydi, ikkinchi bosishda to'xtatadi. Tanilgan matn
+  /// jonli ravishda [_textController]ga yoziladi — yuborish odatdagi
+  /// tugma/`_send()` orqali, alohida "ovozli yuborish" oqimi yo'q.
+  Future<void> _toggleListening() async {
+    if (_isListening) {
+      await _speech.stop();
+      if (mounted) setState(() => _isListening = false);
+      return;
+    }
+
+    final l10n = AppLocalizations.of(context);
+    final available = await _speech.initialize(
+      onStatus: (status) {
+        if (status == 'done' || status == 'notListening') {
+          if (mounted) setState(() => _isListening = false);
+        }
+      },
+      onError: (_) {
+        if (mounted) setState(() => _isListening = false);
+      },
+    );
+    if (!mounted) return;
+    if (!available) {
+      showAppAlert(context, l10n.microphonePermissionDeniedMessage,
+          kind: AppAlertKind.error);
+      return;
+    }
+
+    setState(() => _isListening = true);
+    await _speech.listen(
+      localeId: 'uz_UZ',
+      onResult: (result) {
+        _textController.text = result.recognizedWords;
+        _textController.selection = TextSelection.collapsed(
+            offset: _textController.text.length);
+      },
+    );
   }
 
   void _scrollToBottom() {
@@ -584,6 +633,21 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                     AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
                 child: Row(
                   children: [
+                    Material(
+                      color: Colors.transparent,
+                      shape: const CircleBorder(),
+                      child: IconButton(
+                        onPressed: _isSending ? null : _toggleListening,
+                        icon: Icon(
+                          _isListening
+                              ? PhosphorIconsFill.microphone
+                              : PhosphorIconsRegular.microphone,
+                          color: _isListening
+                              ? AppColors.primary
+                              : context.textSecondary,
+                        ),
+                      ),
+                    ),
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.symmetric(

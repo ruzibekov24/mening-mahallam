@@ -2051,4 +2051,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get offlineBannerMessage => 'Offline — no internet';
+
+  @override
+  String get statusHistoryTitle => 'Status history';
+
+  @override
+  String get remindMeAction => 'Remind me';
+
+  @override
+  String get reminderSetMessage => 'Reminder set';
+
+  @override
+  String get reminderCancelledMessage => 'Reminder cancelled';
+
+  @override
+  String get eventReminderNotificationTitle => 'Event reminder';
+
+  @override
+  String get editMessageAction => 'Edit';
+
+  @override
+  String get messageDeletedPlaceholder => 'Message deleted';
+
+  @override
+  String get editedLabel => '(edited)';
+
+  @override
+  String get recentSearchesTitle => 'Recent searches';
+
+  @override
+  String get clearRecentSearchesAction => 'Clear';
+
+  @override
+  String get microphonePermissionDeniedMessage =>
+      'Microphone permission denied';
+
+  @override
+  String get serviceAvailableLabel => 'Available';
+
+  @override
+  String get serviceBusyLabel => 'Busy';
+
+  @override
+  String get markBusyToggleLabel => 'I\'m available now';
+
+  @override
+  String get callAction => 'Call';
+
+  @override
+  String lastSeenLabel(String time) {
+    return 'Last seen: $time';
+  }
 }

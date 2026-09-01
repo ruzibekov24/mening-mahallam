@@ -800,5 +800,21 @@
   "notificationTypePollLabel": "Янги сўровномалар",
   "notificationTypeMessageLabel": "Янги хабарлар",
   "notificationTypeRequestStatusLabel": "Мурожаат ҳолати",
-  "offlineBannerMessage": "Офлайн — интернет йўқ"
+  "offlineBannerMessage": "Офлайн — интернет йўқ",
+  "statusHistoryTitle": "Ҳолат тарихи",
+  "remindMeAction": "Эслатиб тур",
+  "reminderSetMessage": "Эслатма қўйилди",
+  "reminderCancelledMessage": "Эслатма бекор қилинди",
+  "eventReminderNotificationTitle": "Тадбир эслатмаси",
+  "editMessageAction": "Таҳрирлаш",
+  "messageDeletedPlaceholder": "Хабар ўчирилди",
+  "editedLabel": "(таҳрирланган)",
+  "recentSearchesTitle": "Сўнгги қидирувлар",
+  "clearRecentSearchesAction": "Тозалаш",
+  "microphonePermissionDeniedMessage": "Микрофонга рухсат берилмади",
+  "serviceAvailableLabel": "Мавжуд",
+  "serviceBusyLabel": "Банд",
+  "markBusyToggleLabel": "Ҳозир банд эмасман",
+  "callAction": "Қўнғироқ қилиш",
+  "lastSeenLabel": "Охирги марта: {time}"
 }

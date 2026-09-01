@@ -84,6 +84,12 @@ class LocalService {
   /// yangilanadi.
   final Map<String, int> ratings;
 
+  /// Xizmat ko'rsatuvchi hozir buyurtma qabul qilishga tayyormi —
+  /// staff/rais o'zi belgilaydi (mavjud tahrirlash huquqi bilan bir
+  /// xil: `canManage`, faqat asl yaratuvchiga cheklanmagan). Standart
+  /// holat — `true` (mavjud).
+  final bool isAvailable;
+
   LocalService({
     required this.id,
     required this.name,
@@ -95,6 +101,7 @@ class LocalService {
     this.latitude,
     this.longitude,
     this.ratings = const {},
+    this.isAvailable = true,
   });
 
   bool get hasLocation => latitude != null && longitude != null;
@@ -125,6 +132,7 @@ class LocalService {
       ratings: rawRatings == null
           ? const {}
           : rawRatings.map((uid, value) => MapEntry(uid, (value as num).toInt())),
+      isAvailable: data['isAvailable'] != false,
     );
   }
 }
@@ -192,6 +200,7 @@ class ServiceRepository {
     required String description,
     double? latitude,
     double? longitude,
+    bool isAvailable = true,
   }) async {
     await _firestore
         .collection('mahallas')
@@ -208,7 +217,23 @@ class ServiceRepository {
       // esa buni yo'q joylashuv sifatida to'g'ri o'qiydi.
       'latitude': latitude ?? FieldValue.delete(),
       'longitude': longitude ?? FieldValue.delete(),
+      'isAvailable': isAvailable,
     });
+  }
+
+  /// Xizmat mavjudlik holatini tezkor almashtiradi — kartadagi
+  /// badge'ni bosib, to'liq tahrirlash formasini ochmasdan.
+  Future<void> setServiceAvailability({
+    required String mahallaId,
+    required String serviceId,
+    required bool isAvailable,
+  }) async {
+    await _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('services')
+        .doc(serviceId)
+        .update({'isAvailable': isAvailable});
   }
 
   Future<void> deleteService({

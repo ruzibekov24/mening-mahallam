@@ -193,7 +193,48 @@ class _ServiceCard extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(service.name, style: context.cardTitleStyle),
+                Row(
+                  children: [
+                    Expanded(
+                      child:
+                          Text(service.name, style: context.cardTitleStyle),
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    TapScale(
+                      onTap: canManage
+                          ? () => ref
+                              .read(serviceRepositoryProvider)
+                              .setServiceAvailability(
+                                mahallaId: profile!.mahallaId!,
+                                serviceId: service.id,
+                                isAvailable: !service.isAvailable,
+                              )
+                          : null,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xs, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: (service.isAvailable
+                                  ? AppColors.success
+                                  : AppColors.danger)
+                              .withValues(alpha: 0.12),
+                          borderRadius: AppRadius.xsAll,
+                        ),
+                        child: Text(
+                          service.isAvailable
+                              ? l10n.serviceAvailableLabel
+                              : l10n.serviceBusyLabel,
+                          style: context.captionStyle.copyWith(
+                            color: service.isAvailable
+                                ? AppColors.success
+                                : AppColors.danger,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(_categoryLabel(l10n, service.category),
                     style: context.secondaryStyle),
@@ -407,6 +448,7 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
   late LatLng? _location = widget.existing?.hasLocation == true
       ? LatLng(widget.existing!.latitude!, widget.existing!.longitude!)
       : null;
+  late bool _isAvailable = widget.existing?.isAvailable ?? true;
   bool _isSubmitting = false;
 
   bool get _isEditing => widget.existing != null;
@@ -457,6 +499,7 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
           description: _descriptionController.text.trim(),
           latitude: _location?.latitude,
           longitude: _location?.longitude,
+          isAvailable: _isAvailable,
         );
       } else {
         await repo.createService(
@@ -549,6 +592,24 @@ class _NewServiceSheetState extends ConsumerState<_NewServiceSheet> {
                   keyboardType: TextInputType.phone,
                   decoration:
                       const InputDecoration(hintText: '+998 90 123 45 67'),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _isAvailable
+                            ? l10n.markBusyToggleLabel
+                            : l10n.serviceBusyLabel,
+                        style: context.bodyStyle,
+                      ),
+                    ),
+                    LiquidToggleSwitch(
+                      value: _isAvailable,
+                      onChanged: (available) =>
+                          setState(() => _isAvailable = available),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Row(

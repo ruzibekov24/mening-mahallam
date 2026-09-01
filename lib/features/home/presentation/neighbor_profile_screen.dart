@@ -20,6 +20,18 @@ import 'role_styles.dart';
 import '../../../core/widgets/app_alert.dart';
 import '../../../core/widgets/liquid_glass.dart';
 
+/// Oflayn qo'shni uchun "oxirgi marta" vaqtini o'qish oson shaklda
+/// ko'rsatadi — to'liq sana/vaqt o'rniga nisbiy ("5 daqiqa oldin").
+String _relativeLastSeen(DateTime lastSeenAt) {
+  final diff = DateTime.now().difference(lastSeenAt);
+  if (diff.inMinutes < 1) return 'hozirgina';
+  if (diff.inMinutes < 60) return '${diff.inMinutes} daqiqa oldin';
+  if (diff.inHours < 24) return '${diff.inHours} soat oldin';
+  if (diff.inDays < 7) return '${diff.inDays} kun oldin';
+  return '${lastSeenAt.day.toString().padLeft(2, '0')}.'
+      '${lastSeenAt.month.toString().padLeft(2, '0')}.${lastSeenAt.year}';
+}
+
 /// Bitta qo'shnining profilini ko'rsatadi — qo'ng'iroq qilish va
 /// ilova ichida xabar yozish (chat) imkoniyati bilan.
 class NeighborProfileScreen extends ConsumerWidget {
@@ -227,7 +239,10 @@ class NeighborProfileScreen extends ConsumerWidget {
                         child: Text(
                           member.isOnline
                               ? l10n.onlineNow
-                              : l10n.lastSeenUnknown,
+                              : (member.lastSeenAt == null
+                                  ? l10n.lastSeenUnknown
+                                  : l10n.lastSeenLabel(
+                                      _relativeLastSeen(member.lastSeenAt!))),
                           style: context.secondaryStyle.copyWith(
                             color: member.isOnline
                                 ? AppColors.success

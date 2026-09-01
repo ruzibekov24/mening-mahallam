@@ -8,6 +8,7 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/girih_header.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../core/widgets/no_mahalla_view.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../core/widgets/user_avatar.dart';
@@ -194,23 +195,28 @@ class HomeScreen extends ConsumerWidget {
                     const SizedBox(height: AppSpacing.xl),
 
                     // Qidiruv maydoni — hammasidan tepada, SearchScreen'ga
-                    // o'tadi.
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: AppRadius.smAll,
-                        boxShadow: AppShadows.elevated(context.isDarkMode),
-                      ),
+                    // o'tadi. Liquid Glass sirt bilan o'raladi — oddiy
+                    // TextField'dan ko'ra ko'zga aniqroq tashlanishi va
+                    // ilovaning boshqa "shisha" komponentlariga (v1.8.0)
+                    // vizual jihatdan mos kelishi uchun.
+                    LiquidGlassSurface(
+                      borderRadius: AppRadius.sm,
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: l10n.searchHint,
+                          hintStyle: context.bodyStyle
+                              .copyWith(color: context.textSecondary),
                           prefixIcon: Icon(PhosphorIconsBold.magnifyingGlass,
-                              color: context.textSecondary),
-                          filled: true,
-                          fillColor: context.surfaceColor,
+                              size: 22, color: AppColors.primary),
+                          suffixIcon: Icon(PhosphorIconsRegular.caretRight,
+                              size: 16, color: context.textSecondary),
+                          filled: false,
                           border: const OutlineInputBorder(
                             borderRadius: AppRadius.smAll,
                             borderSide: BorderSide.none,
                           ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: AppSpacing.md),
                         ),
                         readOnly: true,
                         onTap: () {

@@ -625,5 +625,21 @@
   "notificationTypePollLabel": "New polls",
   "notificationTypeMessageLabel": "New messages",
   "notificationTypeRequestStatusLabel": "Request status",
-  "offlineBannerMessage": "Offline — no internet"
+  "offlineBannerMessage": "Offline — no internet",
+  "statusHistoryTitle": "Status history",
+  "remindMeAction": "Remind me",
+  "reminderSetMessage": "Reminder set",
+  "reminderCancelledMessage": "Reminder cancelled",
+  "eventReminderNotificationTitle": "Event reminder",
+  "editMessageAction": "Edit",
+  "messageDeletedPlaceholder": "Message deleted",
+  "editedLabel": "(edited)",
+  "recentSearchesTitle": "Recent searches",
+  "clearRecentSearchesAction": "Clear",
+  "microphonePermissionDeniedMessage": "Microphone permission denied",
+  "serviceAvailableLabel": "Available",
+  "serviceBusyLabel": "Busy",
+  "markBusyToggleLabel": "I'm available now",
+  "callAction": "Call",
+  "lastSeenLabel": "Last seen: {time}"
 }

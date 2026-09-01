@@ -61,6 +61,11 @@
 	     "Mening joylashuvim" tugmasi uchun (geolocator paketi). -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Xaritada joriy joylashuvingizni ko'rsatish va murojaat qo'shishda manzilni avtomatik aniqlash uchun kerak.</string>
+	<!-- AI Yordamchiga ovozli kirish (speech_to_text). -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>AI Yordamchiga ovozli xabar yuborish uchun mikrofondan foydalaniladi.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>AI Yordamchiga aytgan so'zlaringizni matnga aylantirish uchun kerak.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

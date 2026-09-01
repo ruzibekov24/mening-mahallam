@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/services/push_notification_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/confirm_delete.dart';
 import '../../../core/widgets/shimmer.dart';
@@ -214,6 +217,8 @@ class EventDetailScreen extends ConsumerWidget {
                                 ),
                               ],
                             ),
+                            const SizedBox(height: AppSpacing.sm),
+                            _RemindMeButton(event: event),
                             if (event.location.isNotEmpty) ...[
                               const SizedBox(height: AppSpacing.sm),
                               Row(
@@ -262,6 +267,97 @@ class EventDetailScreen extends ConsumerWidget {
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+/// Tadbir boshlanishidan 1 soat oldin mahalliy bildirishnoma
+/// rejalashtirish/bekor qilish tugmasi. Holat (yoqilgan/o'chirilgan)
+/// qurilmada `shared_preferences`da saqlanadi — bu faqat mahalliy
+/// eslatma, serverga yozilmaydi (har bir qurilma o'zi boshqaradi).
+class _RemindMeButton extends StatefulWidget {
+  final MahallaEvent event;
+  const _RemindMeButton({required this.event});
+
+  @override
+  State<_RemindMeButton> createState() => _RemindMeButtonState();
+}
+
+class _RemindMeButtonState extends State<_RemindMeButton> {
+  bool? _isSet;
+
+  String get _prefsKey => 'event_reminder_${widget.event.id}';
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) setState(() => _isSet = prefs.getBool(_prefsKey) ?? false);
+  }
+
+  Future<void> _toggle() async {
+    final l10n = AppLocalizations.of(context);
+    final prefs = await SharedPreferences.getInstance();
+    final next = !(_isSet ?? false);
+    if (next) {
+      await PushNotificationService.instance.scheduleEventReminder(
+        eventId: widget.event.id,
+        title: l10n.eventReminderNotificationTitle,
+        body: widget.event.title,
+        eventDateTime: widget.event.dateTime,
+      );
+    } else {
+      await PushNotificationService.instance
+          .cancelEventReminder(widget.event.id);
+    }
+    await prefs.setBool(_prefsKey, next);
+    if (!mounted) return;
+    setState(() => _isSet = next);
+    showAppAlert(
+      context,
+      next ? l10n.reminderSetMessage : l10n.reminderCancelledMessage,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isSet = _isSet ?? false;
+    return TapScale(
+      onTap: _isSet == null ? null : _toggle,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSet ? AppColors.primary.withValues(alpha: 0.1) : null,
+          border: isSet
+              ? null
+              : Border.all(color: context.textSecondary.withValues(alpha: 0.3)),
+          borderRadius: AppRadius.xsAll,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isSet ? PhosphorIconsFill.bellRinging : PhosphorIconsRegular.bell,
+              size: 15,
+              color: isSet ? AppColors.primary : context.textSecondary,
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Text(
+              l10n.remindMeAction,
+              style: context.captionStyle.copyWith(
+                color: isSet ? AppColors.primary : context.textSecondary,
+                fontWeight: isSet ? FontWeight.w600 : null,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -14,6 +14,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/confirm_delete.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../core/widgets/liquid_glass.dart';
 import '../../../l10n/app_localizations.dart';
@@ -47,6 +48,11 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _textController = TextEditingController();
   bool _isSending = false;
+
+  /// Tahrirlanayotgan xabar — `null` bo'lsa yozish maydoni oddiy yangi
+  /// xabar yozish rejimida. Berilgan bo'lsa, [_send] yangi xabar
+  /// yaratish o'rniga shu xabarni tahrirlaydi.
+  ChatMessage? _editingMessage;
 
   // Faqat ekran birinchi ochilganda ko'ringan xabarlarga kirish
   // animatsiyasi beriladi — har yangi xabar kelganda ro'yxat qayta
@@ -126,6 +132,33 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Future<void> _send() async {
     final text = _textController.text;
     if (text.trim().isEmpty) return;
+
+    if (_editingMessage != null) {
+      final editing = _editingMessage!;
+      setState(() {
+        _isSending = true;
+        _editingMessage = null;
+      });
+      _textController.clear();
+      try {
+        await ref.read(chatRepositoryProvider).editMessage(
+              conversationId: _conversationId,
+              messageId: editing.id,
+              newText: text,
+            );
+      } catch (_) {
+        if (mounted) {
+          setState(() {
+            _editingMessage = editing;
+            _textController.text = text;
+          });
+        }
+      } finally {
+        if (mounted) setState(() => _isSending = false);
+      }
+      return;
+    }
+
     final myProfile = ref.read(currentUserProfileProvider).valueOrNull;
     final myName = myProfile == null
         ? ''
@@ -145,6 +178,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     } finally {
       if (mounted) setState(() => _isSending = false);
     }
+  }
+
+  void _startEdit(ChatMessage message) {
+    setState(() {
+      _editingMessage = message;
+      _textController.text = message.text;
+      _textController.selection =
+          TextSelection.collapsed(offset: message.text.length);
+    });
+  }
+
+  void _cancelEdit() {
+    setState(() {
+      _editingMessage = null;
+      _textController.clear();
+    });
+  }
+
+  Future<void> _confirmAndDeleteMessage(ChatMessage message) async {
+    final confirmed = await confirmDelete(
+      context,
+      itemTitle: message.text.isEmpty ? '' : message.text,
+    );
+    if (!confirmed || !mounted) return;
+    await ref.read(chatRepositoryProvider).deleteMessage(
+          conversationId: _conversationId,
+          messageId: message.id,
+        );
   }
 
   Future<void> _pickAndSendImage() async {
@@ -191,7 +252,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   /// Xabarni uzoq bosganda ochiladigan menyu — emoji reaksiya
   /// tanlagich, va agar [onReport] berilgan bo'lsa (boshqa
   /// foydalanuvchining xabari) pastida "Shikoyat qilish" qatori.
-  void _showReactionPicker(ChatMessage message, {VoidCallback? onReport}) {
+  void _showReactionPicker(
+    ChatMessage message, {
+    VoidCallback? onReport,
+    VoidCallback? onEdit,
+    VoidCallback? onDelete,
+  }) {
     final l10n = AppLocalizations.of(context);
     final myUid = _myUid;
     final currentEmoji = message.reactions[myUid];
@@ -245,6 +311,30 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       onReport();
                     },
                   ),
+                ],
+                if (onEdit != null || onDelete != null) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  const Divider(height: 1),
+                  if (onEdit != null)
+                    ListTile(
+                      leading: const Icon(PhosphorIconsRegular.pencilSimple),
+                      title: Text(l10n.editMessageAction),
+                      onTap: () {
+                        Navigator.of(sheetContext).pop();
+                        onEdit();
+                      },
+                    ),
+                  if (onDelete != null)
+                    ListTile(
+                      leading: const Icon(PhosphorIconsRegular.trash,
+                          color: AppColors.danger),
+                      title: Text(l10n.deleteButton,
+                          style: const TextStyle(color: AppColors.danger)),
+                      onTap: () {
+                        Navigator.of(sheetContext).pop();
+                        onDelete();
+                      },
+                    ),
                 ],
               ],
             ),
@@ -421,25 +511,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         message: message,
                         isMine: isMine,
                         isRead: isRead,
-                        onLongPress: () => _showReactionPicker(
-                          message,
-                          onReport: isMine
-                              ? null
-                              : () {
-                                  final mahallaId = ref
-                                      .read(currentUserProfileProvider)
-                                      .valueOrNull
-                                      ?.mahallaId;
-                                  showReportSheet(
-                                    context,
-                                    ref,
-                                    targetType: ReportTargetType.chatMessage,
-                                    targetId: message.id,
-                                    targetSnippet: message.text,
-                                    mahallaId: mahallaId,
-                                  );
-                                },
-                        ),
+                        onLongPress: message.deleted
+                            ? null
+                            : () => _showReactionPicker(
+                                  message,
+                                  onReport: isMine
+                                      ? null
+                                      : () {
+                                          final mahallaId = ref
+                                              .read(currentUserProfileProvider)
+                                              .valueOrNull
+                                              ?.mahallaId;
+                                          showReportSheet(
+                                            context,
+                                            ref,
+                                            targetType:
+                                                ReportTargetType.chatMessage,
+                                            targetId: message.id,
+                                            targetSnippet: message.text,
+                                            mahallaId: mahallaId,
+                                          );
+                                        },
+                                  onEdit: isMine && !message.isImage
+                                      ? () => _startEdit(message)
+                                      : null,
+                                  onDelete: isMine
+                                      ? () => _confirmAndDeleteMessage(message)
+                                      : null,
+                                ),
                         onImageTap: message.isImage
                             ? () => _openFullscreenImage(message.imageUrl!)
                             : null,
@@ -482,6 +581,30 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ),
               ),
             ),
+            if (_editingMessage != null)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl, vertical: AppSpacing.xs),
+                color: AppColors.primary.withValues(alpha: 0.08),
+                child: Row(
+                  children: [
+                    Icon(PhosphorIconsRegular.pencilSimple,
+                        size: 14, color: AppColors.primary),
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: Text(l10n.editMessageAction,
+                          style: context.captionStyle
+                              .copyWith(color: AppColors.primary)),
+                    ),
+                    TapScale(
+                      onTap: _cancelEdit,
+                      child: Icon(PhosphorIconsRegular.xCircle,
+                          size: 16, color: AppColors.primary),
+                    ),
+                  ],
+                ),
+              ),
             SafeArea(
               top: false,
               child: Padding(
@@ -494,7 +617,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       shape: const CircleBorder(),
                       child: IconButton(
                         tooltip: l10n.attachImageAction,
-                        onPressed: _isSending ? null : _pickAndSendImage,
+                        onPressed: _editingMessage != null || _isSending
+                            ? null
+                            : _pickAndSendImage,
                         icon: Icon(PhosphorIconsRegular.imageSquare,
                             color: context.textSecondary),
                       ),
@@ -698,7 +823,8 @@ class _MessageBubble extends StatelessWidget {
   /// reaksiya tanlagichini ochadi — agar xabar boshqa foydalanuvchiga
   /// tegishli bo'lsa, o'sha menyuda "Shikoyat qilish" bandi ham
   /// chiqadi (mantiq chaqiruvchi tomonda — `ChatScreen._showReactionPicker`).
-  final VoidCallback onLongPress;
+  /// O'chirilgan xabarlar uchun `null` — endi hech qanday amal yo'q.
+  final VoidCallback? onLongPress;
 
   /// Rasm xabari bosilganda to'liq ekranda ochish uchun — matn
   /// xabarlarida `null`.
@@ -759,6 +885,31 @@ class _MessageBubble extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (message.deleted)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(PhosphorIconsRegular.prohibit,
+                                size: 14,
+                                color: (isMine
+                                        ? Colors.white
+                                        : context.textSecondary)
+                                    .withValues(alpha: 0.75)),
+                            const SizedBox(width: 4),
+                            Text(
+                              AppLocalizations.of(context)
+                                  .messageDeletedPlaceholder,
+                              style: context.bodyStyle.copyWith(
+                                fontStyle: FontStyle.italic,
+                                color: (isMine
+                                        ? Colors.white
+                                        : context.textSecondary)
+                                    .withValues(alpha: 0.75),
+                              ),
+                            ),
+                          ],
+                        )
+                      else ...[
                       if (message.isImage)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(14),
@@ -802,6 +953,7 @@ class _MessageBubble extends StatelessWidget {
                           ),
                         ),
                       ],
+                      ],
                       const SizedBox(height: 2),
                       Padding(
                         padding: message.isImage
@@ -810,6 +962,17 @@ class _MessageBubble extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            if (message.editedAt != null && !message.deleted) ...[
+                              Text(
+                                AppLocalizations.of(context).editedLabel,
+                                style: context.captionStyle.copyWith(
+                                  color: isMine
+                                      ? Colors.white.withValues(alpha: 0.65)
+                                      : context.textMuted,
+                                ),
+                              ),
+                              const SizedBox(width: 3),
+                            ],
                             Text(
                               _formatTime(message.createdAt),
                               style: context.captionStyle.copyWith(

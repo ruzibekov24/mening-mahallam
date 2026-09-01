@@ -7,6 +7,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timezone/data/latest.dart' as tz_data;
+import 'package:timezone/timezone.dart' as tz;
 
 import '../../features/chat/presentation/chat_screen.dart';
 import '../../features/home/data/home_repository.dart';
@@ -66,6 +68,14 @@ class PushNotificationService {
   }
 
   Future<void> _initInternal() async {
+    tz_data.initializeTimeZones();
+    try {
+      tz.setLocalLocation(tz.getLocation('Asia/Tashkent'));
+    } catch (_) {
+      // Noma'lum vaqt zonasi bo'lsa UTC bilan davom etamiz — eslatma
+      // baribir ishlaydi, faqat vaqt ko'rsatkichi surilishi mumkin.
+    }
+
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -258,6 +268,50 @@ class PushNotificationService {
       SetOptions(merge: true),
     );
   }
+
+  /// Tadbir boshlanishidan [before] oldin mahalliy bildirishnoma
+  /// rejalashtiradi. Bildirishnoma id'si [eventId]dan hosil qilinadi —
+  /// shu tufayli [cancelEventReminder] bilan aniq bekor qilish mumkin.
+  /// O'tmishga qolib ketgan vaqt uchun rejalashtirmaydi (jimgina
+  /// e'tiborsiz qoldiradi).
+  Future<void> scheduleEventReminder({
+    required String eventId,
+    required String title,
+    required String body,
+    required DateTime eventDateTime,
+    Duration before = const Duration(hours: 1),
+  }) async {
+    final fireAt = eventDateTime.subtract(before);
+    if (fireAt.isBefore(DateTime.now())) return;
+
+    await _localNotifications.zonedSchedule(
+      _reminderNotificationId(eventId),
+      title,
+      body,
+      tz.TZDateTime.from(fireAt, tz.local),
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          _androidChannel.id,
+          _androidChannel.name,
+          channelDescription: _androidChannel.description,
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+        iOS: const DarwinNotificationDetails(),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
+
+  /// Oldin rejalashtirilgan tadbir eslatmasini bekor qiladi.
+  Future<void> cancelEventReminder(String eventId) async {
+    await _localNotifications.cancel(_reminderNotificationId(eventId));
+  }
+
+  int _reminderNotificationId(String eventId) =>
+      'event_reminder_$eventId'.hashCode & 0x7fffffff;
 
   /// Chiqishda tokenni Firestore'dan olib tashlaydi — boshqa hisobga
   /// eski qurilmaga push ketmasligi uchun.

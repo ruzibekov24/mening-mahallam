@@ -1,5 +1,19 @@
 # Roadmap
 
+> **Eslatma (2026-09-01):** ushbu fayl endi git tarixi (`git log`,
+> `pubspec.yaml` version tarixi) bilan solishtirib qayta yozildi — avvalgi
+> nusxa faqat v1.4.0gacha "tayyor" deb ko'rsatib, v1.4.1–v1.8.0 oralig'idagi
+> real ishlab chiqilgan versiyalarni tushirib qoldirgan edi.
+>
+> **Versiya-raqamlash haqida:** git tag'lari (`v1.2.0`, `v1.3.0`...) commit
+> xabarlaridagi versiyalarga mos kelmaydi (masalan `v1.3.0` tegi aslida
+> "v1.8.0" xabarli commitga qo'yilgan) — bu eski, chalkash nomlash tarixi,
+> qasddan tuzatilmagan (tag qayta yozish repo tarixini o'zgartiradi).
+> `pubspec.yaml`dagi haqiqiy manba: versiya nomi v1.8.0+21gacha ko'tarilgan,
+> so'ng oxirgi commit uni **ataylab v1.3.1+23ga qaytargan** (build raqami
+> 23 — barcha oldingi ishlar saqlanib qolgan, faqat ommaviy reliz uchun
+> nom qayta tartiblangan).
+
 ## v1.0 — Publish (2026-09-01)
 
 Birinchi ommaviy relizi. Asosiy modullar tayyor: auth, e'lonlar, tadbirlar,
@@ -100,7 +114,89 @@ v2.0 ro'yxatidan to'lovdan tashqari 4 punkt + 2 yangi g'oya:
 - [x] Offline keshlash — Firestore kesh aniq sozlandi, `connectivity_plus`
       orqali oflayn banner
 
-## v2.0 — Katta yangilanish: to'lov integratsiyasi (rejalashtirish bosqichida, `v2-dev` branch)
+## v1.4.1 — Shoshilinch tuzatish (tayyor)
+
+- [x] AI Yordamchi manzili placeholder edi, haqiqiy `assistant-worker` deploy
+      manziliga tuzatildi
+- [x] v1.4.0dan keyin barcha asosiy ekranlarda "Nimadir xato ketdi" xabari —
+      `connectivity_plus` (native plugin) shubhali sabab sifatida to'liq
+      olib tashlandi (oflayn banner funksiyasi vaqtincha yo'qoldi)
+- [x] `AndroidManifest.xml`ga `ACCESS_NETWORK_STATE` ruxsatnomasi qo'shildi
+
+## v1.5.0 — AI Workers AI'ga o'tkazish + suhbat tarixi (tayyor)
+
+- [x] Production Firestore composite index xatosi (Home/E'lonlar/Murojaat
+      ekranlaridagi asosiy xato) tuzatildi
+- [x] Login ekranidagi dublikat mahalla-tekshirish kodi olib tashlandi
+- [x] AI Yordamchi Gemini'dan Cloudflare Workers AI (Llama 3.3 70B)ga
+      o'tkazildi — tashqi API kalit endi kerak emas
+- [x] AI suhbat tarixi Firestore'da saqlanadi (ro'yxat, yangi suhbat, o'chirish)
+- [x] AI javoblari formatlangan + harflab chiqish animatsiyasi
+- [x] Premium: kunlik AI limiti 20 → 100, super-admin premiumni bekor qila
+      oladi, yangi badge dizayni; premium foydalanuvchi uchun AI orqali
+      murojaat qoralamasini oldindan to'ldirish
+- [x] AI Yordamchi: so'ralmagan mavzularni javobga qo'shib yuborishi
+      cheklandi (tizim ko'rsatmasiga qoida qo'shildi)
+
+## v1.6.0 — Animatsiya va tafsilot ekranlari (tayyor)
+
+- [x] Umumiy `AppPageRoute` o'tish yordamchisi (fade+slide), ~18 ta
+      navigatsiya joyiga qo'llandi
+- [x] E'lon/Tadbir uchun yangi tafsilot ekranlari (Hero rasm, to'liq matn,
+      reaksiyalar); Tadbir modeliga `description` qo'shildi
+- [x] Murojaat tafsiloti: ulashish, o'xshash murojaatlar, o'z izohini
+      o'chirish, Hero rasm uzluksizligi
+
+## v1.6.1 — Rasm keshlash, oflayn holat (tayyor)
+
+- [x] `cached_network_image` — barcha `Image.network` o'rnini bosdi
+      (shimmer placeholder)
+- [x] Oflayn holat aniqlash native plugin'siz — Firestore oqimiga dastlabki
+      kutish taymeri (v1.4.1da olib tashlangan funksiya xavfsizroq usulda
+      qaytarildi)
+- [x] Murojaatga yangi izoh yozilganda muallifga bildirishnoma
+- [x] Til almashtirishda tasdiqlovchi toast
+
+## v1.7.0 — Telegram uslubidagi chat, premium badge, banner iqtisodiyoti (tayyor)
+
+- [x] Chat: o'qildi belgisi, "yozmoqda..." animatsiyasi, emoji reaksiya,
+      rasm yuborish/to'liq ekran ko'rish, kun ajratgichlari
+- [x] Premium: 5 ta badge uslubi (Oltin/Safir/Zumrad/Yoqut/Kumush), profil
+      banner ro'yxatidan 30tadan 4tasi bepul qoladi
+- [x] AI kunlik limiti tugaganda premium taklif kartochkasi
+- [x] Firestore qoidalari: `typing`/`lastReadAt`/`reactions` — har kim
+      faqat o'z kalitini yozadi
+
+## v1.8.0 — "Mahal" AI qayta dizayni, Liquid Glass izchilligi (tayyor)
+
+- [x] AI Yordamchi ("Mahal"): bo'limga kirish bilan yangi suhbat, sidebar
+      orqali tarix, AI o'zi suhbatga nom beradi
+- [x] AI 5 xil niyatni tanib (murojaat/fikr-mulohaza/xizmatlar/yordam/
+      premium) tegishli ekranga tugma taklif qiladi
+- [x] Liquid Glass qayta ishlatiladigan komponentlar kutubxonasi
+      (Surface/Button/CircleButton/BackButton/ToggleSwitch/PillButton),
+      38+ joyga qo'llandi
+- [x] `assistant-worker`ga AI niyat aniqlash + sarlavha generatsiyasi,
+      productionga deploy
+
+## v1.3.1 — Ommaviy relizga tayyorgarlik (joriy holat, `main`, 2026-09-01)
+
+Versiya nomi qasddan qayta tartibga solindi (build 23, yuqoridagi barcha
+ishlar saqlangan holda) — navigatsiya va brend izchilligi ustida ishlandi:
+
+- [x] Bosh ekran header'idan AI/Chat ikonkalari olib tashlandi, faqat tekis
+      bildirishnoma qoldi
+- [x] Bosh ekranga banner va xarita orasida "Mahal" bilan suhbat kartasi
+- [x] Qo'shnilar bo'limi "Qo'shnilar"/"Yozishmalar"ga bo'lindi
+- [x] Marka rangi logotip bilan bir xillashtirildi (#0752EB)
+- [x] Sarlavhalar Work Sans, matn Source Sans 3 shriftiga o'tkazildi
+- [x] Sozlamalar > Versiya to'g'ri qiymatni ko'rsatadi
+
+## v2.0 — Katta yangilanish: to'lov integratsiyasi (hali boshlanmagan, `v2-dev` bo'sh)
+
+`v2-dev` va `v1.5-dev` branch'lari `main`dan uzoqlashmagan — ikkalasi ham
+v1.4.1 commitida to'xtab qolgan, hali hech qanday to'lov-bog'liq kod
+yozilmagan.
 
 Markazida real to'lov shlyuzi turadi (hozir premium/e'lon to'lovi qo'lda,
 admin tasdiqlaydi — kodda ochiq izoh bilan qayd etilgan).
@@ -108,6 +204,38 @@ admin tasdiqlaydi — kodda ochiq izoh bilan qayd etilgan).
 - [ ] Click/Payme (va/yoki Play Billing) integratsiyasi — premium va
       xizmat e'lonlari uchun
 - [ ] Xizmatlar bozorini peer-to-peer qilish + to'lov orqali buyurtma
+
+## Yangi g'oyalar (tavsiya, 2026-09-01)
+
+Kod bazasidagi mavjud modullarni (`lib/features/*`, `assistant-worker/`,
+`admin/`) tekshirib chiqilganda topilgan, hali yopilmagan aniq bo'shliqlar:
+
+- **Xizmatlar reytingiga matnli sharh** — v1.3.0da yulduzli baho qo'shilgan,
+  lekin matnli sharh "keyingi versiyaga qoldirildi" deb yozilgan edi, hali
+  qilinmagan (`lib/features/services/`). Eng kichik, eng tez qo'shsa
+  bo'ladigan punkt.
+- **Xizmatlarga oldindan bron/navbat** — `services/` da xarita pin va
+  reyting bor, lekin real vaqtli murojaat/navbat yo'q. v2.0 to'lov
+  infratuzilmasi bilan tabiiy bog'lanadi (bron + to'lov bitta oqimda).
+- **AI yordamchi foydalanish analitikasi** — `assistant-worker/`da kunlik
+  so'rov cheklovi bor, lekin super-admin panelda (`admin/`) qaysi niyat
+  turlari (murojaat/fikr-mulohaza/xizmatlar/yordam/premium) ko'p
+  ishlatilayotgani, kvota qanchada tugayotgani ko'rinmaydi — v1.8.0da
+  qo'shilgan niyat aniqlashdan bevosita foydalanish mumkin.
+- **Mahalla-aro taqqoslash** (super-admin panel) — `admin_stats_history`
+  orqali har bir mahalla uchun trend sparkline bor, lekin mahallalarni
+  bir-biriga solishtirish (masalan murojaat yopilish tezligi bo'yicha
+  reyting) yo'q — mavjud ma'lumotdan qo'shimcha view sifatida chiqarish
+  mumkin.
+- **Oflaynda murojaat/e'lon yaratish** — v1.6.1da oflayn holatni aniqlash
+  qo'shilgan (faqat banner), lekin oflaynda yangi murojaat/e'lonni local
+  navbatga qo'yib, ulanish tiklanganda avtomatik yuborish yo'q — banner
+  infratuzilmasi ustiga qurish mumkin.
+- **Guruh chat va murojaat SLA uchun push bildirishnoma** — v1.4.0da
+  qo'shilgan `notificationPrefs` tur-tur yoqish/o'chirishni qo'llab-
+  quvvatlaydi, lekin guruh chat xabari va murojaat muddati (SLA) o'tishi
+  uchun push hali ulanganini/ulanmaganini tekshirib chiqish kerak — ehtimol
+  bo'shliq bor.
 
 ## v3.0 — Uzoq muddatli, tasdiqlanmagan g'oyalar
 

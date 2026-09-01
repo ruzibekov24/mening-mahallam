@@ -184,14 +184,21 @@ service cloud.firestore {
         allow read: if isSignedIn() && isParticipant();
         allow create: if isSignedIn() && isParticipant() &&
           request.resource.data.senderUid == myUid();
-        // Faqat `reactions.{myUid}` maydoni o'zgartirilishi mumkin —
-        // matn/rasm/yuboruvchi kabi boshqa maydonlar o'zgarmas
-        // qoladi, va foydalanuvchi faqat o'z reaksiyasini
-        // qo'yishi/olib tashlashi mumkin.
-        allow update: if isSignedIn() && isParticipant() &&
-          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions']) &&
-          request.resource.data.reactions.diff(resource.data.get('reactions', {}))
-            .affectedKeys().hasOnly([myUid()]);
+        // Ikki xil update holati ruxsat etiladi:
+        // 1) Faqat `reactions.{myUid}` maydoni — istalgan ishtirokchi
+        //    o'z reaksiyasini qo'yadi/olib tashlaydi.
+        // 2) Faqat `text`/`editedAt`/`deleted` maydonlari — FAQAT
+        //    xabarning o'z yuboruvchisi, tahrirlash/o'chirish uchun
+        //    (`senderUid`/`createdAt`/`imageUrl`/`reactions` o'zgarmas
+        //    qoladi).
+        allow update: if isSignedIn() && isParticipant() && (
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions']) &&
+           request.resource.data.reactions.diff(resource.data.get('reactions', {}))
+             .affectedKeys().hasOnly([myUid()])) ||
+          (resource.data.senderUid == myUid() &&
+           request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['text', 'editedAt', 'deleted']))
+        );
         allow delete: if false;
       }
     }
@@ -432,6 +439,21 @@ service cloud.firestore {
 
           allow update: if false;
           allow delete: if isSignedIn() && resource.data.authorUid == myUid();
+        }
+
+        // ---------- statusHistory ----------
+        // O'zgarmas audit log: ko'rish comments bilan bir xil qoida,
+        // faqat staff/rais/super-admin yoza oladi (status o'zgartirish
+        // huquqi bilan bir xil), tahrirlash/o'chirish yo'q.
+        match /statusHistory/{entryId} {
+          allow read: if isSuperAdmin() || (isMemberOf(mahallaId) && (
+            get(/databases/$(database)/documents/mahallas/$(mahallaId)/requests/$(requestId)).data.type == 'ommaviy' ||
+            get(/databases/$(database)/documents/mahallas/$(mahallaId)/requests/$(requestId)).data.authorUid == myUid() ||
+            isStaffOrRaisOf(mahallaId)
+          ));
+
+          allow create: if isStaffOrRaisOf(mahallaId) || isSuperAdmin();
+          allow update, delete: if false;
         }
       }
 

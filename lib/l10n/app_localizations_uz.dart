@@ -2060,6 +2060,56 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get offlineBannerMessage => 'Oflayn — internet yo\'q';
+
+  @override
+  String get statusHistoryTitle => 'Holat tarixi';
+
+  @override
+  String get remindMeAction => 'Eslatib tur';
+
+  @override
+  String get reminderSetMessage => 'Eslatma qo\'yildi';
+
+  @override
+  String get reminderCancelledMessage => 'Eslatma bekor qilindi';
+
+  @override
+  String get eventReminderNotificationTitle => 'Tadbir eslatmasi';
+
+  @override
+  String get editMessageAction => 'Tahrirlash';
+
+  @override
+  String get messageDeletedPlaceholder => 'Xabar o\'chirildi';
+
+  @override
+  String get editedLabel => '(tahrirlangan)';
+
+  @override
+  String get recentSearchesTitle => 'So\'nggi qidiruvlar';
+
+  @override
+  String get clearRecentSearchesAction => 'Tozalash';
+
+  @override
+  String get microphonePermissionDeniedMessage => 'Mikrofonga ruxsat berilmadi';
+
+  @override
+  String get serviceAvailableLabel => 'Mavjud';
+
+  @override
+  String get serviceBusyLabel => 'Band';
+
+  @override
+  String get markBusyToggleLabel => 'Hozir band emasman';
+
+  @override
+  String get callAction => 'Qo\'ng\'iroq qilish';
+
+  @override
+  String lastSeenLabel(String time) {
+    return 'Oxirgi marta: $time';
+  }
 }
 
 /// The translations for Uzbek, using the Cyrillic script (`uz_Cyrl`).
@@ -4111,4 +4161,54 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get offlineBannerMessage => 'Офлайн — интернет йўқ';
+
+  @override
+  String get statusHistoryTitle => 'Ҳолат тарихи';
+
+  @override
+  String get remindMeAction => 'Эслатиб тур';
+
+  @override
+  String get reminderSetMessage => 'Эслатма қўйилди';
+
+  @override
+  String get reminderCancelledMessage => 'Эслатма бекор қилинди';
+
+  @override
+  String get eventReminderNotificationTitle => 'Тадбир эслатмаси';
+
+  @override
+  String get editMessageAction => 'Таҳрирлаш';
+
+  @override
+  String get messageDeletedPlaceholder => 'Хабар ўчирилди';
+
+  @override
+  String get editedLabel => '(таҳрирланган)';
+
+  @override
+  String get recentSearchesTitle => 'Сўнгги қидирувлар';
+
+  @override
+  String get clearRecentSearchesAction => 'Тозалаш';
+
+  @override
+  String get microphonePermissionDeniedMessage => 'Микрофонга рухсат берилмади';
+
+  @override
+  String get serviceAvailableLabel => 'Мавжуд';
+
+  @override
+  String get serviceBusyLabel => 'Банд';
+
+  @override
+  String get markBusyToggleLabel => 'Ҳозир банд эмасман';
+
+  @override
+  String get callAction => 'Қўнғироқ қилиш';
+
+  @override
+  String lastSeenLabel(String time) {
+    return 'Охирги марта: $time';
+  }
 }

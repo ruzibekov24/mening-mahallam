@@ -1,7 +1,7 @@
 name: mening_mahallam
 description: "Mening mahallam — mahalla aholisi uchun mobil ilova"
 publish_to: 'none'
-version: 1.3.1+23
+version: 1.3.2+24
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -46,6 +46,13 @@ dependencies:
   # planda). Bu yerdagi paket faqat QABUL qilish/ko'rsatish tomoni.
   firebase_messaging: ^15.1.3
   flutter_local_notifications: ^18.0.1
+
+  # Tadbir eslatmalarini qurilma vaqt zonasida rejalashtirish uchun
+  # (`flutter_local_notifications`ning `zonedSchedule`i shuni talab qiladi)
+  timezone: ^0.9.4
+
+  # AI Yordamchiga ovozli kirish (qurilmada, serverga audio yuborilmaydi)
+  speech_to_text: ^7.0.0
 
   # UI helpers
   google_fonts: ^6.2.1
