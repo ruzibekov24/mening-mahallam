@@ -381,6 +381,24 @@ class AppLocalizationsUz extends AppLocalizations {
   String get premiumBadgeLabel => 'Premium';
 
   @override
+  String get chooseBadgeStyleTitle => 'Belgi uslubini tanlang';
+
+  @override
+  String get premiumBadgeStyleGold => 'Oltin';
+
+  @override
+  String get premiumBadgeStyleSapphire => 'Safir';
+
+  @override
+  String get premiumBadgeStyleEmerald => 'Zumrad';
+
+  @override
+  String get premiumBadgeStyleRuby => 'Yoqut';
+
+  @override
+  String get premiumBadgeStyleSilver => 'Kumush';
+
+  @override
   String dailyRequestLimitReached(Object count) {
     return 'Kunlik murojaat limitiga ($count ta) yetdingiz. Ertaga qayta urinib ko\'ring yoki Premium bilan cheksiz yuboring.';
   }
@@ -834,6 +852,18 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get sendMessageAction => 'Xabar yozish';
+
+  @override
+  String get typingIndicator => 'yozmoqda...';
+
+  @override
+  String get attachImageAction => 'Rasm biriktirish';
+
+  @override
+  String get imageUploadFailed => 'Rasm yuborilmadi. Qayta urinib ko\'ring';
+
+  @override
+  String get yesterdayLabel => 'Kecha';
 
   @override
   String get switchMahallaTitle => 'Mahalla tanlash';
@@ -1938,6 +1968,16 @@ class AppLocalizationsUz extends AppLocalizations {
   String get assistantSuggestion3 => 'Ilovadan qanday foydalanaman?';
 
   @override
+  String get assistantLimitUpsellTitle => 'Kunlik limit tugadi';
+
+  @override
+  String get assistantLimitUpsellMessage =>
+      'Premium bilan har kuni ancha ko\'proq xabar yuborishingiz mumkin.';
+
+  @override
+  String get assistantLimitUpsellButton => 'Premium haqida';
+
+  @override
   String get notificationPreferencesTitle => 'Bildirishnoma sozlamalari';
 
   @override
@@ -2340,6 +2380,24 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get premiumBadgeLabel => 'Премиум';
+
+  @override
+  String get chooseBadgeStyleTitle => 'Белги услубини танланг';
+
+  @override
+  String get premiumBadgeStyleGold => 'Олтин';
+
+  @override
+  String get premiumBadgeStyleSapphire => 'Сафир';
+
+  @override
+  String get premiumBadgeStyleEmerald => 'Зумрад';
+
+  @override
+  String get premiumBadgeStyleRuby => 'Ёқут';
+
+  @override
+  String get premiumBadgeStyleSilver => 'Кумуш';
 
   @override
   String dailyRequestLimitReached(Object count) {
@@ -2792,6 +2850,18 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get sendMessageAction => 'Хабар ёзиш';
+
+  @override
+  String get typingIndicator => 'ёзмоқда...';
+
+  @override
+  String get attachImageAction => 'Расм бириктириш';
+
+  @override
+  String get imageUploadFailed => 'Расм юборилмади. Қайта уриниб кўринг';
+
+  @override
+  String get yesterdayLabel => 'Кеча';
 
   @override
   String get switchMahallaTitle => 'Маҳалла танлаш';
@@ -3891,6 +3961,16 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get assistantSuggestion3 => 'Иловадан қандай фойдаланаман?';
+
+  @override
+  String get assistantLimitUpsellTitle => 'Кунлик лимит тугади';
+
+  @override
+  String get assistantLimitUpsellMessage =>
+      'Premium билан ҳар куни анча кўпроқ хабар юборишингиз мумкин.';
+
+  @override
+  String get assistantLimitUpsellButton => 'Premium ҳақида';
 
   @override
   String get notificationPreferencesTitle => 'Билдиришнома созламалари';

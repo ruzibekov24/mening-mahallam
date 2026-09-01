@@ -21,6 +21,13 @@ final conversationMessagesProvider = StreamProvider.autoDispose
   return ref.watch(chatRepositoryProvider).watchMessages(conversationId);
 });
 
+/// Bitta suhbat hujjatining o'zi — o'qish belgisi va "yozmoqda..."
+/// ko'rsatkichi shundan olinadi.
+final conversationDocProvider =
+    StreamProvider.autoDispose.family<Conversation?, String>((ref, conversationId) {
+  return ref.watch(chatRepositoryProvider).watchConversation(conversationId);
+});
+
 final totalUnreadMessagesProvider = StreamProvider.autoDispose<int>((ref) {
   return ref.watch(chatRepositoryProvider).watchTotalUnreadCount();
 });

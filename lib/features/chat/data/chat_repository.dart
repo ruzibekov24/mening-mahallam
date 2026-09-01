@@ -16,6 +16,17 @@ class Conversation {
   /// uid -> shu foydalanuvchi hali o'qimagan xabarlar soni.
   final Map<String, int> unreadCounts;
 
+  /// uid -> shu foydalanuvchi suhbatni oxirgi marta qachon o'qigani.
+  /// O'qish belgisi (bitta/ikkita tik) shu vaqt bilan xabar vaqtini
+  /// solishtirib hisoblanadi — har bir xabar uchun alohida holat
+  /// saqlanmaydi.
+  final Map<String, DateTime> lastReadAt;
+
+  /// uid -> shu foydalanuvchi hozir yozayotganini bildiruvchi vaqt
+  /// belgisi. Foydalanuvchi yozishni to'xtatganda (yoki ~5 soniya
+  /// harakatsizlikdan keyin) bu maydon o'chiriladi.
+  final Map<String, DateTime> typing;
+
   Conversation({
     required this.id,
     required this.participantUids,
@@ -23,12 +34,22 @@ class Conversation {
     required this.lastMessageAt,
     required this.lastSenderUid,
     required this.unreadCounts,
+    this.lastReadAt = const {},
+    this.typing = const {},
   });
 
   /// Ikki ishtirokchidan `myUid` bo'lmagani — suhbat oynasida
   /// "kim bilan gaplashyapman" degan savolga javob.
   String otherUid(String myUid) =>
       participantUids.firstWhere((uid) => uid != myUid, orElse: () => '');
+
+  static Map<String, DateTime> _timestampMap(dynamic raw) {
+    if (raw is! Map) return const {};
+    return raw.map((key, value) => MapEntry(
+          key as String,
+          (value as Timestamp).toDate(),
+        ));
+  }
 
   factory Conversation.fromFirestore(String id, Map<String, dynamic> data) {
     final timestamp = data['lastMessageAt'] as Timestamp?;
@@ -39,6 +60,8 @@ class Conversation {
       lastMessageAt: timestamp?.toDate(),
       lastSenderUid: data['lastSenderUid'] as String?,
       unreadCounts: Map<String, int>.from(data['unreadCounts'] ?? const {}),
+      lastReadAt: _timestampMap(data['lastReadAt']),
+      typing: _timestampMap(data['typing']),
     );
   }
 }
@@ -49,12 +72,24 @@ class ChatMessage {
   final String text;
   final DateTime createdAt;
 
+  /// Rasm xabarlari uchun yuklangan rasm URL'i — berilgan bo'lsa,
+  /// [text] ixtiyoriy izoh (caption) sifatida ko'rsatiladi.
+  final String? imageUrl;
+
+  /// uid -> shu foydalanuvchi qo'ygan emoji reaksiya. Har bir
+  /// foydalanuvchi bitta xabarga faqat bitta reaksiya qo'yishi mumkin.
+  final Map<String, String> reactions;
+
   ChatMessage({
     required this.id,
     required this.senderUid,
     required this.text,
     required this.createdAt,
+    this.imageUrl,
+    this.reactions = const {},
   });
+
+  bool get isImage => imageUrl != null && imageUrl!.isNotEmpty;
 
   factory ChatMessage.fromFirestore(String id, Map<String, dynamic> data) {
     final timestamp = data['createdAt'] as Timestamp?;
@@ -63,6 +98,8 @@ class ChatMessage {
       senderUid: data['senderUid'] ?? '',
       text: data['text'] ?? '',
       createdAt: timestamp?.toDate() ?? DateTime.now(),
+      imageUrl: data['imageUrl'] as String?,
+      reactions: Map<String, String>.from(data['reactions'] ?? const {}),
     );
   }
 }
@@ -102,6 +139,20 @@ class ChatRepository {
             .toList());
   }
 
+  /// Bitta suhbat hujjatini (o'qilgan/yozayotgan holatlar bilan)
+  /// kuzatadi — suhbat ekranida o'qish belgisi va "yozmoqda..."
+  /// ko'rsatkichi uchun ishlatiladi.
+  Stream<Conversation?> watchConversation(String conversationId) {
+    return _firestore
+        .collection('conversations')
+        .doc(conversationId)
+        .snapshots()
+        .map((doc) {
+      if (!doc.exists || doc.data() == null) return null;
+      return Conversation.fromFirestore(doc.id, doc.data()!);
+    });
+  }
+
   Stream<List<ChatMessage>> watchMessages(String conversationId) {
     return _firestore
         .collection('conversations')
@@ -122,31 +173,42 @@ class ChatRepository {
     required String otherUid,
     required String text,
     required String senderFullName,
+    String? imageUrl,
   }) async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) {
       throw Exception('Foydalanuvchi tizimga kirmagan');
     }
     final trimmed = text.trim();
-    if (trimmed.isEmpty) return;
+    final hasImage = imageUrl != null && imageUrl.isNotEmpty;
+    if (trimmed.isEmpty && !hasImage) return;
 
     final conversationId = conversationIdFor(uid, otherUid);
     final conversationRef =
         _firestore.collection('conversations').doc(conversationId);
 
+    // Suhbatlar ro'yxatida ko'rsatiladigan qisqa matn — rasm-faqat
+    // xabar bo'lsa, matn o'rniga shu belgi ishlatiladi.
+    final previewText = trimmed.isNotEmpty ? trimmed : "📷 Rasm";
+
     await conversationRef.set({
       'participantUids': [uid, otherUid]..sort(),
-      'lastMessage': trimmed,
+      'lastMessage': previewText,
       'lastMessageAt': FieldValue.serverTimestamp(),
       'lastSenderUid': uid,
       'unreadCounts.$otherUid': FieldValue.increment(1),
       'unreadCounts.$uid': 0,
+      // Yangi xabar yuborilganda o'zimizning "yozmoqda" belgimiz
+      // tozalanadi — matn yuborilgach ko'rsatkich osilib qolmasligi
+      // uchun.
+      'typing.$uid': FieldValue.delete(),
     }, SetOptions(merge: true));
 
     await conversationRef.collection('messages').add({
       'senderUid': uid,
       'text': trimmed,
       'createdAt': FieldValue.serverTimestamp(),
+      if (hasImage) 'imageUrl': imageUrl,
     });
 
     // O'ziga o'zi xabar yozgan holatda bildirishnoma yubormaymiz —
@@ -158,9 +220,50 @@ class ChatRepository {
         uid: otherUid,
         type: NotificationType.newMessage,
         title: senderFullName,
-        body: trimmed,
+        body: previewText,
         relatedId: conversationId,
       );
+    }
+  }
+
+  /// Xabar ostiga emoji reaksiya qo'yadi/olib tashlaydi (bir
+  /// foydalanuvchi — bitta xabarga bitta reaksiya, e'lonlardagi
+  /// naqsh bilan bir xil).
+  Future<void> toggleMessageReaction({
+    required String conversationId,
+    required String messageId,
+    required String emoji,
+    required String? currentEmoji,
+  }) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+    final messageRef = _firestore
+        .collection('conversations')
+        .doc(conversationId)
+        .collection('messages')
+        .doc(messageId);
+
+    if (currentEmoji == emoji) {
+      await messageRef.update({'reactions.$uid': FieldValue.delete()});
+    } else {
+      await messageRef.update({'reactions.$uid': emoji});
+    }
+  }
+
+  /// Joriy foydalanuvchi yozayotganini (yoki to'xtaganini) boshqa
+  /// ishtirokchiga bildiradi. Chaqiruvchi tomonidan debounce
+  /// qilinishi kutiladi — har harf kiritilganda emas.
+  Future<void> setTyping(String conversationId, {required bool isTyping}) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+    try {
+      await _firestore.collection('conversations').doc(conversationId).set({
+        'typing.$uid': isTyping ? FieldValue.serverTimestamp() : FieldValue.delete(),
+      }, SetOptions(merge: true));
+    } catch (_) {
+      // Hujjat hali mavjud emas (ikkala tomon ham hali xabar
+      // yubormagan) — bu holatda "yozmoqda" belgisi ko'rsatishga
+      // hojat yo'q, xato jim yutiladi.
     }
   }
 
@@ -169,9 +272,17 @@ class ChatRepository {
   Future<void> markConversationRead(String conversationId) async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return;
-    await _firestore.collection('conversations').doc(conversationId).update({
-      'unreadCounts.$uid': 0,
-    });
+    // Hujjat hali mavjud bo'lmasa (boshqa ishtirokchi hali birorta
+    // xabar yubormagan bo'lsa) yozish shart emas — jim o'tkazib
+    // yuboriladi.
+    try {
+      await _firestore.collection('conversations').doc(conversationId).update({
+        'unreadCounts.$uid': 0,
+        'lastReadAt.$uid': FieldValue.serverTimestamp(),
+      });
+    } catch (_) {
+      // Hujjat mavjud emas — o'qiladigan narsa yo'q.
+    }
   }
 
   /// Joriy foydalanuvchining barcha suhbatlaridagi o'qilmagan xabarlar

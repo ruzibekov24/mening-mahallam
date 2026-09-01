@@ -189,8 +189,7 @@ class NeighborProfileScreen extends ConsumerWidget {
                             lastName: member.lastName,
                             photoUrl: member.photoUrl,
                             seed: member.uid,
-                            ringColor: avatarRingColor(member.role,
-                                isPremium: member.isPremiumActive),
+                            ringColor: avatarRingColor(member.role),
                             isOnline: member.isOnline,
                           ),
                         ),
@@ -210,7 +209,7 @@ class NeighborProfileScreen extends ConsumerWidget {
                             ),
                             if (member.isPremiumActive) ...[
                               const SizedBox(width: AppSpacing.xs),
-                              const PremiumBadge(),
+                              PremiumBadge(styleId: member.badgeStyleId),
                             ],
                           ],
                         ),

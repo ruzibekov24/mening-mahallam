@@ -8,7 +8,17 @@ import 'package:http/http.dart' as http;
 /// ko'rsatsa bo'ladigan xatolik.
 class AssistantException implements Exception {
   final String message;
-  AssistantException(this.message);
+
+  /// `true` faqat serverdan 429 (kunlik xabar limiti) kelganda — bu
+  /// tarmoq/parsing xatolaridan farqli holat, chunki premium bo'lmagan
+  /// foydalanuvchiga bu yerda Premium ekraniga taklif ko'rsatiladi
+  /// (`AssistantScreen`ga qarang). Matnni tekshirish (masalan "limit"
+  /// so'zini qidirish) ishonchsiz bo'lardi — server xabari tilga
+  /// qarab o'zgarmaydi va kelajakda matn o'zgarishi mumkin, shuning
+  /// uchun status kodning o'zi ishlatiladi.
+  final bool isRateLimited;
+
+  AssistantException(this.message, {this.isRateLimited = false});
 
   @override
   String toString() => message;
@@ -94,8 +104,11 @@ class AssistantRepository {
     }
 
     if (response.statusCode == 429) {
-      throw AssistantException(_extractError(response) ??
-          "Kunlik AI yordamchi xabarlar limiti tugadi. Ertaga qayta urinib ko'ring");
+      throw AssistantException(
+        _extractError(response) ??
+            "Kunlik AI yordamchi xabarlar limiti tugadi. Ertaga qayta urinib ko'ring",
+        isRateLimited: true,
+      );
     }
 
     if (response.statusCode != 200) {

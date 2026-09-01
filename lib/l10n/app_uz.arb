@@ -162,6 +162,30 @@
     }
   },
   "premiumBadgeLabel": "Premium",
+  "chooseBadgeStyleTitle": "Belgi uslubini tanlang",
+  "@chooseBadgeStyleTitle": {
+    "description": "Premium foydalanuvchi o'z ismiga qo'yiladigan PremiumBadge ikonka/rang uslubini tanlaydigan pastdan chiquvchi varaq sarlavhasi"
+  },
+  "premiumBadgeStyleGold": "Oltin",
+  "@premiumBadgeStyleGold": {
+    "description": "PremiumBadge uslublaridan biri nomi (tanlov varag'ida ko'rsatiladi)"
+  },
+  "premiumBadgeStyleSapphire": "Safir",
+  "@premiumBadgeStyleSapphire": {
+    "description": "PremiumBadge uslublaridan biri nomi (tanlov varag'ida ko'rsatiladi)"
+  },
+  "premiumBadgeStyleEmerald": "Zumrad",
+  "@premiumBadgeStyleEmerald": {
+    "description": "PremiumBadge uslublaridan biri nomi (tanlov varag'ida ko'rsatiladi)"
+  },
+  "premiumBadgeStyleRuby": "Yoqut",
+  "@premiumBadgeStyleRuby": {
+    "description": "PremiumBadge uslublaridan biri nomi (tanlov varag'ida ko'rsatiladi)"
+  },
+  "premiumBadgeStyleSilver": "Kumush",
+  "@premiumBadgeStyleSilver": {
+    "description": "PremiumBadge uslublaridan biri nomi (tanlov varag'ida ko'rsatiladi)"
+  },
   "dailyRequestLimitReached": "Kunlik murojaat limitiga ({count} ta) yetdingiz. Ertaga qayta urinib ko'ring yoki Premium bilan cheksiz yuboring.",
   "myInfoMenuItem": "Mening ma'lumotlarim",
   "notificationsMenuItem": "Bildirishnomalar",
@@ -372,6 +396,10 @@
   "noMessagesYet": "Hozircha xabarlar yo'q. Birinchi bo'lib yozing!",
   "messageHint": "Xabar yozing...",
   "sendMessageAction": "Xabar yozish",
+  "typingIndicator": "yozmoqda...",
+  "attachImageAction": "Rasm biriktirish",
+  "imageUploadFailed": "Rasm yuborilmadi. Qayta urinib ko'ring",
+  "yesterdayLabel": "Kecha",
   "switchMahallaTitle": "Mahalla tanlash",
   "switchMahallaMenuItem": "Mahalla almashtirish (Super Admin)",
   "switchMahallaMenuItemActive": "Boshqa mahallani boshqaryapsiz",
@@ -1179,6 +1207,18 @@
   "assistantSuggestion3": "Ilovadan qanday foydalanaman?",
   "@assistantSuggestion3": {
     "description": "AI Yordamchi ekranidagi tezkor savol taklifi (3-chi)"
+  },
+  "assistantLimitUpsellTitle": "Kunlik limit tugadi",
+  "@assistantLimitUpsellTitle": {
+    "description": "AI Yordamchi kunlik xabar limitiga yetgan, PREMIUM BO'LMAGAN foydalanuvchiga ko'rsatiladigan taklif kartochkasi sarlavhasi"
+  },
+  "assistantLimitUpsellMessage": "Premium bilan har kuni ancha ko'proq xabar yuborishingiz mumkin.",
+  "@assistantLimitUpsellMessage": {
+    "description": "AI Yordamchi kunlik xabar limitiga yetgan, premium bo'lmagan foydalanuvchiga ko'rsatiladigan taklif kartochkasi matni"
+  },
+  "assistantLimitUpsellButton": "Premium haqida",
+  "@assistantLimitUpsellButton": {
+    "description": "AI Yordamchi limit taklif kartochkasidagi, Premium ekraniga o'tuvchi tugma matni"
   },
   "notificationPreferencesTitle": "Bildirishnoma sozlamalari",
   "@notificationPreferencesTitle": {

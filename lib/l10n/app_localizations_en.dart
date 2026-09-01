@@ -379,6 +379,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumBadgeLabel => 'Premium';
 
   @override
+  String get chooseBadgeStyleTitle => 'Choose a badge style';
+
+  @override
+  String get premiumBadgeStyleGold => 'Gold';
+
+  @override
+  String get premiumBadgeStyleSapphire => 'Sapphire';
+
+  @override
+  String get premiumBadgeStyleEmerald => 'Emerald';
+
+  @override
+  String get premiumBadgeStyleRuby => 'Ruby';
+
+  @override
+  String get premiumBadgeStyleSilver => 'Silver';
+
+  @override
   String dailyRequestLimitReached(Object count) {
     return 'You\'ve reached the daily request limit ($count). Try again tomorrow or get Premium to send unlimited requests.';
   }
@@ -830,6 +848,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sendMessageAction => 'Write a message';
+
+  @override
+  String get typingIndicator => 'typing...';
+
+  @override
+  String get attachImageAction => 'Attach image';
+
+  @override
+  String get imageUploadFailed => 'Image could not be sent. Please try again';
+
+  @override
+  String get yesterdayLabel => 'Yesterday';
 
   @override
   String get switchMahallaTitle => 'Choose mahalla';
@@ -1926,6 +1956,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantSuggestion3 => 'How do I use the app?';
+
+  @override
+  String get assistantLimitUpsellTitle => 'Daily limit reached';
+
+  @override
+  String get assistantLimitUpsellMessage =>
+      'With Premium you can send far more messages every day.';
+
+  @override
+  String get assistantLimitUpsellButton => 'About Premium';
 
   @override
   String get notificationPreferencesTitle => 'Notification preferences';

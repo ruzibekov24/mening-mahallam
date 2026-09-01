@@ -785,6 +785,42 @@ abstract class AppLocalizations {
   /// **'Premium'**
   String get premiumBadgeLabel;
 
+  /// Premium foydalanuvchi o'z ismiga qo'yiladigan PremiumBadge ikonka/rang uslubini tanlaydigan pastdan chiquvchi varaq sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Belgi uslubini tanlang'**
+  String get chooseBadgeStyleTitle;
+
+  /// PremiumBadge uslublaridan biri nomi (tanlov varag'ida ko'rsatiladi)
+  ///
+  /// In uz, this message translates to:
+  /// **'Oltin'**
+  String get premiumBadgeStyleGold;
+
+  /// PremiumBadge uslublaridan biri nomi (tanlov varag'ida ko'rsatiladi)
+  ///
+  /// In uz, this message translates to:
+  /// **'Safir'**
+  String get premiumBadgeStyleSapphire;
+
+  /// PremiumBadge uslublaridan biri nomi (tanlov varag'ida ko'rsatiladi)
+  ///
+  /// In uz, this message translates to:
+  /// **'Zumrad'**
+  String get premiumBadgeStyleEmerald;
+
+  /// PremiumBadge uslublaridan biri nomi (tanlov varag'ida ko'rsatiladi)
+  ///
+  /// In uz, this message translates to:
+  /// **'Yoqut'**
+  String get premiumBadgeStyleRuby;
+
+  /// PremiumBadge uslublaridan biri nomi (tanlov varag'ida ko'rsatiladi)
+  ///
+  /// In uz, this message translates to:
+  /// **'Kumush'**
+  String get premiumBadgeStyleSilver;
+
   /// No description provided for @dailyRequestLimitReached.
   ///
   /// In uz, this message translates to:
@@ -1624,6 +1660,30 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Xabar yozish'**
   String get sendMessageAction;
+
+  /// No description provided for @typingIndicator.
+  ///
+  /// In uz, this message translates to:
+  /// **'yozmoqda...'**
+  String get typingIndicator;
+
+  /// No description provided for @attachImageAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rasm biriktirish'**
+  String get attachImageAction;
+
+  /// No description provided for @imageUploadFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rasm yuborilmadi. Qayta urinib ko\'ring'**
+  String get imageUploadFailed;
+
+  /// No description provided for @yesterdayLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kecha'**
+  String get yesterdayLabel;
 
   /// No description provided for @switchMahallaTitle.
   ///
@@ -3622,6 +3682,24 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Ilovadan qanday foydalanaman?'**
   String get assistantSuggestion3;
+
+  /// AI Yordamchi kunlik xabar limitiga yetgan, PREMIUM BO'LMAGAN foydalanuvchiga ko'rsatiladigan taklif kartochkasi sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Kunlik limit tugadi'**
+  String get assistantLimitUpsellTitle;
+
+  /// AI Yordamchi kunlik xabar limitiga yetgan, premium bo'lmagan foydalanuvchiga ko'rsatiladigan taklif kartochkasi matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Premium bilan har kuni ancha ko\'proq xabar yuborishingiz mumkin.'**
+  String get assistantLimitUpsellMessage;
+
+  /// AI Yordamchi limit taklif kartochkasidagi, Premium ekraniga o'tuvchi tugma matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Premium haqida'**
+  String get assistantLimitUpsellButton;
 
   /// Bildirishnoma turlari sozlash ekrani sarlavhasi; Sozlamalar ekranidagi shu ekranga o'tish bandining sarlavhasi sifatida ham ishlatiladi
   ///

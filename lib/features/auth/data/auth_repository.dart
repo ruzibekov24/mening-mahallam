@@ -226,6 +226,18 @@ class AuthRepository {
     });
   }
 
+  /// Premium `PremiumBadge` uslubi tanlovini Firestore'da saqlaydi
+  /// (`premium_badge_styles.dart`dagi katalogdan bitta `id`).
+  Future<void> updateProfileBadgeStyle(String badgeStyleId) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) {
+      throw AuthException('Foydalanuvchi tizimga kirmagan');
+    }
+    await _firestore.collection('users').doc(uid).update({
+      'badgeStyleId': badgeStyleId,
+    });
+  }
+
   String _mapFirebaseError(String code) {
     switch (code) {
       case 'user-not-found':

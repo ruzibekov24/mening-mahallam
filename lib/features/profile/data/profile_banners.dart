@@ -44,11 +44,24 @@ class ProfileBanner {
   }
 }
 
-/// Barcha mavjud bannerlar — birinchi 3 tasi bepul (haqiqiy o'zbek
-/// to'qimachiligi suratlari), qolganlari premium (chizilgan, brend
-/// ranglariga asoslangan gradientlar).
+/// Barcha mavjud bannerlar.
 ///
-/// MUHIM: premium bannerlar hozircha faqat QULF belgisini ko'rsatadi —
+/// MUHIM (v1.7): endi faqat 4 tasi bepul qoladi — bittasi haqiqiy
+/// o'zbek to'qimachiligi surati (`suzani`), bittasi shahar manzarasi
+/// (`tashkent`), bittasi tabiat/qishloq manzarasi (`valley`) va
+/// bittasi mavhum gradient (`abstract_blue`) — shu to'rttasi turli xil
+/// uslubni qamrab oladi, shuning uchun pullamaydigan foydalanuvchi ham
+/// bir xil ko'rinishdagi variantlar bilan qolib ketmaydi. Qolgan
+/// hammasi (ilgari bepul bo'lgan qolgan 13 tasi + avvaldan premium
+/// bo'lganlar) endi premium.
+///
+/// Bu o'zgarish RETROAKTIV emas: `bannerById()` `isPremium`ni umuman
+/// tekshirmaydi (faqat tanlash varag'idagi bosish tekshiradi), shuning
+/// uchun bu o'zgarishdan oldin bepul bannerlardan birini tanlab qo'ygan
+/// foydalanuvchida u hali ham to'liq ko'rinadi — faqat qayta tanlab
+/// bo'lmaydi, agar premium bo'lmasa.
+///
+/// Premium bannerlar hozircha faqat QULF belgisini ko'rsatadi —
 /// haqiqiy sotib olish (App Store/Play Store IAP) ulanmagan. Buni
 /// yoqish uchun alohida ish kerak (RevenueCat yoki platforma-o'ziga
 /// xos billing API).
@@ -60,10 +73,12 @@ const profileBanners = <ProfileBanner>[
   ProfileBanner(
     id: 'ikat_stripes',
     image: 'assets/images/patterns/uzbek_ikat_stripes.jpg',
+    isPremium: true,
   ),
   ProfileBanner(
     id: 'ikat_robe',
     image: 'assets/images/patterns/uzbek_ikat_robe.jpg',
+    isPremium: true,
   ),
   ProfileBanner(
     id: 'abstract_blue',
@@ -72,14 +87,17 @@ const profileBanners = <ProfileBanner>[
   ProfileBanner(
     id: 'abstract_orange',
     image: 'assets/images/patterns/abstract_orange.png',
+    isPremium: true,
   ),
   ProfileBanner(
     id: 'abstract_green',
     image: 'assets/images/patterns/abstract_green.png',
+    isPremium: true,
   ),
   ProfileBanner(
     id: 'abstract_purple',
     image: 'assets/images/patterns/abstract_purple.png',
+    isPremium: true,
   ),
   ProfileBanner(
     id: 'tashkent',
@@ -88,10 +106,12 @@ const profileBanners = <ProfileBanner>[
   ProfileBanner(
     id: 'samarkand',
     image: 'assets/images/patterns/city_samarkand.jpg',
+    isPremium: true,
   ),
   ProfileBanner(
     id: 'bukhara',
     image: 'assets/images/patterns/city_bukhara.jpg',
+    isPremium: true,
   ),
   ProfileBanner(
     // Fayl nomi `city_khiva.jpg` — ro'yxatda esa `city_khorezm.jpg`
@@ -101,35 +121,38 @@ const profileBanners = <ProfileBanner>[
     // qiymat `khorezm` bo'lib qolgan.
     id: 'khorezm',
     image: 'assets/images/patterns/city_khiva.jpg',
+    isPremium: true,
   ),
   ProfileBanner(
     id: 'syrdarya',
     image: 'assets/images/patterns/city_syrdarya.jpg',
+    isPremium: true,
   ),
   ProfileBanner(
     id: 'valley',
     image: 'assets/images/patterns/valley.jpg',
   ),
 
-  // --- Yangi bepul bannerlar ---------------------------------------
-  // Ataylab "shahar emas" mavzular: mahallalarning ko'pchiligi
-  // viloyatda, va oldingi ro'yxatda deyarli faqat shahar manzaralari
-  // bor edi.
+  // --- Ilgari "yangi bepul bannerlar" edi, endi premium ------------
   ProfileBanner(
     id: 'mahalla_gate',
     image: 'assets/images/patterns/mahalla_gate.jpg',
+    isPremium: true,
   ),
   ProfileBanner(
     id: 'cotton_field',
     image: 'assets/images/patterns/cotton_field.jpg',
+    isPremium: true,
   ),
   ProfileBanner(
     id: 'chimgan',
     image: 'assets/images/patterns/chimgan_mountains.jpg',
+    isPremium: true,
   ),
   ProfileBanner(
     id: 'bread_tandyr',
     image: 'assets/images/patterns/bread_tandyr.jpg',
+    isPremium: true,
   ),
 
   // --- Premium bannerlar (suratlar) --------------------------------

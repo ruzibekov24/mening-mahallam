@@ -33,20 +33,12 @@ extension UserRoleStyle on UserRole {
   Color? get ringColor => isHighlighted ? color : null;
 }
 
-/// Premium obunachining oltin halqa rangi.
-const Color kPremiumRingColor = Color(0xFFE0A526);
-
-/// Avatar halqasi rangi — rol VA premium holatini birga hisobga oladi.
-///
-/// Tartib ataylab shunday: rol halqasi (rais/xodim) ustun turadi,
-/// chunki u mahalladagi mas'uliyatni bildiradi va uni premium bilan
-/// bekitib qo'yish noto'g'ri bo'lardi. Oddiy fuqaro premium olsa,
-/// avvalgi bo'sh halqa o'rniga oltin halqa chiziladi — obunaning
-/// e'lon qilingan imkoniyatlaridan biri (`premiumBenefitAvatar`).
-Color? avatarRingColor(UserRole role, {required bool isPremium}) {
-  if (role.isHighlighted) return role.color;
-  return isPremium ? kPremiumRingColor : null;
-}
+/// Avatar halqasi rangi — FAQAT rol asosida (rais/xodim). Premium endi
+/// halqa bilan emas, tanlanadigan `PremiumBadge` uslubi bilan
+/// ko'rsatiladi (`premium_badge_styles.dart`) — oltin halqa hamma
+/// premium obunachida bir xil ko'rinardi va rais/xodim halqasidan farqi
+/// past yorug'likda deyarli sezilmasdi.
+Color? avatarRingColor(UserRole role) => role.ringColor;
 
 /// Rol tegi ("Rais", "Xodim") — ism yonida ko'rsatiladi.
 ///

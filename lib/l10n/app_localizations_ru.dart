@@ -381,6 +381,24 @@ class AppLocalizationsRu extends AppLocalizations {
   String get premiumBadgeLabel => 'Премиум';
 
   @override
+  String get chooseBadgeStyleTitle => 'Выберите стиль значка';
+
+  @override
+  String get premiumBadgeStyleGold => 'Золотой';
+
+  @override
+  String get premiumBadgeStyleSapphire => 'Сапфировый';
+
+  @override
+  String get premiumBadgeStyleEmerald => 'Изумрудный';
+
+  @override
+  String get premiumBadgeStyleRuby => 'Рубиновый';
+
+  @override
+  String get premiumBadgeStyleSilver => 'Серебряный';
+
+  @override
   String dailyRequestLimitReached(Object count) {
     return 'Вы достигли дневного лимита обращений ($count). Попробуйте завтра или оформите Premium для безлимитной отправки.';
   }
@@ -832,6 +850,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sendMessageAction => 'Написать сообщение';
+
+  @override
+  String get typingIndicator => 'печатает...';
+
+  @override
+  String get attachImageAction => 'Прикрепить фото';
+
+  @override
+  String get imageUploadFailed =>
+      'Не удалось отправить фото. Попробуйте ещё раз';
+
+  @override
+  String get yesterdayLabel => 'Вчера';
 
   @override
   String get switchMahallaTitle => 'Выбор махалли';
@@ -1928,6 +1959,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get assistantSuggestion3 => 'Как пользоваться приложением?';
+
+  @override
+  String get assistantLimitUpsellTitle => 'Дневной лимит исчерпан';
+
+  @override
+  String get assistantLimitUpsellMessage =>
+      'С Premium вы сможете отправлять гораздо больше сообщений каждый день.';
+
+  @override
+  String get assistantLimitUpsellButton => 'О Premium';
 
   @override
   String get notificationPreferencesTitle => 'Настройки уведомлений';

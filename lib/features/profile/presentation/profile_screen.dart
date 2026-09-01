@@ -21,6 +21,7 @@ import '../../requests/presentation/request_detail_screen.dart';
 import '../../premium/presentation/premium_badge.dart';
 import '../../premium/presentation/premium_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
+import '../../premium/data/premium_badge_styles.dart';
 import '../data/profile_activity_providers.dart';
 import '../data/profile_banners.dart';
 import 'edit_profile_screen.dart';
@@ -342,8 +343,7 @@ class _ProfileBannerHeader extends StatelessWidget {
                       // va obunachi o'zi to'lagan narsani ko'rmasdi.
                       ringColor: profile == null
                           ? null
-                          : avatarRingColor(profile!.role,
-                              isPremium: profile!.isPremiumActive),
+                          : avatarRingColor(profile!.role),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Row(
@@ -364,7 +364,18 @@ class _ProfileBannerHeader extends StatelessWidget {
                         ],
                         if (profile?.isPremiumActive == true) ...[
                           const SizedBox(width: AppSpacing.xs),
-                          const PremiumBadge(onDark: true),
+                          Consumer(
+                            builder: (context, ref, _) => PremiumBadge(
+                              onDark: true,
+                              styleId: profile?.badgeStyleId,
+                              onTap: () => _showBadgeStylePicker(
+                                context,
+                                ref,
+                                profile?.badgeStyleId ??
+                                    kDefaultPremiumBadgeStyleId,
+                              ),
+                            ),
+                          ),
                         ],
                       ],
                     ),
@@ -589,6 +600,163 @@ class _BannerOptionTile extends StatelessWidget {
                       size: 12, color: Colors.white),
                 ),
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Premium `PremiumBadge` uslubini tanlash varag'ini ochadi — banner
+/// tanlash bilan bir xil naqsh (`_showBannerPicker`), lekin qulflash
+/// yo'q: bu yerga faqat premium foydalanuvchi kira oladi (belgi o'zi
+/// faqat premiumda ko'rinadi), shuning uchun barcha uslublar ochiq.
+Future<void> _showBadgeStylePicker(
+  BuildContext context,
+  WidgetRef ref,
+  String currentStyleId,
+) async {
+  final l10n = AppLocalizations.of(context);
+  await showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (sheetContext) => _BadgeStylePickerSheet(
+      currentStyleId: currentStyleId,
+      onSelected: (styleId) async {
+        Navigator.of(sheetContext).pop();
+        try {
+          await ref
+              .read(authRepositoryProvider)
+              .updateProfileBadgeStyle(styleId);
+          ref.invalidate(currentUserProfileProvider);
+        } catch (_) {
+          if (context.mounted) {
+            showAppAlert(context, l10n.profileLoadError);
+          }
+        }
+      },
+    ),
+  );
+}
+
+class _BadgeStylePickerSheet extends StatelessWidget {
+  final String currentStyleId;
+  final ValueChanged<String> onSelected;
+
+  const _BadgeStylePickerSheet({
+    required this.currentStyleId,
+    required this.onSelected,
+  });
+
+  String _labelFor(AppLocalizations l10n, String labelKey) {
+    switch (labelKey) {
+      case 'sapphire':
+        return l10n.premiumBadgeStyleSapphire;
+      case 'emerald':
+        return l10n.premiumBadgeStyleEmerald;
+      case 'ruby':
+        return l10n.premiumBadgeStyleRuby;
+      case 'silver':
+        return l10n.premiumBadgeStyleSilver;
+      default:
+        return l10n.premiumBadgeStyleGold;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return SafeArea(
+      child: Container(
+        margin: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.75,
+        ),
+        decoration: BoxDecoration(
+          color: context.surfaceColor,
+          borderRadius: AppRadius.lgAll,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.chooseBadgeStyleTitle, style: context.titleStyle),
+            const SizedBox(height: AppSpacing.md),
+            Flexible(
+              child: GridView.builder(
+                shrinkWrap: true,
+                itemCount: premiumBadgeStyles.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: AppSpacing.sm,
+                  mainAxisSpacing: AppSpacing.sm,
+                  childAspectRatio: 2.4,
+                ),
+                itemBuilder: (context, index) {
+                  final style = premiumBadgeStyles[index];
+                  final isSelected = style.id == currentStyleId;
+                  return _BadgeStyleOptionTile(
+                    style: style,
+                    label: _labelFor(l10n, style.labelKey),
+                    isSelected: isSelected,
+                    onTap: () => onSelected(style.id),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BadgeStyleOptionTile extends StatelessWidget {
+  final PremiumBadgeStyle style;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _BadgeStyleOptionTile({
+    required this.style,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: AppRadius.mdAll,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: style.color.withValues(alpha: 0.1),
+          borderRadius: AppRadius.mdAll,
+          border: Border.all(
+            color: isSelected ? style.color : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(style.icon, size: 18, color: style.color),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: context.cardTitleStyle.copyWith(color: style.color),
+              ),
+            ),
+            if (isSelected)
+              Icon(PhosphorIconsFill.checkCircle, size: 18, color: style.color),
           ],
         ),
       ),

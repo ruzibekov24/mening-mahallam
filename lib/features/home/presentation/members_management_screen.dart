@@ -135,8 +135,7 @@ class _MemberTile extends ConsumerWidget {
             lastName: member.lastName,
             photoUrl: member.photoUrl,
             seed: member.uid,
-            ringColor: avatarRingColor(member.role,
-                isPremium: member.isPremiumActive),
+            ringColor: avatarRingColor(member.role),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(

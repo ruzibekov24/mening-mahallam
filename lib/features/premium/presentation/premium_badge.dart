@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../../core/theme/app_tokens.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../home/presentation/role_styles.dart' show kPremiumRingColor;
+import '../data/premium_badge_styles.dart';
 
 /// Premium foydalanuvchini belgilaydigan chizim — bir tomdan (crown
 /// ikonka) tashkil topgan yalang'och belgi o'rniga, endi to'liq "pill"
@@ -14,21 +13,39 @@ import '../../home/presentation/role_styles.dart' show kPremiumRingColor;
 /// `onDark: true` — rangli/qorong'i fon ustida (masalan profil
 /// ekranining banner qismi) ishlatilganda, oq-shaffof fon + och sariq
 /// matn bilan; aks holda och sariq fon + to'q sariq matn bilan.
+///
+/// `styleId` — `premium_badge_styles.dart`dagi katalogdan tanlangan
+/// ikonka/rang ("gold", "sapphire" ...); `null` yoki noma'lum bo'lsa
+/// standart (oltin) uslubga tushadi — shuning uchun eski, hali tanlov
+/// qilmagan premium foydalanuvchilarda hech narsa o'zgarmaydi.
 class PremiumBadge extends StatelessWidget {
   final bool onDark;
   final bool compact;
+  final String? styleId;
 
-  const PremiumBadge({super.key, this.onDark = false, this.compact = false});
+  /// Berilsa, belgi bosiladigan qiladi — faqat o'z profilida, uslub
+  /// tanlash varag'ini ochish uchun ishlatiladi. Boshqa foydalanuvchi
+  /// profilida `null` qoladi (faqat ko'rish uchun).
+  final VoidCallback? onTap;
+
+  const PremiumBadge({
+    super.key,
+    this.onDark = false,
+    this.compact = false,
+    this.styleId,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    const gold = kPremiumRingColor;
+    final style = premiumBadgeStyleById(styleId);
+    final accent = style.color;
     final background =
-        onDark ? Colors.white.withValues(alpha: 0.2) : gold.withValues(alpha: 0.14);
-    final foreground = onDark ? const Color(0xFFFFE29A) : gold;
+        onDark ? Colors.white.withValues(alpha: 0.2) : accent.withValues(alpha: 0.14);
+    final foreground = onDark ? Colors.white : accent;
 
-    return Tooltip(
+    final badge = Tooltip(
       message: l10n.premiumBadgeLabel,
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -40,12 +57,12 @@ class PremiumBadge extends StatelessWidget {
           borderRadius: AppRadius.pillAll,
           border: onDark
               ? null
-              : Border.all(color: gold.withValues(alpha: 0.35)),
+              : Border.all(color: accent.withValues(alpha: 0.35)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(PhosphorIconsFill.crown, size: compact ? 11 : 13, color: foreground),
+            Icon(style.icon, size: compact ? 11 : 13, color: foreground),
             if (!compact) ...[
               const SizedBox(width: 4),
               Text(
@@ -62,5 +79,8 @@ class PremiumBadge extends StatelessWidget {
         ),
       ),
     );
+
+    if (onTap == null) return badge;
+    return GestureDetector(onTap: onTap, child: badge);
   }
 }

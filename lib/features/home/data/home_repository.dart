@@ -132,6 +132,11 @@ class UserProfile {
   /// `profile_banners.dart`dagi katalogdan bitta `id`.
   final String? profileBannerId;
 
+  /// Ism yonida ko'rsatiladigan `PremiumBadge` ko'rinishi —
+  /// `premium_badge_styles.dart`dagi katalogdan bitta `id`. `null` —
+  /// hali tanlov qilinmagan, standart (oltin) uslub ishlatiladi.
+  final String? badgeStyleId;
+
   /// Premium holati shu muddatgacha amal qiladi. Hozircha haqiqiy
   /// to'lov ulanmagan — bu maydon faqat qo'lda (admin/Firestore
   /// konsoli, [PremiumRepository.grantManually]) o'rnatiladi.
@@ -163,6 +168,7 @@ class UserProfile {
     this.blockedUids = const [],
     this.notificationPrefs = const {},
     this.profileBannerId,
+    this.badgeStyleId,
     this.premiumUntil,
   });
 
@@ -191,6 +197,7 @@ class UserProfile {
           ? const {}
           : rawPrefs.map((key, value) => MapEntry(key, value == true)),
       profileBannerId: data['profileBannerId'] as String?,
+      badgeStyleId: data['badgeStyleId'] as String?,
       premiumUntil: premiumTimestamp?.toDate(),
     );
   }
@@ -233,6 +240,7 @@ class UserProfile {
       blockedUids: blockedUids,
       notificationPrefs: notificationPrefs,
       profileBannerId: profileBannerId,
+      badgeStyleId: badgeStyleId,
       premiumUntil: premiumUntil,
     );
   }
@@ -285,6 +293,11 @@ class MahallaMember {
   /// banneri ko'rinishi uchun.
   final String? profileBannerId;
 
+  /// [UserProfile.badgeStyleId] bilan bir xil ma'noda — boshqa
+  /// foydalanuvchi profilida ham tanlangan `PremiumBadge` uslubi
+  /// ko'rinishi uchun.
+  final String? badgeStyleId;
+
   /// [UserProfile.premiumUntil] bilan bir xil ma'noda — boshqa
   /// foydalanuvchi profilida ham premium nishoni ko'rinishi uchun.
   final DateTime? premiumUntil;
@@ -305,6 +318,7 @@ class MahallaMember {
     this.staffTitle,
     this.street,
     this.profileBannerId,
+    this.badgeStyleId,
     this.premiumUntil,
   });
 
@@ -324,6 +338,7 @@ class MahallaMember {
       phoneVisible: data['phoneVisible'] == true,
       street: data['street'] as String?,
       profileBannerId: data['profileBannerId'] as String?,
+      badgeStyleId: data['badgeStyleId'] as String?,
       premiumUntil: premiumTimestamp?.toDate(),
     );
   }

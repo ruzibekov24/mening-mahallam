@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
+import '../../../core/router/app_page_route.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../home/data/home_repository.dart';
 import '../../language/data/language_repository.dart';
+import '../../premium/presentation/premium_screen.dart';
 import '../../requests/data/requests_repository.dart';
 import '../../requests/presentation/new_request_flow_screen.dart';
 import '../data/assistant_chat_repository.dart';
@@ -142,6 +144,14 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
   bool _isSending = false;
   bool _isLoadingHistory = false;
   String? _errorText;
+
+  /// `true` — oxirgi xatolik kunlik limitga yetish, VA foydalanuvchi
+  /// premium emas. Bunday holatda oddiy qizil matn o'rniga Premium
+  /// ekraniga taklif qiluvchi kartochka ko'rsatiladi (`_errorText`
+  /// ishlatilmaydi). Premium foydalanuvchi ham limitga yetsa (yuqori,
+  /// lekin baribir chekli kvota), oddiy xabar yetarli — u allaqachon
+  /// to'lagan, unga sotish shart emas.
+  bool _showLimitUpsell = false;
   int _nextMessageId = 0;
   String? _chatId;
 
@@ -226,6 +236,7 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
       );
       _isSending = true;
       _errorText = null;
+      _showLimitUpsell = false;
     });
     _textController.clear();
     _scrollToBottom();
@@ -271,9 +282,19 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
       }
     } on AssistantException catch (e) {
       if (!mounted) return;
+      final isPremium = ref
+              .read(currentUserProfileProvider)
+              .valueOrNull
+              ?.isPremiumActive ==
+          true;
       setState(() {
         _isSending = false;
-        _errorText = e.message;
+        if (e.isRateLimited && !isPremium) {
+          _showLimitUpsell = true;
+          _errorText = null;
+        } else {
+          _errorText = e.message;
+        }
       });
     } catch (_) {
       if (!mounted) return;
@@ -351,7 +372,16 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                           },
                         ),
             ),
-            if (_errorText != null)
+            if (_showLimitUpsell)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(AppSpacing.xl,
+                    AppSpacing.xs, AppSpacing.xl, AppSpacing.sm),
+                child: _LimitUpsellCard(
+                  onUpgrade: () =>
+                      AppPageRoute.push(context, const PremiumScreen()),
+                ),
+              )
+            else if (_errorText != null)
               Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.xl, vertical: AppSpacing.xs),
@@ -508,6 +538,66 @@ class _EmptyState extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Kunlik AI Yordamchi xabar limitiga yetgan, PREMIUM BO'LMAGAN
+/// foydalanuvchiga ko'rsatiladigan taklif kartochkasi — oddiy qizil
+/// xatolik matni o'rniga, chunki bu holatda foydalanuvchida haqiqiy
+/// keyingi qadam bor (Premium olish orqali yuqori kvota).
+class _LimitUpsellCard extends StatelessWidget {
+  final VoidCallback onUpgrade;
+  const _LimitUpsellCard({required this.onUpgrade});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    const gold = Color(0xFFE0A526);
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: gold.withValues(alpha: 0.1),
+        borderRadius: AppRadius.mdAll,
+        border: Border.all(color: gold.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: gold.withValues(alpha: 0.16),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(PhosphorIconsFill.crown, color: gold, size: 18),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.assistantLimitUpsellTitle,
+                  style: context.cardTitleStyle,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  l10n.assistantLimitUpsellMessage,
+                  style: context.captionStyle
+                      .copyWith(color: context.textSecondary),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          TextButton(
+            onPressed: onUpgrade,
+            style: TextButton.styleFrom(foregroundColor: gold),
+            child: Text(l10n.assistantLimitUpsellButton),
+          ),
+        ],
       ),
     );
   }

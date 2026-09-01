@@ -36,6 +36,17 @@ service cloud.firestore {
       return isSignedIn() && myUserDoc().data.role == 'superAdmin';
     }
 
+    // Bir hujjatdagi `field` xaritasida o'zgargan kalitlar to'plami
+    // faqat `uid` bo'lishi (yoki umuman o'zgarmagan bo'lishi) kerak —
+    // shu orqali har bir foydalanuvchi shu xaritada faqat o'z
+    // yozuvini yozadi ("typing", "lastReadAt", "reactions" kabi
+    // uid->qiymat xaritalari uchun umumiy tekshiruv).
+    function onlyOwnMapKeyChanged(field, uid) {
+      return !(field in request.resource.data.diff(resource.data).affectedKeys()) ||
+        request.resource.data[field].diff(resource.data.get(field, {}))
+          .affectedKeys().hasOnly([uid]);
+    }
+
     // ---------- users/{uid} ----------
     match /users/{uid} {
       // A user can always read their own doc.
@@ -152,9 +163,18 @@ service cloud.firestore {
 
       // Ishtirokchilar ro'yxati yaratilgandan keyin o'zgarmas —
       // faqat oxirgi xabar/o'qilmagan sanog'i kabi maydonlar
-      // yangilanishi mumkin.
+      // yangilanishi mumkin. `typing.{myUid}` va `lastReadAt.{myUid}`
+      // xaritalarida esa har bir foydalanuvchi FAQAT o'z uid'idagi
+      // kalitni o'zgartira olishi kerak — boshqa ishtirokchining
+      // "yozmoqda" yoki "o'qidi" holatini soxtalashtira olmasligi
+      // uchun.
       allow update: if isSignedIn() && myUid() in resource.data.participantUids &&
-        request.resource.data.participantUids == resource.data.participantUids;
+        request.resource.data.participantUids == resource.data.participantUids &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['lastMessage', 'lastMessageAt', 'lastSenderUid',
+                    'unreadCounts', 'typing', 'lastReadAt']) &&
+        onlyOwnMapKeyChanged('typing', myUid()) &&
+        onlyOwnMapKeyChanged('lastReadAt', myUid());
 
       match /messages/{messageId} {
         function isParticipant() {
@@ -164,7 +184,15 @@ service cloud.firestore {
         allow read: if isSignedIn() && isParticipant();
         allow create: if isSignedIn() && isParticipant() &&
           request.resource.data.senderUid == myUid();
-        allow update, delete: if false;
+        // Faqat `reactions.{myUid}` maydoni o'zgartirilishi mumkin —
+        // matn/rasm/yuboruvchi kabi boshqa maydonlar o'zgarmas
+        // qoladi, va foydalanuvchi faqat o'z reaksiyasini
+        // qo'yishi/olib tashlashi mumkin.
+        allow update: if isSignedIn() && isParticipant() &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions']) &&
+          request.resource.data.reactions.diff(resource.data.get('reactions', {}))
+            .affectedKeys().hasOnly([myUid()]);
+        allow delete: if false;
       }
     }
 
