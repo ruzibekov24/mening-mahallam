@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/offline_stream.dart';
 import '../../home/data/home_repository.dart';
 import 'announcement_repository.dart';
 import 'event_repository.dart';
@@ -23,7 +24,8 @@ final myAnnouncementsProvider =
       if (mahallaId == null || mahallaId.isEmpty) return Stream.value([]);
       return ref
           .watch(announcementRepositoryProvider)
-          .watchAnnouncements(mahallaId);
+          .watchAnnouncements(mahallaId)
+          .withOfflineTimeout();
     },
     loading: () => Stream.value([]),
     error: (_, __) => Stream.value([]),
@@ -38,7 +40,10 @@ final myEventsProvider = StreamProvider.autoDispose<List<MahallaEvent>>((ref) {
     data: (profile) {
       final mahallaId = profile?.mahallaId;
       if (mahallaId == null || mahallaId.isEmpty) return Stream.value([]);
-      return ref.watch(eventRepositoryProvider).watchEvents(mahallaId);
+      return ref
+          .watch(eventRepositoryProvider)
+          .watchEvents(mahallaId)
+          .withOfflineTimeout();
     },
     loading: () => Stream.value([]),
     error: (_, __) => Stream.value([]),

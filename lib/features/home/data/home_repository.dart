@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/offline_stream.dart';
+
 /// Foydalanuvchi roli — MVP bosqichida qo'lda (Firestore Console orqali)
 /// belgilanadi. Kelajakda so'rov yuborish/tasdiqlash oqimi bilan
 /// avtomatlashtiriladi.
@@ -669,7 +671,10 @@ final upcomingEventsProvider =
     data: (profile) {
       final mahallaId = profile?.mahallaId;
       if (mahallaId == null) return Stream.value([]);
-      return ref.watch(homeRepositoryProvider).watchUpcomingEvents(mahallaId);
+      return ref
+          .watch(homeRepositoryProvider)
+          .watchUpcomingEvents(mahallaId)
+          .withOfflineTimeout();
     },
     loading: () => Stream.value([]),
     error: (_, __) => Stream.value([]),

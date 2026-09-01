@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/offline_stream.dart';
 import '../../home/data/home_repository.dart';
 import 'chat_repository.dart';
 
@@ -9,7 +10,10 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
 
 final myConversationsProvider =
     StreamProvider.autoDispose<List<Conversation>>((ref) {
-  return ref.watch(chatRepositoryProvider).watchMyConversations();
+  return ref
+      .watch(chatRepositoryProvider)
+      .watchMyConversations()
+      .withOfflineTimeout();
 });
 
 final conversationMessagesProvider = StreamProvider.autoDispose

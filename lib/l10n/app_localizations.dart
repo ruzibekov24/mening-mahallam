@@ -929,6 +929,12 @@ abstract class AppLocalizations {
   /// **'Til'**
   String get languageSettingTitle;
 
+  /// No description provided for @languageUpdatedMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Til o\'zgartirildi'**
+  String get languageUpdatedMessage;
+
   /// No description provided for @appearanceSettingTitle.
   ///
   /// In uz, this message translates to:

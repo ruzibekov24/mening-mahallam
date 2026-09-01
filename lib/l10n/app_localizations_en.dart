@@ -454,6 +454,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSettingTitle => 'Language';
 
   @override
+  String get languageUpdatedMessage => 'Language updated';
+
+  @override
   String get appearanceSettingTitle => 'Appearance';
 
   @override

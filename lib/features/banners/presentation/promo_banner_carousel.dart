@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -203,15 +204,13 @@ class _BannerCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.network(
-                banner.imageUrl,
+              CachedNetworkImage(
+                imageUrl: banner.imageUrl,
                 fit: BoxFit.cover,
                 width: double.infinity,
-                loadingBuilder: (context, child, progress) {
-                  if (progress == null) return child;
-                  return Container(color: context.surfaceColor);
-                },
-                errorBuilder: (_, __, ___) =>
+                placeholder: (context, url) =>
+                    Container(color: context.surfaceColor),
+                errorWidget: (_, __, ___) =>
                     Container(color: context.surfaceColor),
               ),
               // Sarlavha o'qilishi uchun rasmning pastki qismini
@@ -307,11 +306,15 @@ class _BannerDetailSheet extends StatelessWidget {
               // Rasmning o'zi original nisbatida (crop qilinmasdan)
               // to'liq ko'rsatiladi — kenglikka moslab, balandligi
               // rasmning haqiqiy nisbatidan avtomatik hisoblanadi.
-              child: Image.network(
-                banner.imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: banner.imageUrl,
                 width: double.infinity,
                 fit: BoxFit.fitWidth,
-                errorBuilder: (_, __, ___) => Container(
+                placeholder: (context, url) => Container(
+                  height: 160,
+                  color: context.surfaceColor,
+                ),
+                errorWidget: (_, __, ___) => Container(
                   height: 160,
                   color: context.surfaceColor,
                 ),

@@ -12,6 +12,7 @@ import '../../features/chat/presentation/chat_screen.dart';
 import '../../features/home/data/home_repository.dart';
 import '../../features/notifications/data/notification_repository.dart';
 import '../../features/requests/presentation/request_detail_screen.dart';
+import '../router/app_page_route.dart';
 import '../router/app_router.dart';
 import '../widgets/main_shell.dart';
 
@@ -169,6 +170,7 @@ class PushNotificationService {
 
       case NotificationType.requestStatusChanged:
       case NotificationType.requestOverdue:
+      case NotificationType.newRequestComment:
         container.read(mainTabIndexProvider.notifier).state = 2;
         if (relatedId == null) break;
         try {
@@ -176,12 +178,11 @@ class PushNotificationService {
               await container.read(currentUserProfileProvider.future);
           final mahallaId = profile?.mahallaId;
           if (mahallaId == null || !context.mounted) break;
-          navState.push(
-            MaterialPageRoute(
-              builder: (_) => RequestDetailScreen(
-                mahallaId: mahallaId,
-                requestId: relatedId,
-              ),
+          AppPageRoute.push(
+            context,
+            RequestDetailScreen(
+              mahallaId: mahallaId,
+              requestId: relatedId,
             ),
           );
         } catch (_) {
@@ -210,9 +211,7 @@ class PushNotificationService {
         final parts = relatedId.split('_');
         if (parts.length != 2) break;
         final otherUid = parts.first == myUid ? parts.last : parts.first;
-        navState.push(
-          MaterialPageRoute(builder: (_) => ChatScreen(otherUid: otherUid)),
-        );
+        AppPageRoute.push(context, ChatScreen(otherUid: otherUid));
         break;
     }
   }

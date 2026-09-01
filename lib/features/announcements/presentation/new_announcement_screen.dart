@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -264,8 +265,8 @@ class _NewAnnouncementScreenState
                                   height: 120,
                                   fit: BoxFit.cover,
                                 )
-                              : Image.network(
-                                  _existingImageUrl!,
+                              : CachedNetworkImage(
+                                  imageUrl: _existingImageUrl!,
                                   width: 120,
                                   height: 120,
                                   fit: BoxFit.cover,

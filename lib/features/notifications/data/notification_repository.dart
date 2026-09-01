@@ -25,6 +25,8 @@ enum NotificationType {
   accountDeletionRequested,
   // Biriktirilgan xodimga: murojaat muddati (SLA) o'tib ketdi.
   requestOverdue,
+  // Murojaat egasiga: boshqa foydalanuvchi (yoki xodim) izoh qoldirdi.
+  newRequestComment,
 }
 
 extension NotificationTypeX on NotificationType {
@@ -48,6 +50,8 @@ extension NotificationTypeX on NotificationType {
         return NotificationType.accountDeletionRequested;
       case 'requestOverdue':
         return NotificationType.requestOverdue;
+      case 'newRequestComment':
+        return NotificationType.newRequestComment;
       default:
         return NotificationType.requestStatusChanged;
     }
@@ -75,6 +79,8 @@ extension NotificationTypeX on NotificationType {
         return 'accountDeletionRequested';
       case NotificationType.requestOverdue:
         return 'requestOverdue';
+      case NotificationType.newRequestComment:
+        return 'newRequestComment';
     }
   }
 }
@@ -103,6 +109,7 @@ String? _userTogglePrefKey(NotificationType type) {
       return NotificationType.newMessage.storageValue;
     case NotificationType.requestStatusChanged:
     case NotificationType.requestOverdue:
+    case NotificationType.newRequestComment:
       return NotificationType.requestStatusChanged.storageValue;
     case NotificationType.premiumPaymentSubmitted:
     case NotificationType.premiumApproved:

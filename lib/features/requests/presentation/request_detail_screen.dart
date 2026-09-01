@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -238,20 +239,18 @@ class RequestDetailScreen extends ConsumerWidget {
                             itemBuilder: (context, index) {
                               final image = ClipRRect(
                                 borderRadius: AppRadius.smAll,
-                                child: Image.network(
-                                  request.imageUrls[index],
+                                child: CachedNetworkImage(
+                                  imageUrl: request.imageUrls[index],
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,
-                                  loadingBuilder: (context, child, progress) {
-                                    if (progress == null) return child;
-                                    return Container(
-                                      width: 100,
-                                      height: 100,
-                                      color: context.surfaceColor,
-                                    );
-                                  },
-                                  errorBuilder: (_, __, ___) => Container(
+                                  placeholder: (context, url) =>
+                                      const ShimmerBox(
+                                    width: 100,
+                                    height: 100,
+                                    borderRadius: BorderRadius.zero,
+                                  ),
+                                  errorWidget: (_, __, ___) => Container(
                                     width: 100,
                                     height: 100,
                                     color: context.surfaceColor,

@@ -138,6 +138,7 @@
   "roleUpdated": "Role updated",
   "selectRoleTitle": "Select a role",
   "languageSettingTitle": "Language",
+  "languageUpdatedMessage": "Language updated",
   "appearanceSettingTitle": "Appearance",
   "textSizeSettingTitle": "Text size",
   "sectionAbout": "About the app",

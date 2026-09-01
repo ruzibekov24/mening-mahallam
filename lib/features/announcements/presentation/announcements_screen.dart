@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -360,19 +361,16 @@ class _AnnouncementCard extends ConsumerWidget {
                   top: Radius.circular(AppRadius.md)),
               child: Hero(
                 tag: 'announcement-image-${announcement.id}',
-                child: Image.network(
-                  announcement.imageUrl!,
+                child: CachedNetworkImage(
+                  imageUrl: announcement.imageUrl!,
                   width: double.infinity,
                   height: 140,
                   fit: BoxFit.cover,
-                  loadingBuilder: (context, child, progress) {
-                    if (progress == null) return child;
-                    return Container(
-                      height: 140,
-                      color: color.withValues(alpha: 0.08),
-                    );
-                  },
-                  errorBuilder: (_, __, ___) => Container(
+                  placeholder: (context, url) => Container(
+                    height: 140,
+                    color: color.withValues(alpha: 0.08),
+                  ),
+                  errorWidget: (_, __, ___) => Container(
                     height: 140,
                     color: color.withValues(alpha: 0.08),
                     child: Icon(PhosphorIconsRegular.imageBroken,

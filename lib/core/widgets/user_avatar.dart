@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
@@ -148,21 +149,19 @@ class UserAvatar extends StatelessWidget {
       alignment: Alignment.center,
       clipBehavior: Clip.antiAlias,
       child: _hasPhoto
-          // `Image.network` ishlatamiz (`backgroundImage` emas), chunki
-          // faqat u `errorBuilder`/`loadingBuilder` beradi. Auditdan
-          // oldin rasm yuklanmasa butunlay bo'sh doira qolardi.
-          ? Image.network(
-              photoUrl!,
+          // `CachedNetworkImage` ishlatamiz — diskka keshlaydi (qayta
+          // ochilganda qayta yuklanmaydi) va `errorWidget`/`placeholder`
+          // beradi. Auditdan oldin rasm yuklanmasa butunlay bo'sh doira
+          // qolardi.
+          ? CachedNetworkImage(
+              imageUrl: photoUrl!,
               width: size,
               height: size,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => _initialsText(fontSize),
-              loadingBuilder: (context, child, progress) {
-                if (progress == null) return child;
-                // Yuklanayotganda ham bosh harflar ko'rinib turadi —
-                // bo'sh doira "singan" tuyulmaydi.
-                return _initialsText(fontSize);
-              },
+              errorWidget: (_, __, ___) => _initialsText(fontSize),
+              // Yuklanayotganda ham bosh harflar ko'rinib turadi —
+              // bo'sh doira "singan" tuyulmaydi.
+              placeholder: (context, url) => _initialsText(fontSize),
             )
           : _initialsText(fontSize),
     );

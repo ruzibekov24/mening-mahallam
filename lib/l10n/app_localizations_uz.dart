@@ -456,6 +456,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get languageSettingTitle => 'Til';
 
   @override
+  String get languageUpdatedMessage => 'Til o\'zgartirildi';
+
+  @override
   String get appearanceSettingTitle => 'Ko\'rinish';
 
   @override
@@ -2412,6 +2415,9 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get languageSettingTitle => 'Тил';
+
+  @override
+  String get languageUpdatedMessage => 'Тил ўзгартирилди';
 
   @override
   String get appearanceSettingTitle => 'Кўриниш';

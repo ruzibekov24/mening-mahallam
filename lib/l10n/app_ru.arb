@@ -145,6 +145,7 @@
   "roleUpdated": "Роль обновлена",
   "selectRoleTitle": "Выберите роль",
   "languageSettingTitle": "Язык",
+  "languageUpdatedMessage": "Язык изменён",
   "appearanceSettingTitle": "Вид",
   "textSizeSettingTitle": "Размер текста",
   "sectionAbout": "О приложении",

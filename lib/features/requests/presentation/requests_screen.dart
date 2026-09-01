@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -415,20 +416,17 @@ class _RequestCard extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final thumb = ClipRRect(
                     borderRadius: AppRadius.smAll,
-                    child: Image.network(
-                      request.imageUrls[index],
+                    child: CachedNetworkImage(
+                      imageUrl: request.imageUrls[index],
                       width: 52,
                       height: 52,
                       fit: BoxFit.cover,
-                      loadingBuilder: (context, child, progress) {
-                        if (progress == null) return child;
-                        return Container(
-                          width: 52,
-                          height: 52,
-                          color: context.textSecondary.withValues(alpha: 0.15),
-                        );
-                      },
-                      errorBuilder: (_, __, ___) => Container(
+                      placeholder: (context, url) => const ShimmerBox(
+                        width: 52,
+                        height: 52,
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      errorWidget: (_, __, ___) => Container(
                         width: 52,
                         height: 52,
                         color: context.textSecondary.withValues(alpha: 0.15),

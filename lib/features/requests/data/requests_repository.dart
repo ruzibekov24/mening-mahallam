@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/offline_stream.dart';
 import '../../home/data/home_repository.dart';
 import '../../notifications/data/notification_repository.dart';
 import '../../premium/data/premium_repository.dart';
@@ -659,6 +660,34 @@ class RequestsRepository {
       'text': text,
       'createdAt': FieldValue.serverTimestamp(),
     });
+
+    // Murojaat egasiga yangi izoh haqida bildirishnoma — o'z murojaatiga
+    // o'zi izoh qoldirsa yuborilmaydi. Xato bo'lsa ham izohning o'zi
+    // allaqachon saqlangan, shuning uchun jimgina yutiladi.
+    try {
+      final requestDoc = await _firestore
+          .collection('mahallas')
+          .doc(mahallaId)
+          .collection('requests')
+          .doc(requestId)
+          .get();
+      final data = requestDoc.data();
+      final authorUid = data?['authorUid'] as String?;
+      final title = data?['title'] as String?;
+      if (authorUid != null && authorUid != uid) {
+        await NotificationRepository().sendToUser(
+          uid: authorUid,
+          type: NotificationType.newRequestComment,
+          title: 'Murojaatingizga yangi izoh',
+          body: title != null && title.isNotEmpty
+              ? '"$title" murojaatiga yangi izoh qoldirildi'
+              : 'Sizning murojaatingizga yangi izoh qoldirildi',
+          relatedId: requestId,
+        );
+      }
+    } catch (_) {
+      // Bildirishnoma yuborilmasa ham izohning o'zi allaqachon saqlangan.
+    }
   }
 
   /// O'z komentariyasini o'chiradi — faqat muallifning o'zi chaqirishi
@@ -750,9 +779,11 @@ final myRequestsProvider =
       final canSeeAll = profile?.role.canManageRequests == true;
       final repo = ref.watch(requestsRepositoryProvider);
 
-      if (canSeeAll) return repo.watchRequests(mahallaId);
+      if (canSeeAll) return repo.watchRequests(mahallaId).withOfflineTimeout();
       if (currentUid == null) return Stream.value([]);
-      return repo.watchVisibleRequests(mahallaId, currentUid);
+      return repo
+          .watchVisibleRequests(mahallaId, currentUid)
+          .withOfflineTimeout();
     },
     loading: () => Stream.value([]),
     error: (_, __) => Stream.value([]),

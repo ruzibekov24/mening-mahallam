@@ -516,6 +516,12 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showLanguagePicker(BuildContext context, WidgetRef ref) {
+    // Pastki varaq yopilgach ham foydalanish uchun — ichkaridagi
+    // `Consumer`ning o'z `context` parametri (bir xil nom bilan) shu
+    // tashqi context'ni "soyalab" qo'yadi, varaq yopilishi bilan u
+    // unmount bo'ladi. Tasdiqlash xabari esa Sozlamalar ekranining
+    // O'ZIDA (varaqdan tashqarida) ko'rsatilishi kerak.
+    final screenContext = context;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -575,8 +581,26 @@ class SettingsScreen extends ConsumerWidget {
                               color: AppColors.primary)
                           : null,
                       onTap: () {
+                        final wasDifferent = current != lang;
                         ref.read(languageProvider.notifier).select(lang);
                         Navigator.of(sheetContext).pop();
+                        // Til o'zgarishi butun ilova bo'ylab darhol
+                        // (animatsiyasiz) qo'llanadi — `MaterialApp`
+                        // ildizini `AnimatedSwitcher` bilan o'rash
+                        // navigatsiya holatini (Router/Navigator
+                        // daraxtini) buzish xavfini keltirib chiqarardi.
+                        // Shuning uchun o'zgarish sodir bo'lganini
+                        // tasdiqlovchi qisqa xabar bilan cheklanamiz —
+                        // ilovaning boshqa joylarida ishlatiladigan
+                        // `showAppAlert` naqshi bilan bir xil.
+                        if (wasDifferent && screenContext.mounted) {
+                          showAppAlert(
+                            screenContext,
+                            AppLocalizations.of(screenContext)
+                                .languageUpdatedMessage,
+                            kind: AppAlertKind.success,
+                          );
+                        }
                       },
                     );
                   }),

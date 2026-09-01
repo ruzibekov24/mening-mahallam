@@ -457,6 +457,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get languageSettingTitle => 'Язык';
 
   @override
+  String get languageUpdatedMessage => 'Язык изменён';
+
+  @override
   String get appearanceSettingTitle => 'Вид';
 
   @override
