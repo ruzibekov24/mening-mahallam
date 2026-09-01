@@ -350,6 +350,8 @@ class _RequestCard extends StatelessWidget {
     return AppCard(
       onTap: onTap,
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
+      elevated: false,
+      hairlineBorder: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

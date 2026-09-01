@@ -6,6 +6,7 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Tizimga kirgan holda parolni almashtirish — joriy parolni bilgan
 /// foydalanuvchi uchun. ("Parolni unutdim" oqimidan farqli — u
@@ -71,11 +72,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           children: [
             Row(
               children: [
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  padding: EdgeInsets.zero,
-                ),
+                const LiquidGlassBackButton(),
                 const SizedBox(width: AppSpacing.xs),
                 Text(l10n.changePasswordTitle, style: context.titleStyle),
               ],

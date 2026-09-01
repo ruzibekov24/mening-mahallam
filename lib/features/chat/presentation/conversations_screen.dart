@@ -11,6 +11,7 @@ import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/girih_header.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../core/widgets/user_avatar.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/chat_providers.dart';
 import '../data/chat_repository.dart';
@@ -51,11 +52,7 @@ class ConversationsScreen extends ConsumerWidget {
               watermarkIcon: PhosphorIconsFill.chatDots,
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft,
-                        color: Colors.white),
-                  ),
+                  LiquidGlassBackButton(iconColor: Colors.white),
                   const SizedBox(width: AppSpacing.xs),
                   Text(l10n.conversationsTitle,
                       style: context.titleStyle.copyWith(color: Colors.white)),

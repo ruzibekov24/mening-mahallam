@@ -631,6 +631,26 @@ class AppLocalizationsUz extends AppLocalizations {
   String get feedbackSubmittedMessage => 'Rahmat! Fikringiz yuborildi';
 
   @override
+  String get feedbackModeRatingTab => 'Baho qoldirish';
+
+  @override
+  String get feedbackModeQuestionTab => 'Savol / Murojaat';
+
+  @override
+  String get feedbackQuestionTitle => 'Savol yoki murojaat';
+
+  @override
+  String get feedbackQuestionSubtitle =>
+      'Savolingizni yoki murojaatingizni yozing — superadmin ko\'rib chiqadi va zarur bo\'lsa aloqaga chiqadi.';
+
+  @override
+  String get feedbackQuestionMessageHint =>
+      'Savolingiz yoki murojaatingizni shu yerga yozing...';
+
+  @override
+  String get feedbackQuestionBadge => 'Savol';
+
+  @override
   String get feedbackListTitle => 'Foydalanuvchi fikrlari';
 
   @override
@@ -1946,13 +1966,16 @@ class AppLocalizationsUz extends AppLocalizations {
   String get tapMapHint => 'Xaritani bosib nuqta belgilang';
 
   @override
-  String get assistantScreenTitle => 'AI Yordamchi';
+  String get assistantScreenTitle => 'Mahal';
+
+  @override
+  String get assistantSubtitleLabel => 'AI yordamchi';
 
   @override
   String get assistantInputHint => 'Savolingizni yozing...';
 
   @override
-  String get assistantGreetingTitle => 'Salom! Men AI yordamchiman';
+  String get assistantGreetingTitle => 'Salom! Men Mahalman';
 
   @override
   String get assistantGreetingSubtitle =>
@@ -1976,6 +1999,29 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get assistantLimitUpsellButton => 'Premium haqida';
+
+  @override
+  String get assistantActionOpenFeedback => 'Fikr bildirish';
+
+  @override
+  String get assistantActionOpenServices => 'Xizmatlarni ko\'rish';
+
+  @override
+  String get assistantActionOpenHelp => 'Yordam olish';
+
+  @override
+  String get assistantActionOpenPremium => 'Premium haqida';
+
+  @override
+  String get assistantNewChat => 'Yangi suhbat';
+
+  @override
+  String get assistantDeleteChatTitle => 'Suhbatni o\'chirish';
+
+  @override
+  String assistantDeleteChatMessage(String title) {
+    return '\"$title\" suhbatini butunlay o\'chirmoqchimisiz?';
+  }
 
   @override
   String get notificationPreferencesTitle => 'Bildirishnoma sozlamalari';
@@ -2629,6 +2675,26 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get feedbackSubmittedMessage => 'Раҳмат! Фикрингиз юборилди';
+
+  @override
+  String get feedbackModeRatingTab => 'Баҳо қолдириш';
+
+  @override
+  String get feedbackModeQuestionTab => 'Савол / Мурожаат';
+
+  @override
+  String get feedbackQuestionTitle => 'Савол ёки мурожаат';
+
+  @override
+  String get feedbackQuestionSubtitle =>
+      'Саволингизни ёки мурожаатингизни ёзинг — суперадмин кўриб чиқади ва зарур бўлса алоқага чиқади.';
+
+  @override
+  String get feedbackQuestionMessageHint =>
+      'Саволингиз ёки мурожаатингизни шу ерга ёзинг...';
+
+  @override
+  String get feedbackQuestionBadge => 'Савол';
 
   @override
   String get feedbackListTitle => 'Фойдаланувчи фикрлари';
@@ -3941,13 +4007,16 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
   String get tapMapHint => 'Харитани босиб нуқта белгиланг';
 
   @override
-  String get assistantScreenTitle => 'AI Ёрдамчи';
+  String get assistantScreenTitle => 'Mahal';
+
+  @override
+  String get assistantSubtitleLabel => 'AI ёрдамчи';
 
   @override
   String get assistantInputHint => 'Саволингизни ёзинг...';
 
   @override
-  String get assistantGreetingTitle => 'Салом! Мен AI ёрдамчиман';
+  String get assistantGreetingTitle => 'Салом! Мен Mahalman';
 
   @override
   String get assistantGreetingSubtitle =>
@@ -3971,6 +4040,29 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get assistantLimitUpsellButton => 'Premium ҳақида';
+
+  @override
+  String get assistantActionOpenFeedback => 'Фикр билдириш';
+
+  @override
+  String get assistantActionOpenServices => 'Хизматларни кўриш';
+
+  @override
+  String get assistantActionOpenHelp => 'Ёрдам олиш';
+
+  @override
+  String get assistantActionOpenPremium => 'Premium ҳақида';
+
+  @override
+  String get assistantNewChat => 'Янги суҳбат';
+
+  @override
+  String get assistantDeleteChatTitle => 'Суҳбатни ўчириш';
+
+  @override
+  String assistantDeleteChatMessage(String title) {
+    return '\"$title\" суҳбатини бутунлай ўчирмоқчимисиз?';
+  }
 
   @override
   String get notificationPreferencesTitle => 'Билдиришнома созламалари';

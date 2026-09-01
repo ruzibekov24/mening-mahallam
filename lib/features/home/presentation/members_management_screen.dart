@@ -13,6 +13,7 @@ import '../../../l10n/app_localizations.dart';
 import '../data/home_repository.dart';
 import 'role_styles.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Rais uchun — mahalladagi barcha a'zolarni ko'rish va rolini
 /// o'zgartirish (fuqaro -> xodim -> rais). Faqat role.canManageMembers
@@ -36,10 +37,7 @@ class MembersManagementScreen extends ConsumerWidget {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child: Text(

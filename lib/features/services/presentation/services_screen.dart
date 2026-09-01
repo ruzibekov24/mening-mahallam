@@ -22,6 +22,7 @@ import '../../moderation/presentation/report_sheet.dart';
 import '../data/service_repository.dart';
 import '../data/services_providers.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 String _categoryLabel(AppLocalizations l10n, ServiceCategory category) {
   switch (category) {
@@ -74,11 +75,7 @@ class ServicesScreen extends ConsumerWidget {
               watermarkIcon: PhosphorIconsFill.toolbox,
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft,
-                        color: Colors.white),
-                  ),
+                  LiquidGlassBackButton(iconColor: Colors.white),
                   Expanded(
                     child: Text(l10n.servicesTitle,
                         style:

@@ -15,6 +15,7 @@ import '../../home/data/home_repository.dart';
 import '../../notifications/data/notification_repository.dart';
 import '../data/premium_repository.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Super admin uchun — to'lov qilgan foydalanuvchilarni tasdiqlash.
 class PremiumRequestsScreen extends ConsumerWidget {
@@ -34,10 +35,7 @@ class PremiumRequestsScreen extends ConsumerWidget {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child: Text(l10n.premiumRequestsTitle,

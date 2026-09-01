@@ -629,6 +629,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Thank you! Your feedback has been submitted';
 
   @override
+  String get feedbackModeRatingTab => 'Rate the app';
+
+  @override
+  String get feedbackModeQuestionTab => 'Question / Contact';
+
+  @override
+  String get feedbackQuestionTitle => 'Question or request';
+
+  @override
+  String get feedbackQuestionSubtitle =>
+      'Write your question or request — the superadmin will review it and get back to you if needed.';
+
+  @override
+  String get feedbackQuestionMessageHint =>
+      'Write your question or request here...';
+
+  @override
+  String get feedbackQuestionBadge => 'Question';
+
+  @override
   String get feedbackListTitle => 'User feedback';
 
   @override
@@ -1935,13 +1955,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tapMapHint => 'Tap the map to set a point';
 
   @override
-  String get assistantScreenTitle => 'AI Assistant';
+  String get assistantScreenTitle => 'Mahal';
+
+  @override
+  String get assistantSubtitleLabel => 'AI assistant';
 
   @override
   String get assistantInputHint => 'Type your question...';
 
   @override
-  String get assistantGreetingTitle => 'Hi! I\'m your AI assistant';
+  String get assistantGreetingTitle => 'Hi! I\'m Mahal';
 
   @override
   String get assistantGreetingSubtitle =>
@@ -1966,6 +1989,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantLimitUpsellButton => 'About Premium';
+
+  @override
+  String get assistantActionOpenFeedback => 'Leave feedback';
+
+  @override
+  String get assistantActionOpenServices => 'View services';
+
+  @override
+  String get assistantActionOpenHelp => 'Get help';
+
+  @override
+  String get assistantActionOpenPremium => 'About Premium';
+
+  @override
+  String get assistantNewChat => 'New chat';
+
+  @override
+  String get assistantDeleteChatTitle => 'Delete chat';
+
+  @override
+  String assistantDeleteChatMessage(String title) {
+    return 'Delete the chat \"$title\" permanently?';
+  }
 
   @override
   String get notificationPreferencesTitle => 'Notification preferences';

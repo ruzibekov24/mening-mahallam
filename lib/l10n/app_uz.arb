@@ -299,6 +299,30 @@
   "feedbackMessageHint": "Nima yoqdi, nimani yaxshilash kerak?",
   "feedbackSubmitButton": "Yuborish",
   "feedbackSubmittedMessage": "Rahmat! Fikringiz yuborildi",
+  "feedbackModeRatingTab": "Baho qoldirish",
+  "@feedbackModeRatingTab": {
+    "description": "Fikr-mulohaza ekranidagi rejim almashtirgichning 'baho qoldirish' segmenti"
+  },
+  "feedbackModeQuestionTab": "Savol / Murojaat",
+  "@feedbackModeQuestionTab": {
+    "description": "Fikr-mulohaza ekranidagi rejim almashtirgichning 'savol/murojaat' segmenti"
+  },
+  "feedbackQuestionTitle": "Savol yoki murojaat",
+  "@feedbackQuestionTitle": {
+    "description": "Fikr-mulohaza ekrani 'savol/murojaat' rejimidagi sarlavha"
+  },
+  "feedbackQuestionSubtitle": "Savolingizni yoki murojaatingizni yozing — superadmin ko'rib chiqadi va zarur bo'lsa aloqaga chiqadi.",
+  "@feedbackQuestionSubtitle": {
+    "description": "Fikr-mulohaza ekrani 'savol/murojaat' rejimidagi tavsif matni"
+  },
+  "feedbackQuestionMessageHint": "Savolingiz yoki murojaatingizni shu yerga yozing...",
+  "@feedbackQuestionMessageHint": {
+    "description": "Fikr-mulohaza ekrani 'savol/murojaat' rejimidagi matn maydonining placeholder matni"
+  },
+  "feedbackQuestionBadge": "Savol",
+  "@feedbackQuestionBadge": {
+    "description": "Fikrlar ro'yxatida (super admin uchun) 'savol/murojaat' rejimida yuborilgan yozuvni ajratib ko'rsatuvchi kichik belgi matni"
+  },
   "feedbackListTitle": "Foydalanuvchi fikrlari",
   "noFeedbackFound": "Hozircha fikrlar yo'q",
   "unknownUserLabel": "Noma'lum foydalanuvchi",
@@ -1180,17 +1204,21 @@
   "@tapMapHint": {
     "description": "Joylashuv tanlash xaritasi ustidagi ko'rsatma matni"
   },
-  "assistantScreenTitle": "AI Yordamchi",
+  "assistantScreenTitle": "Mahal",
   "@assistantScreenTitle": {
-    "description": "AI Yordamchi ekrani sarlavhasi; shu matn Sozlamalar ekranidagi menyu bandida ham ishlatiladi"
+    "description": "AI Yordamchi ekrani sarlavhasi; shu matn Sozlamalar ekranidagi menyu bandida ham ishlatiladi. \"Mahal\" — yordamchining brend nomi, \"Mening Mahallam\" kabi barcha tillarda tarjima qilinmasdan aynan shu holicha qoladi"
+  },
+  "assistantSubtitleLabel": "AI yordamchi",
+  "@assistantSubtitleLabel": {
+    "description": "AI Yordamchi ekrani sarlavhasi (\"Mahal\") ostidagi kichik tavsif yozuvi — brend nomidan farqli, bu oddiy tavsif so'zi bo'lgani uchun har bir tilda tarjima qilinadi"
   },
   "assistantInputHint": "Savolingizni yozing...",
   "@assistantInputHint": {
     "description": "AI Yordamchi ekranidagi xabar kiritish maydonining placeholder matni"
   },
-  "assistantGreetingTitle": "Salom! Men AI yordamchiman",
+  "assistantGreetingTitle": "Salom! Men Mahalman",
   "@assistantGreetingTitle": {
-    "description": "AI Yordamchi ekrani hali xabar yo'q holatidagi salomlashuv sarlavhasi"
+    "description": "AI Yordamchi ekrani hali xabar yo'q holatidagi salomlashuv sarlavhasi — yordamchi nomi (\"Mahal\")ni tilga oladi"
   },
   "assistantGreetingSubtitle": "Mahalla haqida savollaringizga javob berishga, ilovadan foydalanishga yordam berishga tayyorman.",
   "@assistantGreetingSubtitle": {
@@ -1219,6 +1247,39 @@
   "assistantLimitUpsellButton": "Premium haqida",
   "@assistantLimitUpsellButton": {
     "description": "AI Yordamchi limit taklif kartochkasidagi, Premium ekraniga o'tuvchi tugma matni"
+  },
+  "assistantActionOpenFeedback": "Fikr bildirish",
+  "@assistantActionOpenFeedback": {
+    "description": "AI Yordamchi javobi ostida ko'rinadigan, Fikr-mulohaza ekraniga o'tuvchi tugma matni"
+  },
+  "assistantActionOpenServices": "Xizmatlarni ko'rish",
+  "@assistantActionOpenServices": {
+    "description": "AI Yordamchi javobi ostida ko'rinadigan, Xizmatlar ekraniga o'tuvchi tugma matni"
+  },
+  "assistantActionOpenHelp": "Yordam olish",
+  "@assistantActionOpenHelp": {
+    "description": "AI Yordamchi javobi ostida ko'rinadigan, Yordam ekraniga o'tuvchi tugma matni"
+  },
+  "assistantActionOpenPremium": "Premium haqida",
+  "@assistantActionOpenPremium": {
+    "description": "AI Yordamchi javobi ostida ko'rinadigan, Premium ekraniga o'tuvchi tugma matni"
+  },
+  "assistantNewChat": "Yangi suhbat",
+  "@assistantNewChat": {
+    "description": "AI Yordamchi sidebar'idagi yangi (bo'sh) suhbat boshlash tugmasi matni"
+  },
+  "assistantDeleteChatTitle": "Suhbatni o'chirish",
+  "@assistantDeleteChatTitle": {
+    "description": "AI Yordamchi sidebar'idagi suhbatni o'chirish tasdiqlash dialogining sarlavhasi"
+  },
+  "assistantDeleteChatMessage": "\"{title}\" suhbatini butunlay o'chirmoqchimisiz?",
+  "@assistantDeleteChatMessage": {
+    "description": "AI Yordamchi sidebar'idagi suhbatni o'chirish tasdiqlash dialogining matni",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
   },
   "notificationPreferencesTitle": "Bildirishnoma sozlamalari",
   "@notificationPreferencesTitle": {

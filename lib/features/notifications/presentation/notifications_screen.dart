@@ -7,6 +7,7 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/shimmer.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/notification_repository.dart';
 
@@ -81,10 +82,7 @@ class NotificationsScreen extends ConsumerWidget {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child: Text(l10n.notificationsMenuItem,

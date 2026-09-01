@@ -17,6 +17,7 @@ import '../../../core/widgets/shimmer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/promo_banner_repository.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Super admin uchun: bosh ekrandagi aylanuvchi bannerlarni
 /// qo'shish/o'chirish.
@@ -37,10 +38,7 @@ class BannerManagementScreen extends ConsumerWidget {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child: Text(l10n.bannerManagementTitle,

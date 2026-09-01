@@ -10,6 +10,7 @@ import '../../qr/data/mahalla_repository.dart';
 import '../data/announcements_providers.dart';
 import '../data/event_repository.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Yangi tadbir yaratish (yoki mavjudini tahrirlash) ekrani — faqat
 /// xodim/rais uchun ochiladi (announcements_screen.dart'da
@@ -154,10 +155,7 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Text(_isEditing ? l10n.editEventTitle : l10n.newEventTitle,
                       style: context.titleStyle),

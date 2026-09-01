@@ -22,6 +22,7 @@ import '../data/requests_labels.dart';
 import '../data/requests_repository.dart';
 import 'request_styles.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Bitta murojaatning to'liq tafsilotlari — sarlavha, tavsif,
 /// rasmlar, holat va (ommaviy bo'lsa) qo'shilish tugmasi.
@@ -392,10 +393,7 @@ class _BackHeader extends StatelessWidget {
           AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
       child: Row(
         children: [
-          IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(PhosphorIconsRegular.arrowLeft),
-          ),
+          const LiquidGlassBackButton(),
           const SizedBox(width: AppSpacing.xs),
           Expanded(child: Text(title, style: context.titleStyle)),
           if (trailing != null) trailing!,

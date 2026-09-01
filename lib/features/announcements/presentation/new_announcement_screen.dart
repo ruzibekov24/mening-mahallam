@@ -19,6 +19,7 @@ import '../data/announcement_repository.dart';
 import '../data/announcements_providers.dart';
 import 'announcement_styles.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 String _categoryLabel(AppLocalizations l10n, AnnouncementCategory category) {
   switch (category) {
@@ -180,10 +181,7 @@ class _NewAnnouncementScreenState
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
                       _isEditing

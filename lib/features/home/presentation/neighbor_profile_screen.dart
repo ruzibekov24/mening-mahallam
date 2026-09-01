@@ -18,6 +18,7 @@ import '../../profile/data/profile_banners.dart';
 import '../data/home_repository.dart';
 import 'role_styles.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Bitta qo'shnining profilini ko'rsatadi — qo'ng'iroq qilish va
 /// ilova ichida xabar yozish (chat) imkoniyati bilan.
@@ -107,10 +108,7 @@ class NeighborProfileScreen extends ConsumerWidget {
                       AppSpacing.xs, AppSpacing.lg, AppSpacing.xs),
                   child: Row(
                     children: [
-                      IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                      ),
+                      const LiquidGlassBackButton(),
                       const Spacer(),
                       PopupMenuButton<String>(
                         icon:

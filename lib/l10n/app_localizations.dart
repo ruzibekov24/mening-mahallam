@@ -1247,6 +1247,42 @@ abstract class AppLocalizations {
   /// **'Rahmat! Fikringiz yuborildi'**
   String get feedbackSubmittedMessage;
 
+  /// Fikr-mulohaza ekranidagi rejim almashtirgichning 'baho qoldirish' segmenti
+  ///
+  /// In uz, this message translates to:
+  /// **'Baho qoldirish'**
+  String get feedbackModeRatingTab;
+
+  /// Fikr-mulohaza ekranidagi rejim almashtirgichning 'savol/murojaat' segmenti
+  ///
+  /// In uz, this message translates to:
+  /// **'Savol / Murojaat'**
+  String get feedbackModeQuestionTab;
+
+  /// Fikr-mulohaza ekrani 'savol/murojaat' rejimidagi sarlavha
+  ///
+  /// In uz, this message translates to:
+  /// **'Savol yoki murojaat'**
+  String get feedbackQuestionTitle;
+
+  /// Fikr-mulohaza ekrani 'savol/murojaat' rejimidagi tavsif matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Savolingizni yoki murojaatingizni yozing — superadmin ko\'rib chiqadi va zarur bo\'lsa aloqaga chiqadi.'**
+  String get feedbackQuestionSubtitle;
+
+  /// Fikr-mulohaza ekrani 'savol/murojaat' rejimidagi matn maydonining placeholder matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Savolingiz yoki murojaatingizni shu yerga yozing...'**
+  String get feedbackQuestionMessageHint;
+
+  /// Fikrlar ro'yxatida (super admin uchun) 'savol/murojaat' rejimida yuborilgan yozuvni ajratib ko'rsatuvchi kichik belgi matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Savol'**
+  String get feedbackQuestionBadge;
+
   /// No description provided for @feedbackListTitle.
   ///
   /// In uz, this message translates to:
@@ -3641,11 +3677,17 @@ abstract class AppLocalizations {
   /// **'Xaritani bosib nuqta belgilang'**
   String get tapMapHint;
 
-  /// AI Yordamchi ekrani sarlavhasi; shu matn Sozlamalar ekranidagi menyu bandida ham ishlatiladi
+  /// AI Yordamchi ekrani sarlavhasi; shu matn Sozlamalar ekranidagi menyu bandida ham ishlatiladi. "Mahal" — yordamchining brend nomi, "Mening Mahallam" kabi barcha tillarda tarjima qilinmasdan aynan shu holicha qoladi
   ///
   /// In uz, this message translates to:
-  /// **'AI Yordamchi'**
+  /// **'Mahal'**
   String get assistantScreenTitle;
+
+  /// AI Yordamchi ekrani sarlavhasi ("Mahal") ostidagi kichik tavsif yozuvi — brend nomidan farqli, bu oddiy tavsif so'zi bo'lgani uchun har bir tilda tarjima qilinadi
+  ///
+  /// In uz, this message translates to:
+  /// **'AI yordamchi'**
+  String get assistantSubtitleLabel;
 
   /// AI Yordamchi ekranidagi xabar kiritish maydonining placeholder matni
   ///
@@ -3653,10 +3695,10 @@ abstract class AppLocalizations {
   /// **'Savolingizni yozing...'**
   String get assistantInputHint;
 
-  /// AI Yordamchi ekrani hali xabar yo'q holatidagi salomlashuv sarlavhasi
+  /// AI Yordamchi ekrani hali xabar yo'q holatidagi salomlashuv sarlavhasi — yordamchi nomi ("Mahal")ni tilga oladi
   ///
   /// In uz, this message translates to:
-  /// **'Salom! Men AI yordamchiman'**
+  /// **'Salom! Men Mahalman'**
   String get assistantGreetingTitle;
 
   /// AI Yordamchi ekrani hali xabar yo'q holatidagi salomlashuv tavsifi
@@ -3700,6 +3742,48 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Premium haqida'**
   String get assistantLimitUpsellButton;
+
+  /// AI Yordamchi javobi ostida ko'rinadigan, Fikr-mulohaza ekraniga o'tuvchi tugma matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Fikr bildirish'**
+  String get assistantActionOpenFeedback;
+
+  /// AI Yordamchi javobi ostida ko'rinadigan, Xizmatlar ekraniga o'tuvchi tugma matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmatlarni ko\'rish'**
+  String get assistantActionOpenServices;
+
+  /// AI Yordamchi javobi ostida ko'rinadigan, Yordam ekraniga o'tuvchi tugma matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Yordam olish'**
+  String get assistantActionOpenHelp;
+
+  /// AI Yordamchi javobi ostida ko'rinadigan, Premium ekraniga o'tuvchi tugma matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Premium haqida'**
+  String get assistantActionOpenPremium;
+
+  /// AI Yordamchi sidebar'idagi yangi (bo'sh) suhbat boshlash tugmasi matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi suhbat'**
+  String get assistantNewChat;
+
+  /// AI Yordamchi sidebar'idagi suhbatni o'chirish tasdiqlash dialogining sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'Suhbatni o\'chirish'**
+  String get assistantDeleteChatTitle;
+
+  /// AI Yordamchi sidebar'idagi suhbatni o'chirish tasdiqlash dialogining matni
+  ///
+  /// In uz, this message translates to:
+  /// **'\"{title}\" suhbatini butunlay o\'chirmoqchimisiz?'**
+  String assistantDeleteChatMessage(String title);
 
   /// Bildirishnoma turlari sozlash ekrani sarlavhasi; Sozlamalar ekranidagi shu ekranga o'tish bandining sarlavhasi sifatida ham ishlatiladi
   ///

@@ -8,12 +8,13 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/girih_header.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../core/widgets/no_mahalla_view.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../announcements/data/announcements_providers.dart';
-import '../../assistant/presentation/assistant_chats_list_screen.dart';
+import '../../assistant/presentation/assistant_screen.dart';
 import '../../banners/data/promo_banner_repository.dart';
 import '../../banners/presentation/promo_banner_carousel.dart';
 import '../../chat/data/chat_providers.dart';
@@ -134,45 +135,29 @@ class HomeScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    TapScale(
-                      onTap: () => AppPageRoute.push(
-                          context, const AssistantChatsListScreen()),
-                      borderRadius: AppRadius.smAll,
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        margin: const EdgeInsets.only(right: AppSpacing.sm),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.18),
-                          borderRadius: AppRadius.smAll,
-                        ),
-                        child: const Icon(
-                          PhosphorIconsFill.sparkle,
-                          color: Colors.white,
-                          size: 22,
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: AppSpacing.sm),
+                      child: LiquidGlassCircleButton(
+                        icon: PhosphorIconsFill.sparkle,
+                        iconColor: Colors.white,
+                        diameter: 44,
+                        iconSize: 22,
+                        onTap: () => AppPageRoute.push(
+                            context, const AssistantScreen()),
                       ),
                     ),
-                    TapScale(
-                      onTap: () => AppPageRoute.push(
-                          context, const ConversationsScreen()),
-                      borderRadius: AppRadius.smAll,
+                    Padding(
+                      padding: const EdgeInsets.only(right: AppSpacing.sm),
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          Container(
-                            width: 44,
-                            height: 44,
-                            margin: const EdgeInsets.only(right: AppSpacing.sm),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.18),
-                              borderRadius: AppRadius.smAll,
-                            ),
-                            child: const Icon(
-                              PhosphorIconsFill.chatDots,
-                              color: Colors.white,
-                              size: 22,
-                            ),
+                          LiquidGlassCircleButton(
+                            icon: PhosphorIconsFill.chatDots,
+                            iconColor: Colors.white,
+                            diameter: 44,
+                            iconSize: 22,
+                            onTap: () => AppPageRoute.push(
+                                context, const ConversationsScreen()),
                           ),
                           Consumer(
                             builder: (context, ref, _) {
@@ -181,7 +166,7 @@ class HomeScreen extends ConsumerWidget {
                               final count = unreadAsync.valueOrNull ?? 0;
                               if (count == 0) return const SizedBox.shrink();
                               return Positioned(
-                                right: AppSpacing.sm - 2,
+                                right: -2,
                                 top: -2,
                                 child: Container(
                                   padding: const EdgeInsets.all(3),
@@ -211,25 +196,16 @@ class HomeScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    TapScale(
-                      onTap: () => AppPageRoute.push(
-                          context, const NotificationsScreen()),
-                      borderRadius: AppRadius.smAll,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.18),
-                              borderRadius: AppRadius.smAll,
-                            ),
-                            child: const Icon(
-                              PhosphorIconsFill.bell,
-                              color: Colors.white,
-                              size: 22,
-                            ),
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                          LiquidGlassCircleButton(
+                            icon: PhosphorIconsFill.bell,
+                            iconColor: Colors.white,
+                            diameter: 44,
+                            iconSize: 22,
+                            onTap: () => AppPageRoute.push(
+                                context, const NotificationsScreen()),
                           ),
                           Consumer(
                             builder: (context, ref, _) {
@@ -267,7 +243,6 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -638,6 +613,8 @@ class _StaffCard extends StatelessWidget {
       padding:
           const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: 6),
       color: context.surfaceColor,
+      elevated: false,
+      hairlineBorder: true,
       onTap: () =>
           AppPageRoute.push(context, NeighborProfileScreen(member: member)),
       child: SizedBox(
@@ -752,6 +729,8 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
+      elevated: false,
+      hairlineBorder: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

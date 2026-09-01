@@ -9,6 +9,7 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/shimmer.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../polls/presentation/polls_screen.dart';
 import '../../services/presentation/services_screen.dart';
@@ -126,20 +127,23 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.sm),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   Expanded(
                     child: Container(
-                      height: 50,
+                      height: 44,
                       padding:
                           const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                       decoration: BoxDecoration(
                         color: context.isDarkMode
-                            ? AppColors.darkSurface
-                            : AppColors.lightBorder,
-                        borderRadius: AppRadius.smAll,
+                            ? AppColors.darkSurfaceElevated
+                            : AppColors.lightSurface,
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(
+                          color: context.isDarkMode
+                              ? Colors.white.withValues(alpha: 0.10)
+                              : Colors.black.withValues(alpha: 0.06),
+                        ),
+                        boxShadow: AppShadows.card(context.isDarkMode),
                       ),
                       child: Row(
                         children: [

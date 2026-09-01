@@ -19,6 +19,12 @@ class AppFeedback {
   /// obuna tugagach eski fikrlar ro'yxatda o'rnini o'zgartirmaydi.
   final bool authorWasPremium;
 
+  /// `true` — bu yozuv "Baho qoldirish" emas, balki "Savol/Murojaat"
+  /// rejimida yuborilgan (yulduzcha bahosiz, superadminga to'g'ridan-
+  /// to'g'ri savol/murojaat sifatida). Admin ro'yxatida buni alohida
+  /// belgi bilan ajratib ko'rsatish uchun ishlatiladi.
+  final bool isQuestion;
+
   AppFeedback({
     required this.id,
     required this.authorUid,
@@ -27,6 +33,7 @@ class AppFeedback {
     required this.message,
     required this.createdAt,
     this.authorWasPremium = false,
+    this.isQuestion = false,
   });
 
   factory AppFeedback.fromFirestore(String id, Map<String, dynamic> data) {
@@ -39,6 +46,7 @@ class AppFeedback {
       message: data['message'] ?? '',
       createdAt: timestamp?.toDate() ?? DateTime.now(),
       authorWasPremium: data['authorWasPremium'] == true,
+      isQuestion: data['isQuestion'] == true,
     );
   }
 }
@@ -56,6 +64,7 @@ class FeedbackRepository {
     required String message,
     required String authorName,
     bool isPremium = false,
+    bool isQuestion = false,
   }) async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) {
@@ -67,6 +76,7 @@ class FeedbackRepository {
       'rating': rating,
       'message': message,
       'authorWasPremium': isPremium,
+      'isQuestion': isQuestion,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }

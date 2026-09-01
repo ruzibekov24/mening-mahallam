@@ -10,6 +10,7 @@ import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/confirm_delete.dart';
 import '../../../core/widgets/girih_header.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../home/data/home_repository.dart';
@@ -70,20 +71,25 @@ class AnnouncementsScreen extends ConsumerWidget {
                       style: context.titleStyle.copyWith(color: Colors.white),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () =>
-                        AppPageRoute.push(context, const PollsScreen()),
-                    icon: const Icon(PhosphorIconsFill.chartBar,
-                        color: Colors.white),
-                    tooltip: l10n.pollsTitle,
+                  Padding(
+                    padding: const EdgeInsets.only(right: AppSpacing.sm),
+                    child: LiquidGlassCircleButton(
+                      icon: PhosphorIconsFill.chartBar,
+                      iconColor: Colors.white,
+                      diameter: 40,
+                      iconSize: 20,
+                      onTap: () =>
+                          AppPageRoute.push(context, const PollsScreen()),
+                    ),
                   ),
                   profileAsync.when(
                     data: (profile) {
                       final canPost = profile?.role.canPost == true &&
                           profile?.mahallaId != null;
                       if (!canPost) return const SizedBox.shrink();
-                      return _AddButton(
+                      return LiquidPillButton(
                         label: l10n.newButton,
+                        icon: PhosphorIconsBold.plus,
                         onTap: () => showEvents
                             ? _openNewEvent(context, profile!.mahallaId!)
                             : _openNewAnnouncement(
@@ -137,51 +143,6 @@ class AnnouncementsScreen extends ConsumerWidget {
                   showEvents ? const _EventsList() : const _AnnouncementsList(),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _AddButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-  const _AddButton({required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: AppRadius.smAll,
-        boxShadow: AppShadows.accent(AppColors.primary, context.isDarkMode),
-      ),
-      child: Material(
-        color: AppColors.primary,
-        borderRadius: AppRadius.smAll,
-        child: InkWell(
-          borderRadius: AppRadius.smAll,
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(PhosphorIconsBold.plus,
-                    size: 16, color: Colors.white),
-                const SizedBox(width: AppSpacing.xs),
-                Text(
-                  label,
-                  style: context.secondaryStyle.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );

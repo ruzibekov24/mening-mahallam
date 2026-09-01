@@ -11,6 +11,7 @@ import '../../moderation/data/report_repository.dart';
 import '../../moderation/presentation/report_sheet.dart';
 import '../data/chat_providers.dart';
 import '../data/group_chat_repository.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Guruh chati ekrani — 1:1 `ChatScreen`ga o'xshash, lekin har bir
 /// xabar ustida (o'zimniki bo'lmasa) yuboruvchining ismi ko'rsatiladi,
@@ -75,10 +76,7 @@ class _GroupChatScreenState extends ConsumerState<GroupChatScreen> {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Container(
                     width: 36,

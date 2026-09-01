@@ -9,6 +9,7 @@ import '../../../core/widgets/app_alert.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../core/widgets/user_avatar.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../home/data/home_repository.dart';
 import '../data/group_chat_repository.dart';
@@ -94,10 +95,7 @@ class _NewGroupScreenState extends ConsumerState<NewGroupScreen> {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Text(l10n.createGroupAction, style: context.titleStyle),
                 ],

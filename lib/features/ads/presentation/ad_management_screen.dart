@@ -13,6 +13,7 @@ import '../../../core/widgets/uz_phone_input_formatter.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/service_ad_repository.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Super admin uchun — mahalladagi xizmat reklamalarini boshqarish.
 class AdManagementScreen extends ConsumerWidget {
@@ -38,10 +39,7 @@ class AdManagementScreen extends ConsumerWidget {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child:

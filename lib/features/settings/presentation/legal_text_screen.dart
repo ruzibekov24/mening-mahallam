@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// "Foydalanish shartlari" va "Maxfiylik siyosati" uchun umumiy
 /// ko'rinishdagi statik matn ekrani.
@@ -26,11 +26,7 @@ class LegalTextScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  padding: EdgeInsets.zero,
-                ),
+                const LiquidGlassBackButton(),
                 const SizedBox(width: AppSpacing.xs),
                 Expanded(child: Text(title, style: context.titleStyle)),
               ],

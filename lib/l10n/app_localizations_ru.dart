@@ -631,6 +631,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String get feedbackSubmittedMessage => 'Спасибо! Ваш отзыв отправлен';
 
   @override
+  String get feedbackModeRatingTab => 'Оценить приложение';
+
+  @override
+  String get feedbackModeQuestionTab => 'Вопрос / Обращение';
+
+  @override
+  String get feedbackQuestionTitle => 'Вопрос или обращение';
+
+  @override
+  String get feedbackQuestionSubtitle =>
+      'Напишите свой вопрос или обращение — суперадмин рассмотрит его и при необходимости свяжется с вами.';
+
+  @override
+  String get feedbackQuestionMessageHint =>
+      'Напишите здесь свой вопрос или обращение...';
+
+  @override
+  String get feedbackQuestionBadge => 'Вопрос';
+
+  @override
   String get feedbackListTitle => 'Отзывы пользователей';
 
   @override
@@ -1939,13 +1959,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get tapMapHint => 'Нажмите на карту, чтобы указать точку';
 
   @override
-  String get assistantScreenTitle => 'ИИ Помощник';
+  String get assistantScreenTitle => 'Mahal';
+
+  @override
+  String get assistantSubtitleLabel => 'ИИ-помощник';
 
   @override
   String get assistantInputHint => 'Напишите ваш вопрос...';
 
   @override
-  String get assistantGreetingTitle => 'Привет! Я ИИ-помощник';
+  String get assistantGreetingTitle => 'Привет! Я Mahal';
 
   @override
   String get assistantGreetingSubtitle =>
@@ -1969,6 +1992,29 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get assistantLimitUpsellButton => 'О Premium';
+
+  @override
+  String get assistantActionOpenFeedback => 'Оставить отзыв';
+
+  @override
+  String get assistantActionOpenServices => 'Посмотреть услуги';
+
+  @override
+  String get assistantActionOpenHelp => 'Получить помощь';
+
+  @override
+  String get assistantActionOpenPremium => 'О Premium';
+
+  @override
+  String get assistantNewChat => 'Новый чат';
+
+  @override
+  String get assistantDeleteChatTitle => 'Удалить чат';
+
+  @override
+  String assistantDeleteChatMessage(String title) {
+    return 'Удалить чат «$title» без возможности восстановления?';
+  }
 
   @override
   String get notificationPreferencesTitle => 'Настройки уведомлений';

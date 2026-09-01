@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../core/widgets/settings_tile.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../core/widgets/user_avatar.dart';
@@ -34,11 +35,7 @@ class PrivacySecurityScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  padding: EdgeInsets.zero,
-                ),
+                const LiquidGlassBackButton(),
                 const SizedBox(width: AppSpacing.xs),
                 Text(l10n.privacySecurityTitle, style: context.titleStyle),
               ],
@@ -61,9 +58,8 @@ class PrivacySecurityScreen extends ConsumerWidget {
                           iconColor: AppAccents.announcements,
                           title: l10n.showLastSeenTitle,
                           subtitle: l10n.showLastSeenSubtitle,
-                          trailing: Switch(
+                          trailing: LiquidToggleSwitch(
                             value: profile.lastSeenVisible,
-                            activeThumbColor: AppColors.primary,
                             onChanged: (value) => ref
                                 .read(homeRepositoryProvider)
                                 .setLastSeenVisible(value),
@@ -74,9 +70,8 @@ class PrivacySecurityScreen extends ConsumerWidget {
                           iconColor: AppAccents.requests,
                           title: l10n.showPhoneToNeighborsTitle,
                           subtitle: l10n.showPhoneToNeighborsSubtitle,
-                          trailing: Switch(
+                          trailing: LiquidToggleSwitch(
                             value: profile.phoneVisible,
-                            activeThumbColor: AppColors.primary,
                             onChanged: (value) => ref
                                 .read(homeRepositoryProvider)
                                 .setPhoneVisible(value),
@@ -173,10 +168,7 @@ class BlockedUsersScreen extends ConsumerWidget {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Text(l10n.blockedUsersTitle, style: context.titleStyle),
                 ],

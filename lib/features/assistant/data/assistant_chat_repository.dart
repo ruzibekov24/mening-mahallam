@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Bitta saqlangan AI suhbatining ro'yxatdagi ko'rinishi (sarlavha +
 /// oxirgi yangilanish vaqti) — to'liq xabarlar emas, faqat
-/// `AssistantChatsListScreen` uchun kerakli maydonlar.
+/// `AssistantSidebar` uchun kerakli maydonlar.
 class AssistantChatSummary {
   final String id;
   final String title;
@@ -137,6 +137,21 @@ class AssistantChatRepository {
       'createdAt': FieldValue.serverTimestamp(),
     });
     await chatRef.update({'updatedAt': FieldValue.serverTimestamp()});
+  }
+
+  /// AI-generated qisqa sarlavhani (`mahallam-title` bloki, ekran
+  /// `_send()`ida ajratib olinadi) saqlaydi — suhbatning har bir yangi
+  /// xabaridan emas, faqat SUHBATNING BIRINCHI javobidan keyin
+  /// chaqiriladi. `addMessage`dagi kabi jim (fire-and-forget) —
+  /// sarlavha ixtiyoriy qulaylik, suhbatning o'zini to'sib qo'ymasligi
+  /// kerak.
+  Future<void> updateTitle(String chatId, String title) async {
+    final uid = _uid;
+    if (uid == null) return;
+    await _chatsCol(uid).doc(chatId).update({
+      'title': title,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   Future<void> deleteChat(String chatId) async {

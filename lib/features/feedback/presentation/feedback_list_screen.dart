@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/shimmer.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/feedback_repository.dart';
 
@@ -33,10 +35,7 @@ class FeedbackListScreen extends ConsumerWidget {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Text(l10n.feedbackListTitle, style: context.titleStyle),
                 ],
@@ -65,19 +64,45 @@ class FeedbackListScreen extends ConsumerWidget {
                           children: [
                             Row(
                               children: [
-                                Row(
-                                  children: List.generate(5, (i) {
-                                    return Icon(
-                                      i < item.rating
-                                          ? PhosphorIconsFill.star
-                                          : PhosphorIconsRegular.star,
-                                      size: 16,
-                                      color: i < item.rating
-                                          ? AppAccents.events
-                                          : context.textMuted,
-                                    );
-                                  }),
-                                ),
+                                if (item.isQuestion)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: AppSpacing.sm,
+                                        vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary
+                                          .withValues(alpha: 0.12),
+                                      borderRadius: AppRadius.pillAll,
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                            PhosphorIconsFill.chatCircleText,
+                                            size: 12,
+                                            color: AppColors.primary),
+                                        const SizedBox(width: 4),
+                                        Text(l10n.feedbackQuestionBadge,
+                                            style: context.captionStyle.copyWith(
+                                                color: AppColors.primary,
+                                                fontWeight: FontWeight.w600)),
+                                      ],
+                                    ),
+                                  )
+                                else
+                                  Row(
+                                    children: List.generate(5, (i) {
+                                      return Icon(
+                                        i < item.rating
+                                            ? PhosphorIconsFill.star
+                                            : PhosphorIconsRegular.star,
+                                        size: 16,
+                                        color: i < item.rating
+                                            ? AppAccents.events
+                                            : context.textMuted,
+                                      );
+                                    }),
+                                  ),
                                 const Spacer(),
                                 Text(_formatDate(item.createdAt),
                                     style: context.captionStyle),

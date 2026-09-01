@@ -9,6 +9,7 @@ import '../../../l10n/app_localizations.dart';
 import '../data/phone_verification_repository.dart';
 import 'telegram_verify_screen.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// "Parolni unutdim" oqimining birinchi qadami: telefon raqamni
 /// kiritish. Keyin TelegramVerifyScreen'ga o'tadi, u yerda
@@ -85,12 +86,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: AppSpacing.xs),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  padding: EdgeInsets.zero,
-                  alignment: Alignment.centerLeft,
-                ),
+                const LiquidGlassBackButton(),
                 const SizedBox(height: AppSpacing.xl),
                 Container(
                   width: 64,
@@ -218,12 +214,7 @@ class _NewPasswordScreenState extends ConsumerState<_NewPasswordScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: AppSpacing.xs),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  padding: EdgeInsets.zero,
-                  alignment: Alignment.centerLeft,
-                ),
+                const LiquidGlassBackButton(),
                 const SizedBox(height: AppSpacing.xl),
                 Text(l10n.newPasswordTitle, style: context.displayStyle),
                 const SizedBox(height: AppSpacing.xs),

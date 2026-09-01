@@ -12,6 +12,7 @@ import '../data/auth_repository.dart';
 import '../data/phone_verification_repository.dart';
 import 'telegram_verify_screen.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// 6. RO'YXATDAN O'TISH (REGISTER) ekrani.
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -154,32 +155,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: AppSpacing.xs),
-                    Container(
-                      width: 42,
-                      height: 42,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: AppRadius.smAll,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.12),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          if (context.canPop()) {
-                            context.pop();
-                          } else {
-                            context.go(AppRoutes.login);
-                          }
-                        },
-                        icon: const Icon(PhosphorIconsRegular.arrowLeft, size: 20),
-                        padding: EdgeInsets.zero,
-                      ),
-                    ),
+                    LiquidGlassBackButton(onTap: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go(AppRoutes.login);
+                      }
+                    }),
                     const SizedBox(height: AppSpacing.xxxl),
                     Text(
                       l10n.registerTitle,

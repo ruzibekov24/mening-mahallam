@@ -14,6 +14,7 @@ import '../data/announcements_providers.dart';
 import '../data/event_repository.dart';
 import 'new_event_screen.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Bitta tadbirning to'liq tafsilotlari — sarlavha, sana/vaqt,
 /// joylashuv, ishtirokchilar, to'liq tavsif. `request_detail_screen.dart`
@@ -279,10 +280,7 @@ class _BackHeader extends StatelessWidget {
           AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
       child: Row(
         children: [
-          IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(PhosphorIconsRegular.arrowLeft),
-          ),
+          const LiquidGlassBackButton(),
           const SizedBox(width: AppSpacing.xs),
           Expanded(child: Text(title, style: context.titleStyle)),
           if (trailing != null) trailing!,

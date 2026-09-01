@@ -9,6 +9,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../auth/data/phone_verification_repository.dart';
 import '../../auth/presentation/telegram_verify_screen.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Telefon raqamni almashtirish: joriy parol bilan tasdiqlash, so'ng
 /// yangi raqamni Telegram bot orqali tasdiqlash — ro'yxatdan o'tish
@@ -105,11 +106,7 @@ class _ChangePhoneScreenState extends ConsumerState<ChangePhoneScreen> {
           children: [
             Row(
               children: [
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  padding: EdgeInsets.zero,
-                ),
+                const LiquidGlassBackButton(),
                 const SizedBox(width: AppSpacing.xs),
                 Text(l10n.changePhoneTitle, style: context.titleStyle),
               ],

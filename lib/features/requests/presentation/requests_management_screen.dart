@@ -14,6 +14,7 @@ import '../../home/data/home_repository.dart';
 import '../data/requests_labels.dart';
 import '../data/requests_repository.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Xodim/rais uchun Boshqaruv paneli — mahalladagi barcha (maxfiy +
 /// ommaviy) murojaatlarni ko'rish va holatini o'zgartirish imkoniyati.
@@ -215,10 +216,7 @@ class _RequestsManagementScreenState
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Text(l10n.managementPanelTitle, style: context.titleStyle),
                 ],

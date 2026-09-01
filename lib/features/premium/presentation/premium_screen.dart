@@ -13,6 +13,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../home/data/home_repository.dart';
 import '../data/premium_repository.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Premium obuna ekrani — imkoniyatlar ro'yxati, narx, karta orqali
 /// to'lash oqimi va amaldagi holat.
@@ -39,11 +40,7 @@ class PremiumScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  padding: EdgeInsets.zero,
-                ),
+                const LiquidGlassBackButton(),
                 const SizedBox(width: AppSpacing.xs),
                 Expanded(
                   child: Text(l10n.premiumTitle, style: context.titleStyle),

@@ -111,6 +111,10 @@ async function handleChat(request, env) {
   }
 
   const appContext = await resolveAppContext(env);
+  // No history (or an empty one) means this is the first exchange of a
+  // brand-new chat — the only time the model should emit the
+  // `mahallam-title` block (see lib/workersAi.js).
+  const isFirstMessage = !body.history || body.history.length === 0;
 
   const reply = await generateReply(env, {
     message: body.message.trim(),
@@ -123,6 +127,7 @@ async function handleChat(request, env) {
     // and shared across every user's request, while premium status is
     // per-request/per-uid.
     isPremium,
+    isFirstMessage,
   });
 
   return jsonResponse({ reply }, 200, env);

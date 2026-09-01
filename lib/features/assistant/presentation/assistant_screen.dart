@@ -9,25 +9,30 @@ import '../../../core/router/app_page_route.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../feedback/presentation/feedback_screen.dart';
 import '../../home/data/home_repository.dart';
 import '../../language/data/language_repository.dart';
 import '../../premium/presentation/premium_screen.dart';
+import '../../profile/presentation/help_screen.dart';
 import '../../requests/data/requests_repository.dart';
 import '../../requests/presentation/new_request_flow_screen.dart';
+import '../../services/presentation/services_screen.dart';
 import '../data/assistant_chat_repository.dart';
 import '../data/assistant_repository.dart';
+import 'assistant_sidebar.dart';
 
 /// Bitta ko'rsatiladigan xabar — foydalanuvchidan yoki AI'dan. Ekranda
 /// xotirada tutiladi (tezkor render uchun); Firestore'ga yozish/o'qish
 /// [AssistantChatRepository] orqali, shu ro'yxatga parallel ravishda
 /// amalga oshiriladi — 'AI Yordamchi' endi bir martalik emas, har bir
-/// suhbat `AssistantChatsListScreen`da saqlanadi.
+/// suhbat sidebar (`AssistantSidebar`) orqali saqlanadi/almashtiriladi.
 class _DisplayMessage {
   final int id;
   final String text;
   final bool isUser;
-  final _DraftRequestAction? action;
+  final _AssistantAction? action;
   const _DisplayMessage({
     required this.id,
     required this.text,
@@ -36,22 +41,41 @@ class _DisplayMessage {
   });
 }
 
-/// AI javobidagi ```mahallam-action``` blokidan chiqarilgan, "Yangi
-/// murojaat" formasini oldindan to'ldirish uchun kerakli maydonlar —
-/// faqat premium foydalanuvchilar uchun serverda yoqilgan imkoniyat
-/// (`assistant-worker/lib/workersAi.js`dagi `ACTION_BLOCK_HINT_*`ga
-/// qarang). Foydalanuvchi baribir formani ko'rib chiqib, o'zi yuborishi
-/// kerak — AI hech qachon murojaatni to'g'ridan-to'g'ri yaratmaydi.
-class _DraftRequestAction {
-  final String title;
-  final String description;
-  final RequestType type;
-  final RequestPriority priority;
-  const _DraftRequestAction({
-    required this.title,
-    required this.description,
-    required this.type,
-    required this.priority,
+/// AI javobidagi ```mahallam-action``` blokida keladigan harakat turlari —
+/// serverda yoqilgan imkoniyatlar (`assistant-worker/lib/workersAi.js`dagi
+/// `ACTION_BLOCK_HINT_*`/`FREE_ACTION_HINT_*`ga qarang): `createRequest`
+/// va uchta qo'shimcha "sodda" harakat (`open_feedback`/`open_services`/
+/// `open_help`) faqat premium foydalanuvchilarga, `openPremium` esa
+/// faqat premium BO'LMAGANLARGA yuboriladi. Gating serverda amalga
+/// oshirilgani uchun mijoz tomonida qayta tekshirish shart emas —
+/// qaysi harakat kelsa, shuni ko'rsatamiz.
+enum _AssistantActionKind {
+  createRequest,
+  openFeedback,
+  openServices,
+  openHelp,
+  openPremium,
+}
+
+/// AI javobidagi ```mahallam-action``` blokidan chiqarilgan harakat.
+/// `title`/`description`/`type`/`priority` faqat `createRequest` uchun
+/// to'ldiriladi ("Yangi murojaat" formasini oldindan to'ldirish uchun) —
+/// qolgan harakat turlari uchun `data['action']`dan boshqa hech qanday
+/// maydon shart emas. Foydalanuvchi baribir formani ko'rib chiqib, o'zi
+/// yuborishi kerak — AI hech qachon murojaatni to'g'ridan-to'g'ri
+/// yaratmaydi.
+class _AssistantAction {
+  final _AssistantActionKind kind;
+  final String? title;
+  final String? description;
+  final RequestType? type;
+  final RequestPriority? priority;
+  const _AssistantAction({
+    required this.kind,
+    this.title,
+    this.description,
+    this.type,
+    this.priority,
   });
 }
 
@@ -63,7 +87,7 @@ final _actionBlockPattern =
 /// noto'g'ri yoki kutilmagan bo'lsa, xatoni yutib yuboradi va shunchaki
 /// blokni matndan olib tashlab, harakatsiz qaytaradi — buzuq JSON AI
 /// javobining ko'rinishini butunlay yo'q qilib qo'ymasligi kerak.
-({String displayText, _DraftRequestAction? action}) _extractDraftAction(
+({String displayText, _AssistantAction? action}) _extractDraftAction(
     String rawText) {
   final match = _actionBlockPattern.firstMatch(rawText);
   if (match == null) return (displayText: rawText.trim(), action: null);
@@ -74,32 +98,93 @@ final _actionBlockPattern =
 
   try {
     final data = jsonDecode(match.group(1)!.trim());
-    if (data is! Map<String, dynamic> || data['action'] != 'create_request') {
+    if (data is! Map<String, dynamic>) {
       return (displayText: withoutBlock, action: null);
     }
-    final title = (data['title'] as String?)?.trim();
-    final description = (data['description'] as String?)?.trim();
-    if (title == null || title.isEmpty || description == null || description.isEmpty) {
-      return (displayText: withoutBlock, action: null);
+    switch (data['action']) {
+      case 'create_request':
+        final title = (data['title'] as String?)?.trim();
+        final description = (data['description'] as String?)?.trim();
+        if (title == null ||
+            title.isEmpty ||
+            description == null ||
+            description.isEmpty) {
+          return (displayText: withoutBlock, action: null);
+        }
+        final type = data['type'] == 'ommaviy'
+            ? RequestType.ommaviy
+            : RequestType.maxfiy;
+        final priority = switch (data['priority']) {
+          'past' => RequestPriority.past,
+          'yuqori' => RequestPriority.yuqori,
+          _ => RequestPriority.ortacha,
+        };
+        return (
+          displayText: withoutBlock,
+          action: _AssistantAction(
+            kind: _AssistantActionKind.createRequest,
+            title: title,
+            description: description,
+            type: type,
+            priority: priority,
+          ),
+        );
+      case 'open_feedback':
+        return (
+          displayText: withoutBlock,
+          action: const _AssistantAction(kind: _AssistantActionKind.openFeedback),
+        );
+      case 'open_services':
+        return (
+          displayText: withoutBlock,
+          action: const _AssistantAction(kind: _AssistantActionKind.openServices),
+        );
+      case 'open_help':
+        return (
+          displayText: withoutBlock,
+          action: const _AssistantAction(kind: _AssistantActionKind.openHelp),
+        );
+      case 'open_premium':
+        return (
+          displayText: withoutBlock,
+          action: const _AssistantAction(kind: _AssistantActionKind.openPremium),
+        );
+      default:
+        return (displayText: withoutBlock, action: null);
     }
-    final type =
-        data['type'] == 'ommaviy' ? RequestType.ommaviy : RequestType.maxfiy;
-    final priority = switch (data['priority']) {
-      'past' => RequestPriority.past,
-      'yuqori' => RequestPriority.yuqori,
-      _ => RequestPriority.ortacha,
-    };
-    return (
-      displayText: withoutBlock,
-      action: _DraftRequestAction(
-        title: title,
-        description: description,
-        type: type,
-        priority: priority,
-      ),
-    );
   } catch (_) {
     return (displayText: withoutBlock, action: null);
+  }
+}
+
+final _titleBlockPattern =
+    RegExp(r'```mahallam-title\s*\n([\s\S]*?)```', multiLine: true);
+
+/// AI javobidan (agar mavjud bo'lsa — faqat suhbatning BIRINCHI javobida
+/// keladi, `assistant-worker/lib/workersAi.js`dagi `TITLE_BLOCK_HINT_*`ga
+/// qarang) `mahallam-title` blokini ajratib oladi va qolgan matnni (blok
+/// o'chirilgan holda) qaytaradi. `_extractDraftAction` bilan bir xil
+/// naqsh — buzuq JSON bo'lsa xatoni yutib yuboradi, sarlavhasiz qaytaradi.
+({String displayText, String? title}) _extractDraftTitle(String rawText) {
+  final match = _titleBlockPattern.firstMatch(rawText);
+  if (match == null) return (displayText: rawText.trim(), title: null);
+
+  final withoutBlock =
+      (rawText.substring(0, match.start) + rawText.substring(match.end))
+          .trim();
+
+  try {
+    final data = jsonDecode(match.group(1)!.trim());
+    if (data is! Map<String, dynamic>) {
+      return (displayText: withoutBlock, title: null);
+    }
+    final title = (data['title'] as String?)?.trim();
+    if (title == null || title.isEmpty) {
+      return (displayText: withoutBlock, title: null);
+    }
+    return (displayText: withoutBlock, title: title);
+  } catch (_) {
+    return (displayText: withoutBlock, title: null);
   }
 }
 
@@ -127,11 +212,10 @@ String _localeCodeFor(AppLanguage language) {
 class AssistantScreen extends ConsumerStatefulWidget {
   /// `null` bo'lsa — yangi suhbat: birinchi xabar yuborilganda
   /// Firestore'da avtomatik yaratiladi. Mavjud suhbatni ochish uchun
-  /// `AssistantChatsListScreen`dan chatId beriladi.
+  /// `AssistantSidebar`dan chatId beriladi.
   final String? chatId;
-  final String? initialTitle;
 
-  const AssistantScreen({super.key, this.chatId, this.initialTitle});
+  const AssistantScreen({super.key, this.chatId});
 
   @override
   ConsumerState<AssistantScreen> createState() => _AssistantScreenState();
@@ -160,42 +244,77 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
   // ko'rinishi kerak.
   int? _freshReplyId;
 
+  /// Sidebar orqali chatlar orasida ekranni qayta qurmasdan (in-place)
+  /// almashtirish uchun — har bir `_switchToChat`/`_send` chaqiruvi o'z
+  /// "avlodi"ni ushlab turadi va faqat hali ham eng so'nggi avlod
+  /// bo'lsagina natijasini qo'llaydi (poyga holati himoyasi, pastga
+  /// qarang).
+  int _chatGeneration = 0;
+
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
     _chatId = widget.chatId;
-    if (_chatId != null) _loadHistory(_chatId!);
+    if (_chatId != null) {
+      _isLoadingHistory = true;
+      _loadHistoryGuarded(_chatId!, _chatGeneration);
+    }
   }
 
-  Future<void> _loadHistory(String chatId) async {
-    setState(() => _isLoadingHistory = true);
+  /// Berilgan `chatId`ning xabarlar tarixini yuklaydi. `generation`
+  /// chaqirilgan paytdagi `_chatGeneration`ni ushlab turadi — agar
+  /// yuklash tugaguncha foydalanuvchi boshqa suhbatga (yoki yangi
+  /// suhbatga) o'tib ketsa, `_chatGeneration` oshadi va bu yuklashning
+  /// natijasi (eski suhbatning xabarlari) e'tiborsiz qoldiriladi.
+  Future<void> _loadHistoryGuarded(String chatId, int generation) async {
     try {
       final messages = await ref
           .read(assistantChatRepositoryProvider)
           .watchMessages(chatId)
           .first;
-      if (!mounted) return;
+      if (!mounted || generation != _chatGeneration) return;
       setState(() {
         _messages.addAll(messages.map((m) {
           if (m.isUser) {
             return _DisplayMessage(
                 id: _nextMessageId++, text: m.text, isUser: true);
           }
-          final parsed = _extractDraftAction(m.text);
+          final withoutAction = _extractDraftAction(m.text);
+          final withoutTitle = _extractDraftTitle(withoutAction.displayText);
           return _DisplayMessage(
             id: _nextMessageId++,
-            text: parsed.displayText,
+            text: withoutTitle.displayText,
             isUser: false,
-            action: parsed.action,
+            action: withoutAction.action,
           );
         }));
         _isLoadingHistory = false;
       });
       _scrollToBottom();
     } catch (_) {
-      if (!mounted) return;
+      if (!mounted || generation != _chatGeneration) return;
       setState(() => _isLoadingHistory = false);
     }
+  }
+
+  /// Sidebar'dan bir chatni tanlash (yoki `chat == null` — "Yangi
+  /// suhbat"): ekranni butunlay qayta qurish/push qilish o'rniga, hozirgi
+  /// `AssistantScreen`ning holatini shu joyning o'zida almashtiradi.
+  void _switchToChat(AssistantChatSummary? chat) {
+    final myGeneration = ++_chatGeneration;
+    setState(() {
+      _chatId = chat?.id;
+      _messages.clear();
+      _isLoadingHistory = chat != null;
+      _errorText = null;
+      _showLimitUpsell = false;
+      _freshReplyId = null;
+      _nextMessageId = 0;
+      _isSending = false;
+    });
+    if (chat != null) _loadHistoryGuarded(chat.id, myGeneration);
   }
 
   @override
@@ -219,6 +338,13 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
   Future<void> _send() async {
     final text = _textController.text.trim();
     if (text.isEmpty || _isSending) return;
+
+    // Sidebar orqali suhbat almashtirish shu yuborish davom etayotganda
+    // sodir bo'lishi mumkin (masalan javob kutilayotganda) — shu holatda
+    // keyingi `setState`larni (va Firestore yozuvlarini) noto'g'ri
+    // (allaqachon tashlab ketilgan) suhbatga qo'llamaslik uchun.
+    final myGeneration = _chatGeneration;
+    final isFirstMessageOfChat = _chatId == null;
 
     final language = ref.read(languageProvider);
     // Server-tomonidagi "so'nggi ~10 burilish" cheklovi bilan mos —
@@ -247,9 +373,16 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
     // ishlaydi. Bu yozuv Gemini'dan javob kutish bilan bir vaqtda emas,
     // undan OLDIN qilinadi: agar tarmoq keyin uzilib qolsa ham,
     // foydalanuvchining savoli tarixda saqlanib qoladi.
+    String? sendingChatId;
     try {
       _chatId ??= await chatRepo.createChat(firstUserMessage: text);
-      await chatRepo.addMessage(chatId: _chatId!, role: 'user', text: text);
+      // `_chatId` shu `await`dan keyin boshqa (yangiroq) `_switchToChat`
+      // chaqiruvi tomonidan qayta yozilgan bo'lishi mumkin — shuning
+      // uchun keyingi yozuvlar uchun shu yerda mahalliy o'zgaruvchiga
+      // "muzlatib" olinadi, `_chatId`ning o'zi emas.
+      sendingChatId = _chatId;
+      await chatRepo.addMessage(
+          chatId: sendingChatId!, role: 'user', text: text);
     } catch (_) {
       // Tarix saqlanmasa ham suhbatning o'zi davom etaversin —
       // xotira ixtiyoriy qulaylik, AI javobini to'sib qo'ymasligi kerak.
@@ -261,27 +394,34 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
             history: history,
             locale: _localeCodeFor(language),
           );
-      if (!mounted) return;
+      if (!mounted || myGeneration != _chatGeneration) return;
       final replyId = _nextMessageId++;
-      final parsed = _extractDraftAction(reply);
+      final withoutAction = _extractDraftAction(reply);
+      final withoutTitle = _extractDraftTitle(withoutAction.displayText);
       setState(() {
         _messages.add(_DisplayMessage(
           id: replyId,
-          text: parsed.displayText,
+          text: withoutTitle.displayText,
           isUser: false,
-          action: parsed.action,
+          action: withoutAction.action,
         ));
         _isSending = false;
         _freshReplyId = replyId;
       });
       _scrollToBottom();
-      if (_chatId != null) {
+      if (sendingChatId != null) {
         unawaited(
-          chatRepo.addMessage(chatId: _chatId!, role: 'model', text: reply),
+          chatRepo.addMessage(
+              chatId: sendingChatId, role: 'model', text: reply),
         );
+        if (isFirstMessageOfChat && withoutTitle.title != null) {
+          unawaited(
+            chatRepo.updateTitle(sendingChatId, withoutTitle.title!),
+          );
+        }
       }
     } on AssistantException catch (e) {
-      if (!mounted) return;
+      if (!mounted || myGeneration != _chatGeneration) return;
       final isPremium = ref
               .read(currentUserProfileProvider)
               .valueOrNull
@@ -297,7 +437,7 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
         }
       });
     } catch (_) {
-      if (!mounted) return;
+      if (!mounted || myGeneration != _chatGeneration) return;
       setState(() {
         _isSending = false;
         _errorText = "Kutilmagan xatolik yuz berdi. Qayta urinib ko'ring";
@@ -308,18 +448,43 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    // Ilovaning umumiy yorug'/qorong'i mavzusiga mos fon rasmi — majburiy
+    // qorong'i emas, ikkala variant ham tayyorlangan. `BoxFit.cover`
+    // ishlatiladi (naqsh takrorlanuvchi kichik plitka emas, ekranni
+    // to'liq qoplaydigan tayyor kompozitsiya sifatida yasalgan).
+    final bgAsset = context.isDarkMode
+        ? 'assets/images/patterns/assistant_bg_dark.png'
+        : 'assets/images/patterns/assistant_bg_light.png';
     return Scaffold(
-      body: SafeArea(
-        child: Column(
+      key: _scaffoldKey,
+      drawer: Drawer(
+        child: AssistantSidebar(
+          activeChatId: _chatId,
+          onSelectChat: _switchToChat,
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          color: context.isDarkMode ? AppColors.darkBg : AppColors.lightBg,
+          image: DecorationImage(
+            image: AssetImage(bgAsset),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
+                  const LiquidGlassBackButton(),
+                  const SizedBox(width: AppSpacing.xs),
+                  LiquidGlassCircleButton(
+                    icon: PhosphorIconsRegular.list,
+                    diameter: 44,
+                    onTap: () => _scaffoldKey.currentState?.openDrawer(),
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   Container(
@@ -334,11 +499,23 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
-                    child: Text(
-                      widget.initialTitle ?? l10n.assistantScreenTitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.titleStyle,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          l10n.assistantScreenTitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.titleStyle,
+                        ),
+                        Text(
+                          l10n.assistantSubtitleLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.captionStyle,
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -460,6 +637,7 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
               ),
             ),
           ],
+          ),
         ),
       ),
     );
@@ -654,17 +832,65 @@ class _MessageBubble extends ConsumerWidget {
     final mahallaId =
         ref.read(currentUserProfileProvider).valueOrNull?.mahallaId;
     if (mahallaId == null) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => NewRequestFlowScreen(
-          mahallaId: mahallaId,
-          initialTitle: action.title,
-          initialDescription: action.description,
-          initialType: action.type,
-          initialPriority: action.priority,
-        ),
+    AppPageRoute.push(
+      context,
+      NewRequestFlowScreen(
+        mahallaId: mahallaId,
+        initialTitle: action.title,
+        initialDescription: action.description,
+        initialType: action.type,
+        initialPriority: action.priority,
       ),
     );
+  }
+
+  void _dispatchAction(BuildContext context, WidgetRef ref) {
+    final action = message.action;
+    if (action == null) return;
+    switch (action.kind) {
+      case _AssistantActionKind.createRequest:
+        _openDraftRequest(context, ref);
+      case _AssistantActionKind.openFeedback:
+        AppPageRoute.push(
+            context, const FeedbackScreen(startInQuestionMode: true));
+      case _AssistantActionKind.openServices:
+        AppPageRoute.push(context, const ServicesScreen());
+      case _AssistantActionKind.openHelp:
+        AppPageRoute.push(context, const HelpScreen());
+      case _AssistantActionKind.openPremium:
+        AppPageRoute.push(context, const PremiumScreen());
+    }
+  }
+
+  ({IconData icon, String label}) _actionButtonContent(
+      _AssistantActionKind kind, AppLocalizations l10n) {
+    switch (kind) {
+      case _AssistantActionKind.createRequest:
+        return (
+          icon: PhosphorIconsFill.notePencil,
+          label: "Murojaat formasini to'ldirish",
+        );
+      case _AssistantActionKind.openFeedback:
+        return (
+          icon: PhosphorIconsFill.chatCircleText,
+          label: l10n.assistantActionOpenFeedback,
+        );
+      case _AssistantActionKind.openServices:
+        return (
+          icon: PhosphorIconsFill.storefront,
+          label: l10n.assistantActionOpenServices,
+        );
+      case _AssistantActionKind.openHelp:
+        return (
+          icon: PhosphorIconsFill.question,
+          label: l10n.assistantActionOpenHelp,
+        );
+      case _AssistantActionKind.openPremium:
+        return (
+          icon: PhosphorIconsFill.crown,
+          label: l10n.assistantActionOpenPremium,
+        );
+    }
   }
 
   @override
@@ -708,20 +934,24 @@ class _MessageBubble extends ConsumerWidget {
                   ),
           ),
           if (message.action != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-              child: OutlinedButton.icon(
-                onPressed: () => _openDraftRequest(context, ref),
-                icon: const Icon(PhosphorIconsFill.notePencil, size: 16),
-                label: const Text("Murojaat formasini to'ldirish"),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
-                  shape:
-                      const RoundedRectangleBorder(borderRadius: AppRadius.pillAll),
+            Builder(builder: (context) {
+              final l10n = AppLocalizations.of(context);
+              final content = _actionButtonContent(message.action!.kind, l10n);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: OutlinedButton.icon(
+                  onPressed: () => _dispatchAction(context, ref),
+                  icon: Icon(content.icon, size: 16),
+                  label: Text(content.label),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.primary,
+                    side: const BorderSide(color: AppColors.primary),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: AppRadius.pillAll),
+                  ),
                 ),
-              ),
-            ),
+              );
+            }),
         ],
       ),
     );

@@ -147,6 +147,12 @@ class AppCard extends StatelessWidget {
   /// Soyani o'chirish — karta boshqa karta ichida joylashganda.
   final bool elevated;
 
+  /// Soya o'rniga (yoki qo'shimcha) ingichka, deyarli sezilmas
+  /// chegara — spetsifikatsiyadagi "scroll_edge" naqshi: oq/sirt fon +
+  /// ~12% qora shaffoflikdagi 1dp chiziq. Tekis, "shisha emas" kartalar
+  /// uchun — [borderColor] berilmagan bo'lsa qo'llaniladi.
+  final bool hairlineBorder;
+
   const AppCard({
     super.key,
     required this.child,
@@ -157,6 +163,7 @@ class AppCard extends StatelessWidget {
     this.margin,
     this.borderColor,
     this.elevated = true,
+    this.hairlineBorder = false,
   });
 
   @override
@@ -170,9 +177,11 @@ class AppCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: br,
-        border: borderColor == null
-            ? null
-            : Border.all(color: borderColor!.withValues(alpha: 0.18)),
+        border: borderColor != null
+            ? Border.all(color: borderColor!.withValues(alpha: 0.18))
+            : (hairlineBorder
+                ? Border.all(color: Colors.black.withValues(alpha: 0.12))
+                : null),
         boxShadow: elevated ? AppShadows.card(isDark) : null,
       ),
       child: Material(

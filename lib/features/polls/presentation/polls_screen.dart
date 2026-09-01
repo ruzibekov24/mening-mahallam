@@ -15,6 +15,7 @@ import '../../home/data/home_repository.dart';
 import '../data/poll_repository.dart';
 import '../data/polls_providers.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// So'rovnomalar ekrani — xodim/rais savol yaratadi, barcha a'zolar
 /// bitta variantga ovoz beradi, natijalar jonli (real-time) chiziq
@@ -44,11 +45,7 @@ class PollsScreen extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft,
-                        color: Colors.white),
-                  ),
+                  LiquidGlassBackButton(iconColor: Colors.white),
                   Expanded(
                     child: Text(l10n.pollsTitle,
                         style: context.titleStyle

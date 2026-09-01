@@ -10,6 +10,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/mahalla_repository.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// 7. QR SKANERLASH ekrani.
 /// Mockupga mos: to'liq ekran kamera, markazda skanerlash freymi
@@ -199,17 +200,13 @@ class _QrScanScreenState extends ConsumerState<QrScanScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
                   child: Row(
                     children: [
-                      IconButton(
-                        onPressed: () {
+                      LiquidGlassBackButton(onTap: () {
                           if (context.canPop()) {
                             context.pop();
                           } else {
                             context.go(AppRoutes.login);
                           }
-                        },
-                        icon: const Icon(PhosphorIconsRegular.arrowLeft,
-                            color: Colors.white),
-                      ),
+                        }, iconColor: Colors.white),
                     ],
                   ),
                 ),

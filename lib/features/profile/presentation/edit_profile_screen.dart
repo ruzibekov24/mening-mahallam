@@ -15,6 +15,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../home/data/home_repository.dart';
 import '../data/profile_banners.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// "Mening ma'lumotlarim" — ism, familiya, profil rasmi, tug'ilgan
 /// sana, manzil va jinsni tahrirlash ekrani.
@@ -517,11 +518,7 @@ class _BannerHeader extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(PhosphorIconsRegular.arrowLeft,
-                          color: Colors.white),
-                    ),
+                    LiquidGlassBackButton(iconColor: Colors.white),
                     Expanded(
                       child: Text(
                         title,

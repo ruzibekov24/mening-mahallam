@@ -10,6 +10,7 @@ import '../../../core/theme/text_scale_provider.dart';
 import '../../../core/theme/theme_mode_provider.dart';
 import '../../../core/utils/phone_format.dart';
 import '../../../core/widgets/animated_ui.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../core/widgets/settings_tile.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
@@ -21,7 +22,7 @@ import '../../language/data/language_repository.dart';
 import '../../language/presentation/language_screen.dart';
 import '../../premium/presentation/premium_config_screen.dart';
 import '../../premium/presentation/premium_requests_screen.dart';
-import '../../assistant/presentation/assistant_chats_list_screen.dart';
+import '../../assistant/presentation/assistant_screen.dart';
 import '../../premium/presentation/premium_screen.dart';
 import '../../profile/presentation/edit_profile_screen.dart';
 import '../../profile/presentation/help_screen.dart';
@@ -178,11 +179,7 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  padding: EdgeInsets.zero,
-                ),
+                const LiquidGlassBackButton(),
                 const SizedBox(width: AppSpacing.xs),
                 Text(l10n.settingsTitle, style: context.titleStyle),
               ],
@@ -366,9 +363,8 @@ class SettingsScreen extends ConsumerWidget {
                   icon: PhosphorIconsFill.bell,
                   iconColor: AppAccents.events,
                   title: l10n.notificationsMenuItem,
-                  trailing: Switch(
+                  trailing: LiquidToggleSwitch(
                     value: notificationsEnabled,
-                    activeThumbColor: AppColors.primary,
                     onChanged: (value) => ref
                         .read(notificationSettingsProvider.notifier)
                         .setEnabled(value),
@@ -395,7 +391,7 @@ class SettingsScreen extends ConsumerWidget {
                   iconColor: AppColors.primary,
                   title: l10n.assistantScreenTitle,
                   onTap: () => AppPageRoute.push(
-                      context, const AssistantChatsListScreen()),
+                      context, const AssistantScreen()),
                   showDivider: false,
                 ),
               ],
@@ -671,17 +667,43 @@ class SettingsScreen extends ConsumerWidget {
                     // "Automatic" bilan bir xil mantiq: yoqilsa
                     // telefon sozlamasiga ergashadi va yuqoridagi
                     // qo'lda tanlov kuchini yo'qotadi.
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(ThemeMode.system.label),
-                      subtitle: Text(l10n.appearanceSystemHint,
-                          style: sheetContext.captionStyle),
-                      value: current == ThemeMode.system,
-                      activeThumbColor: AppColors.primary,
-                      onChanged: (on) => ref
+                    Builder(builder: (_) {
+                      final isSystem = current == ThemeMode.system;
+                      void toggle() => ref
                           .read(themeModeProvider.notifier)
-                          .select(on ? ThemeMode.system : ThemeMode.light),
-                    ),
+                          .select(
+                              isSystem ? ThemeMode.light : ThemeMode.system);
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: toggle,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: AppSpacing.sm),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Text(ThemeMode.system.label,
+                                        style: sheetContext.bodyStyle),
+                                    const SizedBox(height: AppSpacing.xxs),
+                                    Text(l10n.appearanceSystemHint,
+                                        style: sheetContext.captionStyle),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.md),
+                              LiquidToggleSwitch(
+                                value: isSystem,
+                                onChanged: (_) => toggle(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
                   ],
                 ),
               );

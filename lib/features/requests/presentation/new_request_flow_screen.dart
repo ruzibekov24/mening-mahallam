@@ -21,6 +21,7 @@ import '../data/requests_labels.dart';
 import '../data/requests_repository.dart';
 import 'request_styles.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 String _typeDescription(AppLocalizations l10n, RequestType type) {
   switch (type) {
@@ -184,10 +185,7 @@ class _NewRequestFlowScreenState extends ConsumerState<NewRequestFlowScreen> {
               child: Row(
                 children: [
                   if (_currentStep < 4)
-                    IconButton(
-                      onPressed: _goBack,
-                      icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                    )
+                    LiquidGlassBackButton(onTap: _goBack)
                   else
                     const SizedBox(width: 48),
                   Expanded(

@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../qr/data/mahalla_repository.dart';
 import '../data/map_providers.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// Rais uchun — mahalla chegarasini xaritada nuqta-baqadam bosib
 /// belgilash ekrani. Kamida 3 ta nuqta qo'yilgach saqlash mumkin.
@@ -198,10 +199,7 @@ class _BoundaryEditorScreenState extends ConsumerState<BoundaryEditorScreen> {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child: Text(l10n.boundaryEditorTitle,

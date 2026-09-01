@@ -9,6 +9,7 @@ import '../../home/data/home_repository.dart';
 import '../../requests/presentation/request_detail_screen.dart';
 import 'boundary_editor_screen.dart';
 import 'mahalla_map_view.dart';
+import '../../../core/widgets/liquid_glass.dart';
 
 /// To'liq ekranli, interaktiv mahalla xaritasi — markerni bosganda
 /// tegishli murojaat tafsilotiga o'tadi. Rais uchun chegarani
@@ -39,10 +40,7 @@ class _MahallaMapScreenState extends ConsumerState<MahallaMapScreen> {
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.xl, AppSpacing.xs),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(PhosphorIconsRegular.arrowLeft),
-                  ),
+                  const LiquidGlassBackButton(),
                   const SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child: Text(l10n.mahallaMapTitle, style: context.titleStyle),
