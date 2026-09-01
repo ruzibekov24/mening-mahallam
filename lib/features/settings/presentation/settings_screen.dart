@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
+import '../../../core/router/app_page_route.dart';
 import '../../../core/app_version.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
@@ -75,13 +76,12 @@ class SettingsScreen extends ConsumerWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const QrScanScreen()),
-      );
+      AppPageRoute.push(context, const QrScanScreen());
     }
   }
 
-  Future<void> _confirmDeleteAccount(BuildContext context, WidgetRef ref) async {
+  Future<void> _confirmDeleteAccount(
+      BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
@@ -194,16 +194,16 @@ class SettingsScreen extends ConsumerWidget {
             profileAsync.when(
               data: (profile) => _ProfileCard(
                 profile: profile,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-                ),
+                onTap: () =>
+                    AppPageRoute.push(context, const EditProfileScreen()),
               ),
               loading: () => const SizedBox.shrink(),
               error: (_, __) => const SizedBox.shrink(),
             ),
             const SizedBox(height: AppSpacing.xxl),
 
-            Text(l10n.sectionMahalla.toUpperCase(), style: context.captionStyle),
+            Text(l10n.sectionMahalla.toUpperCase(),
+                style: context.captionStyle),
             const SizedBox(height: AppSpacing.sm),
             SettingsCard(
               children: [
@@ -243,10 +243,8 @@ class SettingsScreen extends ConsumerWidget {
                           subtitle: active
                               ? l10n.premiumActiveTitle
                               : l10n.premiumSettingSubtitle,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (_) => const PremiumScreen()),
-                          ),
+                          onTap: () =>
+                              AppPageRoute.push(context, const PremiumScreen()),
                           showDivider: false,
                         ),
                       ],
@@ -274,10 +272,8 @@ class SettingsScreen extends ConsumerWidget {
                           icon: PhosphorIconsFill.receipt,
                           iconColor: AppColors.danger,
                           title: l10n.premiumRequestsTitle,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (_) => const PremiumRequestsScreen()),
-                          ),
+                          onTap: () => AppPageRoute.push(
+                              context, const PremiumRequestsScreen()),
                         ),
                         // To'lov rekvizitlari — kartani reliz
                         // chiqarmasdan o'zgartirish uchun.
@@ -285,10 +281,8 @@ class SettingsScreen extends ConsumerWidget {
                           icon: PhosphorIconsFill.creditCard,
                           iconColor: AppColors.primary,
                           title: l10n.premiumConfigTitle,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (_) => const PremiumConfigScreen()),
-                          ),
+                          onTap: () => AppPageRoute.push(
+                              context, const PremiumConfigScreen()),
                         ),
                         SettingsTile(
                           icon: PhosphorIconsFill.storefront,
@@ -296,12 +290,10 @@ class SettingsScreen extends ConsumerWidget {
                           title: l10n.adManagementTitle,
                           onTap: profile?.mahallaId == null
                               ? null
-                              : () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => AdManagementScreen(
-                                          mahallaId: profile!.mahallaId!),
-                                    ),
-                                  ),
+                              : () => AppPageRoute.push(
+                                  context,
+                                  AdManagementScreen(
+                                      mahallaId: profile!.mahallaId!)),
                           showDivider: false,
                         ),
                       ],
@@ -332,13 +324,11 @@ class SettingsScreen extends ConsumerWidget {
                           icon: PhosphorIconsFill.usersThree,
                           iconColor: AppAccents.neighbors,
                           title: l10n.membersManagementTitle,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => MembersManagementScreen(
+                          onTap: () => AppPageRoute.push(
+                              context,
+                              MembersManagementScreen(
                                 mahallaId: profile!.mahallaId!,
-                              ),
-                            ),
-                          ),
+                              )),
                           showDivider: false,
                         ),
                       ],
@@ -351,7 +341,8 @@ class SettingsScreen extends ConsumerWidget {
               error: (_, __) => const SizedBox.shrink(),
             ),
 
-            Text(l10n.sectionGeneral.toUpperCase(), style: context.captionStyle),
+            Text(l10n.sectionGeneral.toUpperCase(),
+                style: context.captionStyle),
             const SizedBox(height: AppSpacing.sm),
             SettingsCard(
               children: [
@@ -388,10 +379,8 @@ class SettingsScreen extends ConsumerWidget {
                   iconColor: AppAccents.requests,
                   title: l10n.notificationPreferencesTitle,
                   subtitle: l10n.notificationPreferencesSubtitle,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (_) => const NotificationPreferencesScreen()),
-                  ),
+                  onTap: () => AppPageRoute.push(
+                      context, const NotificationPreferencesScreen()),
                 ),
                 SettingsTile(
                   icon: PhosphorIconsFill.textAa,
@@ -405,17 +394,16 @@ class SettingsScreen extends ConsumerWidget {
                   icon: PhosphorIconsFill.sparkle,
                   iconColor: AppColors.primary,
                   title: l10n.assistantScreenTitle,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (_) => const AssistantChatsListScreen()),
-                  ),
+                  onTap: () => AppPageRoute.push(
+                      context, const AssistantChatsListScreen()),
                   showDivider: false,
                 ),
               ],
             ),
             const SizedBox(height: AppSpacing.xxl),
 
-            Text(l10n.sectionPrivacy.toUpperCase(), style: context.captionStyle),
+            Text(l10n.sectionPrivacy.toUpperCase(),
+                style: context.captionStyle),
             const SizedBox(height: AppSpacing.sm),
             SettingsCard(
               children: [
@@ -424,10 +412,8 @@ class SettingsScreen extends ConsumerWidget {
                   iconColor: AppAccents.announcements,
                   title: l10n.privacySecurityTitle,
                   subtitle: l10n.privacySecuritySubtitle,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (_) => const PrivacySecurityScreen()),
-                  ),
+                  onTap: () =>
+                      AppPageRoute.push(context, const PrivacySecurityScreen()),
                 ),
                 SettingsTile(
                   icon: PhosphorIconsFill.trash,
@@ -458,7 +444,8 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.xxl),
 
-            Text(l10n.sectionSupport.toUpperCase(), style: context.captionStyle),
+            Text(l10n.sectionSupport.toUpperCase(),
+                style: context.captionStyle),
             const SizedBox(height: AppSpacing.sm),
             SettingsCard(
               children: [
@@ -466,17 +453,14 @@ class SettingsScreen extends ConsumerWidget {
                   icon: PhosphorIconsFill.question,
                   iconColor: AppAccents.requests,
                   title: l10n.helpMenuItem,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const HelpScreen()),
-                  ),
+                  onTap: () => AppPageRoute.push(context, const HelpScreen()),
                 ),
                 SettingsTile(
                   icon: PhosphorIconsFill.star,
                   iconColor: AppAccents.events,
                   title: l10n.feedbackTitle,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const FeedbackScreen()),
-                  ),
+                  onTap: () =>
+                      AppPageRoute.push(context, const FeedbackScreen()),
                   showDivider: false,
                 ),
               ],
@@ -504,27 +488,23 @@ class SettingsScreen extends ConsumerWidget {
                   icon: PhosphorIconsFill.fileText,
                   iconColor: AppAccents.requests,
                   title: l10n.termsTitle,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => LegalTextScreen(
+                  onTap: () => AppPageRoute.push(
+                      context,
+                      LegalTextScreen(
                         title: l10n.termsTitle,
                         body: l10n.termsBody,
-                      ),
-                    ),
-                  ),
+                      )),
                 ),
                 SettingsTile(
                   icon: PhosphorIconsFill.lockKey,
                   iconColor: AppAccents.events,
                   title: l10n.privacyPolicyTitle,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => LegalTextScreen(
+                  onTap: () => AppPageRoute.push(
+                      context,
+                      LegalTextScreen(
                         title: l10n.privacyPolicyTitle,
                         body: l10n.privacyPolicyBody,
-                      ),
-                    ),
-                  ),
+                      )),
                   showDivider: false,
                 ),
               ],
@@ -758,8 +738,10 @@ class SettingsScreen extends ConsumerWidget {
 
                     Row(
                       children: [
-                        Text('A', style: TextStyle(fontSize: 13,
-                            color: sheetContext.textSecondary)),
+                        Text('A',
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: sheetContext.textSecondary)),
                         Expanded(
                           child: Slider(
                             value: index.toDouble(),
@@ -773,8 +755,10 @@ class SettingsScreen extends ConsumerWidget {
                                 .select(AppTextScale.values[v.round()]),
                           ),
                         ),
-                        Text('A', style: TextStyle(fontSize: 24,
-                            color: sheetContext.textSecondary)),
+                        Text('A',
+                            style: TextStyle(
+                                fontSize: 24,
+                                color: sheetContext.textSecondary)),
                       ],
                     ),
                     Center(
@@ -833,8 +817,8 @@ class _ProfileCard extends StatelessWidget {
                       child: Text(
                         fullName,
                         overflow: TextOverflow.ellipsis,
-                        style: context.cardTitleStyle
-                            .copyWith(fontSize: 16, fontWeight: FontWeight.w700),
+                        style: context.cardTitleStyle.copyWith(
+                            fontSize: 16, fontWeight: FontWeight.w700),
                       ),
                     ),
                     if (profile?.verifiedBadge == true) ...[
@@ -857,7 +841,6 @@ class _ProfileCard extends StatelessWidget {
     );
   }
 }
-
 
 /// Mavzu namunasi — kichik "telefon ekrani" chizmasi.
 ///
@@ -916,8 +899,8 @@ class _ThemePreviewOption extends StatelessWidget {
                 for (var i = 0; i < 2; i++) ...[
                   Container(
                     height: 26,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
                     decoration: BoxDecoration(
                       color: surface,
                       borderRadius: BorderRadius.circular(5),

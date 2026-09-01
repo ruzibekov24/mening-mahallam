@@ -6,6 +6,10 @@ import '../../notifications/data/notification_repository.dart';
 class MahallaEvent {
   final String id;
   final String title;
+
+  /// To'liq tavsif (oddiy matn) — ixtiyoriy, tafsilot ekranida
+  /// ko'rsatiladi. Eski yozuvlarda bo'lmasligi mumkin.
+  final String description;
   final DateTime dateTime;
   final String location;
   final int participantsCount;
@@ -13,6 +17,7 @@ class MahallaEvent {
   MahallaEvent({
     required this.id,
     required this.title,
+    this.description = '',
     required this.dateTime,
     required this.location,
     required this.participantsCount,
@@ -23,6 +28,7 @@ class MahallaEvent {
     return MahallaEvent(
       id: id,
       title: data['title'] ?? '',
+      description: data['description'] as String? ?? '',
       dateTime: timestamp?.toDate() ?? DateTime.now(),
       location: data['location'] ?? '',
       participantsCount: (data['participantsCount'] ?? 0) as int,
@@ -61,6 +67,7 @@ class EventRepository {
   Future<void> createEvent({
     required String mahallaId,
     required String title,
+    String description = '',
     required DateTime dateTime,
     required String location,
   }) async {
@@ -75,6 +82,7 @@ class EventRepository {
         .collection('events')
         .add({
       'title': title,
+      'description': description,
       'dateTime': Timestamp.fromDate(dateTime),
       'location': location,
       'participantsCount': 0,
@@ -99,6 +107,7 @@ class EventRepository {
     required String mahallaId,
     required String eventId,
     required String title,
+    String description = '',
     required DateTime dateTime,
     required String location,
   }) async {
@@ -109,8 +118,25 @@ class EventRepository {
         .doc(eventId)
         .update({
       'title': title,
+      'description': description,
       'dateTime': Timestamp.fromDate(dateTime),
       'location': location,
+    });
+  }
+
+  Stream<MahallaEvent?> watchEventById({
+    required String mahallaId,
+    required String eventId,
+  }) {
+    return _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('events')
+        .doc(eventId)
+        .snapshots()
+        .map((doc) {
+      if (!doc.exists) return null;
+      return MahallaEvent.fromFirestore(doc.id, doc.data()!);
     });
   }
 

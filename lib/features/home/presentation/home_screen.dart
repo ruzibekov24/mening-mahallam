@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
+import '../../../core/router/app_page_route.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
@@ -134,11 +135,8 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                     TapScale(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const AssistantChatsListScreen(),
-                        ),
-                      ),
+                      onTap: () => AppPageRoute.push(
+                          context, const AssistantChatsListScreen()),
                       borderRadius: AppRadius.smAll,
                       child: Container(
                         width: 44,
@@ -156,11 +154,8 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                     TapScale(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const ConversationsScreen(),
-                        ),
-                      ),
+                      onTap: () => AppPageRoute.push(
+                          context, const ConversationsScreen()),
                       borderRadius: AppRadius.smAll,
                       child: Stack(
                         clipBehavior: Clip.none,
@@ -217,11 +212,8 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                     TapScale(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const NotificationsScreen(),
-                        ),
-                      ),
+                      onTap: () => AppPageRoute.push(
+                          context, const NotificationsScreen()),
                       borderRadius: AppRadius.smAll,
                       child: Stack(
                         clipBehavior: Clip.none,
@@ -325,8 +317,7 @@ class HomeScreen extends ConsumerWidget {
                                 shape: const RoundedRectangleBorder(
                                     borderRadius: AppRadius.lgAll),
                                 icon: Container(
-                                  padding:
-                                      const EdgeInsets.all(AppSpacing.md),
+                                  padding: const EdgeInsets.all(AppSpacing.md),
                                   decoration: BoxDecoration(
                                     color: AppColors.primary
                                         .withValues(alpha: 0.12),
@@ -350,11 +341,8 @@ class HomeScreen extends ConsumerWidget {
                                   FilledButton(
                                     onPressed: () {
                                       Navigator.of(dialogContext).pop();
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (_) =>
-                                                const QrScanScreen()),
-                                      );
+                                      AppPageRoute.push(
+                                          context, const QrScanScreen());
                                     },
                                     style: FilledButton.styleFrom(
                                       shape: const RoundedRectangleBorder(
@@ -367,12 +355,8 @@ class HomeScreen extends ConsumerWidget {
                             );
                             return;
                           }
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  SearchScreen(mahallaId: mahallaId),
-                            ),
-                          );
+                          AppPageRoute.push(
+                              context, SearchScreen(mahallaId: mahallaId));
                         },
                       ),
                     ),
@@ -386,8 +370,7 @@ class HomeScreen extends ConsumerWidget {
                     profileAsync.maybeWhen(
                       data: (profile) => profile?.mahallaId == null
                           ? const Padding(
-                              padding:
-                                  EdgeInsets.only(bottom: AppSpacing.xl),
+                              padding: EdgeInsets.only(bottom: AppSpacing.xl),
                               child: NoMahallaBanner(),
                             )
                           : const SizedBox.shrink(),
@@ -473,12 +456,8 @@ class HomeScreen extends ConsumerWidget {
                         final mahallaId = profile?.mahallaId;
                         if (mahallaId == null) return const SizedBox.shrink();
                         return TapScale(
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  MahallaMapScreen(mahallaId: mahallaId),
-                            ),
-                          ),
+                          onTap: () => AppPageRoute.push(
+                              context, MahallaMapScreen(mahallaId: mahallaId)),
                           borderRadius: AppRadius.mdAll,
                           // flutter_map o'zining ichki tap-tanish (gesture)
                           // qatlamiga ega — `interactive: false` faqat
@@ -521,12 +500,8 @@ class HomeScreen extends ConsumerWidget {
                           title: l10n.quickNewRequestTitle,
                           subtitle: l10n.quickNewRequestSubtitle,
                           margin: EdgeInsets.zero,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  NewRequestFlowScreen(mahallaId: mahallaId),
-                            ),
-                          ),
+                          onTap: () => AppPageRoute.push(context,
+                              NewRequestFlowScreen(mahallaId: mahallaId)),
                           trailing: Icon(PhosphorIconsRegular.caretRight,
                               size: 18, color: context.textSecondary),
                         );
@@ -663,11 +638,8 @@ class _StaffCard extends StatelessWidget {
       padding:
           const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: 6),
       color: context.surfaceColor,
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => NeighborProfileScreen(member: member),
-        ),
-      ),
+      onTap: () =>
+          AppPageRoute.push(context, NeighborProfileScreen(member: member)),
       child: SizedBox(
         width: 78,
         child: Column(
@@ -682,7 +654,7 @@ class _StaffCard extends StatelessWidget {
                 photoUrl: member.photoUrl,
                 seed: member.uid,
                 ringColor: avatarRingColor(member.role,
-                isPremium: member.isPremiumActive),
+                    isPremium: member.isPremiumActive),
               ),
             ),
             const SizedBox(height: AppSpacing.xs),

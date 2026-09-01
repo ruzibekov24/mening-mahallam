@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
+import '../../../core/router/app_page_route.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
@@ -102,52 +104,67 @@ class RequestDetailScreen extends ConsumerWidget {
               children: [
                 _BackHeader(
                   title: l10n.requestDetailTitle,
-                  // O'chirish "..." menyu ichida — orqaga qaytish
-                  // tugmasi bilan yonma-yon to'g'ridan-to'g'ri chiqindi
-                  // ikonkasi bo'lsa, ikkalasini adashtirish xavfi bor
-                  // edi (xavfli joy).
-                  trailing: !canDelete
-                      ? null
-                      : PopupMenuButton<void>(
-                          icon: const Icon(
-                              PhosphorIconsBold.dotsThreeVertical),
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: AppRadius.smAll),
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              onTap: () async {
-                                await Future.delayed(
-                                    const Duration(milliseconds: 1));
-                                if (!context.mounted) return;
-                                final confirmed = await confirmDelete(
-                                  context,
-                                  itemTitle: request.title,
-                                );
-                                if (!confirmed || !context.mounted) return;
-                                await ref
-                                    .read(requestsRepositoryProvider)
-                                    .deleteRequest(
-                                      mahallaId: mahallaId,
-                                      requestId: requestId,
-                                    );
-                                if (context.mounted) {
-                                  showAppAlert(context, l10n.itemDeletedMessage);
-                                  Navigator.of(context).pop();
-                                }
-                              },
-                              child: Row(
-                                children: [
-                                  const Icon(PhosphorIconsRegular.trash,
-                                      size: 18, color: AppColors.danger),
-                                  const SizedBox(width: AppSpacing.sm),
-                                  Text(l10n.deleteButton,
-                                      style: context.bodyStyle
-                                          .copyWith(color: AppColors.danger)),
-                                ],
-                              ),
-                            ),
+                  // Share doim ko'rinadi, o'chirish esa faqat egasi/
+                  // xodim-rais uchun — "..." menyu ichida, orqaga
+                  // qaytish tugmasi bilan yonma-yon to'g'ridan-to'g'ri
+                  // chiqindi ikonkasi bo'lsa, ikkalasini adashtirish
+                  // xavfi bor edi (xavfli joy).
+                  trailing: PopupMenuButton<void>(
+                    icon: const Icon(PhosphorIconsBold.dotsThreeVertical),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: AppRadius.smAll),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        onTap: () async {
+                          await Future.delayed(const Duration(milliseconds: 1));
+                          if (!context.mounted) return;
+                          Share.share(
+                              '${request.title}\n\n${request.plainTextDescription}');
+                        },
+                        child: Row(
+                          children: [
+                            Icon(PhosphorIconsRegular.shareNetwork,
+                                size: 18, color: context.textSecondary),
+                            const SizedBox(width: AppSpacing.sm),
+                            Text(l10n.shareAction, style: context.bodyStyle),
                           ],
                         ),
+                      ),
+                      if (canDelete)
+                        PopupMenuItem(
+                          onTap: () async {
+                            await Future.delayed(
+                                const Duration(milliseconds: 1));
+                            if (!context.mounted) return;
+                            final confirmed = await confirmDelete(
+                              context,
+                              itemTitle: request.title,
+                            );
+                            if (!confirmed || !context.mounted) return;
+                            await ref
+                                .read(requestsRepositoryProvider)
+                                .deleteRequest(
+                                  mahallaId: mahallaId,
+                                  requestId: requestId,
+                                );
+                            if (context.mounted) {
+                              showAppAlert(context, l10n.itemDeletedMessage);
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              const Icon(PhosphorIconsRegular.trash,
+                                  size: 18, color: AppColors.danger),
+                              const SizedBox(width: AppSpacing.sm),
+                              Text(l10n.deleteButton,
+                                  style: context.bodyStyle
+                                      .copyWith(color: AppColors.danger)),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
                 Expanded(
                   child: ListView(
@@ -219,7 +236,7 @@ class RequestDetailScreen extends ConsumerWidget {
                             separatorBuilder: (_, __) =>
                                 const SizedBox(width: AppSpacing.sm),
                             itemBuilder: (context, index) {
-                              return ClipRRect(
+                              final image = ClipRRect(
                                 borderRadius: AppRadius.smAll,
                                 child: Image.network(
                                   request.imageUrls[index],
@@ -243,6 +260,20 @@ class RequestDetailScreen extends ConsumerWidget {
                                   ),
                                 ),
                               );
+                              // Faqat BIRINCHI rasm Hero bilan o'raladi —
+                              // ro'yxat kartasidagi thumbnail'dan shu
+                              // yerga "uchib" keladi. Boshqa galereya
+                              // rasmlarini ham Hero'ga o'rasak, Flutter
+                              // noto'g'ri flight animatsiyasi hosil
+                              // qiladi (bir nechta Hero bir vaqtda uchib
+                              // ketishga urinadi).
+                              if (index == 0) {
+                                return Hero(
+                                  tag: 'request-image-${request.id}-0',
+                                  child: image,
+                                );
+                              }
+                              return image;
                             },
                           ),
                         ),
@@ -269,6 +300,12 @@ class RequestDetailScreen extends ConsumerWidget {
                       _CommentsSection(
                         mahallaId: mahallaId,
                         requestId: requestId,
+                      ),
+
+                      const SizedBox(height: AppSpacing.xl),
+                      _SimilarRequestsSection(
+                        mahallaId: mahallaId,
+                        request: request,
                       ),
                     ],
                   ),
@@ -842,6 +879,8 @@ class _CommentsSectionState extends ConsumerState<_CommentsSection> {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                   child: _CommentBubble(
+                    mahallaId: widget.mahallaId,
+                    requestId: widget.requestId,
                     comment: comment,
                     isMine: comment.authorUid == myUid,
                     formattedTime: _formatTime(comment.createdAt),
@@ -912,60 +951,145 @@ class _CommentsSectionState extends ConsumerState<_CommentsSection> {
 }
 
 class _CommentBubble extends ConsumerWidget {
+  final String mahallaId;
+  final String requestId;
   final RequestComment comment;
   final bool isMine;
   final String formattedTime;
 
   const _CommentBubble({
+    required this.mahallaId,
+    required this.requestId,
     required this.comment,
     required this.isMine,
     required this.formattedTime,
   });
 
+  Future<void> _confirmAndDelete(BuildContext context, WidgetRef ref) async {
+    final confirmed = await confirmDelete(context, itemTitle: comment.text);
+    if (!confirmed || !context.mounted) return;
+    await ref.read(requestsRepositoryProvider).deleteComment(
+          mahallaId: mahallaId,
+          requestId: requestId,
+          commentId: comment.id,
+        );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authorAsync = ref.watch(chatUserBriefProvider(comment.authorUid));
 
-    return Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-      decoration: BoxDecoration(
-        color: isMine
-            ? AppColors.primary.withValues(alpha: 0.1)
-            : (context.isDarkMode
-                ? AppColors.darkSurface
-                : AppColors.lightBorder),
-        borderRadius: AppRadius.smAll,
+    return GestureDetector(
+      // Uzoq bosish orqali ham o'chirish mumkin — trailing ikonka
+      // qo'shimcha imkoniyat, ikkalasi bir xil natijaga olib keladi.
+      onLongPress: !isMine ? null : () => _confirmAndDelete(context, ref),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+        decoration: BoxDecoration(
+          color: isMine
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : (context.isDarkMode
+                  ? AppColors.darkSurface
+                  : AppColors.lightBorder),
+          borderRadius: AppRadius.smAll,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                authorAsync.when(
+                  data: (member) {
+                    final fullName = member == null
+                        ? AppLocalizations.of(context).unknownUserLabel
+                        : '${member.firstName} ${member.lastName}'.trim();
+                    return Expanded(
+                      child: Text(
+                        fullName,
+                        style: context.captionStyle
+                            .copyWith(fontWeight: FontWeight.w600),
+                      ),
+                    );
+                  },
+                  loading: () => const SizedBox(
+                      height: 14, child: ShimmerBox(height: 14, width: 80)),
+                  error: (_, __) => const SizedBox.shrink(),
+                ),
+                Text(formattedTime, style: context.captionStyle),
+                // Faqat o'zining komentariyasi bo'lsa ko'rinadi.
+                if (isMine) ...[
+                  const SizedBox(width: AppSpacing.xxs),
+                  TapScale(
+                    onTap: () => _confirmAndDelete(context, ref),
+                    child: Icon(PhosphorIconsRegular.trash,
+                        size: 14, color: context.textSecondary),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xxs),
+            Text(comment.text, style: context.bodyStyle),
+          ],
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              authorAsync.when(
-                data: (member) {
-                  final fullName = member == null
-                      ? AppLocalizations.of(context).unknownUserLabel
-                      : '${member.firstName} ${member.lastName}'.trim();
-                  return Expanded(
-                    child: Text(
-                      fullName,
-                      style: context.captionStyle
-                          .copyWith(fontWeight: FontWeight.w600),
-                    ),
-                  );
-                },
-                loading: () => const SizedBox(
-                    height: 14, child: ShimmerBox(height: 14, width: 80)),
-                error: (_, __) => const SizedBox.shrink(),
-              ),
-              Text(formattedTime, style: context.captionStyle),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xxs),
-          Text(comment.text, style: context.bodyStyle),
-        ],
+    );
+  }
+}
+
+/// Joriy murojaatga o'xshash — bir xil mahalla va turdagi (`type`)
+/// boshqa murojaatlar ro'yxati. Bosilganda xuddi shu
+/// [RequestDetailScreen]ni rekursiv ravishda ochadi.
+class _SimilarRequestsSection extends ConsumerWidget {
+  final String mahallaId;
+  final MahallaRequest request;
+
+  const _SimilarRequestsSection({
+    required this.mahallaId,
+    required this.request,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final similarAsync = ref.watch(similarRequestsProvider(
+        '$mahallaId:${request.id}:${request.type.firestoreValue}'));
+
+    return similarAsync.when(
+      data: (items) {
+        if (items.isEmpty) return const SizedBox.shrink();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.similarRequestsTitle, style: context.sectionStyle),
+            const SizedBox(height: AppSpacing.sm),
+            ...items.map((other) {
+              return AppListCard(
+                icon: other.type == RequestType.maxfiy
+                    ? PhosphorIconsRegular.lockSimple
+                    : PhosphorIconsRegular.globe,
+                accent: other.status.badgeText,
+                title: other.title,
+                subtitle: other.plainTextDescription.isEmpty
+                    ? null
+                    : other.plainTextDescription,
+                onTap: () => AppPageRoute.push(
+                  context,
+                  RequestDetailScreen(
+                    mahallaId: mahallaId,
+                    requestId: other.id,
+                  ),
+                ),
+              );
+            }),
+          ],
+        );
+      },
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+        child: ShimmerListTile(),
       ),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }

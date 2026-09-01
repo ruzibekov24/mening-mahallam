@@ -1274,6 +1274,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventTitleHint => 'e.g. Mahalla meeting';
 
   @override
+  String get eventDescriptionHint =>
+      'Additional details about the event (optional)...';
+
+  @override
   String get dateLabel => 'Date';
 
   @override
@@ -1412,6 +1416,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get requestNotFound => 'Request not found';
+
+  @override
+  String get announcementDetailTitle => 'Announcement details';
+
+  @override
+  String get announcementNotFound => 'Announcement not found';
+
+  @override
+  String get eventDetailTitle => 'Event details';
+
+  @override
+  String get eventNotFound => 'Event not found';
+
+  @override
+  String get shareAction => 'Share';
 
   @override
   String get joinRequestAction => 'Join';
@@ -1833,6 +1852,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commentHint => 'Write a comment...';
+
+  @override
+  String get similarRequestsTitle => 'Similar requests';
 
   @override
   String get createGroupAction => 'Create group';

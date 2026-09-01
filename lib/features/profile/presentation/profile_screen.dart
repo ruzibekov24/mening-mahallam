@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
+import '../../../core/router/app_page_route.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
@@ -106,169 +107,158 @@ class ProfileScreen extends ConsumerWidget {
               child: ListView(
                 padding: AppSpacing.listPadding,
                 children: [
-            profileAsync.when(
-              data: (profile) {
-                if (profile != null &&
-                    (profile.displayAddress?.isNotEmpty == true ||
-                        profile.birthDate != null ||
-                        profile.gender != null)) {
-                  return _InfoRowsCard(profile: profile, l10n: l10n);
-                }
-                return const SizedBox.shrink();
-              },
-              loading: () => const Padding(
-                padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              error: (_, __) => Text(
-                l10n.profileLoadError,
-                style: context.secondaryStyle,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xl),
-
-            // Faollik statistikasi — yuborilgan murojaatlar, e'lonlar
-            // (agar xodim/rais bo'lsa), qo'shilingan ommaviy murojaatlar.
-            const _ActivityStatsRow(),
-            const SizedBox(height: AppSpacing.xl),
-
-            profileAsync.when(
-              data: (profile) {
-                if (profile == null) return const SizedBox.shrink();
-                return _MyActivitySection(profile: profile);
-              },
-              loading: () => const SizedBox.shrink(),
-              error: (_, __) => const SizedBox.shrink(),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-
-            _MenuCard(
-              children: [
-                _MenuItem(
-                  icon: PhosphorIconsFill.userCircle,
-                  label: l10n.myInfoMenuItem,
-                  iconColor: AppAccents.announcements,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-                  ),
-                ),
-                Consumer(
-                  builder: (context, ref, _) {
-                    final unread =
-                        ref.watch(totalUnreadMessagesProvider).valueOrNull ?? 0;
-                    return _MenuItem(
-                      icon: PhosphorIconsFill.chatDots,
-                      label: l10n.conversationsMenuItem,
-                      iconColor: AppColors.primary,
-                      badgeCount: unread,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (_) => const ConversationsScreen()),
-                      ),
-                    );
-                  },
-                ),
-                _MenuItem(
-                  icon: PhosphorIconsFill.bell,
-                  label: l10n.notificationsMenuItem,
-                  iconColor: AppAccents.events,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  ),
-                ),
-                // Premium — Profil menyusining o'zida. Ilgari u faqat
-                // Sozlamalar ichida edi va amalda topilmasdi.
-                _MenuItem(
-                  icon: PhosphorIconsFill.crown,
-                  label: l10n.premiumTitle,
-                  iconColor: const Color(0xFFE0A526),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const PremiumScreen()),
-                  ),
-                ),
-                _MenuItem(
-                  icon: PhosphorIconsFill.gearSix,
-                  label: l10n.settingsMenuItem,
-                  iconColor: AppAccents.neighbors,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  ),
-                ),
-                _MenuItem(
-                  icon: PhosphorIconsFill.question,
-                  label: l10n.helpMenuItem,
-                  iconColor: AppAccents.requests,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const HelpScreen()),
-                  ),
-                  showDivider: false,
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.lg),
-
-            profileAsync.when(
-              data: (profile) {
-                if (profile?.role.isSuperAdmin != true) {
-                  return const SizedBox.shrink();
-                }
-                final override = ref.watch(activeMahallaOverrideProvider);
-                return Column(
-                  children: [
-                    _MenuCard(
-                      children: [
-                        _MenuItem(
-                          icon: PhosphorIconsFill.buildings,
-                          label: override == null
-                              ? l10n.switchMahallaMenuItem
-                              : l10n.switchMahallaMenuItemActive,
-                          iconColor: AppColors.danger,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (_) => const MahallaSwitcherScreen()),
-                          ),
-                        ),
-                        _MenuItem(
-                          icon: PhosphorIconsFill.star,
-                          label: l10n.feedbackListTitle,
-                          iconColor: AppAccents.events,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (_) => const FeedbackListScreen()),
-                          ),
-                        ),
-                        _MenuItem(
-                          icon: PhosphorIconsFill.image,
-                          label: l10n.bannerManagementTitle,
-                          iconColor: AppAccents.neighbors,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (_) => const BannerManagementScreen()),
-                          ),
-                          showDivider: false,
-                        ),
-                      ],
+                  profileAsync.when(
+                    data: (profile) {
+                      if (profile != null &&
+                          (profile.displayAddress?.isNotEmpty == true ||
+                              profile.birthDate != null ||
+                              profile.gender != null)) {
+                        return _InfoRowsCard(profile: profile, l10n: l10n);
+                      }
+                      return const SizedBox.shrink();
+                    },
+                    loading: () => const Padding(
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                      child: Center(child: CircularProgressIndicator()),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
-                  ],
-                );
-              },
-              loading: () => const SizedBox.shrink(),
-              error: (_, __) => const SizedBox.shrink(),
-            ),
+                    error: (_, __) => Text(
+                      l10n.profileLoadError,
+                      style: context.secondaryStyle,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
 
-            _MenuCard(
-              children: [
-                _MenuItem(
-                  icon: PhosphorIconsFill.signOut,
-                  label: l10n.logoutMenuItem,
-                  iconColor: AppColors.danger,
-                  labelColor: AppColors.danger,
-                  onTap: () => _confirmLogout(context, ref),
-                  showDivider: false,
-                ),
-              ],
-            ),
+                  // Faollik statistikasi — yuborilgan murojaatlar, e'lonlar
+                  // (agar xodim/rais bo'lsa), qo'shilingan ommaviy murojaatlar.
+                  const _ActivityStatsRow(),
+                  const SizedBox(height: AppSpacing.xl),
+
+                  profileAsync.when(
+                    data: (profile) {
+                      if (profile == null) return const SizedBox.shrink();
+                      return _MyActivitySection(profile: profile);
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+
+                  _MenuCard(
+                    children: [
+                      _MenuItem(
+                        icon: PhosphorIconsFill.userCircle,
+                        label: l10n.myInfoMenuItem,
+                        iconColor: AppAccents.announcements,
+                        onTap: () => AppPageRoute.push(
+                            context, const EditProfileScreen()),
+                      ),
+                      Consumer(
+                        builder: (context, ref, _) {
+                          final unread = ref
+                                  .watch(totalUnreadMessagesProvider)
+                                  .valueOrNull ??
+                              0;
+                          return _MenuItem(
+                            icon: PhosphorIconsFill.chatDots,
+                            label: l10n.conversationsMenuItem,
+                            iconColor: AppColors.primary,
+                            badgeCount: unread,
+                            onTap: () => AppPageRoute.push(
+                                context, const ConversationsScreen()),
+                          );
+                        },
+                      ),
+                      _MenuItem(
+                        icon: PhosphorIconsFill.bell,
+                        label: l10n.notificationsMenuItem,
+                        iconColor: AppAccents.events,
+                        onTap: () =>
+                            AppPageRoute.push(context, const SettingsScreen()),
+                      ),
+                      // Premium — Profil menyusining o'zida. Ilgari u faqat
+                      // Sozlamalar ichida edi va amalda topilmasdi.
+                      _MenuItem(
+                        icon: PhosphorIconsFill.crown,
+                        label: l10n.premiumTitle,
+                        iconColor: const Color(0xFFE0A526),
+                        onTap: () =>
+                            AppPageRoute.push(context, const PremiumScreen()),
+                      ),
+                      _MenuItem(
+                        icon: PhosphorIconsFill.gearSix,
+                        label: l10n.settingsMenuItem,
+                        iconColor: AppAccents.neighbors,
+                        onTap: () =>
+                            AppPageRoute.push(context, const SettingsScreen()),
+                      ),
+                      _MenuItem(
+                        icon: PhosphorIconsFill.question,
+                        label: l10n.helpMenuItem,
+                        iconColor: AppAccents.requests,
+                        onTap: () =>
+                            AppPageRoute.push(context, const HelpScreen()),
+                        showDivider: false,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+
+                  profileAsync.when(
+                    data: (profile) {
+                      if (profile?.role.isSuperAdmin != true) {
+                        return const SizedBox.shrink();
+                      }
+                      final override = ref.watch(activeMahallaOverrideProvider);
+                      return Column(
+                        children: [
+                          _MenuCard(
+                            children: [
+                              _MenuItem(
+                                icon: PhosphorIconsFill.buildings,
+                                label: override == null
+                                    ? l10n.switchMahallaMenuItem
+                                    : l10n.switchMahallaMenuItemActive,
+                                iconColor: AppColors.danger,
+                                onTap: () => AppPageRoute.push(
+                                    context, const MahallaSwitcherScreen()),
+                              ),
+                              _MenuItem(
+                                icon: PhosphorIconsFill.star,
+                                label: l10n.feedbackListTitle,
+                                iconColor: AppAccents.events,
+                                onTap: () => AppPageRoute.push(
+                                    context, const FeedbackListScreen()),
+                              ),
+                              _MenuItem(
+                                icon: PhosphorIconsFill.image,
+                                label: l10n.bannerManagementTitle,
+                                iconColor: AppAccents.neighbors,
+                                onTap: () => AppPageRoute.push(
+                                    context, const BannerManagementScreen()),
+                                showDivider: false,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+                        ],
+                      );
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+
+                  _MenuCard(
+                    children: [
+                      _MenuItem(
+                        icon: PhosphorIconsFill.signOut,
+                        label: l10n.logoutMenuItem,
+                        iconColor: AppColors.danger,
+                        labelColor: AppColors.danger,
+                        onTap: () => _confirmLogout(context, ref),
+                        showDivider: false,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -390,8 +380,8 @@ class _ProfileBannerHeader extends StatelessWidget {
                       const SizedBox(height: AppSpacing.xs),
                       Text(
                         formatPhoneNumber(phone),
-                        style: context.secondaryStyle
-                            .copyWith(color: Colors.white.withValues(alpha: 0.85)),
+                        style: context.secondaryStyle.copyWith(
+                            color: Colors.white.withValues(alpha: 0.85)),
                       ),
                     ],
                   ],
@@ -499,31 +489,31 @@ class _BannerPickerSheet extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Flexible(
               child: GridView.builder(
-              shrinkWrap: true,
-              itemCount: profileBanners.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: AppSpacing.sm,
-                mainAxisSpacing: AppSpacing.sm,
-                childAspectRatio: 1.6,
-              ),
-              itemBuilder: (context, index) {
-                final banner = profileBanners[index];
-                final isSelected = banner.id == currentBannerId;
-                final locked = banner.isPremium && !isPremiumActive;
-                return _BannerOptionTile(
-                  banner: banner,
-                  isSelected: isSelected,
-                  locked: locked,
-                  onTap: () {
-                    if (locked) {
-                      showAppAlert(context, l10n.premiumBannerLockedMessage);
-                      return;
-                    }
-                    onSelected(banner.id);
-                  },
-                );
-              },
+                shrinkWrap: true,
+                itemCount: profileBanners.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: AppSpacing.sm,
+                  mainAxisSpacing: AppSpacing.sm,
+                  childAspectRatio: 1.6,
+                ),
+                itemBuilder: (context, index) {
+                  final banner = profileBanners[index];
+                  final isSelected = banner.id == currentBannerId;
+                  final locked = banner.isPremium && !isPremiumActive;
+                  return _BannerOptionTile(
+                    banner: banner,
+                    isSelected: isSelected,
+                    locked: locked,
+                    onTap: () {
+                      if (locked) {
+                        showAppAlert(context, l10n.premiumBannerLockedMessage);
+                        return;
+                      }
+                      onSelected(banner.id);
+                    },
+                  );
+                },
               ),
             ),
             if (profileBanners.any((b) => b.attribution != null)) ...[
@@ -884,8 +874,8 @@ class _InfoRow extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 2),
-            child:
-                Icon(icon, size: 18, color: valueColor ?? context.textSecondary),
+            child: Icon(icon,
+                size: 18, color: valueColor ?? context.textSecondary),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
@@ -902,8 +892,8 @@ class _InfoRow extends StatelessWidget {
                 const SizedBox(height: 1),
                 Text(
                   label,
-                  style: context.captionStyle
-                      .copyWith(color: context.textMuted),
+                  style:
+                      context.captionStyle.copyWith(color: context.textMuted),
                 ),
               ],
             ),
@@ -1039,14 +1029,12 @@ class _MyActivitySection extends ConsumerWidget {
                     horizontal: AppSpacing.md,
                     vertical: AppSpacing.md,
                   ),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => RequestDetailScreen(
+                  onTap: () => AppPageRoute.push(
+                      context,
+                      RequestDetailScreen(
                         mahallaId: mahallaId,
                         requestId: request.id,
-                      ),
-                    ),
-                  ),
+                      )),
                   child: Row(
                     children: [
                       Expanded(

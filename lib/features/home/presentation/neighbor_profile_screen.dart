@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/router/app_page_route.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/utils/phone_format.dart';
@@ -245,11 +246,8 @@ class NeighborProfileScreen extends ConsumerWidget {
                         icon: PhosphorIconsFill.chatDots,
                         accent: AppColors.primary,
                         title: l10n.sendMessageAction,
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => ChatScreen(otherUid: member.uid),
-                          ),
-                        ),
+                        onTap: () => AppPageRoute.push(
+                            context, ChatScreen(otherUid: member.uid)),
                         margin: const EdgeInsets.only(bottom: AppSpacing.md),
                       ),
                       if (member.phoneVisible && member.phone.isNotEmpty)

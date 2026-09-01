@@ -1272,6 +1272,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get eventTitleHint => 'Например: Собрание махалли';
 
   @override
+  String get eventDescriptionHint =>
+      'Дополнительная информация о событии (необязательно)...';
+
+  @override
   String get dateLabel => 'Дата';
 
   @override
@@ -1410,6 +1414,21 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get requestNotFound => 'Обращение не найдено';
+
+  @override
+  String get announcementDetailTitle => 'Детали объявления';
+
+  @override
+  String get announcementNotFound => 'Объявление не найдено';
+
+  @override
+  String get eventDetailTitle => 'Детали события';
+
+  @override
+  String get eventNotFound => 'Событие не найдено';
+
+  @override
+  String get shareAction => 'Поделиться';
 
   @override
   String get joinRequestAction => 'Присоединиться';
@@ -1836,6 +1855,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get commentHint => 'Напишите комментарий...';
+
+  @override
+  String get similarRequestsTitle => 'Похожие обращения';
 
   @override
   String get createGroupAction => 'Создать группу';

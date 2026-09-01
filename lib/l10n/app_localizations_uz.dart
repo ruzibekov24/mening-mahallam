@@ -1280,6 +1280,10 @@ class AppLocalizationsUz extends AppLocalizations {
   String get eventTitleHint => 'Masalan: Mahalla yig\'ilishi';
 
   @override
+  String get eventDescriptionHint =>
+      'Tadbir haqida qo\'shimcha ma\'lumot (ixtiyoriy)...';
+
+  @override
   String get dateLabel => 'Sana';
 
   @override
@@ -1418,6 +1422,21 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get requestNotFound => 'Murojaat topilmadi';
+
+  @override
+  String get announcementDetailTitle => 'E\'lon tafsilotlari';
+
+  @override
+  String get announcementNotFound => 'E\'lon topilmadi';
+
+  @override
+  String get eventDetailTitle => 'Tadbir tafsilotlari';
+
+  @override
+  String get eventNotFound => 'Tadbir topilmadi';
+
+  @override
+  String get shareAction => 'Ulashish';
 
   @override
   String get joinRequestAction => 'Qo\'shilish';
@@ -1844,6 +1863,9 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get commentHint => 'Izoh yozing...';
+
+  @override
+  String get similarRequestsTitle => 'O\'xshash murojaatlar';
 
   @override
   String get createGroupAction => 'Guruh yaratish';
@@ -3212,6 +3234,10 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
   String get eventTitleHint => 'Масалан: Маҳалла йиғилиши';
 
   @override
+  String get eventDescriptionHint =>
+      'Тадбир ҳақида қўшимча маълумот (ихтиёрий)...';
+
+  @override
   String get dateLabel => 'Сана';
 
   @override
@@ -3349,6 +3375,21 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get requestNotFound => 'Мурожаат топилмади';
+
+  @override
+  String get announcementDetailTitle => 'Эълон тафсилотлари';
+
+  @override
+  String get announcementNotFound => 'Эълон топилмади';
+
+  @override
+  String get eventDetailTitle => 'Тадбир тафсилотлари';
+
+  @override
+  String get eventNotFound => 'Тадбир топилмади';
+
+  @override
+  String get shareAction => 'Улашиш';
 
   @override
   String get joinRequestAction => 'Қўшилиш';
@@ -3774,6 +3815,9 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get commentHint => 'Изоҳ ёзинг...';
+
+  @override
+  String get similarRequestsTitle => 'Ўхшаш мурожаатлар';
 
   @override
   String get createGroupAction => 'Гуруҳ яратиш';

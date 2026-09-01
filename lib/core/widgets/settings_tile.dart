@@ -58,10 +58,10 @@ class SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    final tile = Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
+        onTap: null, // bosish TapScale orqali boshqariladi
         child: Container(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg,
@@ -122,5 +122,8 @@ class SettingsTile extends StatelessWidget {
         ),
       ),
     );
+
+    if (onTap == null) return tile;
+    return TapScale(onTap: onTap, child: tile);
   }
 }

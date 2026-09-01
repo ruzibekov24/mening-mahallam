@@ -554,6 +554,7 @@
   "newEventTitle": "Yangi tadbir",
   "editEventTitle": "Tadbirni tahrirlash",
   "eventTitleHint": "Masalan: Mahalla yig'ilishi",
+  "eventDescriptionHint": "Tadbir haqida qo'shimcha ma'lumot (ixtiyoriy)...",
   "dateLabel": "Sana",
   "selectTime": "Vaqtni tanlang",
   "locationLabel": "Manzil",
@@ -644,6 +645,11 @@
   "searchNoResults": "Hech narsa topilmadi",
   "requestDetailTitle": "Murojaat tafsilotlari",
   "requestNotFound": "Murojaat topilmadi",
+  "announcementDetailTitle": "E'lon tafsilotlari",
+  "announcementNotFound": "E'lon topilmadi",
+  "eventDetailTitle": "Tadbir tafsilotlari",
+  "eventNotFound": "Tadbir topilmadi",
+  "shareAction": "Ulashish",
   "joinRequestAction": "Qo'shilish",
   "leaveRequestAction": "Chiqish",
   "mahallaStaffTitle": "Mahalla xodimlari",
@@ -1079,6 +1085,10 @@
   "commentHint": "Izoh yozing...",
   "@commentHint": {
     "description": "Izoh yozish maydonining placeholder matni"
+  },
+  "similarRequestsTitle": "O'xshash murojaatlar",
+  "@similarRequestsTitle": {
+    "description": "Murojaat tafsilotlari ekranida bir xil turdagi boshqa murojaatlar ro'yxati sarlavhasi"
   },
   "createGroupAction": "Guruh yaratish",
   "@createGroupAction": {

@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
+import '../../../core/router/app_page_route.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
@@ -16,7 +16,10 @@ import '../data/announcement_repository.dart';
 import '../data/announcements_providers.dart';
 import '../data/event_repository.dart';
 import '../../polls/presentation/polls_screen.dart';
+import 'announcement_detail_screen.dart';
 import 'announcement_styles.dart';
+import 'announcement_widgets.dart';
+import 'event_detail_screen.dart';
 import 'new_announcement_screen.dart';
 import 'new_event_screen.dart';
 import '../../../core/widgets/app_alert.dart';
@@ -29,35 +32,16 @@ final announcementsShowEventsProvider = StateProvider<bool>((ref) => false);
 final _announcementsFilterProvider =
     StateProvider.autoDispose<AnnouncementCategory?>((ref) => null);
 
-String _categoryLabel(AppLocalizations l10n, AnnouncementCategory category) {
-  switch (category) {
-    case AnnouncementCategory.kommunal:
-      return l10n.categoryKommunal;
-    case AnnouncementCategory.xavfsizlik:
-      return l10n.categoryXavfsizlik;
-    case AnnouncementCategory.umumiy:
-      return l10n.categoryUmumiy;
-  }
-}
-
 /// 10-11. E'LONLAR va TADBIRLAR ekrani — ichki tab orqali almashadi.
 class AnnouncementsScreen extends ConsumerWidget {
   const AnnouncementsScreen({super.key});
 
   void _openNewAnnouncement(BuildContext context, String mahallaId) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => NewAnnouncementScreen(mahallaId: mahallaId),
-      ),
-    );
+    AppPageRoute.push(context, NewAnnouncementScreen(mahallaId: mahallaId));
   }
 
   void _openNewEvent(BuildContext context, String mahallaId) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => NewEventScreen(mahallaId: mahallaId),
-      ),
-    );
+    AppPageRoute.push(context, NewEventScreen(mahallaId: mahallaId));
   }
 
   @override
@@ -86,9 +70,8 @@ class AnnouncementsScreen extends ConsumerWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const PollsScreen()),
-                    ),
+                    onPressed: () =>
+                        AppPageRoute.push(context, const PollsScreen()),
                     icon: const Icon(PhosphorIconsFill.chartBar,
                         color: Colors.white),
                     tooltip: l10n.pollsTitle,
@@ -113,7 +96,6 @@ class AnnouncementsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
               child: Container(
@@ -149,9 +131,9 @@ class AnnouncementsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-
             Expanded(
-              child: showEvents ? const _EventsList() : const _AnnouncementsList(),
+              child:
+                  showEvents ? const _EventsList() : const _AnnouncementsList(),
             ),
           ],
         ),
@@ -186,7 +168,8 @@ class _AddButton extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(PhosphorIconsBold.plus, size: 16, color: Colors.white),
+                const Icon(PhosphorIconsBold.plus,
+                    size: 16, color: Colors.white),
                 const SizedBox(width: AppSpacing.xs),
                 Text(
                   label,
@@ -227,8 +210,9 @@ class _SegmentButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: isActive ? AppColors.primary : Colors.transparent,
           borderRadius: AppRadius.xsAll,
-          boxShadow:
-              isActive ? AppShadows.accent(AppColors.primary, context.isDarkMode) : null,
+          boxShadow: isActive
+              ? AppShadows.accent(AppColors.primary, context.isDarkMode)
+              : null,
         ),
         child: Text(
           label,
@@ -288,7 +272,7 @@ class _AnnouncementsList extends ConsumerWidget {
                       for (final cat in AnnouncementCategory.values) ...[
                         const SizedBox(width: AppSpacing.sm),
                         AppFilterChip(
-                          label: _categoryLabel(l10n, cat),
+                          label: categoryLabel(l10n, cat),
                           isActive: selectedCategory == cat,
                           onTap: () => ref
                               .read(_announcementsFilterProvider.notifier)
@@ -310,8 +294,11 @@ class _AnnouncementsList extends ConsumerWidget {
                     : ListView.builder(
                         padding: AppSpacing.listPadding,
                         itemCount: announcements.length,
-                        itemBuilder: (context, index) => _AnnouncementCard(
-                            announcement: announcements[index]),
+                        itemBuilder: (context, index) => StaggeredEntrance(
+                          index: index,
+                          child: _AnnouncementCard(
+                              announcement: announcements[index]),
+                        ),
                       ),
               ),
             ],
@@ -331,8 +318,7 @@ class _AnnouncementsList extends ConsumerWidget {
   }
 }
 
-
-class _AnnouncementCard extends StatelessWidget {
+class _AnnouncementCard extends ConsumerWidget {
   final Announcement announcement;
   const _AnnouncementCard({required this.announcement});
 
@@ -346,13 +332,23 @@ class _AnnouncementCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final color = announcement.category.color;
+    final mahallaId = ref.watch(currentUserProfileProvider).valueOrNull?.mahallaId;
 
     return AppCard(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       padding: EdgeInsets.zero,
+      onTap: mahallaId == null
+          ? null
+          : () => AppPageRoute.push(
+                context,
+                AnnouncementDetailScreen(
+                  mahallaId: mahallaId,
+                  announcementId: announcement.id,
+                ),
+              ),
       borderColor: color,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,23 +358,26 @@ class _AnnouncementCard extends StatelessWidget {
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(AppRadius.md)),
-              child: Image.network(
-                announcement.imageUrl!,
-                width: double.infinity,
-                height: 140,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, progress) {
-                  if (progress == null) return child;
-                  return Container(
+              child: Hero(
+                tag: 'announcement-image-${announcement.id}',
+                child: Image.network(
+                  announcement.imageUrl!,
+                  width: double.infinity,
+                  height: 140,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return Container(
+                      height: 140,
+                      color: color.withValues(alpha: 0.08),
+                    );
+                  },
+                  errorBuilder: (_, __, ___) => Container(
                     height: 140,
                     color: color.withValues(alpha: 0.08),
-                  );
-                },
-                errorBuilder: (_, __, ___) => Container(
-                  height: 140,
-                  color: color.withValues(alpha: 0.08),
-                  child: Icon(PhosphorIconsRegular.imageBroken,
-                      color: color.withValues(alpha: 0.4)),
+                    child: Icon(PhosphorIconsRegular.imageBroken,
+                        color: color.withValues(alpha: 0.4)),
+                  ),
                 ),
               ),
             )
@@ -414,7 +413,7 @@ class _AnnouncementCard extends StatelessWidget {
                         borderRadius: AppRadius.xsAll,
                       ),
                       child: Text(
-                        _categoryLabel(l10n, announcement.category),
+                        categoryLabel(l10n, announcement.category),
                         style: context.captionStyle.copyWith(color: color),
                       ),
                     ),
@@ -432,8 +431,9 @@ class _AnnouncementCard extends StatelessWidget {
                         // chiqindi ikonkasi bo'lgan, juda xavfli edi).
                         Consumer(
                           builder: (context, ref, _) {
-                            final profile =
-                                ref.watch(currentUserProfileProvider).valueOrNull;
+                            final profile = ref
+                                .watch(currentUserProfileProvider)
+                                .valueOrNull;
                             final canDelete = profile?.role.canPost == true &&
                                 profile?.mahallaId != null;
                             if (!canDelete) return const SizedBox.shrink();
@@ -451,19 +451,18 @@ class _AnnouncementCard extends StatelessWidget {
                                     await Future.delayed(
                                         const Duration(milliseconds: 1));
                                     if (!context.mounted) return;
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => NewAnnouncementScreen(
+                                    AppPageRoute.push(
+                                        context,
+                                        NewAnnouncementScreen(
                                           mahallaId: profile!.mahallaId!,
                                           existing: announcement,
-                                        ),
-                                      ),
-                                    );
+                                        ));
                                   },
                                   child: Row(
                                     children: [
                                       Icon(PhosphorIconsRegular.pencilSimple,
-                                          size: 18, color: context.textSecondary),
+                                          size: 18,
+                                          color: context.textSecondary),
                                       const SizedBox(width: AppSpacing.sm),
                                       Text(l10n.editButton,
                                           style: context.bodyStyle),
@@ -491,7 +490,8 @@ class _AnnouncementCard extends StatelessWidget {
                                           announcementId: announcement.id,
                                         );
                                     if (context.mounted) {
-                                      showAppAlert(context, l10n.itemDeletedMessage);
+                                      showAppAlert(
+                                          context, l10n.itemDeletedMessage);
                                     }
                                   },
                                   child: Row(
@@ -525,100 +525,11 @@ class _AnnouncementCard extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: AppSpacing.sm),
-                _ReactionRow(announcement: announcement),
+                ReactionRow(announcement: announcement),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// E'lon ostidagi emoji reaksiya tugmalari qatori — har biri shu
-/// emojiga bosganlar sonini ko'rsatadi, joriy foydalanuvchi allaqachon
-/// tanlagan emoji ajratib ko'rsatiladi.
-class _ReactionRow extends ConsumerWidget {
-  final Announcement announcement;
-  const _ReactionRow({required this.announcement});
-
-  static const _emojis = ['👍', '❤️', '😮', '😂'];
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final profile = ref.watch(currentUserProfileProvider).valueOrNull;
-    final myUid = FirebaseAuth.instance.currentUser?.uid;
-    final myEmoji = myUid == null ? null : announcement.reactedUids[myUid];
-
-    return Wrap(
-      spacing: AppSpacing.xs,
-      children: [
-        for (final emoji in _emojis)
-          _ReactionChip(
-            emoji: emoji,
-            count: announcement.reactionCount(emoji),
-            isActive: myEmoji == emoji,
-            onTap: myUid == null || profile?.mahallaId == null
-                ? null
-                : () => ref.read(announcementRepositoryProvider).toggleReaction(
-                      mahallaId: profile!.mahallaId!,
-                      announcementId: announcement.id,
-                      uid: myUid,
-                      emoji: emoji,
-                      currentEmoji: myEmoji,
-                    ),
-          ),
-      ],
-    );
-  }
-}
-
-class _ReactionChip extends StatelessWidget {
-  final String emoji;
-  final int count;
-  final bool isActive;
-  final VoidCallback? onTap;
-
-  const _ReactionChip({
-    required this.emoji,
-    required this.count,
-    required this.isActive,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    const color = AppAccents.announcements;
-    return TapScale(
-      onTap: onTap,
-      haptic: true,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-        decoration: BoxDecoration(
-          color: isActive ? color.withValues(alpha: 0.14) : context.surfaceColor,
-          borderRadius: AppRadius.pillAll,
-          border: Border.all(
-            color: isActive ? color : context.borderColor,
-            width: 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(emoji, style: const TextStyle(fontSize: 13)),
-            if (count > 0) ...[
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                '$count',
-                style: context.captionStyle.copyWith(
-                  color: isActive ? color : context.textSecondary,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ],
-        ),
       ),
     );
   }
@@ -647,8 +558,10 @@ class _EventsList extends ConsumerWidget {
           return ListView.builder(
             padding: AppSpacing.listPadding,
             itemCount: events.length,
-            itemBuilder: (context, index) =>
-                _EventCard(event: events[index], colorIndex: index),
+            itemBuilder: (context, index) => StaggeredEntrance(
+              index: index,
+              child: _EventCard(event: events[index], colorIndex: index),
+            ),
           );
         },
         loading: () => ListView(
@@ -665,7 +578,7 @@ class _EventsList extends ConsumerWidget {
   }
 }
 
-class _EventCard extends StatelessWidget {
+class _EventCard extends ConsumerWidget {
   final MahallaEvent event;
   final int colorIndex;
   const _EventCard({required this.event, required this.colorIndex});
@@ -682,22 +595,31 @@ class _EventCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final gradient = AppAccents
         .bannerGradients[colorIndex % AppAccents.bannerGradients.length];
+    final mahallaId = ref.watch(currentUserProfileProvider).valueOrNull?.mahallaId;
 
     return AppCard(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       padding: EdgeInsets.zero,
+      onTap: mahallaId == null
+          ? null
+          : () => AppPageRoute.push(
+                context,
+                EventDetailScreen(mahallaId: mahallaId, eventId: event.id),
+              ),
       radius: AppRadius.lg,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(AppRadius.lg)),
-            child: Container(
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
+            child: Hero(
+              tag: 'event-banner-${event.id}',
+              child: Container(
               height: 72,
               width: double.infinity,
               padding: AppSpacing.card,
@@ -749,21 +671,20 @@ class _EventCard extends StatelessWidget {
                                 await Future.delayed(
                                     const Duration(milliseconds: 1));
                                 if (!context.mounted) return;
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => NewEventScreen(
+                                AppPageRoute.push(
+                                    context,
+                                    NewEventScreen(
                                       mahallaId: profile!.mahallaId!,
                                       existing: event,
-                                    ),
-                                  ),
-                                );
+                                    ));
                               },
                               child: Row(
                                 children: [
                                   Icon(PhosphorIconsRegular.pencilSimple,
                                       size: 18, color: context.textSecondary),
                                   const SizedBox(width: AppSpacing.sm),
-                                  Text(l10n.editButton, style: context.bodyStyle),
+                                  Text(l10n.editButton,
+                                      style: context.bodyStyle),
                                 ],
                               ),
                             ),
@@ -784,7 +705,8 @@ class _EventCard extends StatelessWidget {
                                       eventId: event.id,
                                     );
                                 if (context.mounted) {
-                                  showAppAlert(context, l10n.itemDeletedMessage);
+                                  showAppAlert(
+                                      context, l10n.itemDeletedMessage);
                                 }
                               },
                               child: Row(
@@ -806,6 +728,7 @@ class _EventCard extends StatelessWidget {
                 ],
               ),
             ),
+          ),
           ),
           Padding(
             padding: AppSpacing.card,

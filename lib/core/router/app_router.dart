@@ -16,6 +16,7 @@ import '../../features/qr/presentation/qr_scan_screen.dart';
 import '../../features/qr/presentation/qr_result_screen.dart';
 import '../../features/qr/data/mahalla_repository.dart';
 import '../widgets/main_shell.dart';
+import 'app_page_route.dart';
 
 /// Push bildirishnoma bosilganda (BuildContext mavjud bo'lmagan joydan —
 /// [PushNotificationService] ichidan) navigatsiya qilish uchun global
@@ -86,21 +87,9 @@ CustomTransitionPage<void> _buildPageWithTransition({
   return CustomTransitionPage<void>(
     key: state.pageKey,
     child: child,
-    transitionDuration: const Duration(milliseconds: 320),
-    reverseTransitionDuration: const Duration(milliseconds: 260),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
-      return FadeTransition(
-        opacity: curved,
-        child: SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0.04, 0),
-            end: Offset.zero,
-          ).animate(curved),
-          child: child,
-        ),
-      );
-    },
+    transitionDuration: appPageTransitionDuration,
+    reverseTransitionDuration: appPageReverseTransitionDuration,
+    transitionsBuilder: appPageTransitionsBuilder,
   );
 }
 

@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../requests/data/requests_repository.dart';
@@ -304,7 +305,7 @@ class _MahallaMapViewState extends ConsumerState<MahallaMapView> {
                             point: marker.position,
                             width: 34,
                             height: 34,
-                            child: GestureDetector(
+                            child: TapScale(
                               onTap: () => _showServiceInfo(marker),
                               child: Container(
                                 decoration: BoxDecoration(
@@ -338,24 +339,27 @@ class _MahallaMapViewState extends ConsumerState<MahallaMapView> {
                   Positioned(
                     right: AppSpacing.md,
                     bottom: AppSpacing.md,
-                    child: Material(
-                      color: context.surfaceColor,
-                      shape: const CircleBorder(),
-                      elevation: 3,
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        onTap: _locating ? null : _locateMe,
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: _locating
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2),
-                                )
-                              : const Icon(PhosphorIconsFill.navigationArrow,
-                                  size: 20, color: AppColors.primary),
+                    child: TapScale(
+                      onTap: _locating ? null : _locateMe,
+                      child: Material(
+                        color: context.surfaceColor,
+                        shape: const CircleBorder(),
+                        elevation: 3,
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: null, // bosish TapScale orqali boshqariladi
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: _locating
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  )
+                                : const Icon(PhosphorIconsFill.navigationArrow,
+                                    size: 20, color: AppColors.primary),
+                          ),
                         ),
                       ),
                     ),
@@ -493,9 +497,9 @@ class _ServiceMarkerSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            InkWell(
-              borderRadius: AppRadius.smAll,
+            TapScale(
               onTap: () => _launchServiceCall(marker.phone),
+              borderRadius: AppRadius.smAll,
               child: Container(
                 padding: const EdgeInsets.all(AppSpacing.sm),
                 decoration: BoxDecoration(

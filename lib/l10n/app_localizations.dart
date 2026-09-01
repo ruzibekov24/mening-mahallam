@@ -2465,6 +2465,12 @@ abstract class AppLocalizations {
   /// **'Masalan: Mahalla yig\'ilishi'**
   String get eventTitleHint;
 
+  /// No description provided for @eventDescriptionHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tadbir haqida qo\'shimcha ma\'lumot (ixtiyoriy)...'**
+  String get eventDescriptionHint;
+
   /// No description provided for @dateLabel.
   ///
   /// In uz, this message translates to:
@@ -2710,6 +2716,36 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Murojaat topilmadi'**
   String get requestNotFound;
+
+  /// No description provided for @announcementDetailTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'E\'lon tafsilotlari'**
+  String get announcementDetailTitle;
+
+  /// No description provided for @announcementNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'E\'lon topilmadi'**
+  String get announcementNotFound;
+
+  /// No description provided for @eventDetailTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tadbir tafsilotlari'**
+  String get eventDetailTitle;
+
+  /// No description provided for @eventNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tadbir topilmadi'**
+  String get eventNotFound;
+
+  /// No description provided for @shareAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ulashish'**
+  String get shareAction;
 
   /// No description provided for @joinRequestAction.
   ///
@@ -3448,6 +3484,12 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Izoh yozing...'**
   String get commentHint;
+
+  /// Murojaat tafsilotlari ekranida bir xil turdagi boshqa murojaatlar ro'yxati sarlavhasi
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'xshash murojaatlar'**
+  String get similarRequestsTitle;
 
   /// Yangi guruh chati yaratish ekrani sarlavhasi/tugmasi/FAB yorlig'i
   ///

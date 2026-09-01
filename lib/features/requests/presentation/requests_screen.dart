@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
+import '../../../core/router/app_page_route.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
@@ -38,23 +39,16 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
     if (!mounted) return;
 
     if (mahallaId == null || mahallaId.isEmpty) {
-      showAppAlert(context, l10n.mustVerifyMahallaFirst, kind: AppAlertKind.error);
+      showAppAlert(context, l10n.mustVerifyMahallaFirst,
+          kind: AppAlertKind.error);
       return;
     }
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => NewRequestFlowScreen(mahallaId: mahallaId),
-      ),
-    );
+    AppPageRoute.push(context, NewRequestFlowScreen(mahallaId: mahallaId));
   }
 
   void _openManagementPanel(String mahallaId) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => RequestsManagementScreen(mahallaId: mahallaId),
-      ),
-    );
+    AppPageRoute.push(context, RequestsManagementScreen(mahallaId: mahallaId));
   }
 
   @override
@@ -88,12 +82,8 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
                             padding:
                                 const EdgeInsets.only(right: AppSpacing.sm),
                             child: IconButton.filledTonal(
-                              onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      MahallaMapScreen(mahallaId: mahallaId),
-                                ),
-                              ),
+                              onPressed: () => AppPageRoute.push(context,
+                                  MahallaMapScreen(mahallaId: mahallaId)),
                               icon: const Icon(PhosphorIconsRegular.mapTrifold,
                                   size: 20),
                             ),
@@ -141,7 +131,8 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
                     status: requests.where((r) => r.status == status).length,
                 };
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -199,8 +190,9 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
                         // Ekranning o'z usuli ishlatiladi — u mahalla
                         // tanlanganini tekshiradi va tanlanmagan bo'lsa
                         // tushunarli xabar ko'rsatadi.
-                        onAction:
-                            _selectedStatus == null ? _openNewRequestFlow : null,
+                        onAction: _selectedStatus == null
+                            ? _openNewRequestFlow
+                            : null,
                         accent: AppAccents.requests,
                         scrollable: true,
                       );
@@ -217,14 +209,12 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
                           onTap: mahallaId == null
                               ? null
                               : () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => RequestDetailScreen(
+                                  AppPageRoute.push(
+                                      context,
+                                      RequestDetailScreen(
                                         mahallaId: mahallaId,
                                         requestId: request.id,
-                                      ),
-                                    ),
-                                  );
+                                      ));
                                 },
                         );
                       },
@@ -321,7 +311,8 @@ class _NewRequestButton extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(PhosphorIconsBold.plus, size: 16, color: Colors.white),
+                const Icon(PhosphorIconsBold.plus,
+                    size: 16, color: Colors.white),
                 const SizedBox(width: AppSpacing.xs),
                 Text(
                   label,
@@ -419,31 +410,46 @@ class _RequestCard extends StatelessWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: request.imageUrls.length,
-                separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.xs),
-                itemBuilder: (context, index) => ClipRRect(
-                  borderRadius: AppRadius.smAll,
-                  child: Image.network(
-                    request.imageUrls[index],
-                    width: 52,
-                    height: 52,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, progress) {
-                      if (progress == null) return child;
-                      return Container(
+                separatorBuilder: (_, __) =>
+                    const SizedBox(width: AppSpacing.xs),
+                itemBuilder: (context, index) {
+                  final thumb = ClipRRect(
+                    borderRadius: AppRadius.smAll,
+                    child: Image.network(
+                      request.imageUrls[index],
+                      width: 52,
+                      height: 52,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return Container(
+                          width: 52,
+                          height: 52,
+                          color: context.textSecondary.withValues(alpha: 0.15),
+                        );
+                      },
+                      errorBuilder: (_, __, ___) => Container(
                         width: 52,
                         height: 52,
                         color: context.textSecondary.withValues(alpha: 0.15),
-                      );
-                    },
-                    errorBuilder: (_, __, ___) => Container(
-                      width: 52,
-                      height: 52,
-                      color: context.textSecondary.withValues(alpha: 0.15),
-                      child: Icon(PhosphorIconsRegular.imageBroken,
-                          size: 18, color: context.textSecondary),
+                        child: Icon(PhosphorIconsRegular.imageBroken,
+                            size: 18, color: context.textSecondary),
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                  // Faqat birinchi rasm Hero bilan o'raladi — tafsilotlar
+                  // ekranidagi birinchi rasm bilan bir xil tag orqali
+                  // "uchib o'tish" animatsiyasi hosil bo'ladi. Boshqa
+                  // galereya elementlarini Hero'ga o'rash noto'g'ri
+                  // flight animatsiyasiga olib keladi.
+                  if (index == 0) {
+                    return Hero(
+                      tag: 'request-image-${request.id}-0',
+                      child: thumb,
+                    );
+                  }
+                  return thumb;
+                },
               ),
             ),
           ],
@@ -457,7 +463,8 @@ class _RequestCard extends StatelessWidget {
                 const SizedBox(width: AppSpacing.xxs),
                 Text(
                   l10n.joinedCount(request.joinedCount),
-                  style: context.captionStyle.copyWith(color: AppColors.primary),
+                  style:
+                      context.captionStyle.copyWith(color: AppColors.primary),
                 ),
               ],
             ),

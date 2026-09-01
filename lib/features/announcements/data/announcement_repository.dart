@@ -126,6 +126,22 @@ class AnnouncementRepository {
             .toList());
   }
 
+  Stream<Announcement?> watchAnnouncementById({
+    required String mahallaId,
+    required String announcementId,
+  }) {
+    return _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('announcements')
+        .doc(announcementId)
+        .snapshots()
+        .map((doc) {
+      if (!doc.exists) return null;
+      return Announcement.fromFirestore(doc.id, doc.data()!);
+    });
+  }
+
   /// Yangi e'lon yaratadi — faqat tasdiqlangan (verifiedBadge) foydalanuvchi
   /// chaqirishi kerak (UI darajasida tekshiriladi).
   Future<void> createAnnouncement({

@@ -26,6 +26,8 @@ class NewEventScreen extends ConsumerStatefulWidget {
 class _NewEventScreenState extends ConsumerState<NewEventScreen> {
   late final _titleController =
       TextEditingController(text: widget.existing?.title ?? '');
+  late final _descriptionController =
+      TextEditingController(text: widget.existing?.description ?? '');
   late final _locationController =
       TextEditingController(text: widget.existing?.location ?? '');
   late DateTime? _selectedDate = widget.existing?.dateTime;
@@ -40,6 +42,7 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
   @override
   void dispose() {
     _titleController.dispose();
+    _descriptionController.dispose();
     _locationController.dispose();
     super.dispose();
   }
@@ -79,6 +82,7 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
   Future<void> _submit() async {
     final l10n = AppLocalizations.of(context);
     final title = _titleController.text.trim();
+    final description = _descriptionController.text.trim();
     final location = _locationController.text.trim();
     final dateTime = _combinedDateTime;
 
@@ -95,6 +99,7 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
           mahallaId: widget.mahallaId,
           eventId: widget.existing!.id,
           title: title,
+          description: description,
           dateTime: dateTime,
           location: location,
         );
@@ -105,6 +110,7 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
           await repo.createEvent(
             mahallaId: mahalla.id,
             title: title,
+            description: description,
             dateTime: dateTime,
             location: location,
           );
@@ -113,6 +119,7 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
         await repo.createEvent(
           mahallaId: widget.mahallaId,
           title: title,
+          description: description,
           dateTime: dateTime,
           location: location,
         );
@@ -211,6 +218,24 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
                     controller: _locationController,
                     decoration:
                         InputDecoration(hintText: l10n.locationHint),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+
+                  Row(
+                    children: [
+                      Text(l10n.descriptionLabel, style: context.captionStyle),
+                      const SizedBox(width: AppSpacing.xs),
+                      Text(l10n.optionalLabel, style: context.captionStyle),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  TextField(
+                    controller: _descriptionController,
+                    minLines: 3,
+                    maxLines: 6,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration:
+                        InputDecoration(hintText: l10n.eventDescriptionHint),
                   ),
 
                   if (!_isEditing)

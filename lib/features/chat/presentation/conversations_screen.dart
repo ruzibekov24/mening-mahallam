@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
+import '../../../core/router/app_page_route.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
@@ -36,9 +37,7 @@ class ConversationsScreen extends ConsumerWidget {
       // bo'lib ko'rinardi. Rang berilmasa mavzudagi
       // `scaffoldBackgroundColor` ishlaydi (dark mode ham).
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const NewGroupScreen()),
-        ),
+        onPressed: () => AppPageRoute.push(context, const NewGroupScreen()),
         icon: const Icon(PhosphorIconsFill.usersThree),
         label: Text(l10n.createGroupAction),
       ),
@@ -149,11 +148,8 @@ class _GroupChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => GroupChatScreen(groupId: group.id),
-        ),
-      ),
+      onTap: () =>
+          AppPageRoute.push(context, GroupChatScreen(groupId: group.id)),
       child: Row(
         children: [
           // Guruhlar shaxsiy avatar o'rniga umumiy belgi bilan
@@ -228,11 +224,8 @@ class _ConversationTile extends ConsumerWidget {
             : '${member.firstName} ${member.lastName}'.trim();
         return AppCard(
           margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => ChatScreen(otherUid: otherUid),
-            ),
-          ),
+          onTap: () =>
+              AppPageRoute.push(context, ChatScreen(otherUid: otherUid)),
           child: Row(
             children: [
               UserAvatar(
@@ -295,7 +288,8 @@ class _ConversationTile extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const ShimmerBox(height: 64, borderRadius: AppRadius.mdAll),
+      loading: () =>
+          const ShimmerBox(height: 64, borderRadius: AppRadius.mdAll),
       error: (_, __) => const SizedBox.shrink(),
     );
   }

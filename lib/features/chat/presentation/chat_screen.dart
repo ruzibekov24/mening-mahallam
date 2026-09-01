@@ -5,6 +5,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../home/data/home_repository.dart';
@@ -27,6 +28,11 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _textController = TextEditingController();
   bool _isSending = false;
+
+  // Faqat ekran birinchi ochilganda ko'ringan xabarlarga kirish
+  // animatsiyasi beriladi — har yangi xabar kelganda ro'yxat qayta
+  // animatsiya qilinsa, suhbat chalg'ituvchi bo'lib qolardi.
+  Set<String>? _initialMessageIds;
 
   String get _conversationId =>
       ref.read(chatRepositoryProvider).conversationIdFor(
@@ -157,6 +163,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       ),
                     );
                   }
+                  _initialMessageIds ??= messages.map((m) => m.id).toSet();
                   return ListView.builder(
                     reverse: true,
                     padding: const EdgeInsets.symmetric(
@@ -165,7 +172,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     itemBuilder: (context, index) {
                       final message = messages[index];
                       final isMine = message.senderUid == myUid;
-                      return _MessageBubble(
+                      final bubble = _MessageBubble(
                         message: message,
                         isMine: isMine,
                         onReport: isMine
@@ -185,6 +192,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                 );
                               },
                       );
+                      if (_initialMessageIds!.contains(message.id)) {
+                        return StaggeredEntrance(index: index, child: bubble);
+                      }
+                      return bubble;
                     },
                   );
                 },

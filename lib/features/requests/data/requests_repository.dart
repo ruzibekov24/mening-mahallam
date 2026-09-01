@@ -660,6 +660,60 @@ class RequestsRepository {
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
+
+  /// O'z komentariyasini o'chiradi — faqat muallifning o'zi chaqirishi
+  /// mumkin (Firestore Rules bilan mustahkamlangan: `resource.data.
+  /// authorUid == myUid()`).
+  Future<void> deleteComment({
+    required String mahallaId,
+    required String requestId,
+    required String commentId,
+  }) async {
+    await _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('requests')
+        .doc(requestId)
+        .collection('comments')
+        .doc(commentId)
+        .delete();
+  }
+
+  /// Berilgan murojaatga o'xshash — bir xil mahalla va turdagi (`type`)
+  /// boshqa murojaatlarni bir martalik so'rov bilan oladi (tafsilotlar
+  /// ekranida ko'rsatish uchun, real vaqtda kuzatish shart emas).
+  /// Joriy murojaatning o'zi natijadan chiqarib tashlanadi.
+  ///
+  /// `maxfiy` turi uchun qo'shimcha `authorUid == myUid()` filtri
+  /// qo'shiladi — aks holda Firestore Rules butun so'rovni rad etardi
+  /// (oddiy a'zo faqat o'zi yozgan maxfiy murojaatlarni ko'ra oladi,
+  /// batafsili: `firestore.rules`dagi `requests` bo'limi va
+  /// `watchVisibleRequests`dagi izoh). Xodim/rais uchun bu cheklov
+  /// qo'llanilmaydi — ularning ruxsati resursdan mustaqil.
+  Future<List<MahallaRequest>> fetchSimilarRequests({
+    required String mahallaId,
+    required String requestId,
+    required RequestType type,
+    int limit = 5,
+  }) async {
+    final requestsCol =
+        _firestore.collection('mahallas').doc(mahallaId).collection('requests');
+    final myUid = _auth.currentUser?.uid;
+
+    Query<Map<String, dynamic>> query =
+        requestsCol.where('type', isEqualTo: type.firestoreValue);
+    if (type == RequestType.maxfiy && myUid != null) {
+      query = query.where('authorUid', isEqualTo: myUid);
+    }
+
+    final snapshot = await query.get();
+    final items = snapshot.docs
+        .map((doc) => MahallaRequest.fromFirestore(doc.id, doc.data()))
+        .where((r) => r.id != requestId)
+        .toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return items.take(limit).toList();
+  }
 }
 
 final requestsRepositoryProvider = Provider<RequestsRepository>((ref) {
@@ -737,5 +791,25 @@ final requestCommentsProvider =
     return ref
         .watch(requestsRepositoryProvider)
         .watchComments(mahallaId: mahallaId, requestId: requestId);
+  },
+);
+
+/// Bitta murojaatga o'xshash boshqa murojaatlarni oladi. Parametr —
+/// `mahallaId:requestId:type` shaklidagi birlashtirilgan kalit (boshqa
+/// `family` providerlar bilan bir xil naqsh — record o'rniga oddiy
+/// string, chunki mahallaId/requestId Firestore doc ID'lari ':' belgisini
+/// o'z ichiga olmaydi).
+final similarRequestsProvider =
+    FutureProvider.autoDispose.family<List<MahallaRequest>, String>(
+  (ref, compositeKey) {
+    final parts = compositeKey.split(':');
+    final mahallaId = parts[0];
+    final requestId = parts[1];
+    final type = RequestTypeX.fromString(parts[2]);
+    return ref.watch(requestsRepositoryProvider).fetchSimilarRequests(
+          mahallaId: mahallaId,
+          requestId: requestId,
+          type: type,
+        );
   },
 );
