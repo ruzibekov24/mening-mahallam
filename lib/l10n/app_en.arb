@@ -242,6 +242,30 @@
   "telegramFailedMessage": "Couldn't open Telegram",
   "announcementsTitle": "Announcements",
   "eventsTitle": "Events",
+  "feedTitle": "Feed",
+  "postsFilterLabel": "Posts",
+  "noPostsYet": "No posts yet",
+  "noPostsHint": "When a neighbor makes the first post, it will appear here.",
+  "writePostHint": "What's on your mind?",
+  "postCreatedMessage": "Post published",
+  "writePostOrImageError": "Write some text or add a photo",
+  "postUpdatedMessage": "Post updated",
+  "editPostTitle": "Edit post",
+  "postingTooFastError": "You're posting too fast. Please wait a moment and try again.",
+  "inappropriateContentError": "The text contains inappropriate words. Please edit it.",
+  "reactionsSheetTitle": "Reactions",
+  "repostAction": "Repost",
+  "repostedByLabel": "{name} reposted",
+  "@repostedByLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "repostSuccessMessage": "Reposted",
+  "addStoryLabel": "Add story",
+  "yourStoryLabel": "Your story",
   "newButton": "New",
   "noAnnouncementsYet": "No announcements yet",
   "noEventsYet": "No events yet",

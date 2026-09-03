@@ -793,6 +793,62 @@ class AppLocalizationsUz extends AppLocalizations {
   String get eventsTitle => 'Tadbirlar';
 
   @override
+  String get feedTitle => 'Lenta';
+
+  @override
+  String get postsFilterLabel => 'Postlar';
+
+  @override
+  String get noPostsYet => 'Hozircha postlar yo\'q';
+
+  @override
+  String get noPostsHint =>
+      'Qo\'shnilar birinchi post qilganda, u shu yerda paydo bo\'ladi.';
+
+  @override
+  String get writePostHint => 'Nima gaplar?';
+
+  @override
+  String get postCreatedMessage => 'Post joylandi';
+
+  @override
+  String get writePostOrImageError => 'Matn yozing yoki rasm qo\'shing';
+
+  @override
+  String get postUpdatedMessage => 'Post yangilandi';
+
+  @override
+  String get editPostTitle => 'Postni tahrirlash';
+
+  @override
+  String get postingTooFastError =>
+      'Juda tez-tez post joylayapsiz. Biroz kuting va qayta urinib ko\'ring.';
+
+  @override
+  String get inappropriateContentError =>
+      'Matnda nomaqbul so\'zlar bor. Iltimos, matnni tahrirlang.';
+
+  @override
+  String get reactionsSheetTitle => 'Reaksiyalar';
+
+  @override
+  String get repostAction => 'Repost';
+
+  @override
+  String repostedByLabel(String name) {
+    return '$name repost qildi';
+  }
+
+  @override
+  String get repostSuccessMessage => 'Repost qilindi';
+
+  @override
+  String get addStoryLabel => 'Hikoya qo\'shish';
+
+  @override
+  String get yourStoryLabel => 'Sizning hikoyangiz';
+
+  @override
   String get newButton => 'Yangi';
 
   @override
@@ -2897,6 +2953,62 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get eventsTitle => 'Тадбирлар';
+
+  @override
+  String get feedTitle => 'Лента';
+
+  @override
+  String get postsFilterLabel => 'Постлар';
+
+  @override
+  String get noPostsYet => 'Ҳозирча постлар йўқ';
+
+  @override
+  String get noPostsHint =>
+      'Қўшнилар биринчи пост қилганда, у шу ерда пайдо бўлади.';
+
+  @override
+  String get writePostHint => 'Нима гаплар?';
+
+  @override
+  String get postCreatedMessage => 'Пост жойланди';
+
+  @override
+  String get writePostOrImageError => 'Матн ёзинг ёки расм қўшинг';
+
+  @override
+  String get postUpdatedMessage => 'Пост янгиланди';
+
+  @override
+  String get editPostTitle => 'Постни таҳрирлаш';
+
+  @override
+  String get postingTooFastError =>
+      'Жуда тез-тез пост жойлаяпсиз. Бироз кутинг ва қайта уриниб кўринг.';
+
+  @override
+  String get inappropriateContentError =>
+      'Матнда номақбул сўзлар бор. Илтимос, матнни таҳрирланг.';
+
+  @override
+  String get reactionsSheetTitle => 'Реаксиялар';
+
+  @override
+  String get repostAction => 'Репост';
+
+  @override
+  String repostedByLabel(String name) {
+    return '$name репост қилди';
+  }
+
+  @override
+  String get repostSuccessMessage => 'Репост қилинди';
+
+  @override
+  String get addStoryLabel => 'Ҳикоя қўшиш';
+
+  @override
+  String get yourStoryLabel => 'Сизнинг ҳикоянгиз';
 
   @override
   String get newButton => 'Янги';

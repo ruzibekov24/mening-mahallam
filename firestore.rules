@@ -479,6 +479,64 @@ service cloud.firestore {
         allow create, update, delete: if isStaffOrRaisOf(mahallaId) || isSuperAdmin();
       }
 
+      // ---------- posts (Lenta) ----------
+      // Announcements/events'dan farqli — mahallaning istalgan a'zosi
+      // (fuqaro ham) yarata oladi. `reactedUids` yangilash faqat o'z
+      // kalitini o'zgartirishga ruxsat beradi (conversations'dagi
+      // `onlyOwnMapKeyChanged` bilan bir xil naqsh). Qattiq o'chirish
+      // o'rniga `deleted: true` — mavjud izohlar bilan bog'liqlik
+      // buzilmasligi uchun (izoh subkolleksiyasi baribir qoladi).
+      match /posts/{postId} {
+        allow read: if isMemberOf(mahallaId) || isSuperAdmin();
+        allow create: if isMemberOf(mahallaId) &&
+          request.resource.data.authorUid == myUid();
+        allow update: if isStaffOrRaisOf(mahallaId) || isSuperAdmin() ||
+          (isMemberOf(mahallaId) && resource.data.authorUid == myUid() &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deleted'])) ||
+          // Post matnini tahrirlash — faqat muallif, faqat `text`
+          // maydoni (repost bo'lmagan postlar uchun; UI reposting
+          // tahrirlash tugmasini ko'rsatmaydi).
+          (isMemberOf(mahallaId) && resource.data.authorUid == myUid() &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text'])) ||
+          (isMemberOf(mahallaId) &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactedUids']) &&
+            onlyOwnMapKeyChanged('reactedUids', myUid())) ||
+          // `repostCount` — repost qilayotgan (ODATDA boshqa) a'zo
+          // original post ustida oshiradi. Aniq +1 ekanini tekshirish
+          // qimmatga tushadi (concurrent yozuvlarda ishonchli emas),
+          // shuning uchun faqat shu maydonning YAKKA o'zi
+          // o'zgarayotganini talab qilamiz — `requests`dagi
+          // `joinedCount` bilan bir xil ishonch darajasi.
+          (isMemberOf(mahallaId) &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['repostCount']));
+        allow delete: if false;
+
+        match /comments/{commentId} {
+          allow read: if isMemberOf(mahallaId) || isSuperAdmin();
+          allow create: if isMemberOf(mahallaId) &&
+            request.resource.data.authorUid == myUid();
+          allow update: if false;
+          allow delete: if isSignedIn() && resource.data.authorUid == myUid();
+        }
+      }
+
+      // ---------- stories (24 soatlik hikoyalar) ----------
+      // Muddati tugashi butunlay CLIENT tomonida boshqariladi
+      // (`StoryRepository`ga qarang) — muddati o'tgan hujjatlarni
+      // serverda o'chiradigan cron yo'q, shuning uchun bu yerda
+      // `expiresAt` bo'yicha maxsus qoida shart emas (o'qishda
+      // client so'rovi filtrlaydi).
+      match /stories/{storyId} {
+        allow read: if isMemberOf(mahallaId) || isSuperAdmin();
+        allow create: if isMemberOf(mahallaId) &&
+          request.resource.data.authorUid == myUid();
+        allow update: if isMemberOf(mahallaId) &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewedUids']) &&
+          onlyOwnMapKeyChanged('viewedUids', myUid());
+        allow delete: if resource.data.authorUid == myUid() ||
+          isStaffOrRaisOf(mahallaId) || isSuperAdmin();
+      }
+
       // ---------- polls (so'rovnomalar) ----------
       // Ikkita alohida yangilash yo'li: xodim/rais savol/variantlarni
       // to'liq tahrirlashi mumkin; oddiy a'zo esa FAQAT `votes`

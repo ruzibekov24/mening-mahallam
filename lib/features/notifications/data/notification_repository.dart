@@ -27,6 +27,8 @@ enum NotificationType {
   requestOverdue,
   // Murojaat egasiga: boshqa foydalanuvchi (yoki xodim) izoh qoldirdi.
   newRequestComment,
+  // Post muallifiga: boshqa foydalanuvchi lentadagi postiga izoh qoldirdi.
+  newPostComment,
 }
 
 extension NotificationTypeX on NotificationType {
@@ -52,6 +54,8 @@ extension NotificationTypeX on NotificationType {
         return NotificationType.requestOverdue;
       case 'newRequestComment':
         return NotificationType.newRequestComment;
+      case 'newPostComment':
+        return NotificationType.newPostComment;
       default:
         return NotificationType.requestStatusChanged;
     }
@@ -81,6 +85,8 @@ extension NotificationTypeX on NotificationType {
         return 'requestOverdue';
       case NotificationType.newRequestComment:
         return 'newRequestComment';
+      case NotificationType.newPostComment:
+        return 'newPostComment';
     }
   }
 }
@@ -115,6 +121,10 @@ String? _userTogglePrefKey(NotificationType type) {
     case NotificationType.premiumApproved:
     case NotificationType.premiumRejected:
     case NotificationType.accountDeletionRequested:
+    // Lentadagi izoh bildirishnomasi hozircha alohida sozlanmaydi
+    // (mavjud 5 turdagi kabi) — hajmi noma'lum bo'lgani uchun,
+    // sozlamalar ekraniga tugma qo'shish keyingi versiyaga qoldirildi.
+    case NotificationType.newPostComment:
       return null;
   }
 }

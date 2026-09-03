@@ -7,7 +7,7 @@ import '../../features/home/presentation/home_screen.dart';
 import '../../features/home/presentation/neighbors_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/requests/presentation/requests_screen.dart';
-import '../../features/announcements/presentation/announcements_screen.dart';
+import '../../features/feed/presentation/feed_screen.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_tokens.dart';
 import 'app_feedback.dart';
@@ -38,8 +38,9 @@ class _NeighborsTab extends ConsumerWidget {
   }
 }
 
-/// Mockupdagi pastki navigatsiya (5 bo'lim): Asosiy, E'lonlar,
-/// Murojaat, Qo'shnilar, Profil.
+/// Pastki navigatsiya (5 bo'lim): Asosiy, Lenta, Murojaat, Qo'shnilar,
+/// Profil. "Lenta" avvalgi "E'lonlar" o'rnida — postlar, e'lonlar va
+/// tadbirlarni birlashtiradi (`FeedScreen`ga qarang).
 ///
 /// Phosphor Fill ikonalari bilan — ilovaning qolgan qismida
 /// ishlatiladigan ikonka tili bilan bir xil (avval generic Material
@@ -52,7 +53,7 @@ class MainShell extends ConsumerWidget {
 
   static const _screens = [
     HomeScreen(),
-    AnnouncementsScreen(),
+    FeedScreen(),
     RequestsScreen(),
     _NeighborsTab(),
     ProfileScreen(),
@@ -65,9 +66,9 @@ class MainShell extends ConsumerWidget {
       color: AppColors.primary,
     ),
     GlassNavItem(
-      icon: PhosphorIconsFill.megaphone,
-      label: "E'lonlar",
-      color: AppAccents.events,
+      icon: PhosphorIconsFill.rows,
+      label: 'Lenta',
+      color: AppAccents.announcements,
     ),
     GlassNavItem(
       icon: PhosphorIconsFill.chatCircleDots,

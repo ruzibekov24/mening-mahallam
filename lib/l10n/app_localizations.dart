@@ -1553,6 +1553,108 @@ abstract class AppLocalizations {
   /// **'Tadbirlar'**
   String get eventsTitle;
 
+  /// No description provided for @feedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Lenta'**
+  String get feedTitle;
+
+  /// No description provided for @postsFilterLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Postlar'**
+  String get postsFilterLabel;
+
+  /// No description provided for @noPostsYet.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha postlar yo\'q'**
+  String get noPostsYet;
+
+  /// No description provided for @noPostsHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'shnilar birinchi post qilganda, u shu yerda paydo bo\'ladi.'**
+  String get noPostsHint;
+
+  /// No description provided for @writePostHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nima gaplar?'**
+  String get writePostHint;
+
+  /// No description provided for @postCreatedMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Post joylandi'**
+  String get postCreatedMessage;
+
+  /// No description provided for @writePostOrImageError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Matn yozing yoki rasm qo\'shing'**
+  String get writePostOrImageError;
+
+  /// No description provided for @postUpdatedMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Post yangilandi'**
+  String get postUpdatedMessage;
+
+  /// No description provided for @editPostTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Postni tahrirlash'**
+  String get editPostTitle;
+
+  /// No description provided for @postingTooFastError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Juda tez-tez post joylayapsiz. Biroz kuting va qayta urinib ko\'ring.'**
+  String get postingTooFastError;
+
+  /// No description provided for @inappropriateContentError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Matnda nomaqbul so\'zlar bor. Iltimos, matnni tahrirlang.'**
+  String get inappropriateContentError;
+
+  /// No description provided for @reactionsSheetTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Reaksiyalar'**
+  String get reactionsSheetTitle;
+
+  /// No description provided for @repostAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Repost'**
+  String get repostAction;
+
+  /// No description provided for @repostedByLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} repost qildi'**
+  String repostedByLabel(String name);
+
+  /// No description provided for @repostSuccessMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Repost qilindi'**
+  String get repostSuccessMessage;
+
+  /// No description provided for @addStoryLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hikoya qo\'shish'**
+  String get addStoryLabel;
+
+  /// No description provided for @yourStoryLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sizning hikoyangiz'**
+  String get yourStoryLabel;
+
   /// No description provided for @newButton.
   ///
   /// In uz, this message translates to:

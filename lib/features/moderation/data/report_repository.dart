@@ -3,7 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Shikoyat qilingan narsaning turi.
-enum ReportTargetType { chatMessage, announcement, serviceAd, user }
+enum ReportTargetType {
+  chatMessage,
+  announcement,
+  serviceAd,
+  user,
+  post,
+  comment,
+  story,
+}
 
 extension ReportTargetTypeX on ReportTargetType {
   static ReportTargetType fromString(String value) {
@@ -14,6 +22,12 @@ extension ReportTargetTypeX on ReportTargetType {
         return ReportTargetType.serviceAd;
       case 'user':
         return ReportTargetType.user;
+      case 'post':
+        return ReportTargetType.post;
+      case 'comment':
+        return ReportTargetType.comment;
+      case 'story':
+        return ReportTargetType.story;
       default:
         return ReportTargetType.chatMessage;
     }
@@ -29,6 +43,12 @@ extension ReportTargetTypeX on ReportTargetType {
         return 'serviceAd';
       case ReportTargetType.user:
         return 'user';
+      case ReportTargetType.post:
+        return 'post';
+      case ReportTargetType.comment:
+        return 'comment';
+      case ReportTargetType.story:
+        return 'story';
     }
   }
 }

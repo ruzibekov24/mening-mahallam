@@ -20,6 +20,8 @@ extension on NotificationType {
         return PhosphorIconsFill.clockCountdown;
       case NotificationType.newRequestComment:
         return PhosphorIconsFill.chatCircleDots;
+      case NotificationType.newPostComment:
+        return PhosphorIconsFill.chatCircleDots;
       case NotificationType.newAnnouncement:
         return PhosphorIconsFill.megaphone;
       case NotificationType.newEvent:
@@ -45,6 +47,8 @@ extension on NotificationType {
         return AppColors.danger;
       case NotificationType.newRequestComment:
         return AppAccents.requests;
+      case NotificationType.newPostComment:
+        return AppAccents.announcements;
       case NotificationType.newAnnouncement:
         return AppAccents.announcements;
       case NotificationType.newEvent:

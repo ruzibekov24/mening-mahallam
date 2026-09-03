@@ -291,6 +291,30 @@
   "telegramFailedMessage": "Не удалось открыть Telegram",
   "announcementsTitle": "Объявления",
   "eventsTitle": "Мероприятия",
+  "feedTitle": "Лента",
+  "postsFilterLabel": "Посты",
+  "noPostsYet": "Пока нет постов",
+  "noPostsHint": "Когда сосед опубликует первый пост, он появится здесь.",
+  "writePostHint": "Что у вас нового?",
+  "postCreatedMessage": "Пост опубликован",
+  "writePostOrImageError": "Напишите текст или добавьте фото",
+  "postUpdatedMessage": "Пост обновлён",
+  "editPostTitle": "Редактировать пост",
+  "postingTooFastError": "Вы публикуете слишком часто. Подождите немного и попробуйте снова.",
+  "inappropriateContentError": "Текст содержит недопустимые слова. Пожалуйста, отредактируйте текст.",
+  "reactionsSheetTitle": "Реакции",
+  "repostAction": "Репост",
+  "repostedByLabel": "{name} сделал(а) репост",
+  "@repostedByLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "repostSuccessMessage": "Репост сделан",
+  "addStoryLabel": "Добавить историю",
+  "yourStoryLabel": "Ваша история",
   "newButton": "Новое",
   "noAnnouncementsYet": "Пока нет объявлений",
   "noEventsYet": "Пока нет мероприятий",

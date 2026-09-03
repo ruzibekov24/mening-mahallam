@@ -793,6 +793,62 @@ class AppLocalizationsRu extends AppLocalizations {
   String get eventsTitle => 'Мероприятия';
 
   @override
+  String get feedTitle => 'Лента';
+
+  @override
+  String get postsFilterLabel => 'Посты';
+
+  @override
+  String get noPostsYet => 'Пока нет постов';
+
+  @override
+  String get noPostsHint =>
+      'Когда сосед опубликует первый пост, он появится здесь.';
+
+  @override
+  String get writePostHint => 'Что у вас нового?';
+
+  @override
+  String get postCreatedMessage => 'Пост опубликован';
+
+  @override
+  String get writePostOrImageError => 'Напишите текст или добавьте фото';
+
+  @override
+  String get postUpdatedMessage => 'Пост обновлён';
+
+  @override
+  String get editPostTitle => 'Редактировать пост';
+
+  @override
+  String get postingTooFastError =>
+      'Вы публикуете слишком часто. Подождите немного и попробуйте снова.';
+
+  @override
+  String get inappropriateContentError =>
+      'Текст содержит недопустимые слова. Пожалуйста, отредактируйте текст.';
+
+  @override
+  String get reactionsSheetTitle => 'Реакции';
+
+  @override
+  String get repostAction => 'Репост';
+
+  @override
+  String repostedByLabel(String name) {
+    return '$name сделал(а) репост';
+  }
+
+  @override
+  String get repostSuccessMessage => 'Репост сделан';
+
+  @override
+  String get addStoryLabel => 'Добавить историю';
+
+  @override
+  String get yourStoryLabel => 'Ваша история';
+
+  @override
   String get newButton => 'Новое';
 
   @override

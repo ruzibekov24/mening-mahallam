@@ -6,6 +6,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../data/auth_repository.dart';
 import '../data/phone_verification_repository.dart';
 
 /// Telefon raqamni Telegram bot orqali tasdiqlash ekrani. Eski SMS
@@ -67,7 +68,15 @@ class _TelegramVerifyScreenState extends ConsumerState<TelegramVerifyScreen> {
             if (mounted) {
               setState(() {
                 _isCompleting = false;
-                _errorText = 'Xatolik yuz berdi. Qayta urinib ko\'ring';
+                // Haqiqiy xato matnini ko'rsatamiz (masalan Firebase'ning
+                // aniq kodi) — avval bu yerda doim bir xil umumiy xabar
+                // ko'rsatilardi, shuning uchun production'da ro'yxatdan
+                // o'tish nega muvaffaqiyatsiz tugaganini bilib bo'lmasdi.
+                _errorText = switch (e) {
+                  AuthException(:final message) => message,
+                  PhoneVerificationException(:final message) => message,
+                  _ => 'Xatolik yuz berdi. Qayta urinib ko\'ring',
+                };
               });
             }
           }

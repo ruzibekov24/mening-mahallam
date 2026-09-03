@@ -258,7 +258,7 @@ class _AnnouncementsList extends ConsumerWidget {
                         itemCount: announcements.length,
                         itemBuilder: (context, index) => StaggeredEntrance(
                           index: index,
-                          child: _AnnouncementCard(
+                          child: AnnouncementCard(
                               announcement: announcements[index]),
                         ),
                       ),
@@ -280,9 +280,12 @@ class _AnnouncementsList extends ConsumerWidget {
   }
 }
 
-class _AnnouncementCard extends ConsumerWidget {
+/// Bitta e'lon kartochkasi — `AnnouncementsScreen` (E'lonlar ichki
+/// tabi) va `FeedScreen` (Lenta, e'lonlarni postlar bilan birga
+/// ko'rsatadi) ikkalasi ham shu widget'dan foydalanadi.
+class AnnouncementCard extends ConsumerWidget {
   final Announcement announcement;
-  const _AnnouncementCard({required this.announcement});
+  const AnnouncementCard({super.key, required this.announcement});
 
   String _timeAgo(BuildContext context, DateTime dt) {
     final l10n = AppLocalizations.of(context);
@@ -519,7 +522,7 @@ class _EventsList extends ConsumerWidget {
             itemCount: events.length,
             itemBuilder: (context, index) => StaggeredEntrance(
               index: index,
-              child: _EventCard(event: events[index], colorIndex: index),
+              child: EventCard(event: events[index], colorIndex: index),
             ),
           );
         },
@@ -537,10 +540,13 @@ class _EventsList extends ConsumerWidget {
   }
 }
 
-class _EventCard extends ConsumerWidget {
+/// Bitta tadbir kartochkasi — `AnnouncementsScreen` va `FeedScreen`
+/// ikkalasi ham shu widget'dan foydalanadi (`AnnouncementCard`dagi
+/// bilan bir xil sabab).
+class EventCard extends ConsumerWidget {
   final MahallaEvent event;
   final int colorIndex;
-  const _EventCard({required this.event, required this.colorIndex});
+  const EventCard({super.key, required this.event, required this.colorIndex});
 
   String _formatDateTime(BuildContext context, DateTime dt) {
     final l10n = AppLocalizations.of(context);

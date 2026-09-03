@@ -62,18 +62,28 @@ class AuthRepository {
     required String phone,
     required String password,
   }) async {
+    User? createdUser;
     try {
       final credential = await _auth.createUserWithEmailAndPassword(
         email: _phoneToPseudoEmail(phone),
         password: password,
       );
 
-      final uid = credential.user?.uid;
-      if (uid == null) {
+      final user = credential.user;
+      if (user == null) {
         throw AuthException("Foydalanuvchi yaratishda xatolik yuz berdi");
       }
+      createdUser = user;
 
-      await _firestore.collection('users').doc(uid).set({
+      // Hisob yangi yaratilgan bo'lgani uchun mahalliy ID token hali
+      // yangilanmagan bo'lishi mumkin — Firestore darhol shu eski
+      // token bilan yozishga urinsa, xavfsizlik qoidalari
+      // `request.auth`ni to'g'ri ko'rmasdan "permission-denied"
+      // tashlashi mumkin (Firebase'da ma'lum poyga holati). Yozishdan
+      // oldin tokenni majburan yangilab olamiz.
+      await user.getIdToken(true);
+
+      await _firestore.collection('users').doc(user.uid).set({
         'firstName': firstName,
         'lastName': lastName,
         'phone': phone,
@@ -83,6 +93,20 @@ class AuthRepository {
       });
     } on FirebaseAuthException catch (e) {
       throw AuthException(_mapFirebaseError(e.code));
+    } catch (e) {
+      // Bu yerga tushish demak — Firebase hisobi (Auth) ALLAQACHON
+      // yaratildi, faqat Firestore profilini yozishda xato yuz berdi
+      // (masalan vaqtinchalik tarmoq/qoida xatosi). Foydalanuvchiga
+      // umuman "ro'yxatdan o'tmadi" deyish noto'g'ri — hisobi bor,
+      // shuning uchun buni aniq aytamiz.
+      if (createdUser != null) {
+        throw AuthException(
+          "Hisobingiz yaratildi, lekin profilni saqlashda xatolik yuz "
+          "berdi. Ilovaga qaytadan kirishga urinib ko'ring (\"Kirish\" "
+          "orqali, shu telefon va parol bilan). Xato: $e",
+        );
+      }
+      rethrow;
     }
   }
 

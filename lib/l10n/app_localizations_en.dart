@@ -791,6 +791,62 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventsTitle => 'Events';
 
   @override
+  String get feedTitle => 'Feed';
+
+  @override
+  String get postsFilterLabel => 'Posts';
+
+  @override
+  String get noPostsYet => 'No posts yet';
+
+  @override
+  String get noPostsHint =>
+      'When a neighbor makes the first post, it will appear here.';
+
+  @override
+  String get writePostHint => 'What\'s on your mind?';
+
+  @override
+  String get postCreatedMessage => 'Post published';
+
+  @override
+  String get writePostOrImageError => 'Write some text or add a photo';
+
+  @override
+  String get postUpdatedMessage => 'Post updated';
+
+  @override
+  String get editPostTitle => 'Edit post';
+
+  @override
+  String get postingTooFastError =>
+      'You\'re posting too fast. Please wait a moment and try again.';
+
+  @override
+  String get inappropriateContentError =>
+      'The text contains inappropriate words. Please edit it.';
+
+  @override
+  String get reactionsSheetTitle => 'Reactions';
+
+  @override
+  String get repostAction => 'Repost';
+
+  @override
+  String repostedByLabel(String name) {
+    return '$name reposted';
+  }
+
+  @override
+  String get repostSuccessMessage => 'Reposted';
+
+  @override
+  String get addStoryLabel => 'Add story';
+
+  @override
+  String get yourStoryLabel => 'Your story';
+
+  @override
   String get newButton => 'New';
 
   @override

@@ -291,6 +291,30 @@
   "telegramFailedMessage": "Телеграм очиб бўлмади",
   "announcementsTitle": "Эълонлар",
   "eventsTitle": "Тадбирлар",
+  "feedTitle": "Лента",
+  "postsFilterLabel": "Постлар",
+  "noPostsYet": "Ҳозирча постлар йўқ",
+  "noPostsHint": "Қўшнилар биринчи пост қилганда, у шу ерда пайдо бўлади.",
+  "writePostHint": "Нима гаплар?",
+  "postCreatedMessage": "Пост жойланди",
+  "writePostOrImageError": "Матн ёзинг ёки расм қўшинг",
+  "postUpdatedMessage": "Пост янгиланди",
+  "editPostTitle": "Постни таҳрирлаш",
+  "postingTooFastError": "Жуда тез-тез пост жойлаяпсиз. Бироз кутинг ва қайта уриниб кўринг.",
+  "inappropriateContentError": "Матнда номақбул сўзлар бор. Илтимос, матнни таҳрирланг.",
+  "reactionsSheetTitle": "Реаксиялар",
+  "repostAction": "Репост",
+  "repostedByLabel": "{name} репост қилди",
+  "@repostedByLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "repostSuccessMessage": "Репост қилинди",
+  "addStoryLabel": "Ҳикоя қўшиш",
+  "yourStoryLabel": "Сизнинг ҳикоянгиз",
   "newButton": "Янги",
   "noAnnouncementsYet": "Ҳозирча эълонлар йўқ",
   "noEventsYet": "Ҳозирча тадбирлар йўқ",

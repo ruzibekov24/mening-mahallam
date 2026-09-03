@@ -368,6 +368,30 @@
   "telegramFailedMessage": "Telegram ochib bo'lmadi",
   "announcementsTitle": "E'lonlar",
   "eventsTitle": "Tadbirlar",
+  "feedTitle": "Lenta",
+  "postsFilterLabel": "Postlar",
+  "noPostsYet": "Hozircha postlar yo'q",
+  "noPostsHint": "Qo'shnilar birinchi post qilganda, u shu yerda paydo bo'ladi.",
+  "writePostHint": "Nima gaplar?",
+  "postCreatedMessage": "Post joylandi",
+  "writePostOrImageError": "Matn yozing yoki rasm qo'shing",
+  "postUpdatedMessage": "Post yangilandi",
+  "editPostTitle": "Postni tahrirlash",
+  "postingTooFastError": "Juda tez-tez post joylayapsiz. Biroz kuting va qayta urinib ko'ring.",
+  "inappropriateContentError": "Matnda nomaqbul so'zlar bor. Iltimos, matnni tahrirlang.",
+  "reactionsSheetTitle": "Reaksiyalar",
+  "repostAction": "Repost",
+  "repostedByLabel": "{name} repost qildi",
+  "@repostedByLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "repostSuccessMessage": "Repost qilindi",
+  "addStoryLabel": "Hikoya qo'shish",
+  "yourStoryLabel": "Sizning hikoyangiz",
   "newButton": "Yangi",
   "noAnnouncementsYet": "Hozircha e'lonlar yo'q",
   "noEventsYet": "Hozircha tadbirlar yo'q",

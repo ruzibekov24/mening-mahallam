@@ -11,6 +11,7 @@ import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../features/chat/presentation/chat_screen.dart';
+import '../../features/feed/presentation/post_detail_screen.dart';
 import '../../features/home/data/home_repository.dart';
 import '../../features/notifications/data/notification_repository.dart';
 import '../../features/requests/presentation/request_detail_screen.dart';
@@ -208,6 +209,24 @@ class PushNotificationService {
         // Premium bildirishnomalari uchun alohida ekranga o'tmaymiz —
         // ilova ochilishining o'zi yetarli, tafsilotlar Sozlamalar >
         // Premium bo'limida turadi.
+        break;
+
+      case NotificationType.newPostComment:
+        container.read(mainTabIndexProvider.notifier).state = 1;
+        if (relatedId == null) break;
+        try {
+          final profile =
+              await container.read(currentUserProfileProvider.future);
+          final mahallaId = profile?.mahallaId;
+          if (mahallaId == null || !context.mounted) break;
+          AppPageRoute.push(
+            context,
+            PostDetailScreen(mahallaId: mahallaId, postId: relatedId),
+          );
+        } catch (_) {
+          // Post topilmasa yoki mahallaId aniqlanmasa — tab
+          // almashtirilgani yetarli, xato ko'rsatilmaydi.
+        }
         break;
 
       case NotificationType.newMessage:
