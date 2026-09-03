@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../../core/router/app_page_route.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
@@ -22,15 +23,18 @@ import 'new_post_screen.dart';
 import 'post_widgets.dart';
 import 'stories_bar.dart';
 
-enum _FeedFilter { all, posts, announcements, events }
+enum _FeedFilter { announcements, events, posts }
 
 final _feedFilterProvider =
-    StateProvider.autoDispose<_FeedFilter>((ref) => _FeedFilter.all);
+    StateProvider.autoDispose<_FeedFilter>((ref) => _FeedFilter.announcements);
 
-/// Lenta — postlar, e'lonlar va tadbirlarni bitta xronologik
-/// ro'yxatda ko'rsatadi (avvalgi "E'lonlar" tabining o'rnida).
-/// `announcements`/`events` kolleksiyalari o'zgarishsiz qoladi —
-/// bu faqat ularni birlashtiruvchi UI ko'rinishi.
+/// Lenta — postlar, e'lonlar va tadbirlarni bitta ekranda, lekin
+/// ALOHIDA-ALOHIDA (aralashtirilmasdan) ko'rsatadi: yuqoridagi 3 ta
+/// chip har doim aynan bitta turkumni tanlaydi, "hammasi" degan
+/// aralash ko'rinish yo'q — rasmiy e'lon/tadbirlar oddiy foydalanuvchi
+/// postlari orasida yo'qolib qolmasligi uchun. `announcements`/`events`
+/// kolleksiyalari o'zgarishsiz qoladi — bu faqat ular orasida almashish
+/// uchun UI ko'rinishi.
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
 
@@ -80,7 +84,6 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     final hasMorePosts = ref.watch(hasMorePostsProvider);
 
     final filtered = switch (filter) {
-      _FeedFilter.all => items,
       _FeedFilter.posts => items.where(_isPost).toList(),
       _FeedFilter.announcements => items.where(_isAnnouncement).toList(),
       _FeedFilter.events => items.where(_isEvent).toList(),
@@ -165,36 +168,42 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
             ],
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+              child: Container(
+                padding: const EdgeInsets.all(AppSpacing.xs),
+                decoration: BoxDecoration(
+                  color: context.isDarkMode
+                      ? AppColors.darkSurface
+                      : AppColors.lightBorder,
+                  borderRadius: AppRadius.smAll,
+                ),
                 child: Row(
                   children: [
-                    AppFilterChip(
-                      label: l10n.allFilter,
-                      isActive: filter == _FeedFilter.all,
-                      onTap: () => ref.read(_feedFilterProvider.notifier).state =
-                          _FeedFilter.all,
+                    Expanded(
+                      child: _FeedSegmentButton(
+                        label: l10n.announcementsTitle,
+                        isActive: filter == _FeedFilter.announcements,
+                        onTap: () =>
+                            ref.read(_feedFilterProvider.notifier).state =
+                                _FeedFilter.announcements,
+                      ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
-                    AppFilterChip(
-                      label: l10n.postsFilterLabel,
-                      isActive: filter == _FeedFilter.posts,
-                      onTap: () => ref.read(_feedFilterProvider.notifier).state =
-                          _FeedFilter.posts,
+                    Expanded(
+                      child: _FeedSegmentButton(
+                        label: l10n.eventsTitle,
+                        isActive: filter == _FeedFilter.events,
+                        onTap: () =>
+                            ref.read(_feedFilterProvider.notifier).state =
+                                _FeedFilter.events,
+                      ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
-                    AppFilterChip(
-                      label: l10n.announcementsTitle,
-                      isActive: filter == _FeedFilter.announcements,
-                      onTap: () => ref.read(_feedFilterProvider.notifier).state =
-                          _FeedFilter.announcements,
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    AppFilterChip(
-                      label: l10n.eventsTitle,
-                      isActive: filter == _FeedFilter.events,
-                      onTap: () => ref.read(_feedFilterProvider.notifier).state =
-                          _FeedFilter.events,
+                    Expanded(
+                      child: _FeedSegmentButton(
+                        label: l10n.postsFilterLabel,
+                        isActive: filter == _FeedFilter.posts,
+                        onTap: () =>
+                            ref.read(_feedFilterProvider.notifier).state =
+                                _FeedFilter.posts,
+                      ),
                     ),
                   ],
                 ),
@@ -223,8 +232,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                       scrollable: true,
                     );
                   }
-                  final showLoadMoreRow = hasMorePosts &&
-                      (filter == _FeedFilter.all || filter == _FeedFilter.posts);
+                  final showLoadMoreRow =
+                      hasMorePosts && filter == _FeedFilter.posts;
                   return RefreshIndicator(
                     onRefresh: () async {
                       ref.read(postsLimitProvider.notifier).state = 20;
@@ -272,6 +281,48 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// `NeighborsScreen._SegmentButton` bilan vizual jihatdan bir xil
+/// (uch bo'lakli qatorda) — kichik widget bo'lgani uchun umumiy fayl
+/// chiqarish o'rniga shu yerda alohida nusxasi saqlangan.
+class _FeedSegmentButton extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _FeedSegmentButton({
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TapScale(
+      onTap: onTap,
+      haptic: false,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isActive ? AppColors.primary : Colors.transparent,
+          borderRadius: AppRadius.xsAll,
+          boxShadow: isActive
+              ? AppShadows.accent(AppColors.primary, context.isDarkMode)
+              : null,
+        ),
+        child: Text(
+          label,
+          style: context.secondaryStyle.copyWith(
+            fontWeight: FontWeight.w600,
+            color: isActive ? Colors.white : context.textSecondary,
+          ),
         ),
       ),
     );
