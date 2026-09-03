@@ -68,10 +68,13 @@ class Post {
   final String? repostOfPostId;
   final RepostSnapshot? repostSnapshot;
 
-  /// Ushbu post nechta marta repost qilingani (`FieldValue.increment`
-  /// bilan yangilanadi — reaksiyalardan farqli, bu haqiqiy sonlagich,
-  /// concurrent yozuvlarda ham xavfsiz).
-  final int repostCount;
+  /// uid -> shu foydalanuvchi yaratgan repost post'ining id'si.
+  /// `reactedUids`dagi bilan bir xil naqsh — har bir a'zo bitta postni
+  /// faqat BIR MARTA repost qila oladi (qayta bossa bekor qiladi),
+  /// cheksiz takroriy repost bilan lentani to'ldirib yubormaslik uchun.
+  final Map<String, String> repostedByUids;
+
+  int get repostCount => repostedByUids.length;
 
   Post({
     required this.id,
@@ -84,7 +87,7 @@ class Post {
     this.reactedUids = const {},
     this.repostOfPostId,
     this.repostSnapshot,
-    this.repostCount = 0,
+    this.repostedByUids = const {},
   });
 
   bool get isRepost => repostOfPostId != null;
@@ -107,7 +110,8 @@ class Post {
       repostOfPostId: data['repostOfPostId'] as String?,
       repostSnapshot:
           snapshotData == null ? null : RepostSnapshot.fromMap(snapshotData),
-      repostCount: (data['repostCount'] ?? 0) as int,
+      repostedByUids:
+          Map<String, String>.from(data['repostedByUids'] ?? const {}),
     );
   }
 }
@@ -206,17 +210,18 @@ class FeedRepository {
       'imageUrls': imageUrls,
       'createdAt': FieldValue.serverTimestamp(),
       'reactedUids': <String, String>{},
-      'repostCount': 0,
       'deleted': false,
     });
   }
 
-  /// Postni o'z lentasiga repost qiladi — yangi post hujjati sifatida
-  /// (`repostOfPostId` bilan), original postning `repostCount`ini
-  /// oshiradi. Original post ustiga qayta repost qilish (repostning
-  /// reposti) UI darajasida cheklangan — zanjir chuqurlashib
-  /// ketmasligi uchun.
-  Future<void> createRepost({
+  /// Postni o'z lentasiga repost qiladi/bekor qiladi — reaksiyalar
+  /// bilan bir xil "toggle" mantiq: bir foydalanuvchi bitta postni
+  /// faqat bir marta repost qila oladi (qayta bossa, o'zining repost
+  /// postini bekor qiladi). Buning oldida cheksiz repost lentani
+  /// bitta post bilan to'ldirib yuborishi mumkin edi. Original post
+  /// ustiga qayta repost qilish (repostning reposti) UI darajasida
+  /// cheklangan — zanjir chuqurlashib ketmasligi uchun.
+  Future<void> toggleRepost({
     required String mahallaId,
     required Post original,
     required String authorName,
@@ -227,31 +232,50 @@ class FeedRepository {
       throw Exception('Foydalanuvchi tizimga kirmagan');
     }
 
+    final originalRef = _postsRef(mahallaId).doc(original.id);
+    final existingRepostId = original.repostedByUids[uid];
+
+    if (existingRepostId != null) {
+      // Repostni bekor qilish — o'z repost post'ini soft-delete
+      // qilish (mavjud `deletePost` bilan bir xil naqsh) va
+      // original postdagi belgini olib tashlash.
+      final repostRef = _postsRef(mahallaId).doc(existingRepostId);
+      await _firestore.runTransaction((transaction) async {
+        transaction.update(repostRef, {'deleted': true});
+        transaction.update(originalRef, {
+          'repostedByUids.$uid': FieldValue.delete(),
+        });
+      });
+      return;
+    }
+
     final preview = original.text.length > 140
         ? '${original.text.substring(0, 140)}…'
         : original.text;
+    final newRepostRef = _postsRef(mahallaId).doc();
 
-    await _postsRef(mahallaId).add({
-      'authorUid': uid,
-      'authorName': authorName,
-      'authorPhotoUrl': authorPhotoUrl,
-      'text': '',
-      'imageUrls': <String>[],
-      'createdAt': FieldValue.serverTimestamp(),
-      'reactedUids': <String, String>{},
-      'repostCount': 0,
-      'deleted': false,
-      'repostOfPostId': original.id,
-      'repostSnapshot': RepostSnapshot(
-        authorName: original.authorName,
-        textPreview: preview,
-        imageUrl: original.imageUrls.isNotEmpty ? original.imageUrls.first : null,
-      ).toMap(),
+    await _firestore.runTransaction((transaction) async {
+      transaction.set(newRepostRef, {
+        'authorUid': uid,
+        'authorName': authorName,
+        'authorPhotoUrl': authorPhotoUrl,
+        'text': '',
+        'imageUrls': <String>[],
+        'createdAt': FieldValue.serverTimestamp(),
+        'reactedUids': <String, String>{},
+        'deleted': false,
+        'repostOfPostId': original.id,
+        'repostSnapshot': RepostSnapshot(
+          authorName: original.authorName,
+          textPreview: preview,
+          imageUrl:
+              original.imageUrls.isNotEmpty ? original.imageUrls.first : null,
+        ).toMap(),
+      });
+      transaction.update(originalRef, {
+        'repostedByUids.$uid': newRepostRef.id,
+      });
     });
-
-    await _postsRef(mahallaId)
-        .doc(original.id)
-        .update({'repostCount': FieldValue.increment(1)});
   }
 
   /// Post matnini tahrirlaydi — faqat muallif chaqirishi kerak (UI

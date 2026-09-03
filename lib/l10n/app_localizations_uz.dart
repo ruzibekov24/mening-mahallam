@@ -843,6 +843,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get repostSuccessMessage => 'Repost qilindi';
 
   @override
+  String get repostRemovedMessage => 'Repost bekor qilindi';
+
+  @override
   String get addStoryLabel => 'Hikoya qo\'shish';
 
   @override
@@ -3003,6 +3006,9 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get repostSuccessMessage => 'Репост қилинди';
+
+  @override
+  String get repostRemovedMessage => 'Репост бекор қилинди';
 
   @override
   String get addStoryLabel => 'Ҳикоя қўшиш';

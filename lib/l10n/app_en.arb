@@ -264,6 +264,7 @@
     }
   },
   "repostSuccessMessage": "Reposted",
+  "repostRemovedMessage": "Repost removed",
   "addStoryLabel": "Add story",
   "yourStoryLabel": "Your story",
   "newButton": "New",

@@ -501,14 +501,13 @@ service cloud.firestore {
           (isMemberOf(mahallaId) &&
             request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactedUids']) &&
             onlyOwnMapKeyChanged('reactedUids', myUid())) ||
-          // `repostCount` — repost qilayotgan (ODATDA boshqa) a'zo
-          // original post ustida oshiradi. Aniq +1 ekanini tekshirish
-          // qimmatga tushadi (concurrent yozuvlarda ishonchli emas),
-          // shuning uchun faqat shu maydonning YAKKA o'zi
-          // o'zgarayotganini talab qilamiz — `requests`dagi
-          // `joinedCount` bilan bir xil ishonch darajasi.
+          // `repostedByUids` — repost qilish/bekor qilish "toggle"si,
+          // `reactedUids` bilan bir xil naqsh: har kim faqat o'z
+          // kalitini qo'sha/o'chira oladi (repostCount endi alohida
+          // saqlanmaydi — `repostedByUids.length` sifatida hisoblanadi).
           (isMemberOf(mahallaId) &&
-            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['repostCount']));
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['repostedByUids']) &&
+            onlyOwnMapKeyChanged('repostedByUids', myUid()));
         allow delete: if false;
 
         match /comments/{commentId} {

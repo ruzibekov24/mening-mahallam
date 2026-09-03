@@ -843,6 +843,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get repostSuccessMessage => 'Репост сделан';
 
   @override
+  String get repostRemovedMessage => 'Репост отменён';
+
+  @override
   String get addStoryLabel => 'Добавить историю';
 
   @override

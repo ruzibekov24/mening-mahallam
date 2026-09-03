@@ -1643,6 +1643,12 @@ abstract class AppLocalizations {
   /// **'Repost qilindi'**
   String get repostSuccessMessage;
 
+  /// No description provided for @repostRemovedMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Repost bekor qilindi'**
+  String get repostRemovedMessage;
+
   /// No description provided for @addStoryLabel.
   ///
   /// In uz, this message translates to:

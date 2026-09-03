@@ -310,8 +310,12 @@ class PostCard extends ConsumerWidget {
               PostReactionRow(post: post, mahallaId: mahallaId),
               const Spacer(),
               if (!post.isRepost)
-                Semantics(
+                Builder(builder: (context) {
+                  final hasReposted =
+                      myUid != null && post.repostedByUids.containsKey(myUid);
+                  return Semantics(
                   button: true,
+                  selected: hasReposted,
                   label: l10n.repostAction,
                   child: TapScale(
                   haptic: true,
@@ -324,7 +328,7 @@ class PostCard extends ConsumerWidget {
                               '${profile?.firstName ?? ''} ${profile?.lastName ?? ''}'
                                   .trim();
                           try {
-                            await ref.read(feedRepositoryProvider).createRepost(
+                            await ref.read(feedRepositoryProvider).toggleRepost(
                                   mahallaId: mahallaId,
                                   original: post,
                                   authorName:
@@ -332,7 +336,12 @@ class PostCard extends ConsumerWidget {
                                   authorPhotoUrl: profile?.photoUrl,
                                 );
                             if (context.mounted) {
-                              showAppAlert(context, l10n.repostSuccessMessage);
+                              showAppAlert(
+                                context,
+                                hasReposted
+                                    ? l10n.repostRemovedMessage
+                                    : l10n.repostSuccessMessage,
+                              );
                             }
                           } catch (_) {
                             if (context.mounted) {
@@ -345,15 +354,26 @@ class PostCard extends ConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(PhosphorIconsRegular.repeat,
-                          size: 16, color: context.textSecondary),
+                          size: 16,
+                          color: hasReposted
+                              ? AppAccents.announcements
+                              : context.textSecondary),
                       if (post.repostCount > 0) ...[
                         const SizedBox(width: AppSpacing.xxs),
-                        Text('${post.repostCount}', style: context.captionStyle),
+                        Text('${post.repostCount}',
+                            style: context.captionStyle.copyWith(
+                              color: hasReposted
+                                  ? AppAccents.announcements
+                                  : null,
+                              fontWeight:
+                                  hasReposted ? FontWeight.w700 : null,
+                            )),
                       ],
                     ],
                   ),
                   ),
-                ),
+                  );
+                }),
               const SizedBox(width: AppSpacing.md),
               Icon(PhosphorIconsRegular.chatCircle,
                   size: 16, color: context.textSecondary),

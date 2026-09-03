@@ -313,6 +313,7 @@
     }
   },
   "repostSuccessMessage": "Репост қилинди",
+  "repostRemovedMessage": "Репост бекор қилинди",
   "addStoryLabel": "Ҳикоя қўшиш",
   "yourStoryLabel": "Сизнинг ҳикоянгиз",
   "newButton": "Янги",

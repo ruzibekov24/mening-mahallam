@@ -313,6 +313,7 @@
     }
   },
   "repostSuccessMessage": "Репост сделан",
+  "repostRemovedMessage": "Репост отменён",
   "addStoryLabel": "Добавить историю",
   "yourStoryLabel": "Ваша история",
   "newButton": "Новое",

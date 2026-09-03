@@ -390,6 +390,7 @@
     }
   },
   "repostSuccessMessage": "Repost qilindi",
+  "repostRemovedMessage": "Repost bekor qilindi",
   "addStoryLabel": "Hikoya qo'shish",
   "yourStoryLabel": "Sizning hikoyangiz",
   "newButton": "Yangi",

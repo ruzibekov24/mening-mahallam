@@ -841,6 +841,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repostSuccessMessage => 'Reposted';
 
   @override
+  String get repostRemovedMessage => 'Repost removed';
+
+  @override
   String get addStoryLabel => 'Add story';
 
   @override
