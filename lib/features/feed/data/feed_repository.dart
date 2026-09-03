@@ -3,6 +3,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../notifications/data/notification_repository.dart';
 
+/// `imageUrls`da saqlangan havola video ekanini aniqlaydi (kengaytma
+/// bo'yicha) — post/repost preview'da rasm o'rniga video pleer
+/// ko'rsatish kerakligini bilish uchun. Alohida `mediaType` maydoni
+/// saqlamaslik uchun ataylab shunday — mavjud `imageUrls: List<String>`
+/// maydonini o'zgartirmasdan, aralash rasm+video ro'yxatini
+/// qo'llab-quvvatlaydi (`MediaPickerGrid`/`uploadMediaFiles`dagi kabi).
+bool isVideoUrl(String url) {
+  final path = url.split('?').first.toLowerCase();
+  return path.endsWith('.mp4') ||
+      path.endsWith('.mov') ||
+      path.endsWith('.3gp') ||
+      path.endsWith('.webm');
+}
+
 /// Lentadagi bitta post — `mahallas/{mahallaId}/posts/{postId}`
 /// hujjatida saqlanadi. Muallif ismi/rasmi post yaratilgan paytda
 /// denormalize qilinadi (announcements'dagi kabi to'g'ridan-to'g'ri

@@ -1,7 +1,7 @@
 name: mening_mahallam
 description: "Mening mahallam — mahalla aholisi uchun mobil ilova"
 publish_to: 'none'
-version: 1.4.7+32
+version: 1.4.8+33
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -67,6 +67,9 @@ dependencies:
   # Rasm biriktirish
   image_picker: ^1.1.2
   firebase_database: ^11.3.4
+
+  # Lentadagi/postlardagi video ijrosi (Supabase Storage'dagi video URL'lari)
+  video_player: ^2.9.2
 
   # Tarmoq rasmlarini disk keshiga saqlash (qayta yuklashni oldini olish)
   cached_network_image: ^3.4.1

@@ -1,18 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/services/image_upload_service.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/utils/content_filter.dart';
 import '../../../core/utils/post_cooldown.dart';
 import '../../../core/widgets/app_alert.dart';
 import '../../../core/widgets/liquid_glass.dart';
+import '../../../core/widgets/media_picker_grid.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../home/data/home_repository.dart';
 import '../data/feed_providers.dart';
@@ -36,7 +32,7 @@ class NewPostScreen extends ConsumerStatefulWidget {
 
 class _NewPostScreenState extends ConsumerState<NewPostScreen> {
   final _textController = TextEditingController();
-  final List<File> _images = [];
+  List<MediaFile> _media = [];
   bool _isSubmitting = false;
   bool _posted = false;
 
@@ -80,19 +76,10 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImages() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickMultiImage(imageQuality: 80, maxWidth: 1600);
-    if (picked.isEmpty) return;
-    setState(() {
-      _images.addAll(picked.map((x) => File(x.path)));
-    });
-  }
-
   Future<void> _submit() async {
     final l10n = AppLocalizations.of(context);
     final text = _textController.text.trim();
-    if (text.isEmpty && _images.isEmpty) {
+    if (text.isEmpty && _media.isEmpty) {
       showAppAlert(context, l10n.writePostOrImageError,
           kind: AppAlertKind.error);
       return;
@@ -116,9 +103,9 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
           '${profile?.firstName ?? ''} ${profile?.lastName ?? ''}'.trim();
 
       List<String> imageUrls = const [];
-      if (_images.isNotEmpty) {
-        imageUrls = await ImageUploadService().uploadImages(
-          files: _images,
+      if (_media.isNotEmpty) {
+        imageUrls = await ImageUploadService().uploadMediaFiles(
+          files: _media,
           storagePathPrefix: 'posts/${widget.mahallaId}',
         );
       }
@@ -180,55 +167,9 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                     decoration: InputDecoration(hintText: l10n.writePostHint),
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.sm,
-                    children: [
-                      for (var i = 0; i < _images.length; i++)
-                        Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: AppRadius.smAll,
-                              child: Image.file(_images[i],
-                                  width: 100, height: 100, fit: BoxFit.cover),
-                            ),
-                            Positioned(
-                              top: AppSpacing.xs,
-                              right: AppSpacing.xs,
-                              child: GestureDetector(
-                                onTap: () => setState(() => _images.removeAt(i)),
-                                child: Container(
-                                  width: 22,
-                                  height: 22,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.black54,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(PhosphorIconsBold.x,
-                                      size: 14, color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      GestureDetector(
-                        onTap: _pickImages,
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.05),
-                            borderRadius: AppRadius.smAll,
-                            border: Border.all(
-                              color: context.borderColor,
-                              width: 1.2,
-                            ),
-                          ),
-                          child: Icon(PhosphorIconsRegular.imageSquare,
-                              color: context.textSecondary),
-                        ),
-                      ),
-                    ],
+                  MediaPickerGrid(
+                    mediaFiles: _media,
+                    onChanged: (updated) => setState(() => _media = updated),
                   ),
                   const SizedBox(height: AppSpacing.xxl),
                   SizedBox(

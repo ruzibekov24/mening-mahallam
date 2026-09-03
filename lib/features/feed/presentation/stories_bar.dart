@@ -42,24 +42,74 @@ class StoriesBar extends ConsumerWidget {
   final String mahallaId;
   const StoriesBar({super.key, required this.mahallaId});
 
+  Future<File?> _pickStoryMedia(BuildContext context) async {
+    final choice = await showModalBottomSheet<_StoryMediaChoice>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        final isDark = sheetContext.isDarkMode;
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(PhosphorIconsRegular.imageSquare),
+                  title: const Text('Rasm'),
+                  onTap: () => Navigator.of(sheetContext)
+                      .pop(_StoryMediaChoice.image),
+                ),
+                ListTile(
+                  leading: const Icon(PhosphorIconsRegular.videoCamera),
+                  title: const Text('Video'),
+                  onTap: () => Navigator.of(sheetContext)
+                      .pop(_StoryMediaChoice.video),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    if (choice == null || !context.mounted) return null;
+
+    final picker = ImagePicker();
+    if (choice == _StoryMediaChoice.image) {
+      final picked = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+        maxWidth: 1600,
+      );
+      return picked == null ? null : File(picked.path);
+    }
+    final picked = await picker.pickVideo(
+      source: ImageSource.gallery,
+      maxDuration: const Duration(minutes: 2),
+    );
+    return picked == null ? null : File(picked.path);
+  }
+
   Future<void> _addStory(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context);
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-      maxWidth: 1600,
-    );
-    if (picked == null) return;
+    final file = await _pickStoryMedia(context);
+    if (file == null || !context.mounted) return;
+    final isVideo = ['.mp4', '.mov', '.3gp']
+        .any((ext) => file.path.toLowerCase().endsWith(ext));
 
     try {
       final profile = ref.read(currentUserProfileProvider).valueOrNull;
       final authorName =
           '${profile?.firstName ?? ''} ${profile?.lastName ?? ''}'.trim();
+      final extension = isVideo ? 'mp4' : 'jpg';
       final url = await ImageUploadService().uploadFile(
-        file: File(picked.path),
+        file: file,
         storagePath:
-            'stories/$mahallaId/${DateTime.now().millisecondsSinceEpoch}.jpg',
+            'stories/$mahallaId/${DateTime.now().millisecondsSinceEpoch}.$extension',
       );
       await ref.read(storyRepositoryProvider).createStory(
             mahallaId: mahallaId,
@@ -177,6 +227,8 @@ class StoriesBar extends ConsumerWidget {
     );
   }
 }
+
+enum _StoryMediaChoice { image, video }
 
 class _StoryCircle extends StatelessWidget {
   final String label;

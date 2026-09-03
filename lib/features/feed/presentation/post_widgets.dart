@@ -16,6 +16,7 @@ import '../../home/data/home_repository.dart';
 import '../data/feed_providers.dart';
 import '../data/feed_repository.dart';
 import 'post_detail_screen.dart';
+import 'video_player_screen.dart';
 
 /// Post ostidagi emoji reaksiya tugmalari qatori — announcements'dagi
 /// `ReactionRow` bilan bir xil naqsh, faqat `Post`/`FeedRepository`
@@ -278,21 +279,27 @@ class PostCard extends ConsumerWidget {
                   itemCount: displayImageUrls.length,
                   separatorBuilder: (_, __) =>
                       const SizedBox(width: AppSpacing.xs),
-                  itemBuilder: (context, index) => CachedNetworkImage(
-                    imageUrl: displayImageUrls[index],
-                    width: 160,
-                    height: 160,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
+                  itemBuilder: (context, index) {
+                    final url = displayImageUrls[index];
+                    if (isVideoUrl(url)) {
+                      return _FeedVideoThumb(videoUrl: url);
+                    }
+                    return CachedNetworkImage(
+                      imageUrl: url,
                       width: 160,
-                      color: AppAccents.announcements.withValues(alpha: 0.08),
-                    ),
-                    errorWidget: (_, __, ___) => Container(
-                      width: 160,
-                      color: AppAccents.announcements.withValues(alpha: 0.08),
-                      child: const Icon(PhosphorIconsRegular.imageBroken),
-                    ),
-                  ),
+                      height: 160,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        width: 160,
+                        color: AppAccents.announcements.withValues(alpha: 0.08),
+                      ),
+                      errorWidget: (_, __, ___) => Container(
+                        width: 160,
+                        color: AppAccents.announcements.withValues(alpha: 0.08),
+                        child: const Icon(PhosphorIconsRegular.imageBroken),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -416,6 +423,35 @@ Future<void> _showEditPostDialog(
     if (context.mounted) {
       showAppAlert(context, l10n.unexpectedError, kind: AppAlertKind.error);
     }
+  }
+}
+
+/// Post kartochkasidagi video preview — haqiqiy kadr ko'rsatmaydi
+/// (bu qo'shimcha yuklashni talab qilardi), shunchaki qora fon +
+/// play belgisi, bosilganda [VideoPlayerScreen] to'liq ekranda ochadi.
+class _FeedVideoThumb extends StatelessWidget {
+  final String videoUrl;
+  const _FeedVideoThumb({required this.videoUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => AppPageRoute.push(
+        context,
+        VideoPlayerScreen(videoUrl: videoUrl),
+      ),
+      child: Container(
+        width: 160,
+        height: 160,
+        color: Colors.black87,
+        alignment: Alignment.center,
+        child: const Icon(
+          PhosphorIconsFill.playCircle,
+          color: Colors.white,
+          size: 40,
+        ),
+      ),
+    );
   }
 }
 

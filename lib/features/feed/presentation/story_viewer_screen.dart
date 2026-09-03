@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/app_alert.dart';
@@ -10,6 +11,7 @@ import '../../../core/widgets/confirm_delete.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../moderation/data/report_repository.dart';
 import '../../moderation/presentation/report_sheet.dart';
+import '../data/feed_repository.dart' show isVideoUrl;
 import '../data/story_providers.dart';
 import '../data/story_repository.dart';
 
@@ -137,16 +139,18 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen>
                     }
                   },
                   child: Center(
-                    child: CachedNetworkImage(
-                      imageUrl: story.mediaUrl,
-                      fit: BoxFit.contain,
-                      width: double.infinity,
-                      height: double.infinity,
-                      errorWidget: (_, __, ___) => const Icon(
-                          PhosphorIconsRegular.imageBroken,
-                          color: Colors.white38,
-                          size: 48),
-                    ),
+                    child: isVideoUrl(story.mediaUrl)
+                        ? _StoryVideoPlayer(url: story.mediaUrl)
+                        : CachedNetworkImage(
+                            imageUrl: story.mediaUrl,
+                            fit: BoxFit.contain,
+                            width: double.infinity,
+                            height: double.infinity,
+                            errorWidget: (_, __, ___) => const Icon(
+                                PhosphorIconsRegular.imageBroken,
+                                color: Colors.white38,
+                                size: 48),
+                          ),
                   ),
                 );
               },
@@ -246,6 +250,51 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen>
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Video hikoya uchun avtomatik ijro etuvchi pleer. `StoryViewerScreen`
+/// progress-baridan mustaqil — 5 soniyalik umumiy taymer bilan bir xil
+/// ishlaydi (video shu vaqt ichida qancha ko'rsatilsa shuncha ko'rinadi,
+/// uzunroq video kesiladi) — alohida video davomiyligiga moslashtirish
+/// progress-bar mantig'ini murakkablashtirar edi, hikoyalar odatda
+/// qisqa (2 daqiqagacha) bo'lgani uchun bu qabul qilingan soddalashtirish.
+class _StoryVideoPlayer extends StatefulWidget {
+  final String url;
+  const _StoryVideoPlayer({required this.url});
+
+  @override
+  State<_StoryVideoPlayer> createState() => _StoryVideoPlayerState();
+}
+
+class _StoryVideoPlayerState extends State<_StoryVideoPlayer> {
+  late final VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
+      ..initialize().then((_) {
+        if (mounted) setState(() {});
+        _controller.play();
+      }).catchError((_) {});
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_controller.value.isInitialized) {
+      return const CircularProgressIndicator(color: Colors.white);
+    }
+    return AspectRatio(
+      aspectRatio: _controller.value.aspectRatio,
+      child: VideoPlayer(_controller),
     );
   }
 }
