@@ -303,17 +303,6 @@
   "postingTooFastError": "Жуда тез-тез пост жойлаяпсиз. Бироз кутинг ва қайта уриниб кўринг.",
   "inappropriateContentError": "Матнда номақбул сўзлар бор. Илтимос, матнни таҳрирланг.",
   "reactionsSheetTitle": "Реаксиялар",
-  "repostAction": "Репост",
-  "repostedByLabel": "{name} репост қилди",
-  "@repostedByLabel": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "repostSuccessMessage": "Репост қилинди",
-  "repostRemovedMessage": "Репост бекор қилинди",
   "addStoryLabel": "Ҳикоя қўшиш",
   "yourStoryLabel": "Сизнинг ҳикоянгиз",
   "newButton": "Янги",
@@ -508,7 +497,7 @@
   "scanningStatus": "Сканерланмоқда...",
   "enterCodeManually": "Кодни қўлда киритиш",
   "enterMahallaCodeTitle": "Маҳалла кодини киритинг",
-  "mahallaCodeHint": "Масалан: MFY-00123",
+  "mahallaCodeHint": "Масалан: Y234-5678",
   "confirmButton": "Тасдиқлаш",
   "qrGenericError": "Хатолик юз берди, қайта уриниб кўринг",
   "confirmError": "Тасдиқлашда хатолик юз берди, қайта уриниб кўринг",

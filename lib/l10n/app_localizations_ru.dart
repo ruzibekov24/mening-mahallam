@@ -832,20 +832,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reactionsSheetTitle => 'Реакции';
 
   @override
-  String get repostAction => 'Репост';
-
-  @override
-  String repostedByLabel(String name) {
-    return '$name сделал(а) репост';
-  }
-
-  @override
-  String get repostSuccessMessage => 'Репост сделан';
-
-  @override
-  String get repostRemovedMessage => 'Репост отменён';
-
-  @override
   String get addStoryLabel => 'Добавить историю';
 
   @override
@@ -1281,7 +1267,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get enterMahallaCodeTitle => 'Введите код махалли';
 
   @override
-  String get mahallaCodeHint => 'Например: MFY-00123';
+  String get mahallaCodeHint => 'Например: Y234-5678';
 
   @override
   String get confirmButton => 'Подтвердить';

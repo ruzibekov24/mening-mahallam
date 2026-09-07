@@ -20,6 +20,7 @@ import {
   runQuery,
   runAggregationQuery,
   createDoc,
+  createDocWithId,
   patchDoc,
   deleteDoc,
   FieldDelete,
@@ -125,6 +126,65 @@ async function route(request, env, pathname, searchParams, uid) {
   if (method === 'GET' && pathname === '/api/mahallas') {
     const docs = await listCollection(env, 'mahallas');
     return jsonResponse({ mahallas: docs }, 200, env);
+  }
+
+  // POST /api/mahallas
+  //
+  // Yangi mahalla yaratadi va unga mos qo'shilish kodini
+  // (`joinCodes/{code}` — lib/features/qr/data/mahalla_repository.dart
+  // va scripts/generate_join_code.mjs bilan bir xil format: 1 harf
+  // + 7 tasodifiy raqam, masalan "Y2345678") generatsiya qiladi.
+  // Mahalla hujjati ID'si ("slug") nomdan avtomatik hosil qilinadi.
+  if (method === 'POST' && pathname === '/api/mahallas') {
+    const body = await safeJson(request);
+    if (!body || typeof body.name !== 'string' || !body.name.trim()) {
+      throw new HttpError(400, 'name is required');
+    }
+    const name = body.name.trim();
+    const mahallaId = slugifyMahallaName(name);
+    if (!mahallaId) {
+      throw new HttpError(400, 'name must contain at least one letter or digit');
+    }
+
+    const mahallaDoc = await createDocWithId(env, 'mahallas', mahallaId, {
+      name,
+      district: typeof body.district === 'string' ? body.district.trim() : '',
+      extra: '',
+    });
+    if (!mahallaDoc) {
+      throw new HttpError(409, `"${mahallaId}" ID'li mahalla allaqachon mavjud`);
+    }
+
+    // Qo'shilish kodi to'qnashib qolsa (juda kam ehtimol — bitta harf
+    // uchun 10 million kombinatsiya bor), boshqa tasodifiy raqamlar
+    // bilan qayta uriniladi.
+    const letter = firstLetterFor(name);
+    let joinCode = null;
+    let joinDoc = null;
+    for (let attempt = 0; attempt < 20 && !joinDoc; attempt++) {
+      joinCode = `${letter}${randomDigits(7)}`;
+      joinDoc = await createDocWithId(env, 'joinCodes', joinCode, { mahallaId });
+    }
+    if (!joinDoc) {
+      // Mahalla hujjati allaqachon yaratildi — bu holatda admin
+      // `scripts/generate_join_code.mjs` orqali kodni qo'lda qo'shishi
+      // kerak bo'ladi (juda kam uchraydigan holat).
+      throw new HttpError(
+        500,
+        "Mahalla yaratildi, lekin qo'shilish kodini generatsiya qilib bo'lmadi (juda ko'p to'qnashuv) — scripts/generate_join_code.mjs orqali qo'lda qo'shing",
+      );
+    }
+
+    await logAudit(env, uid, 'mahalla.create', { mahallaId, joinCode });
+
+    return jsonResponse(
+      {
+        mahalla: mahallaDoc,
+        joinCode: `${joinCode.slice(0, 4)}-${joinCode.slice(4)}`,
+      },
+      201,
+      env,
+    );
   }
 
   // GET /api/mahallas/:id/detail
@@ -1061,6 +1121,43 @@ async function route(request, env, pathname, searchParams, uid) {
 /** Valid `ServiceCategory` values — mirrors `ServiceCategoryX.firestoreValue`
  * in lib/features/services/data/service_repository.dart. */
 const SERVICE_CATEGORIES = ['santexnik', 'elektrik', 'duradgor', 'tozalash', 'qurilish', 'boshqa'];
+
+/**
+ * Turns a mahalla name into a Firestore-safe doc id ("slug") — matches
+ * the style of the existing seeded mahallas (`yettiguzar`,
+ * `karvonsaroy`, `xovosobod` in landing/mahallalar.json): lowercase
+ * ASCII letters/digits only, no separators. Uzbek apostrophe variants
+ * (o', g') are stripped rather than kept, so "O'zbekiston" -> "ozbekiston".
+ */
+function slugifyMahallaName(name) {
+  return name
+    .toLowerCase()
+    .replace(/[‘’'`ʻʼ]/g, '')
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '') // combining diacritical marks
+    .replace(/[^a-z0-9]+/g, '')
+    .slice(0, 40);
+}
+
+/** First Latin letter in `name`, uppercased — falls back to "M" (for
+ * "Mahalla") if the name has none, e.g. starts with digits only. */
+function firstLetterFor(name) {
+  const match = name.match(/[A-Za-z]/);
+  return match ? match[0].toUpperCase() : 'M';
+}
+
+/** Cryptographically random digit string of length `n`, via Web Crypto
+ * (`node:crypto` isn't available in the Workers runtime). Rejects bytes
+ * >= 250 before the modulo to avoid modulo bias across 0-9. */
+function randomDigits(n) {
+  const byte = new Uint8Array(1);
+  let out = '';
+  while (out.length < n) {
+    crypto.getRandomValues(byte);
+    if (byte[0] < 250) out += byte[0] % 10;
+  }
+  return out;
+}
 
 /** Parses an ISO 8601 date string into a `Date`, or returns `null` if invalid. */
 function parseIsoDate(value) {

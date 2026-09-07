@@ -18,7 +18,7 @@ import '../data/feed_repository.dart';
 import 'post_detail_screen.dart';
 import 'video_player_screen.dart';
 
-/// Post ostidagi emoji reaksiya tugmalari qatori — announcements'dagi
+/// Post ostidagi layk/dislayk tugmalari qatori — announcements'dagi
 /// `ReactionRow` bilan bir xil naqsh, faqat `Post`/`FeedRepository`
 /// uchun (ikkalasini bitta generic widget qilib birlashtirish shart
 /// emas — ikkita mustaqil kolleksiya, dublikatsiya kam va aniq).
@@ -27,30 +27,30 @@ class PostReactionRow extends ConsumerWidget {
   final String mahallaId;
   const PostReactionRow({super.key, required this.post, required this.mahallaId});
 
-  static const _emojis = ['👍', '❤️', '😮', '😂'];
+  static const _reactions = ['like', 'dislike'];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(currentUserProfileProvider).valueOrNull;
     final myUid = FirebaseAuth.instance.currentUser?.uid;
-    final myEmoji = myUid == null ? null : post.reactedUids[myUid];
+    final myReaction = myUid == null ? null : post.reactedUids[myUid];
 
     return Wrap(
       spacing: AppSpacing.xs,
       children: [
-        for (final emoji in _emojis)
+        for (final reaction in _reactions)
           _ReactionChip(
-            emoji: emoji,
-            count: post.reactionCount(emoji),
-            isActive: myEmoji == emoji,
+            reaction: reaction,
+            count: post.reactionCount(reaction),
+            isActive: myReaction == reaction,
             onTap: myUid == null || profile?.mahallaId == null
                 ? null
                 : () => ref.read(feedRepositoryProvider).toggleReaction(
                       mahallaId: mahallaId,
                       postId: post.id,
                       uid: myUid,
-                      emoji: emoji,
-                      currentEmoji: myEmoji,
+                      reaction: reaction,
+                      currentReaction: myReaction,
                     ),
             onLongPress: post.reactedUids.isEmpty
                 ? null
@@ -60,6 +60,12 @@ class PostReactionRow extends ConsumerWidget {
     );
   }
 }
+
+/// `reactedUids`da saqlangan "like"/"dislike" qiymatini chipda
+/// ko'rsatiladigan belgiga aylantiradi.
+IconData _reactionIcon(String reaction) => reaction == 'dislike'
+    ? PhosphorIconsFill.thumbsDown
+    : PhosphorIconsFill.thumbsUp;
 
 /// Reaksiya chipini uzoq bosganda kim reaksiya bildirganini
 /// ko'rsatuvchi bottom sheet — `reactedUids`dagi uid'lar uchun
@@ -97,8 +103,11 @@ void _showReactorsSheet(BuildContext context, WidgetRef ref, Post post) {
                                 vertical: AppSpacing.xs),
                             child: Row(
                               children: [
-                                Text(entry.value,
-                                    style: const TextStyle(fontSize: 18)),
+                                Icon(_reactionIcon(entry.value),
+                                    size: 18,
+                                    color: entry.value == 'dislike'
+                                        ? AppColors.danger
+                                        : AppAccents.announcements),
                                 const SizedBox(width: AppSpacing.sm),
                                 Expanded(
                                   child: Text(
@@ -143,22 +152,8 @@ class PostCard extends ConsumerWidget {
         (myUid == post.authorUid ||
             ref.watch(currentUserProfileProvider).valueOrNull?.role.canPost ==
                 true);
-    // Faqat matnni o'zi yozgan foydalanuvchi tahrirlashi mumkin —
-    // repostlar tahrirlanmaydi, chunki `repostSnapshot` original
-    // postning holatini aks ettiradi, o'zining matni yo'q.
-    final canEdit = myUid != null && myUid == post.authorUid && !post.isRepost;
-
-    // Repost bo'lsa, karta tanasi original mualliflik/matn/rasmni
-    // (`repostSnapshot`) ko'rsatadi — ustidagi "X repost qildi"
-    // qatori esa repost qilgan kishini bildiradi (`post.authorName`).
-    final displayAuthorName =
-        post.isRepost ? post.repostSnapshot!.authorName : post.authorName;
-    final displayPhotoUrl = post.isRepost ? null : post.authorPhotoUrl;
-    final displayText =
-        post.isRepost ? post.repostSnapshot!.textPreview : post.text;
-    final displayImageUrls = post.isRepost
-        ? [if (post.repostSnapshot!.imageUrl != null) post.repostSnapshot!.imageUrl!]
-        : post.imageUrls;
+    // Faqat matnni o'zi yozgan foydalanuvchi tahrirlashi mumkin.
+    final canEdit = myUid != null && myUid == post.authorUid;
 
     return AppCard(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
@@ -169,27 +164,15 @@ class PostCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (post.isRepost) ...[
-            Row(
-              children: [
-                Icon(PhosphorIconsFill.repeat,
-                    size: 14, color: context.textSecondary),
-                const SizedBox(width: AppSpacing.xxs),
-                Text(l10n.repostedByLabel(post.authorName),
-                    style: context.captionStyle),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.sm),
-          ],
           Row(
             children: [
               CircleAvatar(
                 radius: 16,
                 backgroundColor: AppAccents.announcements.withValues(alpha: 0.14),
-                backgroundImage: displayPhotoUrl != null && displayPhotoUrl.isNotEmpty
-                    ? CachedNetworkImageProvider(displayPhotoUrl)
+                backgroundImage: post.authorPhotoUrl != null && post.authorPhotoUrl!.isNotEmpty
+                    ? CachedNetworkImageProvider(post.authorPhotoUrl!)
                     : null,
-                child: displayPhotoUrl == null || displayPhotoUrl.isEmpty
+                child: post.authorPhotoUrl == null || post.authorPhotoUrl!.isEmpty
                     ? const Icon(PhosphorIconsFill.user,
                         size: 16, color: AppAccents.announcements)
                     : null,
@@ -199,7 +182,7 @@ class PostCard extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(displayAuthorName, style: context.cardTitleStyle),
+                    Text(post.authorName, style: context.cardTitleStyle),
                     Text(_postTimeAgo(context, post.createdAt),
                         style: context.captionStyle),
                   ],
@@ -238,7 +221,7 @@ class PostCard extends ConsumerWidget {
                           if (!context.mounted) return;
                           final confirmed = await confirmDelete(
                             context,
-                            itemTitle: displayText,
+                            itemTitle: post.text,
                           );
                           if (!confirmed || !context.mounted) return;
                           await ref.read(feedRepositoryProvider).deletePost(
@@ -264,11 +247,11 @@ class PostCard extends ConsumerWidget {
                 ),
             ],
           ),
-          if (displayText.isNotEmpty) ...[
+          if (post.text.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
-            Text(displayText, style: context.bodyStyle),
+            Text(post.text, style: context.bodyStyle),
           ],
-          if (displayImageUrls.isNotEmpty) ...[
+          if (post.imageUrls.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             ClipRRect(
               borderRadius: AppRadius.smAll,
@@ -276,11 +259,11 @@ class PostCard extends ConsumerWidget {
                 height: 160,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  itemCount: displayImageUrls.length,
+                  itemCount: post.imageUrls.length,
                   separatorBuilder: (_, __) =>
                       const SizedBox(width: AppSpacing.xs),
                   itemBuilder: (context, index) {
-                    final url = displayImageUrls[index];
+                    final url = post.imageUrls[index];
                     if (isVideoUrl(url)) {
                       return _FeedVideoThumb(videoUrl: url);
                     }
@@ -309,72 +292,6 @@ class PostCard extends ConsumerWidget {
             children: [
               PostReactionRow(post: post, mahallaId: mahallaId),
               const Spacer(),
-              if (!post.isRepost)
-                Builder(builder: (context) {
-                  final hasReposted =
-                      myUid != null && post.repostedByUids.containsKey(myUid);
-                  return Semantics(
-                  button: true,
-                  selected: hasReposted,
-                  label: l10n.repostAction,
-                  child: TapScale(
-                  haptic: true,
-                  onTap: myUid == null
-                      ? null
-                      : () async {
-                          final profile =
-                              ref.read(currentUserProfileProvider).valueOrNull;
-                          final authorName =
-                              '${profile?.firstName ?? ''} ${profile?.lastName ?? ''}'
-                                  .trim();
-                          try {
-                            await ref.read(feedRepositoryProvider).toggleRepost(
-                                  mahallaId: mahallaId,
-                                  original: post,
-                                  authorName:
-                                      authorName.isEmpty ? "Qo'shni" : authorName,
-                                  authorPhotoUrl: profile?.photoUrl,
-                                );
-                            if (context.mounted) {
-                              showAppAlert(
-                                context,
-                                hasReposted
-                                    ? l10n.repostRemovedMessage
-                                    : l10n.repostSuccessMessage,
-                              );
-                            }
-                          } catch (_) {
-                            if (context.mounted) {
-                              showAppAlert(context, l10n.unexpectedError,
-                                  kind: AppAlertKind.error);
-                            }
-                          }
-                        },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(PhosphorIconsRegular.repeat,
-                          size: 16,
-                          color: hasReposted
-                              ? AppAccents.announcements
-                              : context.textSecondary),
-                      if (post.repostCount > 0) ...[
-                        const SizedBox(width: AppSpacing.xxs),
-                        Text('${post.repostCount}',
-                            style: context.captionStyle.copyWith(
-                              color: hasReposted
-                                  ? AppAccents.announcements
-                                  : null,
-                              fontWeight:
-                                  hasReposted ? FontWeight.w700 : null,
-                            )),
-                      ],
-                    ],
-                  ),
-                  ),
-                  );
-                }),
-              const SizedBox(width: AppSpacing.md),
               Icon(PhosphorIconsRegular.chatCircle,
                   size: 16, color: context.textSecondary),
               const SizedBox(width: AppSpacing.xxs),
@@ -476,14 +393,14 @@ class _FeedVideoThumb extends StatelessWidget {
 }
 
 class _ReactionChip extends StatelessWidget {
-  final String emoji;
+  final String reaction;
   final int count;
   final bool isActive;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
   const _ReactionChip({
-    required this.emoji,
+    required this.reaction,
     required this.count,
     required this.isActive,
     required this.onTap,
@@ -492,12 +409,13 @@ class _ReactionChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const color = AppAccents.announcements;
+    final color =
+        reaction == 'dislike' ? AppColors.danger : AppAccents.announcements;
     return Semantics(
       button: true,
       selected: isActive,
       value: '$count',
-      label: emoji,
+      label: reaction,
       child: GestureDetector(
       onLongPress: onLongPress,
       child: TapScale(
@@ -518,7 +436,8 @@ class _ReactionChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 13)),
+            Icon(_reactionIcon(reaction),
+                size: 14, color: isActive ? color : context.textSecondary),
             if (count > 0) ...[
               const SizedBox(width: AppSpacing.xs),
               Text(

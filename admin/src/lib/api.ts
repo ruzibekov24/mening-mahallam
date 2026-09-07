@@ -252,6 +252,11 @@ export const api = {
       (r) => r.history
     ),
   getMahallas: () => request<{ mahallas: Mahalla[] }>('/api/mahallas').then((r) => r.mahallas),
+  createMahalla: (data: { name: string; district?: string }) =>
+    request<{ mahalla: Mahalla; joinCode: string }>('/api/mahallas', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
   getMahallaDetail: (id: string) =>
     request<{ mahalla: MahallaDetail }>(
       `/api/mahallas/${encodeURIComponent(id)}/detail`

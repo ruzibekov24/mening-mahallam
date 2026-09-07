@@ -380,17 +380,6 @@
   "postingTooFastError": "Juda tez-tez post joylayapsiz. Biroz kuting va qayta urinib ko'ring.",
   "inappropriateContentError": "Matnda nomaqbul so'zlar bor. Iltimos, matnni tahrirlang.",
   "reactionsSheetTitle": "Reaksiyalar",
-  "repostAction": "Repost",
-  "repostedByLabel": "{name} repost qildi",
-  "@repostedByLabel": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "repostSuccessMessage": "Repost qilindi",
-  "repostRemovedMessage": "Repost bekor qilindi",
   "addStoryLabel": "Hikoya qo'shish",
   "yourStoryLabel": "Sizning hikoyangiz",
   "newButton": "Yangi",
@@ -585,7 +574,7 @@
   "scanningStatus": "Skanerlanmoqda...",
   "enterCodeManually": "Kodni qo'lda kiritish",
   "enterMahallaCodeTitle": "Mahalla kodini kiriting",
-  "mahallaCodeHint": "Masalan: MFY-00123",
+  "mahallaCodeHint": "Masalan: Y234-5678",
   "confirmButton": "Tasdiqlash",
   "qrGenericError": "Xatolik yuz berdi, qayta urinib ko'ring",
   "confirmError": "Tasdiqlashda xatolik yuz berdi, qayta urinib ko'ring",

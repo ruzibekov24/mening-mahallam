@@ -196,6 +196,28 @@ export async function createDoc(env, collection, fields) {
 }
 
 /**
+ * Creates a new document with a CALLER-CHOSEN id (as opposed to `createDoc`,
+ * which lets Firestore auto-generate one). Uses the REST API's
+ * `?documentId=` param, which fails with 409 if a document already exists
+ * at that id — this is exactly the semantics needed for slug-style ids
+ * (e.g. `mahallas/{slug}`, `joinCodes/{code}`) where collisions must be
+ * rejected rather than silently overwritten. Returns `null` on collision
+ * (409) instead of throwing, so callers can retry (e.g. picking a new
+ * random join code) without wrapping every call in try/catch.
+ */
+export async function createDocWithId(env, collection, id, fields) {
+  const url = `${BASE}/${documentsRoot(env)}/${collection}?documentId=${encodeURIComponent(id)}`;
+  const res = await fsFetch(env, url, {
+    method: 'POST',
+    body: JSON.stringify({ fields: encodeFields(fields) }),
+  });
+  if (res.status === 409) return null;
+  if (!res.ok) throw new Error(`Firestore createDocWithId failed: ${res.status}`);
+  const doc = await res.json();
+  return decodeDoc(doc);
+}
+
+/**
  * Sentinel value for `patchDoc` — pass this as a field's value to delete
  * that field from the document entirely (mirrors the Flutter app's
  * `FieldValue.delete()`, e.g. `PremiumRepository.revokePremium`'s

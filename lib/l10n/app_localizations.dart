@@ -1625,30 +1625,6 @@ abstract class AppLocalizations {
   /// **'Reaksiyalar'**
   String get reactionsSheetTitle;
 
-  /// No description provided for @repostAction.
-  ///
-  /// In uz, this message translates to:
-  /// **'Repost'**
-  String get repostAction;
-
-  /// No description provided for @repostedByLabel.
-  ///
-  /// In uz, this message translates to:
-  /// **'{name} repost qildi'**
-  String repostedByLabel(String name);
-
-  /// No description provided for @repostSuccessMessage.
-  ///
-  /// In uz, this message translates to:
-  /// **'Repost qilindi'**
-  String get repostSuccessMessage;
-
-  /// No description provided for @repostRemovedMessage.
-  ///
-  /// In uz, this message translates to:
-  /// **'Repost bekor qilindi'**
-  String get repostRemovedMessage;
-
   /// No description provided for @addStoryLabel.
   ///
   /// In uz, this message translates to:
@@ -2480,7 +2456,7 @@ abstract class AppLocalizations {
   /// No description provided for @mahallaCodeHint.
   ///
   /// In uz, this message translates to:
-  /// **'Masalan: MFY-00123'**
+  /// **'Masalan: Y234-5678'**
   String get mahallaCodeHint;
 
   /// No description provided for @confirmButton.

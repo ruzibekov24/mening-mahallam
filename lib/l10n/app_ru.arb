@@ -303,17 +303,6 @@
   "postingTooFastError": "Вы публикуете слишком часто. Подождите немного и попробуйте снова.",
   "inappropriateContentError": "Текст содержит недопустимые слова. Пожалуйста, отредактируйте текст.",
   "reactionsSheetTitle": "Реакции",
-  "repostAction": "Репост",
-  "repostedByLabel": "{name} сделал(а) репост",
-  "@repostedByLabel": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "repostSuccessMessage": "Репост сделан",
-  "repostRemovedMessage": "Репост отменён",
   "addStoryLabel": "Добавить историю",
   "yourStoryLabel": "Ваша история",
   "newButton": "Новое",
@@ -508,7 +497,7 @@
   "scanningStatus": "Сканирование...",
   "enterCodeManually": "Ввести код вручную",
   "enterMahallaCodeTitle": "Введите код махалли",
-  "mahallaCodeHint": "Например: MFY-00123",
+  "mahallaCodeHint": "Например: Y234-5678",
   "confirmButton": "Подтвердить",
   "qrGenericError": "Произошла ошибка, попробуйте снова",
   "confirmError": "Ошибка при подтверждении, попробуйте снова",

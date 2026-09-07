@@ -57,6 +57,10 @@ landing/.wrangler/
 landing-worker/.wrangler/
 admin-worker/.wrangler/
 
+# scripts/ ichidagi bir martalik Node vositalari (masalan QR/kod
+# generatorlari) uchun o'rnatilgan paketlar — manba emas.
+scripts/node_modules/
+
 # Claude Code local session state
 .claude/
 

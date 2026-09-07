@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../notifications/data/notification_repository.dart';
 
 /// `imageUrls`da saqlangan havola video ekanini aniqlaydi (kengaytma
-/// bo'yicha) — post/repost preview'da rasm o'rniga video pleer
-/// ko'rsatish kerakligini bilish uchun. Alohida `mediaType` maydoni
+/// bo'yicha) — post preview'da rasm o'rniga video pleer ko'rsatish
+/// kerakligini bilish uchun. Alohida `mediaType` maydoni
 /// saqlamaslik uchun ataylab shunday — mavjud `imageUrls: List<String>`
 /// maydonini o'zgartirmasdan, aralash rasm+video ro'yxatini
 /// qo'llab-quvvatlaydi (`MediaPickerGrid`/`uploadMediaFiles`dagi kabi).
@@ -22,35 +22,6 @@ bool isVideoUrl(String url) {
 /// denormalize qilinadi (announcements'dagi kabi to'g'ridan-to'g'ri
 /// maydon, ro'yxatda har bir post uchun alohida `users/{uid}` o'qishni
 /// oldini olish uchun).
-/// Repost qilinganda original postdan denormalize qilingan qisqa
-/// ko'rinish — repost kartasi original postni qayta o'qimasdan
-/// ko'rsatishi uchun (bitta qo'shimcha Firestore o'qishdan qochish).
-class RepostSnapshot {
-  final String authorName;
-  final String textPreview;
-  final String? imageUrl;
-
-  RepostSnapshot({
-    required this.authorName,
-    required this.textPreview,
-    required this.imageUrl,
-  });
-
-  factory RepostSnapshot.fromMap(Map<String, dynamic> data) {
-    return RepostSnapshot(
-      authorName: data['authorName'] ?? '',
-      textPreview: data['textPreview'] ?? '',
-      imageUrl: data['imageUrl'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-        'authorName': authorName,
-        'textPreview': textPreview,
-        'imageUrl': imageUrl,
-      };
-}
-
 class Post {
   final String id;
   final String authorUid;
@@ -60,21 +31,10 @@ class Post {
   final List<String> imageUrls;
   final DateTime createdAt;
 
-  /// uid -> tanlagan emoji. Announcements'dagi bilan bir xil pattern —
-  /// to'g'ridan-to'g'ri hujjat maydonida, subcollection emas.
+  /// uid -> tanlagan reaksiya ("like" yoki "dislike"). Announcements'dagi
+  /// bilan bir xil pattern — to'g'ridan-to'g'ri hujjat maydonida,
+  /// subcollection emas.
   final Map<String, String> reactedUids;
-
-  /// Repost bo'lsa — original post id. `null` bo'lsa oddiy post.
-  final String? repostOfPostId;
-  final RepostSnapshot? repostSnapshot;
-
-  /// uid -> shu foydalanuvchi yaratgan repost post'ining id'si.
-  /// `reactedUids`dagi bilan bir xil naqsh — har bir a'zo bitta postni
-  /// faqat BIR MARTA repost qila oladi (qayta bossa bekor qiladi),
-  /// cheksiz takroriy repost bilan lentani to'ldirib yubormaslik uchun.
-  final Map<String, String> repostedByUids;
-
-  int get repostCount => repostedByUids.length;
 
   Post({
     required this.id,
@@ -85,19 +45,13 @@ class Post {
     required this.imageUrls,
     required this.createdAt,
     this.reactedUids = const {},
-    this.repostOfPostId,
-    this.repostSnapshot,
-    this.repostedByUids = const {},
   });
 
-  bool get isRepost => repostOfPostId != null;
-
-  int reactionCount(String emoji) =>
-      reactedUids.values.where((e) => e == emoji).length;
+  int reactionCount(String reaction) =>
+      reactedUids.values.where((e) => e == reaction).length;
 
   factory Post.fromFirestore(String id, Map<String, dynamic> data) {
     final timestamp = data['createdAt'] as Timestamp?;
-    final snapshotData = data['repostSnapshot'] as Map<String, dynamic>?;
     return Post(
       id: id,
       authorUid: data['authorUid'] ?? '',
@@ -107,11 +61,6 @@ class Post {
       imageUrls: List<String>.from(data['imageUrls'] ?? const []),
       createdAt: timestamp?.toDate() ?? DateTime.now(),
       reactedUids: Map<String, String>.from(data['reactedUids'] ?? const {}),
-      repostOfPostId: data['repostOfPostId'] as String?,
-      repostSnapshot:
-          snapshotData == null ? null : RepostSnapshot.fromMap(snapshotData),
-      repostedByUids:
-          Map<String, String>.from(data['repostedByUids'] ?? const {}),
     );
   }
 }
@@ -214,74 +163,8 @@ class FeedRepository {
     });
   }
 
-  /// Postni o'z lentasiga repost qiladi/bekor qiladi — reaksiyalar
-  /// bilan bir xil "toggle" mantiq: bir foydalanuvchi bitta postni
-  /// faqat bir marta repost qila oladi (qayta bossa, o'zining repost
-  /// postini bekor qiladi). Buning oldida cheksiz repost lentani
-  /// bitta post bilan to'ldirib yuborishi mumkin edi. Original post
-  /// ustiga qayta repost qilish (repostning reposti) UI darajasida
-  /// cheklangan — zanjir chuqurlashib ketmasligi uchun.
-  Future<void> toggleRepost({
-    required String mahallaId,
-    required Post original,
-    required String authorName,
-    String? authorPhotoUrl,
-  }) async {
-    final uid = _auth.currentUser?.uid;
-    if (uid == null) {
-      throw Exception('Foydalanuvchi tizimga kirmagan');
-    }
-
-    final originalRef = _postsRef(mahallaId).doc(original.id);
-    final existingRepostId = original.repostedByUids[uid];
-
-    if (existingRepostId != null) {
-      // Repostni bekor qilish — o'z repost post'ini soft-delete
-      // qilish (mavjud `deletePost` bilan bir xil naqsh) va
-      // original postdagi belgini olib tashlash.
-      final repostRef = _postsRef(mahallaId).doc(existingRepostId);
-      await _firestore.runTransaction((transaction) async {
-        transaction.update(repostRef, {'deleted': true});
-        transaction.update(originalRef, {
-          'repostedByUids.$uid': FieldValue.delete(),
-        });
-      });
-      return;
-    }
-
-    final preview = original.text.length > 140
-        ? '${original.text.substring(0, 140)}…'
-        : original.text;
-    final newRepostRef = _postsRef(mahallaId).doc();
-
-    await _firestore.runTransaction((transaction) async {
-      transaction.set(newRepostRef, {
-        'authorUid': uid,
-        'authorName': authorName,
-        'authorPhotoUrl': authorPhotoUrl,
-        'text': '',
-        'imageUrls': <String>[],
-        'createdAt': FieldValue.serverTimestamp(),
-        'reactedUids': <String, String>{},
-        'deleted': false,
-        'repostOfPostId': original.id,
-        'repostSnapshot': RepostSnapshot(
-          authorName: original.authorName,
-          textPreview: preview,
-          imageUrl:
-              original.imageUrls.isNotEmpty ? original.imageUrls.first : null,
-        ).toMap(),
-      });
-      transaction.update(originalRef, {
-        'repostedByUids.$uid': newRepostRef.id,
-      });
-    });
-  }
-
   /// Post matnini tahrirlaydi — faqat muallif chaqirishi kerak (UI
   /// darajasida tekshiriladi, Firestore Rules bilan mustahkamlangan).
-  /// Repostlar tahrirlanmaydi (`repostSnapshot` allaqachon original
-  /// postning holatini aks ettiradi).
   Future<void> updatePost({
     required String mahallaId,
     required String postId,
@@ -302,20 +185,21 @@ class FeedRepository {
   }
 
   /// Announcements'dagi `toggleReaction` bilan aynan bir xil mantiq:
-  /// hali reaksiya bildirmagan bo'lsa qo'shadi, xuddi shu emojini
-  /// qayta bossa olib tashlaydi, boshqasini bossa almashtiradi.
+  /// hali reaksiya bildirmagan bo'lsa qo'shadi ("like" yoki "dislike"),
+  /// xuddi shuni qayta bossa olib tashlaydi, boshqasini bossa
+  /// almashtiradi.
   Future<void> toggleReaction({
     required String mahallaId,
     required String postId,
     required String uid,
-    required String emoji,
-    required String? currentEmoji,
+    required String reaction,
+    required String? currentReaction,
   }) async {
     final docRef = _postsRef(mahallaId).doc(postId);
-    if (currentEmoji == emoji) {
+    if (currentReaction == reaction) {
       await docRef.update({'reactedUids.$uid': FieldValue.delete()});
     } else {
-      await docRef.update({'reactedUids.$uid': emoji});
+      await docRef.update({'reactedUids.$uid': reaction});
     }
   }
 

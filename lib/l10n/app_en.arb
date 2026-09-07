@@ -254,17 +254,6 @@
   "postingTooFastError": "You're posting too fast. Please wait a moment and try again.",
   "inappropriateContentError": "The text contains inappropriate words. Please edit it.",
   "reactionsSheetTitle": "Reactions",
-  "repostAction": "Repost",
-  "repostedByLabel": "{name} reposted",
-  "@repostedByLabel": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "repostSuccessMessage": "Reposted",
-  "repostRemovedMessage": "Repost removed",
   "addStoryLabel": "Add story",
   "yourStoryLabel": "Your story",
   "newButton": "New",
@@ -403,7 +392,7 @@
   "scanningStatus": "Scanning...",
   "enterCodeManually": "Enter code manually",
   "enterMahallaCodeTitle": "Enter mahalla code",
-  "mahallaCodeHint": "e.g. MFY-00123",
+  "mahallaCodeHint": "e.g. Y234-5678",
   "confirmButton": "Confirm",
   "qrGenericError": "An error occurred, please try again",
   "confirmError": "Error confirming, please try again",

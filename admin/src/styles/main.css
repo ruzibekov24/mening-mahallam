@@ -63,6 +63,7 @@
      .state-msg / .state-msg.error   loading / error placeholder block
      .spinner                        inline spinning loader
      .error-banner                   inline form error banner
+     .success-banner                 inline form success banner
      .empty-state                    "no data" placeholder
 
    Login
@@ -656,6 +657,16 @@ th.mono {
   background: var(--danger-bg);
   color: var(--danger);
   border: 1px solid rgba(211, 58, 58, 0.28);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.success-banner {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid rgba(26, 155, 98, 0.28);
   border-radius: var(--radius-sm);
   padding: 12px 16px;
   margin-bottom: 16px;

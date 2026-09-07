@@ -38,7 +38,7 @@ class ImageUploadService {
 
   /// Bitta faylni (rasm yoki video) yuklaydi va uning ochiq
   /// (public) URL'ini qaytaradi. [storagePath] masalan:
-  /// "requests/MFY-00123/abc123_0.jpg"
+  /// "requests/yettiguzar/abc123_0.jpg"
   Future<String> uploadFile({
     required File file,
     required String storagePath,

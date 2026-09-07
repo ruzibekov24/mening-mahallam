@@ -830,20 +830,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reactionsSheetTitle => 'Reactions';
 
   @override
-  String get repostAction => 'Repost';
-
-  @override
-  String repostedByLabel(String name) {
-    return '$name reposted';
-  }
-
-  @override
-  String get repostSuccessMessage => 'Reposted';
-
-  @override
-  String get repostRemovedMessage => 'Repost removed';
-
-  @override
   String get addStoryLabel => 'Add story';
 
   @override
@@ -1281,7 +1267,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterMahallaCodeTitle => 'Enter mahalla code';
 
   @override
-  String get mahallaCodeHint => 'e.g. MFY-00123';
+  String get mahallaCodeHint => 'e.g. Y234-5678';
 
   @override
   String get confirmButton => 'Confirm';

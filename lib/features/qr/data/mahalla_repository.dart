@@ -60,30 +60,51 @@ class MahallaRepository {
   })  : _firestore = firestore ?? FirebaseFirestore.instance,
         _auth = auth ?? FirebaseAuth.instance;
 
-  /// QR koddagi matnni Firestore'dagi mahalla hujjati ID'siga moslab,
-  /// mahalla ma'lumotlarini o'qiydi.
+  /// QR koddagi (yoki qo'lda kiritilgan) 8 belgili qo'shilish kodini
+  /// (1 harf + 7 raqam, masalan "Y2345678") `joinCodes/{code}` orqali
+  /// haqiqiy mahallaga moslab, mahalla ma'lumotlarini o'qiydi.
   ///
-  /// QR kod formatini loyihangizga moslashtiring — hozircha
-  /// "mahallam://mahalla/<docId>" yoki oddiy "<docId>" ko'rinishini
-  /// qabul qiladi.
+  /// MUHIM: kod to'g'ridan-to'g'ri `mahallas/{id}` hujjat ID'si EMAS.
+  /// `mahallas` kolleksiyasini istalgan tizimga kirgan foydalanuvchi
+  /// `list` qila oladi (`firestore.rules`), shuning uchun maxfiy kod
+  /// alohida `joinCodes` kolleksiyasida saqlanadi — u faqat aniq kodni
+  /// bilgan holda `get` qilinadi, `list` esa butunlay taqiqlangan.
+  /// Bu tasodifiy taxmin qilib yoki ro'yxatni sanab chiqib boshqa
+  /// mahallaga "kirib olish"ning oldini oladi.
   Future<MahallaInfo> lookupByQrCode(String rawQrValue) async {
-    final docId = _extractMahallaId(rawQrValue);
-    if (docId.isEmpty) {
+    final code = _extractJoinCode(rawQrValue);
+    if (code == null) {
       throw MahallaNotFoundException('Mahalla topilmadi. QR kodni tekshiring.');
     }
 
-    final doc =
-        await _firestore.collection('mahallas').doc(docId).get();
-
-    if (!doc.exists) {
+    final joinDoc = await _firestore.collection('joinCodes').doc(code).get();
+    final mahallaId = joinDoc.data()?['mahallaId'] as String?;
+    if (mahallaId == null || mahallaId.isEmpty) {
       throw MahallaNotFoundException('Mahalla topilmadi. QR kodni tekshiring.');
     }
 
-    return MahallaInfo.fromFirestore(doc.id, doc.data()!);
+    final mahalla = await fetchMahallaInfo(mahallaId);
+    if (mahalla == null) {
+      throw MahallaNotFoundException('Mahalla topilmadi. QR kodni tekshiring.');
+    }
+
+    return mahalla;
   }
 
   /// Kodni qo'lda kiritganda ham xuddi shu tekshiruvdan o'tkazamiz.
   Future<MahallaInfo> lookupByManualCode(String code) => lookupByQrCode(code);
+
+  /// Xom qiymatdan (QR yoki qo'lda kiritilgan matn) harf-raqamlarni
+  /// ajratib, katta harfga o'tkazadi — "y234-5678", "Y234 5678",
+  /// "mahallam://mahalla/Y2345678" kabi variantlarning barchasi bir
+  /// xil 8 belgili kodga keltiriladi. Format mos kelmasa (aynan 8
+  /// ta harf/raqam bo'lmasa) `null` qaytaradi.
+  String? _extractJoinCode(String rawValue) {
+    final normalized =
+        rawValue.toUpperCase().replaceAll(RegExp(r'[^A-Z0-9]'), '');
+    if (normalized.length != 8) return null;
+    return normalized;
+  }
 
   /// Mahalla ID orqali to'liq ma'lumotni (jumladan xarita markazi
   /// uchun koordinatalarni) bir martalik o'qiydi.
@@ -171,21 +192,6 @@ class MahallaRepository {
     });
   }
 
-  String _extractMahallaId(String rawQrValue) {
-    final trimmed = rawQrValue.trim();
-    final uri = Uri.tryParse(trimmed);
-    if (uri != null) {
-      // MUHIM: bo'sh bo'laklarni chiqarib tashlaymiz. Aks holda
-      // "mahallam://mahalla/abc123/" (oxirida chiziq bilan) kodida
-      // `pathSegments.last` BO'SH SATR qaytarardi va Firestore
-      // `.doc('')` da yiqilardi — foydalanuvchi uchun bu "QR kod
-      // ishlamayapti"ga o'xshardi.
-      final segments =
-          uri.pathSegments.where((s) => s.trim().isNotEmpty).toList();
-      if (segments.isNotEmpty) return segments.last.trim();
-    }
-    return trimmed;
-  }
 }
 
 final mahallaRepositoryProvider = Provider<MahallaRepository>((ref) {

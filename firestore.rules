@@ -358,6 +358,21 @@ service cloud.firestore {
       allow delete: if isSuperAdmin() || (isSignedIn() && uid == myUid());
     }
 
+    // ---------- joinCodes/{code} ----------
+    // QR/qo'lda kiritish orqali mahallaga qo'shilish uchun maxfiy
+    // 8 belgili kod (1 harf + 7 raqam, masalan "Y2345678") ->
+    // mahallaId moslashuvi. `mahallas` kolleksiyasidan
+    // ATAYLAB alohida: `mahallas`ni istalgan tizimga kirgan foydalanuvchi
+    // `list` qila oladi (pastdagi izohga qarang), shuning uchun agar
+    // maxfiy kod shu yerda maydon sifatida saqlansa, uni bitta so'rov
+    // bilan hamma o'qib olardi. Bu yerda esa faqat aniq kodni bilgan
+    // holda `get` qilish mumkin — `list` butunlay taqiqlangan, ya'ni
+    // barcha kodlarni sanab chiqib bo'lmaydi.
+    match /joinCodes/{code} {
+      allow get: if isSignedIn();
+      allow list, create, update, delete: if false;
+    }
+
     // ---------- mahallas/{mahallaId} ----------
     match /mahallas/{mahallaId} {
       // Anyone signed in can read basic mahalla info (needed to preview
@@ -493,21 +508,12 @@ service cloud.firestore {
         allow update: if isStaffOrRaisOf(mahallaId) || isSuperAdmin() ||
           (isMemberOf(mahallaId) && resource.data.authorUid == myUid() &&
             request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deleted'])) ||
-          // Post matnini tahrirlash — faqat muallif, faqat `text`
-          // maydoni (repost bo'lmagan postlar uchun; UI reposting
-          // tahrirlash tugmasini ko'rsatmaydi).
+          // Post matnini tahrirlash — faqat muallif, faqat `text` maydoni.
           (isMemberOf(mahallaId) && resource.data.authorUid == myUid() &&
             request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text'])) ||
           (isMemberOf(mahallaId) &&
             request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactedUids']) &&
-            onlyOwnMapKeyChanged('reactedUids', myUid())) ||
-          // `repostedByUids` — repost qilish/bekor qilish "toggle"si,
-          // `reactedUids` bilan bir xil naqsh: har kim faqat o'z
-          // kalitini qo'sha/o'chira oladi (repostCount endi alohida
-          // saqlanmaydi — `repostedByUids.length` sifatida hisoblanadi).
-          (isMemberOf(mahallaId) &&
-            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['repostedByUids']) &&
-            onlyOwnMapKeyChanged('repostedByUids', myUid()));
+            onlyOwnMapKeyChanged('reactedUids', myUid()));
         allow delete: if false;
 
         match /comments/{commentId} {

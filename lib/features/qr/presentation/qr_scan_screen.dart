@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -178,11 +179,21 @@ class _QrScanScreenState extends ConsumerState<QrScanScreen> {
               // QANDAY xato uchun inglizcha "An unexpected error
               // occurred" ko'rsatadi — foydalanuvchi ham, biz ham
               // sababni bilmay qolamiz. Shuning uchun o'zimizniki.
-              errorBuilder: (context, error, _) => _CameraErrorView(
-                error: error,
-                onRetry: _retryCamera,
-                onManualEntry: _goToManualEntry,
-              ),
+              errorBuilder: (context, error, _) {
+                // `error.errorDetails?.message` platformadan (Android/
+                // iOS) kelgan haqiqiy sababni o'z ichiga oladi — lekin
+                // foydalanuvchiga umumiy xabar ko'rsatamiz (texnik
+                // matn tushunarsiz bo'lardi). Shuning uchun asl xatoni
+                // hech bo'lmasa konsolga chiqaramiz — aks holda "kamera
+                // ishlamayapti" xabarlari hech qanday izsiz qolib,
+                // sababini aniqlash imkonsiz bo'lardi.
+                debugPrint('QR kamera xatosi: $error');
+                return _CameraErrorView(
+                  error: error,
+                  onRetry: _retryCamera,
+                  onManualEntry: _goToManualEntry,
+                );
+              },
             ),
 
           // Qorong'ulashtirilgan overlay + markazdagi skanerlash freymi
@@ -539,6 +550,9 @@ class _ManualCodeSheetState extends State<_ManualCodeSheet> {
           TextField(
             controller: _controller,
             autofocus: true,
+            keyboardType: TextInputType.visiblePassword,
+            textCapitalization: TextCapitalization.characters,
+            inputFormatters: [_JoinCodeInputFormatter()],
             decoration: InputDecoration(hintText: l10n.mahallaCodeHint),
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -551,6 +565,36 @@ class _ManualCodeSheetState extends State<_ManualCodeSheet> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Qo'shilish kodi maydoni uchun formatlovchi: foydalanuvchi kichik
+/// harfda yozsa ham tizim o'zi katta harfga o'tkazadi, chiziqcha ("-")
+/// 4-belgidan keyin o'zi qo'yiladi — "y2345678" yozilsa maydonda
+/// "Y234-5678" ko'rinadi. Kod har doim 8 ta harf/raqamdan iborat
+/// bo'lgani uchun undan ortig'i kesib tashlanadi.
+class _JoinCodeInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final chars = newValue.text
+        .toUpperCase()
+        .replaceAll(RegExp(r'[^A-Z0-9]'), '');
+    final limited = chars.length > 8 ? chars.substring(0, 8) : chars;
+
+    final buffer = StringBuffer();
+    for (var i = 0; i < limited.length; i++) {
+      if (i == 4) buffer.write('-');
+      buffer.write(limited[i]);
+    }
+    final formatted = buffer.toString();
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }

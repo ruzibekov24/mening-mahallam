@@ -832,20 +832,6 @@ class AppLocalizationsUz extends AppLocalizations {
   String get reactionsSheetTitle => 'Reaksiyalar';
 
   @override
-  String get repostAction => 'Repost';
-
-  @override
-  String repostedByLabel(String name) {
-    return '$name repost qildi';
-  }
-
-  @override
-  String get repostSuccessMessage => 'Repost qilindi';
-
-  @override
-  String get repostRemovedMessage => 'Repost bekor qilindi';
-
-  @override
   String get addStoryLabel => 'Hikoya qo\'shish';
 
   @override
@@ -1287,7 +1273,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get enterMahallaCodeTitle => 'Mahalla kodini kiriting';
 
   @override
-  String get mahallaCodeHint => 'Masalan: MFY-00123';
+  String get mahallaCodeHint => 'Masalan: Y234-5678';
 
   @override
   String get confirmButton => 'Tasdiqlash';
@@ -2997,20 +2983,6 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
   String get reactionsSheetTitle => 'Реаксиялар';
 
   @override
-  String get repostAction => 'Репост';
-
-  @override
-  String repostedByLabel(String name) {
-    return '$name репост қилди';
-  }
-
-  @override
-  String get repostSuccessMessage => 'Репост қилинди';
-
-  @override
-  String get repostRemovedMessage => 'Репост бекор қилинди';
-
-  @override
   String get addStoryLabel => 'Ҳикоя қўшиш';
 
   @override
@@ -3450,7 +3422,7 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
   String get enterMahallaCodeTitle => 'Маҳалла кодини киритинг';
 
   @override
-  String get mahallaCodeHint => 'Масалан: MFY-00123';
+  String get mahallaCodeHint => 'Масалан: Y234-5678';
 
   @override
   String get confirmButton => 'Тасдиқлаш';
