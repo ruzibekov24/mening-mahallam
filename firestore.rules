@@ -489,9 +489,21 @@ service cloud.firestore {
       }
 
       // ---------- events ----------
+      // Update ikki xil holatda ruxsat etiladi:
+      // 1) Xodim/rais — istalgan maydon (sarlavha, sana, `rsvpEnabled`
+      //    va h.k.).
+      // 2) Oddiy a'zo — FAQAT `attendeeUids`/`participantsCount`
+      //    ("Boraman" belgisi). `requests`dagi `joinedUids` bilan bir
+      //    xil naqsh — rais qatnashish belgisini yoqmagan tadbirda ham
+      //    yozish texnik jihatdan mumkin, lekin ilova UI darajasida
+      //    tugmani ko'rsatmaydi (`rsvpEnabled == false` bo'lsa).
       match /events/{eventId} {
         allow read: if isMemberOf(mahallaId) || isSuperAdmin();
-        allow create, update, delete: if isStaffOrRaisOf(mahallaId) || isSuperAdmin();
+        allow create, delete: if isStaffOrRaisOf(mahallaId) || isSuperAdmin();
+        allow update: if isStaffOrRaisOf(mahallaId) || isSuperAdmin() ||
+          (isMemberOf(mahallaId) &&
+           request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['attendeeUids', 'participantsCount']));
       }
 
       // ---------- posts (Lenta) ----------

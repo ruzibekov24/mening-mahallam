@@ -14,6 +14,19 @@ class MahallaEvent {
   final String location;
   final int participantsCount;
 
+  /// Qatnashish belgisi ("Boraman" tugmasi) shu tadbirda yoqilganmi.
+  ///
+  /// Standart holatda o'chiq: har bir tadbirda majburiy emas — rais
+  /// tadbir yaratayotganda (`new_event_screen.dart`) alohida yoqadi.
+  /// Kichik e'lonlarda (masalan "hovli tozalash kuni") kerak emas,
+  /// katta yig'inlarda foydali.
+  final bool rsvpEnabled;
+
+  /// Qatnashishni belgilagan foydalanuvchilar — faqat `rsvpEnabled`
+  /// bo'lganda ma'noli, lekin har doim o'qiladi (masalan rais keyin
+  /// belgini o'chirsa ham, oldingi ro'yxat yo'qolmaydi).
+  final List<String> attendeeUids;
+
   MahallaEvent({
     required this.id,
     required this.title,
@@ -21,7 +34,11 @@ class MahallaEvent {
     required this.dateTime,
     required this.location,
     required this.participantsCount,
+    this.rsvpEnabled = false,
+    this.attendeeUids = const [],
   });
+
+  bool isAttendingBy(String uid) => attendeeUids.contains(uid);
 
   factory MahallaEvent.fromFirestore(String id, Map<String, dynamic> data) {
     final timestamp = data['dateTime'] as Timestamp?;
@@ -32,6 +49,11 @@ class MahallaEvent {
       dateTime: timestamp?.toDate() ?? DateTime.now(),
       location: data['location'] ?? '',
       participantsCount: (data['participantsCount'] ?? 0) as int,
+      rsvpEnabled: data['rsvpEnabled'] == true,
+      attendeeUids: (data['attendeeUids'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          const [],
     );
   }
 }
@@ -70,6 +92,7 @@ class EventRepository {
     String description = '',
     required DateTime dateTime,
     required String location,
+    bool rsvpEnabled = false,
   }) async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) {
@@ -86,6 +109,8 @@ class EventRepository {
       'dateTime': Timestamp.fromDate(dateTime),
       'location': location,
       'participantsCount': 0,
+      'rsvpEnabled': rsvpEnabled,
+      'attendeeUids': <String>[],
       'createdAt': FieldValue.serverTimestamp(),
       'authorUid': uid,
     });
@@ -110,6 +135,7 @@ class EventRepository {
     String description = '',
     required DateTime dateTime,
     required String location,
+    required bool rsvpEnabled,
   }) async {
     await _firestore
         .collection('mahallas')
@@ -121,6 +147,45 @@ class EventRepository {
       'description': description,
       'dateTime': Timestamp.fromDate(dateTime),
       'location': location,
+      'rsvpEnabled': rsvpEnabled,
+    });
+  }
+
+  /// "Boraman" — joriy foydalanuvchini qatnashuvchilar ro'yxatiga
+  /// qo'shadi. `requests_repository.dart`dagi `joinRequest` bilan bir
+  /// xil naqsh: ro'yxat va hisoblagich bitta yozuvda birga yangilanadi.
+  Future<void> joinEvent({
+    required String mahallaId,
+    required String eventId,
+  }) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+    await _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('events')
+        .doc(eventId)
+        .update({
+      'attendeeUids': FieldValue.arrayUnion([uid]),
+      'participantsCount': FieldValue.increment(1),
+    });
+  }
+
+  /// Qatnashishni bekor qiladi.
+  Future<void> leaveEvent({
+    required String mahallaId,
+    required String eventId,
+  }) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+    await _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('events')
+        .doc(eventId)
+        .update({
+      'attendeeUids': FieldValue.arrayRemove([uid]),
+      'participantsCount': FieldValue.increment(-1),
     });
   }
 

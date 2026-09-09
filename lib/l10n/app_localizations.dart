@@ -2669,6 +2669,30 @@ abstract class AppLocalizations {
   /// **'Tadbir haqida qo\'shimcha ma\'lumot (ixtiyoriy)...'**
   String get eventDescriptionHint;
 
+  /// No description provided for @rsvpToggleLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qatnashish belgisi'**
+  String get rsvpToggleLabel;
+
+  /// No description provided for @rsvpToggleHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yoqilsa, foydalanuvchilar \"Boraman\" deb belgilay oladi.'**
+  String get rsvpToggleHint;
+
+  /// No description provided for @rsvpJoinAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boraman'**
+  String get rsvpJoinAction;
+
+  /// No description provided for @rsvpJoinedLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boraman'**
+  String get rsvpJoinedLabel;
+
   /// No description provided for @dateLabel.
   ///
   /// In uz, this message translates to:

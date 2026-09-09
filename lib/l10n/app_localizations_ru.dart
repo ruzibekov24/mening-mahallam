@@ -1382,6 +1382,19 @@ class AppLocalizationsRu extends AppLocalizations {
       'Дополнительная информация о событии (необязательно)...';
 
   @override
+  String get rsvpToggleLabel => 'Отметка об участии';
+
+  @override
+  String get rsvpToggleHint =>
+      'Если включено, пользователи смогут нажать \"Я пойду\".';
+
+  @override
+  String get rsvpJoinAction => 'Я пойду';
+
+  @override
+  String get rsvpJoinedLabel => 'Я пойду';
+
+  @override
   String get dateLabel => 'Дата';
 
   @override

@@ -1,7 +1,7 @@
 name: mening_mahallam
 description: "Mening mahallam — mahalla aholisi uchun mobil ilova"
 publish_to: 'none'
-version: 1.4.11+36
+version: 1.4.13+38
 
 environment:
   sdk: '>=3.3.0 <4.0.0'

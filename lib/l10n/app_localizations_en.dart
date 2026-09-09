@@ -1383,6 +1383,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Additional details about the event (optional)...';
 
   @override
+  String get rsvpToggleLabel => 'Attendance marker';
+
+  @override
+  String get rsvpToggleHint => 'When on, users can tap \"I\'ll go\".';
+
+  @override
+  String get rsvpJoinAction => 'I\'ll go';
+
+  @override
+  String get rsvpJoinedLabel => 'I\'ll go';
+
+  @override
   String get dateLabel => 'Date';
 
   @override

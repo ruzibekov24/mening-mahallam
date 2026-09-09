@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -233,7 +234,21 @@ class EventDetailScreen extends ConsumerWidget {
                                 ],
                               ),
                             ],
-                            if (event.participantsCount > 0) ...[
+                            // Qatnashish belgisi — faqat rais shu
+                            // tadbirda yoqqan bo'lsa ko'rinadi
+                            // (`new_event_screen.dart`dagi svitch).
+                            // O'chirilgan tadbirlarda hech narsa
+                            // ko'rsatilmaydi — bo'sh "0 qatnashuvchi"
+                            // yozuvi bilan foydalanuvchini
+                            // chalg'itmaslik uchun.
+                            if (event.rsvpEnabled) ...[
+                              const SizedBox(height: AppSpacing.sm),
+                              _RsvpButton(
+                                mahallaId: mahallaId,
+                                event: event,
+                                accent: gradient.last,
+                              ),
+                            ] else if (event.participantsCount > 0) ...[
                               const SizedBox(height: AppSpacing.sm),
                               Row(
                                 children: [
@@ -360,6 +375,84 @@ class _RemindMeButtonState extends State<_RemindMeButton> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// "Boraman" tugmasi — faqat `event.rsvpEnabled == true` bo'lganda
+/// ko'rinadi (`event_detail_screen.dart` yuqorisiga qarang). Bosilganda
+/// joriy foydalanuvchini qatnashuvchilar ro'yxatiga qo'shadi/olib
+/// tashlaydi va hisoblagichni ko'rsatadi — `_RemindMeButton` bilan bir
+/// xil vizual uslubda, lekin serverga yoziladi (mahalliy eslatma emas,
+/// boshqa a'zolar ham ko'radi).
+class _RsvpButton extends ConsumerWidget {
+  final String mahallaId;
+  final MahallaEvent event;
+  final Color accent;
+
+  const _RsvpButton({
+    required this.mahallaId,
+    required this.event,
+    required this.accent,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final myUid = FirebaseAuth.instance.currentUser?.uid;
+    final isAttending = myUid != null && event.isAttendingBy(myUid);
+
+    return Row(
+      children: [
+        TapScale(
+          onTap: myUid == null
+              ? null
+              : () {
+                  final repo = ref.read(eventRepositoryProvider);
+                  if (isAttending) {
+                    repo.leaveEvent(mahallaId: mahallaId, eventId: event.id);
+                  } else {
+                    repo.joinEvent(mahallaId: mahallaId, eventId: event.id);
+                  }
+                },
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md, vertical: 6),
+            decoration: BoxDecoration(
+              color: isAttending ? accent : null,
+              border: isAttending ? null : Border.all(color: accent),
+              borderRadius: AppRadius.xsAll,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  isAttending
+                      ? PhosphorIconsFill.checkCircle
+                      : PhosphorIconsRegular.plusCircle,
+                  size: 15,
+                  color: isAttending ? Colors.white : accent,
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                Text(
+                  isAttending ? l10n.rsvpJoinedLabel : l10n.rsvpJoinAction,
+                  style: context.captionStyle.copyWith(
+                    color: isAttending ? Colors.white : accent,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (event.participantsCount > 0) ...[
+          const SizedBox(width: AppSpacing.sm),
+          Text(
+            l10n.participantsCount(event.participantsCount),
+            style: context.secondaryStyle,
+          ),
+        ],
+      ],
     );
   }
 }

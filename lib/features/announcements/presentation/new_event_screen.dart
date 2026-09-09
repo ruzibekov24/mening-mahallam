@@ -38,6 +38,11 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
   bool _isSubmitting = false;
   bool _broadcastToAll = false;
 
+  /// Qatnashish belgisi ("Boraman" tugmasi) shu tadbirda ko'rinsinmi.
+  /// Standart holatda o'chiq — har bir tadbirda kerak emas, rais o'zi
+  /// tanlaydi.
+  late bool _rsvpEnabled = widget.existing?.rsvpEnabled ?? false;
+
   bool get _isEditing => widget.existing != null;
 
   @override
@@ -103,6 +108,7 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
           description: description,
           dateTime: dateTime,
           location: location,
+          rsvpEnabled: _rsvpEnabled,
         );
       } else if (_broadcastToAll) {
         final mahallas =
@@ -114,6 +120,7 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
             description: description,
             dateTime: dateTime,
             location: location,
+            rsvpEnabled: _rsvpEnabled,
           );
         }
       } else {
@@ -123,6 +130,7 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
           description: description,
           dateTime: dateTime,
           location: location,
+          rsvpEnabled: _rsvpEnabled,
         );
       }
 
@@ -234,6 +242,42 @@ class _NewEventScreenState extends ConsumerState<NewEventScreen> {
                     textCapitalization: TextCapitalization.sentences,
                     decoration:
                         InputDecoration(hintText: l10n.eventDescriptionHint),
+                  ),
+
+                  const SizedBox(height: AppSpacing.lg),
+                  InkWell(
+                    borderRadius: AppRadius.smAll,
+                    onTap: () =>
+                        setState(() => _rsvpEnabled = !_rsvpEnabled),
+                    child: Container(
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: context.borderColor),
+                        borderRadius: AppRadius.smAll,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(l10n.rsvpToggleLabel,
+                                    style: context.cardTitleStyle),
+                                const SizedBox(height: AppSpacing.xxs),
+                                Text(l10n.rsvpToggleHint,
+                                    style: context.secondaryStyle),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          LiquidToggleSwitch(
+                            value: _rsvpEnabled,
+                            onChanged: (v) =>
+                                setState(() => _rsvpEnabled = v),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
 
                   if (!_isEditing)

@@ -1389,6 +1389,19 @@ class AppLocalizationsUz extends AppLocalizations {
       'Tadbir haqida qo\'shimcha ma\'lumot (ixtiyoriy)...';
 
   @override
+  String get rsvpToggleLabel => 'Qatnashish belgisi';
+
+  @override
+  String get rsvpToggleHint =>
+      'Yoqilsa, foydalanuvchilar \"Boraman\" deb belgilay oladi.';
+
+  @override
+  String get rsvpJoinAction => 'Boraman';
+
+  @override
+  String get rsvpJoinedLabel => 'Boraman';
+
+  @override
   String get dateLabel => 'Sana';
 
   @override
@@ -3535,6 +3548,19 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
   @override
   String get eventDescriptionHint =>
       'Тадбир ҳақида қўшимча маълумот (ихтиёрий)...';
+
+  @override
+  String get rsvpToggleLabel => 'Қатнашиш белгиси';
+
+  @override
+  String get rsvpToggleHint =>
+      'Ёқилса, фойдаланувчилар \"Бораман\" деб белгилай олади.';
+
+  @override
+  String get rsvpJoinAction => 'Бораман';
+
+  @override
+  String get rsvpJoinedLabel => 'Бораман';
 
   @override
   String get dateLabel => 'Сана';
