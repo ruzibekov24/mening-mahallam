@@ -21,7 +21,17 @@ class _StateIllustration extends StatefulWidget {
   final IconData icon;
   final Color accent;
 
-  const _StateIllustration({required this.icon, required this.accent});
+  /// Berilsa, gradient doira+ikonka o'rniga shu rasm (masalan
+  /// `assets/images/empty_states/search.png`) markazda ko'rsatiladi —
+  /// atrofdagi halqa/nuqta animatsiyasi saqlanadi, faqat markaziy
+  /// element almashadi.
+  final String? imageAsset;
+
+  const _StateIllustration({
+    required this.icon,
+    required this.accent,
+    this.imageAsset,
+  });
 
   @override
   State<_StateIllustration> createState() => _StateIllustrationState();
@@ -77,23 +87,32 @@ class _StateIllustrationState extends State<_StateIllustration>
                 scale: 0.6 + 0.4 * iconT,
                 child: Opacity(
                   opacity: iconT.clamp(0.0, 1.0),
-                  child: Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          widget.accent,
-                          Color.lerp(widget.accent, Colors.white, 0.35)!,
-                        ],
-                      ),
-                      boxShadow: AppShadows.accent(widget.accent, isDark),
-                    ),
-                    child: Icon(widget.icon, size: 28, color: Colors.white),
-                  ),
+                  child: widget.imageAsset != null
+                      ? Image.asset(
+                          widget.imageAsset!,
+                          width: 92,
+                          height: 92,
+                          fit: BoxFit.contain,
+                        )
+                      : Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                widget.accent,
+                                Color.lerp(
+                                    widget.accent, Colors.white, 0.35)!,
+                              ],
+                            ),
+                            boxShadow: AppShadows.accent(widget.accent, isDark),
+                          ),
+                          child:
+                              Icon(widget.icon, size: 28, color: Colors.white),
+                        ),
                 ),
               ),
             ),
@@ -255,6 +274,7 @@ class AppErrorView extends StatelessWidget {
             const _StateIllustration(
               icon: PhosphorIconsFill.warningCircle,
               accent: AppColors.danger,
+              imageAsset: 'assets/images/empty_states/generic.png',
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
@@ -332,6 +352,10 @@ class AppEmptyView extends StatelessWidget {
   /// yangilash ishlaydi.
   final bool scrollable;
 
+  /// Berilsa, chizilgan ikonka o'rniga shu rasm ko'rsatiladi (masalan
+  /// `assets/images/empty_states/search.png`).
+  final String? imageAsset;
+
   const AppEmptyView({
     super.key,
     required this.icon,
@@ -341,6 +365,7 @@ class AppEmptyView extends StatelessWidget {
     this.onAction,
     this.accent,
     this.scrollable = false,
+    this.imageAsset,
   });
 
   @override
@@ -350,7 +375,7 @@ class AppEmptyView extends StatelessWidget {
     final content = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _StateIllustration(icon: icon, accent: color),
+        _StateIllustration(icon: icon, accent: color, imageAsset: imageAsset),
         const SizedBox(height: AppSpacing.lg),
         Text(
           title,

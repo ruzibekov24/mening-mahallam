@@ -29,26 +29,55 @@ const MAX_HISTORY_TURNS = 10;
 
 // Client-side rendering note: the Flutter app's chat bubble
 // (`_MarkdownLiteText` in `lib/features/assistant/presentation/
-// assistant_screen.dart`) understands `**bold**` and `* `/`1. ` list
-// markers and renders them properly — so it's safe (and, per user
-// feedback, expected) to actually use that formatting rather than
-// writing plain unformatted paragraphs.
+// assistant_screen.dart`) understands `**bold**`, `*italic*`/`_italic_`,
+// `` `inline code` ``, `## heading` lines, `* `/`1. ` list markers, and
+// `[Link text](action:key)` in-app action links (only the 5 keys listed
+// below are recognized — anything else renders as plain text) — so it's
+// safe (and, per user feedback, expected) to actually use that
+// formatting rather than writing plain unformatted paragraphs.
 const FORMATTING_HINT_UZ =
   "Javoblaring yetarlicha batafsil va tushunarli bo'lsin — juda qisqa, " +
   "bir gapli javoblardan qoching. Kerak bo'lsa **qalin matn** bilan muhim " +
-  "so'zlarni ajrat, va ro'yxat kerak bo'lsa \"1. \", \"2. \" yoki \"* \" " +
-  "bilan boshlangan qatorlardan foydalan (bular ilovada to'g'ri formatlab " +
-  "ko'rsatiladi).";
+  "so'zlarni, *kursiv matn* bilan urg'uni, `kod` bilan aniq buyruq/atama " +
+  "yoki qiymatni ajrat; qisqa kichik sarlavha kerak bo'lsa qatorni \"## \" " +
+  "bilan boshla, ro'yxat kerak bo'lsa \"1. \", \"2. \" yoki \"* \" bilan " +
+  "boshlangan qatorlardan foydalan (bularning barchasi ilovada to'g'ri " +
+  "formatlab ko'rsatiladi). Bundan tashqari, javobing ichida mavzuga " +
+  "ANIQ mos bo'lganda ilova ichidagi bo'limga ishora qiluvchi havola " +
+  "qo'shishing mumkin — FAQAT quyidagi 5 ta aniq kalitdan biri bilan, " +
+  "boshqa hech qanday erkin URL emas: `[Xizmatlar](action:services)`, " +
+  "`[Fikr-mulohaza](action:feedback)`, `[Yordam](action:help)`, " +
+  "`[Premium](action:premium)`, `[Murojaat yuborish](action:new_request)` " +
+  "— havola matnini mos tarzda o'zing tanla, kalitni (`action:...` " +
+  "qismini) o'zgartirmay ishlat. Bu havolalarni spam qilib har javobga " +
+  "qo'ymay, faqat chindan foydali bo'lganda, kamdan-kam ishlat.";
 const FORMATTING_HINT_RU =
   'Отвечай достаточно подробно и понятно — избегай слишком коротких, ' +
   'однострочных ответов. При необходимости выделяй важные слова ' +
-  '**жирным текстом**, а для списков используй строки, начинающиеся с ' +
-  '"1. ", "2. " или "* " (они корректно отображаются в приложении).';
+  '**жирным текстом**, акцент — *курсивом*, точную команду/термин или ' +
+  'значение — `кодом`; для короткого подзаголовка начни строку с "## ", ' +
+  'а для списков используй строки, начинающиеся с "1. ", "2. " или "* " ' +
+  '(всё это корректно отображается в приложении). Также, когда это ТОЧНО ' +
+  'соответствует теме ответа, можешь добавить внутриприложенческую ссылку ' +
+  '— ТОЛЬКО с одним из этих 5 точных ключей, никаких произвольных URL: ' +
+  '`[Услуги](action:services)`, `[Обратная связь](action:feedback)`, ' +
+  '`[Помощь](action:help)`, `[Премиум](action:premium)`, ' +
+  '`[Отправить обращение](action:new_request)` — текст ссылки подбирай ' +
+  'сама, а ключ (часть `action:...`) не меняй. Не добавляй такие ссылки ' +
+  'в каждый ответ — только когда это действительно полезно.';
 const FORMATTING_HINT_EN =
   'Answer with enough detail to be genuinely useful — avoid overly short, ' +
-  'one-line answers. Use **bold text** for important words where it ' +
-  'helps, and lines starting with "1. ", "2. " or "* " for lists (these ' +
-  'render correctly in the app).';
+  'one-line answers. Use **bold text** for important words, *italics* for ' +
+  'emphasis, `code` for an exact command/term/value; start a line with ' +
+  '"## " for a short subheading, and lines starting with "1. ", "2. " or ' +
+  '"* " for lists (all of these render correctly in the app). You can ' +
+  'also add an in-app link when it EXACTLY matches the topic of your ' +
+  'answer — ONLY using one of these 5 exact keys, never a free-form URL: ' +
+  '`[Services](action:services)`, `[Feedback](action:feedback)`, ' +
+  '`[Help](action:help)`, `[Premium](action:premium)`, ' +
+  '`[Send a request](action:new_request)` — write your own link text but ' +
+  "never change the key (the `action:...` part). Don't add such links to " +
+  'every reply — only when genuinely useful.';
 
 // Open models like Llama tend to be over-eager: asked one narrow
 // question, they'll volunteer a wall of loosely-related information
@@ -186,7 +215,7 @@ const ACTION_BLOCK_HINT_UZ =
   "Bu blokni FAQAT foydalanuvchi ANIQ ravishda murojaat/shikoyat yozib " +
   "berishingni so'raganda va yetarli tafsilot to'plaganingdan keyin qo'sh " +
   "— oddiy savol-javoblarda hech qachon qo'shma.\n\n" +
-  "Bulardan tashqari, yana UCHTA sodda imkoniyat bor (premium " +
+  "Bulardan tashqari, yana TO'RTTA sodda imkoniyat bor (premium " +
   "foydalanuvchilar uchun) — bularda qo'shimcha tafsilot yig'ish shart " +
   "emas, foydalanuvchining niyati aniq bo'lgan zahoti blokni darhol qo'sh:\n" +
   "1) Foydalanuvchi ilova haqida fikr-mulohaza/shikoyat qoldirmoqchi " +
@@ -201,7 +230,19 @@ const ACTION_BLOCK_HINT_UZ =
   "bera oladigan holatlardan farqli — faqat aniq yordam bo'limiga " +
   "yo'naltirishni so'raganda ishlat): ```mahallam-action\n" +
   "{\"action\":\"open_help\"}\n```\n" +
-  "Bu uchta blokni ham FAQAT mos niyat ANIQ ifodalanganda qo'sh, hech " +
+  "4) Foydalanuvchi profilidagi ma'lumotni (ism, familiya, ko'cha, uy " +
+  "raqami) o'zgartirmoqchi bo'lsa: avval suhbat orqali ANIQLA — masalan " +
+  "\"ismingizni nimaga o'zgartiramiz?\" kabi savol ber, faqat foydalanuvchi " +
+  "aniq aytgan YANGI qiymatni ol. Yetarli aniqlik bo'lgach, oddiy " +
+  "javobingdan KEYIN blok qo'sh — FAQAT haqiqatan o'zgaradigan maydonlarni " +
+  "kirit, qolganlarini butunlay TASHLAB KET (bo'sh qator ham qo'shma):\n" +
+  "```mahallam-action\n" +
+  '{"action":"edit_profile","firstName":"...","lastName":"...",' +
+  '"street":"...","houseNumber":"..."}\n' +
+  "```\n" +
+  "Masalan faqat ism o'zgarsa, blokda FAQAT `firstName` bo'lsin, boshqa " +
+  "maydonlar umuman yozilmasin.\n" +
+  "Bu to'rtta blokni ham FAQAT mos niyat ANIQ ifodalanganda qo'sh, hech " +
   "qachon o'zingdan taklif qilmasdan. Barcha bu imkoniyatlar (murojaat " +
   "yozish ham) haqida foydalanuvchi o'zi so'ramaguncha, boshqa mavzudagi " +
   "javoblaringda HECH QACHON eslatib o'tirma yoki taklif qilma — bular " +
@@ -220,7 +261,7 @@ const ACTION_BLOCK_HINT_RU =
   '```\n' +
   'Добавляй этот блок ТОЛЬКО когда пользователь явно просит составить ' +
   'обращение и достаточно деталей собрано — никогда в обычных вопросах-ответах.\n\n' +
-  'Кроме этого, есть ещё ТРИ простые возможности (тоже только для ' +
+  'Кроме этого, есть ещё ЧЕТЫРЕ простые возможности (тоже только для ' +
   'премиум-пользователей) — для них не нужно собирать детали, добавляй ' +
   'блок сразу, как только намерение пользователя стало явным:\n' +
   '1) Пользователь хочет оставить отзыв/жалобу о самом приложении или ' +
@@ -233,7 +274,19 @@ const ACTION_BLOCK_HINT_RU =
   'случаев, когда ты сам можешь просто ответить текстом — используй ' +
   'только когда явно просят направить в раздел помощи): ' +
   '```mahallam-action\n{"action":"open_help"}\n```\n' +
-  'Добавляй эти три блока ТОЛЬКО при явном намерении, никогда не ' +
+  '4) Пользователь хочет изменить данные своего профиля (имя, фамилию, ' +
+  'улицу, номер дома): сначала УТОЧНИ через диалог — например спроси ' +
+  '"на что изменить имя?", бери только ЯВНО названное пользователем новое ' +
+  'значение. Когда ясности достаточно, ПОСЛЕ обычного ответа добавь блок ' +
+  '— указывай ТОЛЬКО реально изменяемые поля, остальные полностью ' +
+  'ПРОПУСКАЙ (даже пустой строкой не добавляй):\n' +
+  '```mahallam-action\n' +
+  '{"action":"edit_profile","firstName":"...","lastName":"...",' +
+  '"street":"...","houseNumber":"..."}\n' +
+  '```\n' +
+  'Например, если меняется только имя, в блоке пусть будет ТОЛЬКО ' +
+  '`firstName`, остальные поля вообще не пиши.\n' +
+  'Добавляй эти четыре блока ТОЛЬКО при явном намерении, никогда не ' +
   'предлагая их сама. Никогда не упоминай и не предлагай ни одну из этих ' +
   'возможностей (включая составление обращения), пока пользователь сам ' +
   'не попросит об этом.';
@@ -250,7 +303,7 @@ const ACTION_BLOCK_HINT_EN =
   "```\n" +
   "Only add this block when the user explicitly asks you to draft a " +
   "request and you've gathered enough detail — never during normal Q&A.\n\n" +
-  "There are also THREE simple capabilities (also premium users only) " +
+  "There are also FOUR simple capabilities (also premium users only) " +
   "that need no extra detail gathering — add the block as soon as the " +
   "user's intent is unambiguous:\n" +
   "1) The user wants to leave feedback/a complaint about the app itself, " +
@@ -264,7 +317,19 @@ const ACTION_BLOCK_HINT_EN =
   "just answer yourself in text — only use this when they specifically " +
   "ask to be pointed to help/support): ```mahallam-action\n" +
   "{\"action\":\"open_help\"}\n```\n" +
-  "Only add these three blocks when the intent is explicit and " +
+  "4) The user wants to change their profile info (first name, last " +
+  "name, street, house number): first CLARIFY through conversation — " +
+  "e.g. ask \"what should we change your name to?\" — and only take the " +
+  "new value the user explicitly stated. Once clear enough, AFTER your " +
+  "normal reply, add a block — include ONLY the fields that actually " +
+  "change, and completely OMIT the rest (don't even add them empty):\n" +
+  "```mahallam-action\n" +
+  '{"action":"edit_profile","firstName":"...","lastName":"...",' +
+  '"street":"...","houseNumber":"..."}\n' +
+  "```\n" +
+  "For example, if only the first name changes, the block should contain " +
+  "ONLY `firstName`, with no other fields written at all.\n" +
+  "Only add these four blocks when the intent is explicit and " +
   "unambiguous — never suggest them yourself. Never mention or offer any " +
   "of these capabilities (including drafting a request) unless the user " +
   "brings it up first.";

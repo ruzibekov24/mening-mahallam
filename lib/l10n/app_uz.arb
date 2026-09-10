@@ -5,14 +5,16 @@
     "description": "Ilova nomi, splash ekranida ko'rinadi"
   },
   "splashTagline": "Sizning mahallangiz bitta ilovada",
-  "onboardingAnnouncementsTitle": "E'lonlardan xabardor bo'ling",
-  "onboardingAnnouncementsDescription": "Mahallangizdagi barcha yangiliklar va e'lonlar bir joyda",
-  "onboardingEventsTitle": "Tadbirlardan xabardor bo'ling",
-  "onboardingEventsDescription": "Mahalladagi yig'ilishlar va tashabbuslarda ishtirok eting",
-  "onboardingRequestsTitle": "Murojaat yuboring",
-  "onboardingRequestsDescription": "Muammoingizni bildiring va javobini real vaqtda kuzating",
-  "onboardingNeighborsTitle": "Qo'shni bilan bog'laning",
-  "onboardingNeighborsDescription": "Mahalla a'zolari bilan muloqot qiling, birga qaror qabul qiling",
+  "onboardingWelcomeTitle": "Xush kelibsiz!",
+  "onboardingWelcomeDescription": "Mening Mahallam — mahallangiz bitta ilovada. Keling, imkoniyatlar bilan tanishtiraman.",
+  "onboardingAnnouncementsTitle": "Har doim xabardor bo'ling",
+  "onboardingAnnouncementsDescription": "Mahallangizdagi yangiliklar va e'lonlar to'g'ridan-to'g'ri qo'lingizda",
+  "onboardingEventsTitle": "Tadbirlarni o'tkazib yubormang",
+  "onboardingEventsDescription": "Yig'in, bayram yoki tadbir bo'lsa — birinchilardan bo'lib bilib olasiz",
+  "onboardingRequestsTitle": "Muammoni bir necha bosishda yeching",
+  "onboardingRequestsDescription": "Ko'chada nosozlik ko'rdingizmi? Murojaat yuboring, rais va xodimlar darhol ko'radi",
+  "onboardingNeighborsTitle": "Qo'shnilaringiz bilan bog'laning",
+  "onboardingNeighborsDescription": "Ko'changizdagilarni toping, suhbatlashing, birga mahallani yaxshilang",
   "previewAnnouncements": "E'lonlar",
   "previewEvents": "Tadbirlar",
   "previewRequests": "Murojaatlar",
@@ -1291,6 +1293,10 @@
   "assistantActionOpenNewRequest": "Murojaat ekranini ochish",
   "@assistantActionOpenNewRequest": {
     "description": "AI Yordamchi javobi ostida ko'rinadigan, bo'sh \"Yangi murojaat\" formasini ochuvchi tugma matni"
+  },
+  "assistantActionEditProfile": "Profil formasini to'ldirish",
+  "@assistantActionEditProfile": {
+    "description": "AI Yordamchi javobi ostida ko'rinadigan, AI aniqlagan qiymatlar bilan oldindan to'ldirilgan profil tahrirlash formasini ochuvchi tugma matni (premium)"
   },
   "assistantNewChat": "Yangi suhbat",
   "@assistantNewChat": {

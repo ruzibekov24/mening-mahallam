@@ -90,9 +90,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 8),
-                  _GlassPreviewStack(
-                    highlightedIndex: _currentIndex,
-                    onSelectIndex: _goToIndex,
+                  // 0-indeks — "Xush kelibsiz" bosqichi, preview
+                  // ro'yxatida qatori yo'q (faqat 4 ta xususiyat bor),
+                  // shuning uchun shu bosqichda butunlay yashiriladi;
+                  // qolganlarida indeks 1 ga surilgan holda ko'rsatiladi.
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 300),
+                    opacity: _currentIndex == 0 ? 0 : 1,
+                    child: IgnorePointer(
+                      ignoring: _currentIndex == 0,
+                      child: _GlassPreviewStack(
+                        highlightedIndex: (_currentIndex - 1).clamp(
+                            0, onboardingPreviewItems(context).length - 1),
+                        onSelectIndex: (index) => _goToIndex(index + 1),
+                      ),
+                    ),
                   ),
                   const Spacer(),
                   _StepDots(

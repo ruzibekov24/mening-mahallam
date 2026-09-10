@@ -272,6 +272,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             icon: PhosphorIconsFill.magnifyingGlass,
                             title: l10n.searchNoResults,
                             scrollable: true,
+                            imageAsset: 'assets/images/empty_states/search.png',
                           );
                         }
                         final counts = <SearchResultKind?, int>{
@@ -320,6 +321,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                       icon: PhosphorIconsFill.magnifyingGlass,
                                       title: l10n.searchNoResults,
                                       scrollable: true,
+                                      imageAsset:
+                                          'assets/images/empty_states/search.png',
                                     )
                                   : ListView.builder(
                                       padding: const EdgeInsets.fromLTRB(

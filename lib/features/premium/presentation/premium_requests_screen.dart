@@ -64,6 +64,7 @@ class PremiumRequestsScreen extends ConsumerWidget {
                       icon: PhosphorIconsFill.crown,
                       title: l10n.premiumRequestsEmpty,
                       scrollable: true,
+                      imageAsset: 'assets/images/empty_states/premium.png',
                     );
                   }
                   return ListView.builder(

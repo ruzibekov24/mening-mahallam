@@ -134,8 +134,12 @@ class _HeroCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(PhosphorIconsFill.crown,
-              color: Color(0xFFFFC94A), size: 34),
+          Image.asset(
+            'assets/images/patterns/premium_medal.png',
+            width: 56,
+            height: 56,
+            fit: BoxFit.contain,
+          ),
           const SizedBox(height: AppSpacing.md),
           Text(
             l10n.premiumHeroTitle,

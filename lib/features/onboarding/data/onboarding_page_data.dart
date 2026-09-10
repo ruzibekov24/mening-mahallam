@@ -73,11 +73,19 @@ class OnboardingPageData {
   });
 }
 
-/// 4 ta bosqich — onboardingPreviewItems bilan bir xil tartibda:
-/// 0-E'lonlar, 1-Tadbirlar, 2-Murojaatlar, 3-Qo'shnilar.
+/// 5 ta bosqich: 0-Xush kelibsiz (tanishtiruv, `onboardingPreviewItems`da
+/// mos qatori yo'q), 1-E'lonlar, 2-Tadbirlar, 3-Murojaatlar, 4-Qo'shnilar
+/// — preview ro'yxati bilan indeks 1 surilgan holda mos keladi
+/// (`onboarding_screen.dart`dagi `_GlassPreviewStack` shuni hisobga oladi).
 List<OnboardingPageData> onboardingPages(BuildContext context) {
   final l10n = AppLocalizations.of(context);
   return [
+    OnboardingPageData(
+      image: 'assets/images/onboarding_backgrounds/welcome.png',
+      tint: const Color(0xFF0752EB),
+      title: l10n.onboardingWelcomeTitle,
+      description: l10n.onboardingWelcomeDescription,
+    ),
     OnboardingPageData(
       image: 'assets/images/onboarding_backgrounds/announcements.png',
       tint: const Color(0xFF2F5BFF),

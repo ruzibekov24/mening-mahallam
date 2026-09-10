@@ -93,13 +93,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: ClipPath(
               clipper: _WaveClipper(),
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/patterns/auth_gate.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                foregroundDecoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      AppColors.primary,
-                      Color.lerp(AppColors.primary, const Color(0xFF7B5CFA), 0.55)!,
+                      AppColors.primary.withValues(alpha: 0.82),
+                      Color.lerp(AppColors.primary, const Color(0xFF7B5CFA), 0.55)!
+                          .withValues(alpha: 0.82),
                     ],
                   ),
                 ),

@@ -20,7 +20,21 @@ import '../../../core/widgets/liquid_glass.dart';
 /// "Mening ma'lumotlarim" — ism, familiya, profil rasmi, tug'ilgan
 /// sana, manzil va jinsni tahrirlash ekrani.
 class EditProfileScreen extends ConsumerStatefulWidget {
-  const EditProfileScreen({super.key});
+  /// AI Yordamchi orqali oldindan to'ldirish uchun — berilgan bo'lsa,
+  /// profildagi qiymat o'rniga shu ishlatiladi. Foydalanuvchi baribir
+  /// ko'rib chiqib, o'zi "Saqlash"ni bosishi kerak.
+  final String? initialFirstName;
+  final String? initialLastName;
+  final String? initialStreet;
+  final String? initialHouseNumber;
+
+  const EditProfileScreen({
+    super.key,
+    this.initialFirstName,
+    this.initialLastName,
+    this.initialStreet,
+    this.initialHouseNumber,
+  });
 
   @override
   ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -51,10 +65,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   void _fillFromProfile(UserProfile profile) {
     if (_initialized) return;
-    _firstNameController.text = profile.firstName;
-    _lastNameController.text = profile.lastName;
-    _streetController.text = profile.street ?? '';
-    _houseNumberController.text = profile.houseNumber ?? '';
+    _firstNameController.text = widget.initialFirstName ?? profile.firstName;
+    _lastNameController.text = widget.initialLastName ?? profile.lastName;
+    _streetController.text =
+        widget.initialStreet ?? profile.street ?? '';
+    _houseNumberController.text =
+        widget.initialHouseNumber ?? profile.houseNumber ?? '';
     _birthDate = profile.birthDate;
     _gender = profile.gender;
     _photoUrl = profile.photoUrl;

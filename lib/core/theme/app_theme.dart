@@ -189,10 +189,9 @@ class AppTheme {
           borderRadius: AppRadius.mdAll,
           borderSide: BorderSide.none,
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderRadius: AppRadius.mdAll,
-          borderSide:
-              BorderSide(color: primary.withValues(alpha: 0.5), width: 1.5),
+          borderSide: BorderSide.none,
         ),
         hintStyle: baseTextTheme.bodyLarge?.copyWith(color: textSecondary),
       ),

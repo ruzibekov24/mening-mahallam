@@ -562,6 +562,7 @@ class _EventsList extends ConsumerWidget {
               title: l10n.noEventsYet,
               accent: AppAccents.events,
               scrollable: true,
+              imageAsset: 'assets/images/empty_states/events.png',
             );
           }
           return ListView.builder(

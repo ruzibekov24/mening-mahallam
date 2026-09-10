@@ -185,6 +185,7 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
                         subtitle: _selectedStatus == null
                             ? l10n.noRequestsHint
                             : null,
+                        imageAsset: 'assets/images/empty_states/requests.png',
                         actionLabel: _selectedStatus == null
                             ? l10n.newRequestTitle
                             : null,

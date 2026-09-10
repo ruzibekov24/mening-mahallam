@@ -113,52 +113,64 @@ abstract class AppLocalizations {
   /// **'Sizning mahallangiz bitta ilovada'**
   String get splashTagline;
 
+  /// No description provided for @onboardingWelcomeTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xush kelibsiz!'**
+  String get onboardingWelcomeTitle;
+
+  /// No description provided for @onboardingWelcomeDescription.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mening Mahallam — mahallangiz bitta ilovada. Keling, imkoniyatlar bilan tanishtiraman.'**
+  String get onboardingWelcomeDescription;
+
   /// No description provided for @onboardingAnnouncementsTitle.
   ///
   /// In uz, this message translates to:
-  /// **'E\'lonlardan xabardor bo\'ling'**
+  /// **'Har doim xabardor bo\'ling'**
   String get onboardingAnnouncementsTitle;
 
   /// No description provided for @onboardingAnnouncementsDescription.
   ///
   /// In uz, this message translates to:
-  /// **'Mahallangizdagi barcha yangiliklar va e\'lonlar bir joyda'**
+  /// **'Mahallangizdagi yangiliklar va e\'lonlar to\'g\'ridan-to\'g\'ri qo\'lingizda'**
   String get onboardingAnnouncementsDescription;
 
   /// No description provided for @onboardingEventsTitle.
   ///
   /// In uz, this message translates to:
-  /// **'Tadbirlardan xabardor bo\'ling'**
+  /// **'Tadbirlarni o\'tkazib yubormang'**
   String get onboardingEventsTitle;
 
   /// No description provided for @onboardingEventsDescription.
   ///
   /// In uz, this message translates to:
-  /// **'Mahalladagi yig\'ilishlar va tashabbuslarda ishtirok eting'**
+  /// **'Yig\'in, bayram yoki tadbir bo\'lsa — birinchilardan bo\'lib bilib olasiz'**
   String get onboardingEventsDescription;
 
   /// No description provided for @onboardingRequestsTitle.
   ///
   /// In uz, this message translates to:
-  /// **'Murojaat yuboring'**
+  /// **'Muammoni bir necha bosishda yeching'**
   String get onboardingRequestsTitle;
 
   /// No description provided for @onboardingRequestsDescription.
   ///
   /// In uz, this message translates to:
-  /// **'Muammoingizni bildiring va javobini real vaqtda kuzating'**
+  /// **'Ko\'chada nosozlik ko\'rdingizmi? Murojaat yuboring, rais va xodimlar darhol ko\'radi'**
   String get onboardingRequestsDescription;
 
   /// No description provided for @onboardingNeighborsTitle.
   ///
   /// In uz, this message translates to:
-  /// **'Qo\'shni bilan bog\'laning'**
+  /// **'Qo\'shnilaringiz bilan bog\'laning'**
   String get onboardingNeighborsTitle;
 
   /// No description provided for @onboardingNeighborsDescription.
   ///
   /// In uz, this message translates to:
-  /// **'Mahalla a\'zolari bilan muloqot qiling, birga qaror qabul qiling'**
+  /// **'Ko\'changizdagilarni toping, suhbatlashing, birga mahallani yaxshilang'**
   String get onboardingNeighborsDescription;
 
   /// No description provided for @previewAnnouncements.
@@ -3916,6 +3928,12 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Murojaat ekranini ochish'**
   String get assistantActionOpenNewRequest;
+
+  /// AI Yordamchi javobi ostida ko'rinadigan, AI aniqlagan qiymatlar bilan oldindan to'ldirilgan profil tahrirlash formasini ochuvchi tugma matni (premium)
+  ///
+  /// In uz, this message translates to:
+  /// **'Profil formasini to\'ldirish'**
+  String get assistantActionEditProfile;
 
   /// AI Yordamchi sidebar'idagi yangi (bo'sh) suhbat boshlash tugmasi matni
   ///

@@ -21,31 +21,31 @@ import 'animated_ui.dart';
 class _GlassRecipe {
   _GlassRecipe._();
 
-  static const double blurSigma = 14;
+  static const double blurSigma = 7;
 
   static List<Color> gradient(bool isDark) => isDark
       ? [
-          Colors.white.withValues(alpha: 0.18),
-          Colors.white.withValues(alpha: 0.06),
+          Colors.white.withValues(alpha: 0.11),
+          Colors.white.withValues(alpha: 0.04),
         ]
       : [
-          Colors.white.withValues(alpha: 0.38),
-          Colors.white.withValues(alpha: 0.16),
+          Colors.white.withValues(alpha: 0.24),
+          Colors.white.withValues(alpha: 0.10),
         ];
 
   static Color border(bool isDark) => isDark
-      ? Colors.white.withValues(alpha: 0.28)
-      : Colors.white.withValues(alpha: 0.75);
+      ? Colors.white.withValues(alpha: 0.18)
+      : Colors.white.withValues(alpha: 0.55);
 
   /// [strong] — katta modal/varaqlar uchun (masalan sana/vaqt tanlagich
   /// sheet'i) — spetsifikatsiyadagi "elevation 60dp" ga yaqinroq, kattaroq
   /// blur va spread bilan.
   static List<BoxShadow> shadow(bool isDark, {bool strong = false}) => [
         BoxShadow(
-          color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.18),
-          blurRadius: strong ? 40 : 24,
-          spreadRadius: strong ? 2 : 0,
-          offset: Offset(0, strong ? 16 : 10),
+          color: Colors.black.withValues(alpha: isDark ? 0.32 : 0.12),
+          blurRadius: strong ? 28 : 16,
+          spreadRadius: strong ? 1 : 0,
+          offset: Offset(0, strong ? 12 : 6),
         ),
       ];
 }

@@ -15,32 +15,39 @@ class AppLocalizationsUz extends AppLocalizations {
   String get splashTagline => 'Sizning mahallangiz bitta ilovada';
 
   @override
-  String get onboardingAnnouncementsTitle => 'E\'lonlardan xabardor bo\'ling';
+  String get onboardingWelcomeTitle => 'Xush kelibsiz!';
+
+  @override
+  String get onboardingWelcomeDescription =>
+      'Mening Mahallam — mahallangiz bitta ilovada. Keling, imkoniyatlar bilan tanishtiraman.';
+
+  @override
+  String get onboardingAnnouncementsTitle => 'Har doim xabardor bo\'ling';
 
   @override
   String get onboardingAnnouncementsDescription =>
-      'Mahallangizdagi barcha yangiliklar va e\'lonlar bir joyda';
+      'Mahallangizdagi yangiliklar va e\'lonlar to\'g\'ridan-to\'g\'ri qo\'lingizda';
 
   @override
-  String get onboardingEventsTitle => 'Tadbirlardan xabardor bo\'ling';
+  String get onboardingEventsTitle => 'Tadbirlarni o\'tkazib yubormang';
 
   @override
   String get onboardingEventsDescription =>
-      'Mahalladagi yig\'ilishlar va tashabbuslarda ishtirok eting';
+      'Yig\'in, bayram yoki tadbir bo\'lsa — birinchilardan bo\'lib bilib olasiz';
 
   @override
-  String get onboardingRequestsTitle => 'Murojaat yuboring';
+  String get onboardingRequestsTitle => 'Muammoni bir necha bosishda yeching';
 
   @override
   String get onboardingRequestsDescription =>
-      'Muammoingizni bildiring va javobini real vaqtda kuzating';
+      'Ko\'chada nosozlik ko\'rdingizmi? Murojaat yuboring, rais va xodimlar darhol ko\'radi';
 
   @override
-  String get onboardingNeighborsTitle => 'Qo\'shni bilan bog\'laning';
+  String get onboardingNeighborsTitle => 'Qo\'shnilaringiz bilan bog\'laning';
 
   @override
   String get onboardingNeighborsDescription =>
-      'Mahalla a\'zolari bilan muloqot qiling, birga qaror qabul qiling';
+      'Ko\'changizdagilarni toping, suhbatlashing, birga mahallani yaxshilang';
 
   @override
   String get previewAnnouncements => 'E\'lonlar';
@@ -2094,6 +2101,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get assistantActionOpenNewRequest => 'Murojaat ekranini ochish';
 
   @override
+  String get assistantActionEditProfile => 'Profil formasini to\'ldirish';
+
+  @override
   String get assistantNewChat => 'Yangi suhbat';
 
   @override
@@ -2194,32 +2204,39 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
   String get splashTagline => 'Сизнинг маҳаллангиз битта иловада';
 
   @override
-  String get onboardingAnnouncementsTitle => 'Эълонлардан хабардор бўлинг';
+  String get onboardingWelcomeTitle => 'Хуш келибсиз!';
+
+  @override
+  String get onboardingWelcomeDescription =>
+      'Менинг Маҳаллам — маҳаллангиз битта иловада. Келинг, имкониятлар билан таништираман.';
+
+  @override
+  String get onboardingAnnouncementsTitle => 'Ҳар доим хабардор бўлинг';
 
   @override
   String get onboardingAnnouncementsDescription =>
-      'Маҳаллангиздаги барча янгиликлар ва эълонлар бир жойда';
+      'Маҳаллангиздаги янгиликлар ва эълонлар тўғридан-тўғри қўлингизда';
 
   @override
-  String get onboardingEventsTitle => 'Тадбирлардан хабардор бўлинг';
+  String get onboardingEventsTitle => 'Тадбирларни ўтказиб юборманг';
 
   @override
   String get onboardingEventsDescription =>
-      'Маҳалладаги йиғилишлар ва ташаббусларда иштирок этинг';
+      'Йиғин, байрам ёки тадбир бўлса — биринчилардан бўлиб билиб оласиз';
 
   @override
-  String get onboardingRequestsTitle => 'Мурожаат юборинг';
+  String get onboardingRequestsTitle => 'Муаммони бир неча босишда ечинг';
 
   @override
   String get onboardingRequestsDescription =>
-      'Муаммоингизни билдиринг ва жавобини реал вақтда кузатинг';
+      'Кўчада носозлик кўрдингизми? Мурожаат юборинг, раис ва ходимлар дарҳол кўради';
 
   @override
-  String get onboardingNeighborsTitle => 'Қўшни билан боғланинг';
+  String get onboardingNeighborsTitle => 'Қўшниларингиз билан боғланинг';
 
   @override
   String get onboardingNeighborsDescription =>
-      'Маҳалла аъзолари билан мулоқот қилинг, бирга қарор қабул қилинг';
+      'Кўчангиздагиларни топинг, суҳбатлашинг, бирга маҳаллани яхшиланг';
 
   @override
   String get previewAnnouncements => 'Эълонлар';
@@ -4264,6 +4281,9 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get assistantActionOpenNewRequest => 'Мурожаат экранини очиш';
+
+  @override
+  String get assistantActionEditProfile => 'Профил формасини тўлдириш';
 
   @override
   String get assistantNewChat => 'Янги суҳбат';

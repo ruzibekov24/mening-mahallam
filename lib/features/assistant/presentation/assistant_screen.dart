@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -17,6 +18,7 @@ import '../../feedback/presentation/feedback_screen.dart';
 import '../../home/data/home_repository.dart';
 import '../../language/data/language_repository.dart';
 import '../../premium/presentation/premium_screen.dart';
+import '../../profile/presentation/edit_profile_screen.dart';
 import '../../profile/presentation/help_screen.dart';
 import '../../requests/data/requests_repository.dart';
 import '../../requests/presentation/new_request_flow_screen.dart';
@@ -64,6 +66,13 @@ enum _AssistantActionKind {
   /// foydalanuvchilarga ham yuboriladi
   /// (`assistant-worker/lib/workersAi.js`dagi `NEW_REQUEST_HINT_*`).
   openNewRequest,
+
+  /// AI orqali profil tahrirlash (premium) — AI suhbat davomida qaysi
+  /// maydon(lar) o'zgarishini aniqlaydi, so'ng `EditProfileScreen`ni
+  /// shu qiymatlar bilan OLDINDAN TO'LDIRIB ochadi. AI hech qachon
+  /// profilni to'g'ridan-to'g'ri o'zgartirmaydi — foydalanuvchi ko'rib
+  /// chiqib, o'zi "Saqlash"ni bosadi.
+  editProfile,
 }
 
 /// AI javobidagi ```mahallam-action``` blokidan chiqarilgan harakat.
@@ -79,12 +88,25 @@ class _AssistantAction {
   final String? description;
   final RequestType? type;
   final RequestPriority? priority;
+
+  /// Faqat `editProfile` uchun — o'zgaradigan maydonlar. `null` bo'lgani
+  /// "o'zgarmasin" degani, bo'sh qator emas (AuthRepository.updateProfile
+  /// bilan bir xil semantika).
+  final String? firstName;
+  final String? lastName;
+  final String? street;
+  final String? houseNumber;
+
   const _AssistantAction({
     required this.kind,
     this.title,
     this.description,
     this.type,
     this.priority,
+    this.firstName,
+    this.lastName,
+    this.street,
+    this.houseNumber,
   });
 }
 
@@ -163,6 +185,32 @@ final _actionBlockPattern =
           displayText: withoutBlock,
           action:
               const _AssistantAction(kind: _AssistantActionKind.openNewRequest),
+        );
+      case 'edit_profile':
+        String? asTrimmedOrNull(dynamic v) {
+          final s = (v as String?)?.trim();
+          return (s == null || s.isEmpty) ? null : s;
+        }
+
+        final firstName = asTrimmedOrNull(data['firstName']);
+        final lastName = asTrimmedOrNull(data['lastName']);
+        final street = asTrimmedOrNull(data['street']);
+        final houseNumber = asTrimmedOrNull(data['houseNumber']);
+        if (firstName == null &&
+            lastName == null &&
+            street == null &&
+            houseNumber == null) {
+          return (displayText: withoutBlock, action: null);
+        }
+        return (
+          displayText: withoutBlock,
+          action: _AssistantAction(
+            kind: _AssistantActionKind.editProfile,
+            firstName: firstName,
+            lastName: lastName,
+            street: street,
+            houseNumber: houseNumber,
+          ),
         );
       default:
         return (displayText: withoutBlock, action: null);
@@ -938,6 +986,43 @@ class _MessageBubble extends ConsumerWidget {
         AppPageRoute.push(context, const PremiumScreen());
       case _AssistantActionKind.openNewRequest:
         _openNewRequest(context, ref);
+      case _AssistantActionKind.editProfile:
+        _openEditProfile(context, action);
+    }
+  }
+
+  /// AI aniqlagan maydonlar bilan `EditProfileScreen`ni oldindan
+  /// to'ldirib ochadi — foydalanuvchi ko'rib chiqib, o'zi saqlaydi.
+  void _openEditProfile(BuildContext context, _AssistantAction action) {
+    AppPageRoute.push(
+      context,
+      EditProfileScreen(
+        initialFirstName: action.firstName,
+        initialLastName: action.lastName,
+        initialStreet: action.street,
+        initialHouseNumber: action.houseNumber,
+      ),
+    );
+  }
+
+  /// Javob matni ichidagi `[Matn](action:key)` havolasi bosilganda
+  /// chaqiriladi. `key` — server tomonida ham qat'iy cheklangan, oldindan
+  /// belgilangan ro'yxatdan biri (`FORMATTING_HINT_*`,
+  /// `assistant-worker/lib/workersAi.js`) — erkin URL emas, shuning
+  /// uchun bu yerda ham faqat shu 5 ta variant tan olinadi.
+  void _dispatchActionLink(BuildContext context, WidgetRef ref, String key) {
+    switch (key) {
+      case 'services':
+        AppPageRoute.push(context, const ServicesScreen());
+      case 'feedback':
+        AppPageRoute.push(
+            context, const FeedbackScreen(startInQuestionMode: true));
+      case 'help':
+        AppPageRoute.push(context, const HelpScreen());
+      case 'premium':
+        AppPageRoute.push(context, const PremiumScreen());
+      case 'new_request':
+        _openNewRequest(context, ref);
     }
   }
 
@@ -983,6 +1068,11 @@ class _MessageBubble extends ConsumerWidget {
           icon: PhosphorIconsFill.plusCircle,
           label: l10n.assistantActionOpenNewRequest,
         );
+      case _AssistantActionKind.editProfile:
+        return (
+          icon: PhosphorIconsFill.userGear,
+          label: l10n.assistantActionEditProfile,
+        );
     }
   }
 
@@ -1024,6 +1114,8 @@ class _MessageBubble extends ConsumerWidget {
                     animate: animate,
                     baseStyle:
                         context.bodyStyle.copyWith(color: context.textPrimary),
+                    onActionLink: (key) =>
+                        _dispatchActionLink(context, ref, key),
                   ),
           ),
           if (message.action != null)
@@ -1064,10 +1156,12 @@ class _TypewriterReveal extends StatefulWidget {
   final String text;
   final bool animate;
   final TextStyle baseStyle;
+  final void Function(String key)? onActionLink;
   const _TypewriterReveal({
     required this.text,
     required this.animate,
     required this.baseStyle,
+    this.onActionLink,
   });
 
   @override
@@ -1116,7 +1210,11 @@ class _TypewriterRevealState extends State<_TypewriterReveal> {
   Widget build(BuildContext context) {
     final visibleText =
         widget.animate ? widget.text.substring(0, _visibleChars) : widget.text;
-    return _MarkdownLiteText(text: visibleText, baseStyle: widget.baseStyle);
+    return _MarkdownLiteText(
+      text: visibleText,
+      baseStyle: widget.baseStyle,
+      onActionLink: widget.onActionLink,
+    );
   }
 }
 
@@ -1126,26 +1224,118 @@ class _TypewriterRevealState extends State<_TypewriterReveal> {
 /// To'liq markdown paketi (`flutter_markdown`) o'rniga qo'lda — chunki
 /// AI Yordamchi faqat shu ikkita naqshni ishlatadi (Gemini javoblarida
 /// kuzatilgan), qo'shimcha bog'liqlik shart emas.
-class _MarkdownLiteText extends StatelessWidget {
+class _MarkdownLiteText extends StatefulWidget {
   final String text;
   final TextStyle baseStyle;
-  const _MarkdownLiteText({required this.text, required this.baseStyle});
 
-  static final _boldPattern = RegExp(r'\*\*(.+?)\*\*');
+  /// `[Matn](action:key)` havolasi bosilganda chaqiriladi. `key` —
+  /// `_MessageBubble._dispatchActionLink`dagi bilan bir xil, qat'iy
+  /// cheklangan ro'yxatdan biri.
+  final void Function(String key)? onActionLink;
+
+  const _MarkdownLiteText({
+    required this.text,
+    required this.baseStyle,
+    this.onActionLink,
+  });
+
+  @override
+  State<_MarkdownLiteText> createState() => _MarkdownLiteTextState();
+}
+
+class _MarkdownLiteTextState extends State<_MarkdownLiteText> {
+  static final _headingPattern = RegExp(r'^##\s+(.*)$');
   static final _bulletPattern = RegExp(r'^[\*\-]\s+(.*)$');
   static final _numberedPattern = RegExp(r'^(\d+)\.\s+(.*)$');
+
+  /// Bitta qatordagi inline naqshlarni CHAPDAN O'NGGA, birinchi mos
+  /// kelganidan boshlab tartibda topadi: qalin (`**..**`), kod
+  /// (`` `..` ``), ilova-ichi havola (`[Matn](action:key)`), so'ng
+  /// kursiv (`*..*` yoki `_.._`). Qalin kodning oldin turishi
+  /// muhim — aks holda `**matn**` ikkita qo'shni kursiv sifatida
+  /// noto'g'ri o'qiladi.
+  static final _inlinePattern = RegExp(
+    r'\*\*(.+?)\*\*'
+    r'|`([^`\n]+?)`'
+    r'|\[([^\]\n]+?)\]\(action:([a-z_]+?)\)'
+    r'|\*([^*\n]+?)\*'
+    r'|_([^_\n]+?)_',
+  );
+
+  /// Havola sifatida tan olinadigan `key`lar — server tomonida ham
+  /// xuddi shu ro'yxat bilan cheklangan (`FORMATTING_HINT_*`,
+  /// `assistant-worker/lib/workersAi.js`).
+  static const _allowedLinkKeys = {
+    'services',
+    'feedback',
+    'help',
+    'premium',
+    'new_request',
+  };
+
+  final _recognizers = <TapGestureRecognizer>[];
+
+  @override
+  void dispose() {
+    for (final r in _recognizers) {
+      r.dispose();
+    }
+    super.dispose();
+  }
 
   List<InlineSpan> _parseInline(String line, TextStyle style) {
     final spans = <InlineSpan>[];
     var last = 0;
-    for (final match in _boldPattern.allMatches(line)) {
+    for (final match in _inlinePattern.allMatches(line)) {
       if (match.start > last) {
         spans.add(TextSpan(text: line.substring(last, match.start)));
       }
-      spans.add(TextSpan(
-        text: match.group(1),
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ));
+      if (match.group(1) != null) {
+        // **qalin**
+        spans.add(TextSpan(
+          text: match.group(1),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ));
+      } else if (match.group(2) != null) {
+        // `kod`
+        spans.add(TextSpan(
+          text: match.group(2),
+          style: TextStyle(
+            fontFamily: 'monospace',
+            fontSize: (style.fontSize ?? 14) - 1,
+            backgroundColor: style.color?.withValues(alpha: 0.10) ??
+                Colors.grey.withValues(alpha: 0.18),
+          ),
+        ));
+      } else if (match.group(3) != null && match.group(4) != null) {
+        // [Matn](action:key) — faqat ruxsat etilgan key'lar havola bo'ladi,
+        // aks holda oddiy matn sifatida qoldiriladi.
+        final linkText = match.group(3)!;
+        final key = match.group(4)!;
+        if (_allowedLinkKeys.contains(key) && widget.onActionLink != null) {
+          final recognizer = TapGestureRecognizer()
+            ..onTap = () => widget.onActionLink!(key);
+          _recognizers.add(recognizer);
+          spans.add(TextSpan(
+            text: linkText,
+            style: const TextStyle(
+              color: AppColors.primary,
+              decoration: TextDecoration.underline,
+              fontWeight: FontWeight.w600,
+            ),
+            recognizer: recognizer,
+          ));
+        } else {
+          spans.add(TextSpan(text: linkText));
+        }
+      } else {
+        // *kursiv* yoki _kursiv_
+        final content = match.group(5) ?? match.group(6);
+        spans.add(TextSpan(
+          text: content,
+          style: const TextStyle(fontStyle: FontStyle.italic),
+        ));
+      }
       last = match.end;
     }
     if (last < line.length) {
@@ -1156,7 +1346,16 @@ class _MarkdownLiteText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lines = text.split('\n');
+    // Har bir qayta chizishda eski recognizer'lar yangilari bilan
+    // almashadi (masalan animatsiya davomida matn o'sib boradi) —
+    // eskilarini shu yerda tozalab, faqat joriy chizilgan qismning
+    // recognizer'lari saqlanadi.
+    for (final r in _recognizers) {
+      r.dispose();
+    }
+    _recognizers.clear();
+
+    final lines = widget.text.split('\n');
     final children = <Widget>[];
 
     for (var i = 0; i < lines.length; i++) {
@@ -1168,11 +1367,20 @@ class _MarkdownLiteText extends StatelessWidget {
         continue;
       }
 
+      final headingMatch = _headingPattern.firstMatch(line);
       final bulletMatch = _bulletPattern.firstMatch(line);
       final numberedMatch = _numberedPattern.firstMatch(line);
       final String prefix;
       final String content;
-      if (bulletMatch != null) {
+      TextStyle lineStyle = widget.baseStyle;
+      if (headingMatch != null) {
+        prefix = '';
+        content = headingMatch.group(1)!;
+        lineStyle = widget.baseStyle.copyWith(
+          fontWeight: FontWeight.w700,
+          fontSize: (widget.baseStyle.fontSize ?? 14) + 1.5,
+        );
+      } else if (bulletMatch != null) {
         prefix = '•';
         content = bulletMatch.group(1)!;
       } else if (numberedMatch != null) {
@@ -1185,8 +1393,8 @@ class _MarkdownLiteText extends StatelessWidget {
 
       final textWidget = RichText(
         text: TextSpan(
-          style: baseStyle,
-          children: _parseInline(content, baseStyle),
+          style: lineStyle,
+          children: _parseInline(content, lineStyle),
         ),
       );
 
@@ -1202,7 +1410,7 @@ class _MarkdownLiteText extends StatelessWidget {
               children: [
                 SizedBox(
                   width: 20,
-                  child: Text(prefix, style: baseStyle),
+                  child: Text(prefix, style: lineStyle),
                 ),
                 Expanded(child: textWidget),
               ],

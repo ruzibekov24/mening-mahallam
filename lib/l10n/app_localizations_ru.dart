@@ -15,32 +15,39 @@ class AppLocalizationsRu extends AppLocalizations {
   String get splashTagline => 'Ваша махалля в одном приложении';
 
   @override
-  String get onboardingAnnouncementsTitle => 'Будьте в курсе объявлений';
+  String get onboardingWelcomeTitle => 'Добро пожаловать!';
+
+  @override
+  String get onboardingWelcomeDescription =>
+      'Mening Mahallam — ваша махалля в одном приложении. Давайте познакомимся с возможностями.';
+
+  @override
+  String get onboardingAnnouncementsTitle => 'Всегда будьте в курсе';
 
   @override
   String get onboardingAnnouncementsDescription =>
-      'Все новости и объявления вашей махалли в одном месте';
+      'Новости и объявления вашей махалли — прямо в руках';
 
   @override
-  String get onboardingEventsTitle => 'Будьте в курсе мероприятий';
+  String get onboardingEventsTitle => 'Не пропускайте мероприятия';
 
   @override
   String get onboardingEventsDescription =>
-      'Участвуйте в собраниях и инициативах махалли';
+      'Собрание, праздник или мероприятие — вы узнаете первыми';
 
   @override
-  String get onboardingRequestsTitle => 'Отправьте обращение';
+  String get onboardingRequestsTitle => 'Решите проблему в пару нажатий';
 
   @override
   String get onboardingRequestsDescription =>
-      'Сообщите о проблеме и следите за ответом в реальном времени';
+      'Заметили неполадку на улице? Отправьте обращение — раис и сотрудники увидят сразу';
 
   @override
-  String get onboardingNeighborsTitle => 'Свяжитесь с соседями';
+  String get onboardingNeighborsTitle => 'Общайтесь с соседями';
 
   @override
   String get onboardingNeighborsDescription =>
-      'Общайтесь с жителями махалли, принимайте решения вместе';
+      'Находите жителей своей улицы, общайтесь, вместе улучшайте махаллю';
 
   @override
   String get previewAnnouncements => 'Объявления';
@@ -2085,6 +2092,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get assistantActionOpenNewRequest => 'Открыть форму обращения';
+
+  @override
+  String get assistantActionEditProfile => 'Заполнить форму профиля';
 
   @override
   String get assistantNewChat => 'Новый чат';

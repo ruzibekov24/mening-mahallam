@@ -1,7 +1,7 @@
 name: mening_mahallam
 description: "Mening mahallam — mahalla aholisi uchun mobil ilova"
 publish_to: 'none'
-version: 1.4.14+39
+version: 1.5.0+40
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -105,6 +105,7 @@ flutter:
     - assets/images/patterns/
     - assets/images/onboarding_icons/
     - assets/images/onboarding_backgrounds/
+    - assets/images/empty_states/
 
 flutter_launcher_icons:
   android: true
