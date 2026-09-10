@@ -37,7 +37,10 @@ android {
         applicationId = "uz.meningmahallam.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // ffmpeg_kit_flutter_new (video -> GIF avatar konvertatsiyasi)
+        // API 24+ talab qiladi — Flutter'ning standart minSdk'idan
+        // yuqori bo'lishi mumkin, shuning uchun aniq belgilangan.
+        minSdk = maxOf(flutter.minSdkVersion, 24)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

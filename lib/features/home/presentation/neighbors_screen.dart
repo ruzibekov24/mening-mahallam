@@ -9,6 +9,7 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/girih_header.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
@@ -61,20 +62,22 @@ class NeighborsScreen extends ConsumerWidget {
                     ),
                   ),
                   if (showConversations)
-                    IconButton(
-                      onPressed: () =>
+                    LiquidGlassCircleButton(
+                      icon: PhosphorIconsFill.usersThree,
+                      diameter: 40,
+                      iconSize: 20,
+                      iconColor: Colors.white,
+                      onTap: () =>
                           AppPageRoute.push(context, const NewGroupScreen()),
-                      icon: const Icon(PhosphorIconsFill.usersThree,
-                          color: Colors.white),
-                      tooltip: l10n.createGroupAction,
                     )
                   else
-                    IconButton(
-                      onPressed: () => AppPageRoute.push(
+                    LiquidGlassCircleButton(
+                      icon: PhosphorIconsFill.toolbox,
+                      diameter: 40,
+                      iconSize: 20,
+                      iconColor: Colors.white,
+                      onTap: () => AppPageRoute.push(
                           context, const ServicesScreen()),
-                      icon: const Icon(PhosphorIconsFill.toolbox,
-                          color: Colors.white),
-                      tooltip: l10n.servicesTitle,
                     ),
                 ],
               ),

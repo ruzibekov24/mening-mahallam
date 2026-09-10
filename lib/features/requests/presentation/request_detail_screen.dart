@@ -18,6 +18,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../chat/data/chat_providers.dart';
 import '../../home/data/home_repository.dart';
 import '../../home/presentation/neighbor_profile_screen.dart';
+import '../../feed/data/feed_repository.dart' show isVideoUrl;
+import '../../feed/presentation/video_player_screen.dart';
 import '../data/requests_labels.dart';
 import '../data/requests_repository.dart';
 import 'request_styles.dart';
@@ -238,10 +240,42 @@ class RequestDetailScreen extends ConsumerWidget {
                             separatorBuilder: (_, __) =>
                                 const SizedBox(width: AppSpacing.sm),
                             itemBuilder: (context, index) {
+                              final url = request.imageUrls[index];
+                              // Video biriktirmalar ham xuddi shu
+                              // ro'yxatda, rasm bilan bir qatorda
+                              // saqlanadi (`imageUrls` — aralash
+                              // media). Ilgari bu yerda HAMMASI
+                              // `CachedNetworkImage`ga berilardi —
+                              // video URL rasm sifatida dekodlanmay,
+                              // doim "buzilgan rasm" belgisi
+                              // ko'rsatilardi. Endi kengaytmaga qarab
+                              // ajratiladi va videoga bosilsa
+                              // `VideoPlayerScreen` ochiladi.
+                              if (isVideoUrl(url)) {
+                                final video = ClipRRect(
+                                  borderRadius: AppRadius.smAll,
+                                  child: Container(
+                                    width: 100,
+                                    height: 100,
+                                    color: Colors.black87,
+                                    alignment: Alignment.center,
+                                    child: const Icon(
+                                      PhosphorIconsFill.playCircle,
+                                      color: Colors.white,
+                                      size: 32,
+                                    ),
+                                  ),
+                                );
+                                return GestureDetector(
+                                  onTap: () => AppPageRoute.push(
+                                      context, VideoPlayerScreen(videoUrl: url)),
+                                  child: video,
+                                );
+                              }
                               final image = ClipRRect(
                                 borderRadius: AppRadius.smAll,
                                 child: CachedNetworkImage(
-                                  imageUrl: request.imageUrls[index],
+                                  imageUrl: url,
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,

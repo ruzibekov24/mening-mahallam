@@ -3407,6 +3407,30 @@ abstract class AppLocalizations {
   /// **'Fayl juda katta. 5 MB dan kichik rasm tanlang'**
   String get photoTooLarge;
 
+  /// No description provided for @avatarSourceImage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rasm'**
+  String get avatarSourceImage;
+
+  /// No description provided for @avatarSourceVideo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Video'**
+  String get avatarSourceVideo;
+
+  /// No description provided for @avatarSourceVideoHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Birinchi 4 soniyasi jonli GIF avatarga aylantiriladi'**
+  String get avatarSourceVideoHint;
+
+  /// No description provided for @videoToGifError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Videoni GIF\'ga aylantirib bo\'lmadi. Boshqa video bilan urinib ko\'ring'**
+  String get videoToGifError;
+
   /// Premium / profil
   ///
   /// In uz, this message translates to:

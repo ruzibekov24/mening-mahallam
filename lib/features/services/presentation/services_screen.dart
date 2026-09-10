@@ -86,8 +86,12 @@ class ServicesScreen extends ConsumerWidget {
                       final canPost = profile?.role.canPost == true &&
                           profile?.mahallaId != null;
                       if (!canPost) return const SizedBox.shrink();
-                      return IconButton(
-                        onPressed: () => showModalBottomSheet<void>(
+                      return LiquidGlassCircleButton(
+                        icon: PhosphorIconsFill.plusCircle,
+                        diameter: 40,
+                        iconSize: 20,
+                        iconColor: Colors.white,
+                        onTap: () => showModalBottomSheet<void>(
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
@@ -95,8 +99,6 @@ class ServicesScreen extends ConsumerWidget {
                             mahallaId: profile!.mahallaId!,
                           ),
                         ),
-                        icon: const Icon(PhosphorIconsFill.plusCircle,
-                            color: Colors.white),
                       );
                     },
                     loading: () => const SizedBox.shrink(),

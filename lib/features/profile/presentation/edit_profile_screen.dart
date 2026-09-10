@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -84,11 +86,69 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   /// ham tushib, ro'yxatlar sekinlashib ketardi.
   static const int _maxAnimatedBytes = 5 * 1024 * 1024;
 
+  bool get _isPremium =>
+      ref.read(currentUserProfileProvider).valueOrNull?.isPremiumActive ==
+      true;
+
+  /// Kamera belgisi bosilganda chaqiriladi. Premium bo'lmagan
+  /// foydalanuvchida to'g'ridan-to'g'ri rasm tanlash oynasi ochiladi
+  /// (oldingi xatti-harakat o'zgarmagan). Premium obunachida esa —
+  /// `MediaPickerGrid`dagi rasm/video tanlash varag'i bilan bir xil
+  /// uslubda — "Rasm" yoki "Video" tanlash varag'i chiqadi, video
+  /// tanlansa avtomatik jonli GIF avatarga aylantiriladi.
+  Future<void> _onAvatarTap() async {
+    if (!_isPremium) {
+      await _pickAndUploadPhoto();
+      return;
+    }
+
+    final choice = await showModalBottomSheet<_AvatarSource>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        final isDark = sheetContext.isDarkMode;
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(PhosphorIconsFill.image),
+                  title: Text(AppLocalizations.of(sheetContext).avatarSourceImage),
+                  onTap: () =>
+                      Navigator.of(sheetContext).pop(_AvatarSource.image),
+                ),
+                ListTile(
+                  leading: const Icon(PhosphorIconsFill.videoCamera),
+                  title: Text(AppLocalizations.of(sheetContext).avatarSourceVideo),
+                  subtitle:
+                      Text(AppLocalizations.of(sheetContext).avatarSourceVideoHint),
+                  onTap: () =>
+                      Navigator.of(sheetContext).pop(_AvatarSource.video),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    if (choice == null || !mounted) return;
+
+    if (choice == _AvatarSource.image) {
+      await _pickAndUploadPhoto();
+    } else {
+      await _pickAndUploadVideoAsGif();
+    }
+  }
+
   Future<void> _pickAndUploadPhoto() async {
     final l10n = AppLocalizations.of(context);
-    final isPremium =
-        ref.read(currentUserProfileProvider).valueOrNull?.isPremiumActive ==
-            true;
+    final isPremium = _isPremium;
     final picker = ImagePicker();
 
     // Oddiy foydalanuvchida rasm siqiladi (80% sifat, 800px) — bu
@@ -133,6 +193,67 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         showAppAlert(context, l10n.photoUploadError);
       }
     } finally {
+      if (mounted) setState(() => _uploadingPhoto = false);
+    }
+  }
+
+  /// Premium — galereyadan video tanlab, BIRINCHI 4 soniyasini
+  /// avtomatik jonli GIF avatarga aylantiradi (`ffmpeg_kit_flutter_new`
+  /// orqali mahalliy, qurilmaning o'zida konvertatsiya qilinadi —
+  /// serverga video umuman yuborilmaydi, faqat tayyor GIF yuklanadi).
+  Future<void> _pickAndUploadVideoAsGif() async {
+    final l10n = AppLocalizations.of(context);
+    final picker = ImagePicker();
+    final pickedVideo = await picker.pickVideo(source: ImageSource.gallery);
+    if (pickedVideo == null) return;
+
+    setState(() => _uploadingPhoto = true);
+    final outputPath =
+        '${Directory.systemTemp.path}/mahallam_avatar_${DateTime.now().millisecondsSinceEpoch}.gif';
+    File? outputFile;
+    try {
+      // -t 4: faqat birinchi 4 soniya. fps=12/scale=320: avatar
+      // hajmida ortiqcha katta/silliq bo'lishning hojati yo'q — fayl
+      // hajmini (va shu bilan yuklash vaqtini) kamaytiradi.
+      final session = await FFmpegKit.execute(
+        '-y -i "${pickedVideo.path}" -t 4 '
+        '-vf "fps=12,scale=320:-1:flags=lanczos" -loop 0 "$outputPath"',
+      );
+      final returnCode = await session.getReturnCode();
+      if (!ReturnCode.isSuccess(returnCode)) {
+        if (mounted) showAppAlert(context, l10n.videoToGifError);
+        return;
+      }
+
+      outputFile = File(outputPath);
+      if (!await outputFile.exists()) {
+        if (mounted) showAppAlert(context, l10n.videoToGifError);
+        return;
+      }
+
+      final size = await outputFile.length();
+      if (size > _maxAnimatedBytes) {
+        if (mounted) showAppAlert(context, l10n.photoTooLarge);
+        return;
+      }
+
+      final url = await ref
+          .read(authRepositoryProvider)
+          .updateProfilePhoto(outputFile);
+      if (!mounted) return;
+      setState(() => _photoUrl = url);
+      ref.invalidate(currentUserProfileProvider);
+    } on ImageUploadException catch (e) {
+      if (mounted) showAppAlert(context, e.message);
+    } catch (_) {
+      if (mounted) showAppAlert(context, l10n.videoToGifError);
+    } finally {
+      // Vaqtinchalik GIF fayli yuklangandan (yoki xato bo'lgandan)
+      // keyin endi kerak emas — qurilma xotirasida to'planib
+      // qolmasligi uchun tozalanadi.
+      if (outputFile != null && await outputFile.exists()) {
+        await outputFile.delete();
+      }
       if (mounted) setState(() => _uploadingPhoto = false);
     }
   }
@@ -219,7 +340,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         right: 0,
                         bottom: 0,
                         child: TapScale(
-                          onTap: _uploadingPhoto ? null : _pickAndUploadPhoto,
+                          onTap: _uploadingPhoto ? null : _onAvatarTap,
                           child: Container(
                             width: 32,
                             height: 32,
@@ -557,3 +678,5 @@ class _BannerHeader extends StatelessWidget {
     );
   }
 }
+
+enum _AvatarSource { image, video }

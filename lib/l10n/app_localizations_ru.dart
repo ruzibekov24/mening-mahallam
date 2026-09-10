@@ -1808,6 +1808,20 @@ class AppLocalizationsRu extends AppLocalizations {
       'Файл слишком большой. Выберите изображение меньше 5 МБ';
 
   @override
+  String get avatarSourceImage => 'Изображение';
+
+  @override
+  String get avatarSourceVideo => 'Видео';
+
+  @override
+  String get avatarSourceVideoHint =>
+      'Первые 4 секунды станут живым GIF-аватаром';
+
+  @override
+  String get videoToGifError =>
+      'Не удалось преобразовать видео в GIF. Попробуйте другое видео';
+
+  @override
   String get premiumBenefitAnimatedAvatar => 'Живое (GIF) фото профиля';
 
   @override

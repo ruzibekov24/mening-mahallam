@@ -9,8 +9,10 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/girih_header.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../core/widgets/shimmer.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../feed/data/feed_repository.dart' show isVideoUrl;
 import '../../home/data/home_repository.dart';
 import '../../map/presentation/mahalla_map_screen.dart';
 import '../data/requests_labels.dart';
@@ -82,11 +84,13 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
                           return Padding(
                             padding:
                                 const EdgeInsets.only(right: AppSpacing.sm),
-                            child: IconButton.filledTonal(
-                              onPressed: () => AppPageRoute.push(context,
+                            child: LiquidGlassCircleButton(
+                              icon: PhosphorIconsFill.mapTrifold,
+                              diameter: 40,
+                              iconSize: 20,
+                              iconColor: Colors.white,
+                              onTap: () => AppPageRoute.push(context,
                                   MahallaMapScreen(mahallaId: mahallaId)),
-                              icon: const Icon(PhosphorIconsRegular.mapTrifold,
-                                  size: 20),
                             ),
                           );
                         },
@@ -417,10 +421,29 @@ class _RequestCard extends StatelessWidget {
                 separatorBuilder: (_, __) =>
                     const SizedBox(width: AppSpacing.xs),
                 itemBuilder: (context, index) {
+                  final url = request.imageUrls[index];
+                  // Video biriktirma bo'lsa `CachedNetworkImage`ga
+                  // berilmaydi — u video baytlarini rasm sifatida
+                  // dekodlay olmay, doim "buzilgan rasm" belgisini
+                  // ko'rsatardi (tafsilotlar ekranidagi bilan bir xil
+                  // tuzatish).
+                  if (isVideoUrl(url)) {
+                    return ClipRRect(
+                      borderRadius: AppRadius.smAll,
+                      child: Container(
+                        width: 52,
+                        height: 52,
+                        color: Colors.black87,
+                        alignment: Alignment.center,
+                        child: const Icon(PhosphorIconsFill.playCircle,
+                            color: Colors.white, size: 20),
+                      ),
+                    );
+                  }
                   final thumb = ClipRRect(
                     borderRadius: AppRadius.smAll,
                     child: CachedNetworkImage(
-                      imageUrl: request.imageUrls[index],
+                      imageUrl: url,
                       width: 52,
                       height: 52,
                       fit: BoxFit.cover,

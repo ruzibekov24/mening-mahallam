@@ -1803,6 +1803,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get photoTooLarge => 'File is too large. Choose an image under 5 MB';
 
   @override
+  String get avatarSourceImage => 'Image';
+
+  @override
+  String get avatarSourceVideo => 'Video';
+
+  @override
+  String get avatarSourceVideoHint =>
+      'The first 4 seconds become a live GIF avatar';
+
+  @override
+  String get videoToGifError =>
+      'Couldn\'t convert the video to a GIF. Try a different video';
+
+  @override
   String get premiumBenefitAnimatedAvatar => 'Animated (GIF) profile photo';
 
   @override

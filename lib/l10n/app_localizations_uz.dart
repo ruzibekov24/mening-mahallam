@@ -1814,6 +1814,20 @@ class AppLocalizationsUz extends AppLocalizations {
   String get photoTooLarge => 'Fayl juda katta. 5 MB dan kichik rasm tanlang';
 
   @override
+  String get avatarSourceImage => 'Rasm';
+
+  @override
+  String get avatarSourceVideo => 'Video';
+
+  @override
+  String get avatarSourceVideoHint =>
+      'Birinchi 4 soniyasi jonli GIF avatarga aylantiriladi';
+
+  @override
+  String get videoToGifError =>
+      'Videoni GIF\'ga aylantirib bo\'lmadi. Boshqa video bilan urinib ko\'ring';
+
+  @override
   String get premiumBenefitAnimatedAvatar => 'Jonli (GIF) profil surati';
 
   @override
@@ -3994,6 +4008,20 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get photoTooLarge => 'Файл жуда катта. 5 МБ дан кичик расм танланг';
+
+  @override
+  String get avatarSourceImage => 'Расм';
+
+  @override
+  String get avatarSourceVideo => 'Видео';
+
+  @override
+  String get avatarSourceVideoHint =>
+      'Биринчи 4 сонияси жонли GIF аватарга айлантирилади';
+
+  @override
+  String get videoToGifError =>
+      'Видеони GIF\'га айлантириб бўлмади. Бошқа видео билан уриниб кўринг';
 
   @override
   String get premiumBenefitAnimatedAvatar => 'Жонли (GIF) профил сурати';

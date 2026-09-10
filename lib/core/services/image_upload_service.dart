@@ -152,6 +152,8 @@ class ImageUploadService {
         return 'image/png';
       case 'webp':
         return 'image/webp';
+      case 'gif':
+        return 'image/gif';
       case 'heic':
         return 'image/heic';
       case 'mp4':
@@ -160,6 +162,10 @@ class ImageUploadService {
         return 'video/quicktime';
       case '3gp':
         return 'video/3gpp';
+      case 'webm':
+        return 'video/webm';
+      case 'mkv':
+        return 'video/x-matroska';
       default:
         return 'application/octet-stream';
     }

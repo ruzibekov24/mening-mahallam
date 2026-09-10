@@ -943,6 +943,10 @@
   "@photoTooLarge": {
     "description": "Premium / profil"
   },
+  "avatarSourceImage": "Rasm",
+  "avatarSourceVideo": "Video",
+  "avatarSourceVideoHint": "Birinchi 4 soniyasi jonli GIF avatarga aylantiriladi",
+  "videoToGifError": "Videoni GIF'ga aylantirib bo'lmadi. Boshqa video bilan urinib ko'ring",
   "premiumBenefitAnimatedAvatar": "Jonli (GIF) profil surati",
   "@premiumBenefitAnimatedAvatar": {
     "description": "Premium / profil"

@@ -62,7 +62,8 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 120),
             children: [
               GirihHeader(
-                image: 'assets/images/patterns/abstract_blue.png',
+                color: AppAccents.events,
+                image: 'assets/images/patterns/abstract_orange.png',
                 watermarkIcon: PhosphorIconsFill.houseLine,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -136,14 +137,20 @@ class HomeScreen extends ConsumerWidget {
                     Stack(
                       clipBehavior: Clip.none,
                       children: [
-                          TapScale(
+                          // Ilgari bu yerda yalang'och `Icon` bor edi —
+                          // rangli sarlavha foni ustida hech qanday
+                          // sirt/soya bo'lmagani uchun tugma emas,
+                          // shunchaki "yopishib qolgan" belgidek ko'rinardi.
+                          // Boshqa barcha aylana tugmalar bilan bir xil
+                          // shisha sirt (`LiquidGlassCircleButton`) endi
+                          // shu yerda ham ishlatiladi.
+                          LiquidGlassCircleButton(
+                            icon: PhosphorIconsFill.bell,
+                            diameter: 40,
+                            iconSize: 20,
+                            iconColor: Colors.white,
                             onTap: () => AppPageRoute.push(
                                 context, const NotificationsScreen()),
-                            child: const Icon(
-                              PhosphorIconsFill.bell,
-                              color: Colors.white,
-                              size: 22,
-                            ),
                           ),
                           Consumer(
                             builder: (context, ref, _) {
@@ -162,7 +169,7 @@ class HomeScreen extends ConsumerWidget {
                                     color: AppColors.danger,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: AppColors.primary,
+                                      color: AppAccents.events,
                                       width: 2,
                                     ),
                                   ),

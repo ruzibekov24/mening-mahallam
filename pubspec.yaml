@@ -1,7 +1,7 @@
 name: mening_mahallam
 description: "Mening mahallam — mahalla aholisi uchun mobil ilova"
 publish_to: 'none'
-version: 1.5.1+41
+version: 1.5.2+42
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -70,6 +70,10 @@ dependencies:
 
   # Lentadagi/postlardagi video ijrosi (Supabase Storage'dagi video URL'lari)
   video_player: ^2.9.2
+
+  # Premium foydalanuvchi video yuklaganda uni jonli GIF avatarga
+  # aylantirish uchun (birinchi 3-4 soniyani kesib olish).
+  ffmpeg_kit_flutter_new: ^4.6.2
 
   # Tarmoq rasmlarini disk keshiga saqlash (qayta yuklashni oldini olish)
   cached_network_image: ^3.4.1
