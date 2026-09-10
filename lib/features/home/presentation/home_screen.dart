@@ -62,8 +62,7 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 120),
             children: [
               GirihHeader(
-                color: AppAccents.events,
-                image: 'assets/images/patterns/abstract_orange.png',
+                image: 'assets/images/patterns/abstract_blue.png',
                 watermarkIcon: PhosphorIconsFill.houseLine,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -169,7 +168,7 @@ class HomeScreen extends ConsumerWidget {
                                     color: AppColors.danger,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: AppAccents.events,
+                                      color: AppColors.primary,
                                       width: 2,
                                     ),
                                   ),

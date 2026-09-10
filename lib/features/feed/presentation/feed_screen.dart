@@ -96,7 +96,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         child: Column(
           children: [
             GirihHeader(
-              color: AppAccents.announcements,
+              color: AppAccents.events,
+              image: 'assets/images/patterns/abstract_orange.png',
               watermarkIcon: PhosphorIconsFill.rows,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
