@@ -58,6 +58,11 @@ class Announcement {
   /// subcollection darajasidagi murakkablik shart emas.
   final Map<String, String> reactedUids;
 
+  /// Xodim/rais tomonidan ro'yxat boshida mahkamlangan (pin qilingan)
+  /// e'lon — masalan suv yoki svet uzilishi haqidagi muhim xabar.
+  /// Standart holatda o'chiq.
+  final bool isPinned;
+
   Announcement({
     required this.id,
     required this.title,
@@ -67,6 +72,7 @@ class Announcement {
     required this.imageUrl,
     required this.authorUid,
     this.reactedUids = const {},
+    this.isPinned = false,
   });
 
   /// Berilgan emoji bo'yicha nechta odam reaksiya bildirganini sanaydi.
@@ -100,6 +106,7 @@ class Announcement {
       imageUrl: data['imageUrl'] as String?,
       authorUid: data['authorUid'] ?? '',
       reactedUids: Map<String, String>.from(data['reactedUids'] ?? const {}),
+      isPinned: data['isPinned'] == true,
     );
   }
 }
@@ -123,7 +130,24 @@ class AnnouncementRepository {
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => Announcement.fromFirestore(doc.id, doc.data()))
-            .toList());
+            .toList())
+        .map(_withPinnedFirst);
+  }
+
+  /// Mahkamlangan e'lonlarni ro'yxat boshiga chiqaradi, ikkala guruh
+  /// ichida esa `createdAt` bo'yicha kamayish tartibi saqlanadi.
+  ///
+  /// Buni Firestore `orderBy('isPinned', ...)` bilan emas, mijoz
+  /// tomonida qilamiz: Firestore `orderBy` shu maydon umuman
+  /// yo'q hujjatlarni natijadan butunlay tashlab yuboradi — `isPinned`
+  /// eski yozuvlarning hech birida yo'q, shuning uchun serverdagi
+  /// saralash ularni ro'yxatdan yo'qotib qo'yardi. Bo'lish (partition)
+  /// esa Firestore'ning allaqachon berilgan tartibini o'zgartirmasdan
+  /// saqlaydi — `List.sort` kabi beqaror emas.
+  List<Announcement> _withPinnedFirst(List<Announcement> items) {
+    final pinned = items.where((a) => a.isPinned).toList();
+    final rest = items.where((a) => !a.isPinned).toList();
+    return [...pinned, ...rest];
   }
 
   Stream<Announcement?> watchAnnouncementById({
@@ -203,6 +227,24 @@ class AnnouncementRepository {
       'category': category.firestoreValue,
       'imageUrl': imageUrl,
     });
+  }
+
+  /// Mahkamlash (pin) holatini almashtiradi — faqat xodim/rais
+  /// chaqirishi kerak (UI darajasida tekshiriladi; Firestore Rules
+  /// darajasida alohida qoida shart emas, chunki bu ham oddiy
+  /// `update` — mavjud "faqat xodim/rais" qoidasi allaqachon qamrab
+  /// oladi).
+  Future<void> toggleAnnouncementPin({
+    required String mahallaId,
+    required String announcementId,
+    required bool pinned,
+  }) async {
+    await _firestore
+        .collection('mahallas')
+        .doc(mahallaId)
+        .collection('announcements')
+        .doc(announcementId)
+        .update({'isPinned': pinned});
   }
 
   /// E'lonni o'chiradi — faqat xodim/rais chaqirishi kerak (UI darajasida

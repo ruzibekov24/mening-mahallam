@@ -47,6 +47,17 @@ service cloud.firestore {
           .affectedKeys().hasOnly([uid]);
     }
 
+    // Ikki tomonlama bloklash tekshiruvi — `myUid()` `otherUid`ni
+    // bloklagan bo'lsa YOKI `otherUid` `myUid()`ni bloklagan bo'lsa
+    // `true`. 1:1 suhbatga xabar yozish qoidasida ishlatiladi
+    // (`conversations/{id}/messages`) — bloklangan foydalanuvchilar
+    // orasida xabar yaratilmasligi uchun.
+    function isBlockedEitherWay(otherUid) {
+      return otherUid in myUserDoc().data.get('blockedUids', []) ||
+        myUid() in get(/databases/$(database)/documents/users/$(otherUid))
+          .data.get('blockedUids', []);
+    }
+
     // ---------- users/{uid} ----------
     match /users/{uid} {
       // A user can always read their own doc.
@@ -181,9 +192,23 @@ service cloud.firestore {
           return myUid() in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participantUids;
         }
 
+        // Suhbatdagi IKKINCHI ishtirokchi (o'zim emasi). `participantUids`
+        // har doim ikkita element saqlaydi (`conversations` create
+        // qoidasi buni majburlaydi), shuning uchun "birinchisi men
+        // bo'lmasam, ikkinchisi men emasman" mantiqi xavfsiz.
+        function otherParticipant() {
+          let uids = get(/databases/$(database)/documents/conversations/$(conversationId)).data.participantUids;
+          return uids[0] == myUid() ? uids[1] : uids[0];
+        }
+
         allow read: if isSignedIn() && isParticipant();
+        // Bloklash tekshiruvi faqat YANGI xabar yaratishda — mavjud
+        // xabarlarni o'qish/reaksiya qo'yish bloklangandan keyin ham
+        // ishlayveradi (eski yozishmalar yo'qolib qolmaydi, faqat
+        // yangi xabar qo'shilmaydi).
         allow create: if isSignedIn() && isParticipant() &&
-          request.resource.data.senderUid == myUid();
+          request.resource.data.senderUid == myUid() &&
+          !isBlockedEitherWay(otherParticipant());
         // Ikki xil update holati ruxsat etiladi:
         // 1) Faqat `reactions.{myUid}` maydoni — istalgan ishtirokchi
         //    o'z reaksiyasini qo'yadi/olib tashlaydi.

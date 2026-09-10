@@ -1389,6 +1389,16 @@ class AppLocalizationsUz extends AppLocalizations {
       'Tadbir haqida qo\'shimcha ma\'lumot (ixtiyoriy)...';
 
   @override
+  String get pinAnnouncementAction => 'Yuqoriga mahkamlash';
+
+  @override
+  String get unpinAnnouncementAction => 'Mahkamlashni yechish';
+
+  @override
+  String get cannotMessageBlockedUser =>
+      'Bu foydalanuvchiga xabar yubora olmaysiz.';
+
+  @override
   String get rsvpToggleLabel => 'Qatnashish belgisi';
 
   @override
@@ -2079,6 +2089,9 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get assistantActionOpenPremium => 'Premium haqida';
+
+  @override
+  String get assistantActionOpenNewRequest => 'Murojaat ekranini ochish';
 
   @override
   String get assistantNewChat => 'Yangi suhbat';
@@ -3550,6 +3563,16 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
       'Тадбир ҳақида қўшимча маълумот (ихтиёрий)...';
 
   @override
+  String get pinAnnouncementAction => 'Юқорига маҳкамлаш';
+
+  @override
+  String get unpinAnnouncementAction => 'Маҳкамлашни ечиш';
+
+  @override
+  String get cannotMessageBlockedUser =>
+      'Бу фойдаланувчига хабар юбора олмайсиз.';
+
+  @override
   String get rsvpToggleLabel => 'Қатнашиш белгиси';
 
   @override
@@ -4238,6 +4261,9 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get assistantActionOpenPremium => 'Premium ҳақида';
+
+  @override
+  String get assistantActionOpenNewRequest => 'Мурожаат экранини очиш';
 
   @override
   String get assistantNewChat => 'Янги суҳбат';

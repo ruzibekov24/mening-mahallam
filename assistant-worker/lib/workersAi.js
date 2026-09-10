@@ -68,19 +68,39 @@ const FOCUS_HINT_EN =
   "Answer ONLY what the user actually asked — don't volunteer unrelated " +
   'topics, facts, or suggestions they didn\'t ask about.';
 
+// AI'ning o'z ismi — ilova UI'sida ekran sarlavhasi va suhbat kartasi
+// sifatida allaqachon "Mahal" deb ko'rsatiladi
+// (`assistantScreenTitle`/`mahalCardTitle`, `lib/l10n/app_uz.arb`), lekin
+// avval model o'ziga ism berilmagan holda ishlardi — kimdir "ismingiz
+// nima" deb so'rasa, generik "men AI yordamchiman" javobidan boshqa
+// narsa ayta olmasdi. Endi ism va qisqa "shaxsiyat" ta'rifi bazaviy
+// ko'rsatmaning o'zida.
+const NAME_UZ =
+  "Sening isming — Mahal. Kimdir isming nima deb so'rasa, aynan shu " +
+  "ismni ayt (\"Men Mahalman\" kabi). Ohangdirig'ing do'stona, hurmatli " +
+  "va aniq — ortiqcha rasmiylashib ketmasdan.";
+const NAME_RU =
+  'Тебя зовут Махал (Mahal). Если кто-то спросит твоё имя, назови ' +
+  'именно его ("Меня зовут Махал"). Тон — дружелюбный, уважительный и ' +
+  'по делу, без лишней официозности.';
+const NAME_EN =
+  'Your name is Mahal. If someone asks your name, give exactly that ' +
+  '("I\'m Mahal"). Keep your tone friendly, respectful, and to the ' +
+  'point — not overly formal.';
+
 const SYSTEM_INSTRUCTIONS = {
   uz:
-    "Sen \"Mening Mahallam\" ilovasining AI yordamchisisan — bu O'zbekistondagi " +
+    `${NAME_UZ} Sen "Mening Mahallam" ilovasining AI yordamchisisan — bu O'zbekistondagi ` +
     "mahalla jamoasi ilovasi (e'lonlar, tadbirlar, murojaatlar, so'rovnomalar, " +
     "qo'shnilar bilan aloqa, mahalliy xizmatlar kabi bo'limlari bor). Foydalanuvchilarga " +
     `aniq va foydali javob ber. ${FOCUS_HINT_UZ} ${FORMATTING_HINT_UZ} Javoblaringni o'zbek tilida yoz.`,
   ru:
-    "Ты — ИИ-помощник приложения \"Mening Mahallam\" — это приложение для " +
+    `${NAME_RU} Ты — ИИ-помощник приложения "Mening Mahallam" — это приложение для ` +
     "махаллинского (соседского) сообщества в Узбекистане (объявления, события, " +
     `обращения, опросы, общение с соседями, местные услуги). ${FOCUS_HINT_RU} ${FORMATTING_HINT_RU} ` +
     'Отвечай на русском языке.',
   en:
-    'You are the AI assistant for "Mening Mahallam" — a neighborhood community app ' +
+    `${NAME_EN} You are the AI assistant for "Mening Mahallam" — a neighborhood community app ` +
     'for Uzbekistan (announcements, events, resident requests, polls, neighbor chat, ' +
     `local services). ${FOCUS_HINT_EN} ${FORMATTING_HINT_EN} Answer in English.`,
 };
@@ -88,6 +108,58 @@ const SYSTEM_INSTRUCTIONS = {
 function systemInstructionFor(locale) {
   const key = ['uz', 'ru', 'en'].includes(locale) ? locale : 'uz';
   return SYSTEM_INSTRUCTIONS[key];
+}
+
+// Barcha foydalanuvchilar uchun (premium ham, bepul ham) — `create_request`
+// dan farqli, bu yerda AI murojaat matnini YOZIB BERMAYDI, faqat
+// jarayonni tushuntiradi va "Murojaat ekranini ochish" tugmasini
+// ko'rsatadi (`lib/features/assistant/presentation/assistant_screen.dart`
+// dagi `_AssistantActionKind.openNewRequest`). Shuning uchun
+// `ACTION_BLOCK_HINT_*`/`FREE_ACTION_HINT_*` kabi premium/bepul
+// gating'iga bog'liq emas — bazaviy ko'rsatmaning o'zida, har doim
+// yoqilgan.
+const NEW_REQUEST_HINT_UZ =
+  "Agar foydalanuvchi murojaat/shikoyat/taklif yubormoqchi ekanini aytsa " +
+  "yoki buni qanday qilishni so'rasa (BUNI SENDAN uning nomidan yozib " +
+  "berishingni so'ragan holat bilan aralashtirma — bu boshqa, alohida " +
+  "imkoniyat), oddiy javobingda qisqacha jarayonni tushuntir (masalan: " +
+  "muammoni aniq yozish, kerak bo'lsa rasm biriktirish, ochiq \"ommaviy\" " +
+  "yoki \"maxfiy\" turini tanlash, so'ng yuborish). Shu javobingdan " +
+  "KEYIN, alohida qatorda aynan quyidagi formatda blok qo'sh (boshqa " +
+  "hech narsa qo'shmasdan, faqat to'g'ri JSON):\n" +
+  "```mahallam-action\n{\"action\":\"open_new_request\"}\n```\n" +
+  "Bu blokni FAQAT foydalanuvchi ANIQ murojaat yubormoqchi bo'lganda " +
+  "yoki buni qanday qilishni so'raganda qo'sh, boshqa mavzudagi " +
+  "javoblaringda hech qachon o'zingdan taklif qilmasdan qo'shma.";
+const NEW_REQUEST_HINT_RU =
+  'Если пользователь говорит, что хочет отправить обращение/жалобу/' +
+  'предложение, или спрашивает, как это сделать (не путай с просьбой ' +
+  'составить обращение ОТ ЕГО ИМЕНИ — это другая, отдельная ' +
+  'возможность), кратко объясни процесс в обычном ответе (например: ' +
+  'точно описать проблему, при необходимости прикрепить фото, выбрать ' +
+  'тип "открытое" или "конфиденциальное", затем отправить). После этого ' +
+  'ответа добавь отдельной строкой блок ровно в таком формате (больше ' +
+  'ничего не добавляя, только корректный JSON):\n' +
+  '```mahallam-action\n{"action":"open_new_request"}\n```\n' +
+  'Добавляй этот блок ТОЛЬКО когда пользователь явно хочет отправить ' +
+  'обращение или спрашивает как это сделать — никогда не предлагай его ' +
+  'сама в ответах на другие темы.';
+const NEW_REQUEST_HINT_EN =
+  "If the user says they want to send a request/complaint/suggestion " +
+  "(murojaat), or asks how to do that (don't confuse this with asking " +
+  "you to draft it ON THEIR BEHALF — that's a separate capability), " +
+  "briefly explain the process in your normal reply (e.g.: describe the " +
+  "issue clearly, attach a photo if relevant, choose \"public\" or " +
+  "\"confidential\" type, then submit). AFTER that reply, add a block on " +
+  "its own line in exactly this format (nothing else added, valid JSON " +
+  "only):\n```mahallam-action\n{\"action\":\"open_new_request\"}\n```\n" +
+  "Only add this block when the user clearly wants to send a request or " +
+  "asks how to do so — never suggest it yourself in answers about " +
+  "unrelated topics.";
+
+function newRequestHintFor(locale) {
+  const key = ['uz', 'ru', 'en'].includes(locale) ? locale : 'uz';
+  return { uz: NEW_REQUEST_HINT_UZ, ru: NEW_REQUEST_HINT_RU, en: NEW_REQUEST_HINT_EN }[key];
 }
 
 // Premium-only capability: instead of just describing how to file a
@@ -328,6 +400,10 @@ function buildMessages(message, history, locale, appContext, isPremium, isFirstM
     }));
 
   let systemContent = withAppContext(systemInstructionFor(locale), appContext);
+  // "Murojaat ekranini ochish" — hamma uchun, premium holatidan
+  // qat'i nazar (o'zi murojaat matnini yozib bermaydi, faqat
+  // jarayonni tushuntirib, forma ekranini ochadi).
+  systemContent = `${systemContent}\n\n${newRequestHintFor(locale)}`;
   // Every user gets exactly one of the two hint sets, never both, never
   // neither: premium users get the full action-block capability set
   // (create_request + open_feedback/open_services/open_help), free

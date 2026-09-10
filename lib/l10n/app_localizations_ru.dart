@@ -1382,6 +1382,16 @@ class AppLocalizationsRu extends AppLocalizations {
       'Дополнительная информация о событии (необязательно)...';
 
   @override
+  String get pinAnnouncementAction => 'Закрепить вверху';
+
+  @override
+  String get unpinAnnouncementAction => 'Открепить';
+
+  @override
+  String get cannotMessageBlockedUser =>
+      'Вы не можете отправить сообщение этому пользователю.';
+
+  @override
   String get rsvpToggleLabel => 'Отметка об участии';
 
   @override
@@ -2072,6 +2082,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get assistantActionOpenPremium => 'О Premium';
+
+  @override
+  String get assistantActionOpenNewRequest => 'Открыть форму обращения';
 
   @override
   String get assistantNewChat => 'Новый чат';

@@ -367,17 +367,32 @@ class AnnouncementCard extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-                      decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.14),
-                        borderRadius: AppRadius.xsAll,
-                      ),
-                      child: Text(
-                        categoryLabel(l10n, announcement.category),
-                        style: context.captionStyle.copyWith(color: color),
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Mahkamlangan e'lon belgisi — kategoriya
+                        // chipidan oldin, shunda ro'yxatni tez
+                        // ko'zdan kechirganda darhol ko'zga tashlanadi.
+                        if (announcement.isPinned) ...[
+                          Icon(PhosphorIconsFill.pushPin,
+                              size: 14, color: color),
+                          const SizedBox(width: AppSpacing.xs),
+                        ],
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm,
+                              vertical: AppSpacing.xs),
+                          decoration: BoxDecoration(
+                            color: color.withValues(alpha: 0.14),
+                            borderRadius: AppRadius.xsAll,
+                          ),
+                          child: Text(
+                            categoryLabel(l10n, announcement.category),
+                            style:
+                                context.captionStyle.copyWith(color: color),
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
@@ -408,6 +423,38 @@ class AnnouncementCard extends ConsumerWidget {
                               shape: const RoundedRectangleBorder(
                                   borderRadius: AppRadius.smAll),
                               itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  onTap: () async {
+                                    await Future.delayed(
+                                        const Duration(milliseconds: 1));
+                                    if (!context.mounted) return;
+                                    await ref
+                                        .read(announcementRepositoryProvider)
+                                        .toggleAnnouncementPin(
+                                          mahallaId: profile!.mahallaId!,
+                                          announcementId: announcement.id,
+                                          pinned: !announcement.isPinned,
+                                        );
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        announcement.isPinned
+                                            ? PhosphorIconsFill.pushPinSlash
+                                            : PhosphorIconsFill.pushPin,
+                                        size: 18,
+                                        color: context.textSecondary,
+                                      ),
+                                      const SizedBox(width: AppSpacing.sm),
+                                      Text(
+                                        announcement.isPinned
+                                            ? l10n.unpinAnnouncementAction
+                                            : l10n.pinAnnouncementAction,
+                                        style: context.bodyStyle,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 PopupMenuItem(
                                   onTap: () async {
                                     await Future.delayed(

@@ -624,6 +624,9 @@
   "editEventTitle": "Tadbirni tahrirlash",
   "eventTitleHint": "Masalan: Mahalla yig'ilishi",
   "eventDescriptionHint": "Tadbir haqida qo'shimcha ma'lumot (ixtiyoriy)...",
+  "pinAnnouncementAction": "Yuqoriga mahkamlash",
+  "unpinAnnouncementAction": "Mahkamlashni yechish",
+  "cannotMessageBlockedUser": "Bu foydalanuvchiga xabar yubora olmaysiz.",
   "rsvpToggleLabel": "Qatnashish belgisi",
   "rsvpToggleHint": "Yoqilsa, foydalanuvchilar \"Boraman\" deb belgilay oladi.",
   "rsvpJoinAction": "Boraman",
@@ -1284,6 +1287,10 @@
   "assistantActionOpenPremium": "Premium haqida",
   "@assistantActionOpenPremium": {
     "description": "AI Yordamchi javobi ostida ko'rinadigan, Premium ekraniga o'tuvchi tugma matni"
+  },
+  "assistantActionOpenNewRequest": "Murojaat ekranini ochish",
+  "@assistantActionOpenNewRequest": {
+    "description": "AI Yordamchi javobi ostida ko'rinadigan, bo'sh \"Yangi murojaat\" formasini ochuvchi tugma matni"
   },
   "assistantNewChat": "Yangi suhbat",
   "@assistantNewChat": {

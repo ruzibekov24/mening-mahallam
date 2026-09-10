@@ -1383,6 +1383,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Additional details about the event (optional)...';
 
   @override
+  String get pinAnnouncementAction => 'Pin to top';
+
+  @override
+  String get unpinAnnouncementAction => 'Unpin';
+
+  @override
+  String get cannotMessageBlockedUser =>
+      'You can\'t send a message to this user.';
+
+  @override
   String get rsvpToggleLabel => 'Attendance marker';
 
   @override
@@ -2068,6 +2078,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantActionOpenPremium => 'About Premium';
+
+  @override
+  String get assistantActionOpenNewRequest => 'Open request screen';
 
   @override
   String get assistantNewChat => 'New chat';

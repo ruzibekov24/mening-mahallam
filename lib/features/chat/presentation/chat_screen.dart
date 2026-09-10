@@ -173,6 +173,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             text: text,
             senderFullName: myName,
           );
+    } on UserBlockedException {
+      _textController.text = text;
+      if (mounted) {
+        showAppAlert(
+          context,
+          AppLocalizations.of(context).cannotMessageBlockedUser,
+          kind: AppAlertKind.error,
+        );
+      }
     } catch (_) {
       _textController.text = text;
     } finally {
@@ -240,6 +249,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           );
     } on ImageUploadException catch (e) {
       if (mounted) showAppAlert(context, e.message, kind: AppAlertKind.error);
+    } on UserBlockedException {
+      if (mounted) {
+        showAppAlert(
+          context,
+          AppLocalizations.of(context).cannotMessageBlockedUser,
+          kind: AppAlertKind.error,
+        );
+      }
     } catch (_) {
       if (mounted) {
         showAppAlert(context, l10n.imageUploadFailed, kind: AppAlertKind.error);

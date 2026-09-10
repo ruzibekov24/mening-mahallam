@@ -57,6 +57,13 @@ enum _AssistantActionKind {
   openServices,
   openHelp,
   openPremium,
+
+  /// "Murojaat ekranini ochish" — `createRequest`dan farqli, bu yerda
+  /// AI matn yozib bermaydi, faqat jarayonni tushuntirib bo'sh forma
+  /// ekranini ochadi. Server tomonida gating yo'q — premium bo'lmagan
+  /// foydalanuvchilarga ham yuboriladi
+  /// (`assistant-worker/lib/workersAi.js`dagi `NEW_REQUEST_HINT_*`).
+  openNewRequest,
 }
 
 /// AI javobidagi ```mahallam-action``` blokidan chiqarilgan harakat.
@@ -150,6 +157,12 @@ final _actionBlockPattern =
         return (
           displayText: withoutBlock,
           action: const _AssistantAction(kind: _AssistantActionKind.openPremium),
+        );
+      case 'open_new_request':
+        return (
+          displayText: withoutBlock,
+          action:
+              const _AssistantAction(kind: _AssistantActionKind.openNewRequest),
         );
       default:
         return (displayText: withoutBlock, action: null);
@@ -923,7 +936,18 @@ class _MessageBubble extends ConsumerWidget {
         AppPageRoute.push(context, const HelpScreen());
       case _AssistantActionKind.openPremium:
         AppPageRoute.push(context, const PremiumScreen());
+      case _AssistantActionKind.openNewRequest:
+        _openNewRequest(context, ref);
     }
+  }
+
+  /// `_openDraftRequest`dan farqli — hech qanday oldindan to'ldirish
+  /// yo'q, faqat bo'sh "Yangi murojaat" formasi ochiladi.
+  void _openNewRequest(BuildContext context, WidgetRef ref) {
+    final mahallaId =
+        ref.read(currentUserProfileProvider).valueOrNull?.mahallaId;
+    if (mahallaId == null) return;
+    AppPageRoute.push(context, NewRequestFlowScreen(mahallaId: mahallaId));
   }
 
   ({IconData icon, String label}) _actionButtonContent(
@@ -953,6 +977,11 @@ class _MessageBubble extends ConsumerWidget {
         return (
           icon: PhosphorIconsFill.crown,
           label: l10n.assistantActionOpenPremium,
+        );
+      case _AssistantActionKind.openNewRequest:
+        return (
+          icon: PhosphorIconsFill.plusCircle,
+          label: l10n.assistantActionOpenNewRequest,
         );
     }
   }

@@ -3,6 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../notifications/data/notification_repository.dart';
 
+/// Ikki tomonlama bloklash tekshiruvi natijasida xabar yuborish rad
+/// etilganda otiladi — men uni bloklaganman yoki u meni bloklagan.
+/// Ikkala holat ham foydalanuvchiga bir xil ko'rinishda ko'rsatiladi
+/// (`chat_screen.dart`), shuning uchun aynan qaysi tomon ekanini
+/// bildirish shart emas.
+class UserBlockedException implements Exception {}
+
 /// Ikkita foydalanuvchi orasidagi suhbat — sarlavha ma'lumotlari
 /// (oxirgi xabar, kim yubordi) tezkor ro'yxat uchun bu yerda saqlanadi,
 /// haqiqiy xabarlar `messages` sub-kolleksiyasida.
@@ -197,6 +204,25 @@ class ChatRepository {
     final trimmed = text.trim();
     final hasImage = imageUrl != null && imageUrl.isNotEmpty;
     if (trimmed.isEmpty && !hasImage) return;
+
+    // Bloklash tekshiruvi — `HomeRepository.blockUser` ilgari faqat
+    // qo'shnilar ro'yxatidan yashirardi, yozishni to'sib qo'ymasdi.
+    // Ikkala yo'nalish ham tekshiriladi: men uni bloklagan bo'lsam
+    // (o'z hujjatim — qo'shimcha o'qishsiz allaqachon ma'lum bo'lishi
+    // mumkin edi, lekin izchillik uchun shu yerda ham tekshiramiz) yoki
+    // u meni bloklagan bo'lsa.
+    final myDoc = await _firestore.collection('users').doc(uid).get();
+    final myBlockedUids =
+        List<String>.from(myDoc.data()?['blockedUids'] ?? const []);
+    if (myBlockedUids.contains(otherUid)) {
+      throw UserBlockedException();
+    }
+    final otherDoc = await _firestore.collection('users').doc(otherUid).get();
+    final otherBlockedUids =
+        List<String>.from(otherDoc.data()?['blockedUids'] ?? const []);
+    if (otherBlockedUids.contains(uid)) {
+      throw UserBlockedException();
+    }
 
     final conversationId = conversationIdFor(uid, otherUid);
     final conversationRef =

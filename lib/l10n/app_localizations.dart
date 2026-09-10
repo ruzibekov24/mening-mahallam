@@ -2669,6 +2669,24 @@ abstract class AppLocalizations {
   /// **'Tadbir haqida qo\'shimcha ma\'lumot (ixtiyoriy)...'**
   String get eventDescriptionHint;
 
+  /// No description provided for @pinAnnouncementAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yuqoriga mahkamlash'**
+  String get pinAnnouncementAction;
+
+  /// No description provided for @unpinAnnouncementAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahkamlashni yechish'**
+  String get unpinAnnouncementAction;
+
+  /// No description provided for @cannotMessageBlockedUser.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu foydalanuvchiga xabar yubora olmaysiz.'**
+  String get cannotMessageBlockedUser;
+
   /// No description provided for @rsvpToggleLabel.
   ///
   /// In uz, this message translates to:
@@ -3892,6 +3910,12 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Premium haqida'**
   String get assistantActionOpenPremium;
+
+  /// AI Yordamchi javobi ostida ko'rinadigan, bo'sh "Yangi murojaat" formasini ochuvchi tugma matni
+  ///
+  /// In uz, this message translates to:
+  /// **'Murojaat ekranini ochish'**
+  String get assistantActionOpenNewRequest;
 
   /// AI Yordamchi sidebar'idagi yangi (bo'sh) suhbat boshlash tugmasi matni
   ///
