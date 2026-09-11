@@ -81,10 +81,16 @@ class TutorialOverlay extends StatefulWidget {
 }
 
 class _TutorialOverlayState extends State<TutorialOverlay> {
+  int? _lastEnsuredVisibleFor;
+
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(_onStepChanged);
+    // Birinchi bosqich allaqachon faol bo'lib boshlanishi mumkin
+    // (masalan `controller.start()` shu widget qurilishidan oldin
+    // chaqirilgan bo'lsa) — shuning uchun ham darhol tekshiramiz.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _ensureVisible());
   }
 
   @override
@@ -101,7 +107,39 @@ class _TutorialOverlayState extends State<TutorialOverlay> {
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) setState(() {});
+      _ensureVisible();
     });
+  }
+
+  /// Nishon skrollanadigan ro'yxat ichida, ekrandan tashqarida
+  /// (masalan Bosh sahifadagi xarita — bir nechta bo'lim ostida)
+  /// bo'lishi mumkin. Shunday holatda pardadagi "teshik" va
+  /// tushuntirish kartasi ko'rinmas joyda chiqib, foydalanuvchi
+  /// hech narsaga bosolmay "qotib qolgandek" tuyular edi — endi
+  /// nishon avtomatik ko'rinadigan joyga skrollanadi.
+  Future<void> _ensureVisible() async {
+    final index = widget.controller.stepIndex;
+    if (index == null || index >= widget.steps.length) return;
+    if (_lastEnsuredVisibleFor == index) return;
+    final ctx = widget.steps[index].targetKey.currentContext;
+    if (ctx == null) return;
+    _lastEnsuredVisibleFor = index;
+    try {
+      // Nishon skrollanadigan ro'yxat ichida bo'lmasligi ham mumkin
+      // (masalan pastki navigatsiya tugmalari) — bunday holatda
+      // atrofida Scrollable topilmaydi, shunchaki hech narsa
+      // qilinmaydi.
+      await Scrollable.ensureVisible(
+        ctx,
+        alignment: 0.3,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    } catch (_) {
+      // Muhim emas — pastdagi xavfsizlik cheklovi (clamp) baribir
+      // kartani ekran ichida ushlab turadi.
+    }
+    if (mounted) setState(() {});
   }
 
   Rect? _targetRect(GlobalKey key) {
@@ -271,8 +309,32 @@ class _TutorialCard extends StatelessWidget {
     // Nishon ekranning pastki yarmida bo'lsa (masalan pastki
     // navigatsiya) — karta va strelka nishon USTIDA turadi;
     // aks holda (masalan tepadagi xarita) — nishon OSTIDA.
-    final cardBottom = holeAbove ? screenSize.height - holeRect.top + 14 : null;
-    final cardTop = holeAbove ? null : holeRect.bottom + 14;
+    //
+    // MUHIM: nishon (masalan skrollanadigan ro'yxat ichidagi xarita)
+    // biror sababga ko'ra hali ekranga to'liq ko'rinadigan holga
+    // skrollanmagan bo'lsa, xom hisoblangan qiymat kartani butunlay
+    // ekrandan tashqariga chiqarib yuborishi mumkin edi — foydalanuvchi
+    // hech narsaga bosolmay, ilova "qotib qolgandek" ko'rinardi. Shu
+    // sababli quyida karta doim ekran ichida qolishi MAJBURIY tarzda
+    // cheklanadi ("Bugungi safar" xavfsizlik to'ri).
+    final topInset = MediaQuery.paddingOf(context).top;
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
+    const cardReserve = 220.0;
+    final minTop = topInset + 16;
+    final maxTop = screenSize.height - bottomInset - cardReserve;
+
+    double? cardTop;
+    double? cardBottom;
+    if (holeAbove) {
+      final rawBottom = screenSize.height - holeRect.top + 14;
+      cardBottom = rawBottom
+          .clamp(bottomInset + 16, screenSize.height - minTop - cardReserve)
+          .toDouble();
+    } else {
+      final rawTop = holeRect.bottom + 14;
+      cardTop =
+          rawTop.clamp(minTop, maxTop < minTop ? minTop : maxTop).toDouble();
+    }
 
     return Positioned(
       left: AppSpacing.xl,

@@ -118,10 +118,12 @@ class _MainShellState extends ConsumerState<MainShell> {
     if (completed || !mounted) return;
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
-    showAppAlert(
+    // "OK" bosilguncha KUTAMIZ — ilgari bu yerda mustaqil kechikish
+    // (`Future.delayed`) ishlatilardi va tur muloqot oyna ustida
+    // hali ochiq turgan paytda ham boshlanib ketardi.
+    await showAppAlert(
         context, "Xush kelibsiz! Keling, ilova bilan qisqacha tanishtiraman.",
         kind: AppAlertKind.success);
-    await Future.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
     ref.read(tutorialControllerProvider).start();
   }
