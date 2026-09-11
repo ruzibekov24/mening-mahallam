@@ -231,14 +231,37 @@ class _SpotlightPainter extends CustomPainter {
   final Rect holeRect;
   const _SpotlightPainter({required this.holeRect});
 
+  /// MUHIM: ilgari bu yerda `Path.combine(PathOperation.difference, ...)`
+  /// bilan "teshikli" bitta path chizilardi — ba'zi qurilmalar/
+  /// emulyatorlarning (masalan BlueStacks) grafika drayveri bu
+  /// operatsiyani to'g'ri qo'llab-quvvatlamay, butun ekranni qora
+  /// holatda "muzlatib" qo'yardi (qo'llanma birinchi marta paydo
+  /// bo'lgan zahoti). Endi "teshik" alohida TO'RTTA oddiy
+  /// to'rtburchak (yuqori/pastki/chap/o'ng) bilan chiziladi — hech
+  /// qanday path-bulean amaliyoti yo'q, har qanday qurilmada
+  /// ishlashi kafolatlangan.
   @override
   void paint(Canvas canvas, Size size) {
-    final full = Path()..addRect(Offset.zero & size);
-    final hole = Path()
-      ..addRRect(RRect.fromRectAndRadius(holeRect, const Radius.circular(20)));
-    final combined = Path.combine(PathOperation.difference, full, hole);
-    canvas.drawPath(
-        combined, Paint()..color = Colors.black.withValues(alpha: 0.78));
+    final paint = Paint()..color = Colors.black.withValues(alpha: 0.78);
+    final h = holeRect;
+    // Yuqori.
+    if (h.top > 0) {
+      canvas.drawRect(Rect.fromLTRB(0, 0, size.width, h.top), paint);
+    }
+    // Pastki.
+    if (h.bottom < size.height) {
+      canvas.drawRect(
+          Rect.fromLTRB(0, h.bottom, size.width, size.height), paint);
+    }
+    // Chap (faqat teshik qatoriga mos balandlikda).
+    if (h.left > 0) {
+      canvas.drawRect(Rect.fromLTRB(0, h.top, h.left, h.bottom), paint);
+    }
+    // O'ng.
+    if (h.right < size.width) {
+      canvas.drawRect(
+          Rect.fromLTRB(h.right, h.top, size.width, h.bottom), paint);
+    }
   }
 
   @override
