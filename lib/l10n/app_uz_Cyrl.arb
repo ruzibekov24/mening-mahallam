@@ -311,6 +311,7 @@
   "newButton": "Янги",
   "noAnnouncementsYet": "Ҳозирча эълонлар йўқ",
   "noEventsYet": "Ҳозирча тадбирлар йўқ",
+  "noEventsHint": "Маҳалла раиси ёки ходимлари тадбир эълон қилганда, у шу ерда пайдо бўлади.",
   "announcementsLoadError": "Эълонларни юклашда хатолик юз берди",
   "participantsCount": "{count} қатнашувчи",
   "@participantsCount": {

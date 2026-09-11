@@ -311,6 +311,7 @@
   "newButton": "Новое",
   "noAnnouncementsYet": "Пока нет объявлений",
   "noEventsYet": "Пока нет мероприятий",
+  "noEventsHint": "Когда раис или сотрудники махалли объявят мероприятие, оно появится здесь.",
   "announcementsLoadError": "Ошибка при загрузке объявлений",
   "participantsCount": "{count} участников",
   "@participantsCount": {

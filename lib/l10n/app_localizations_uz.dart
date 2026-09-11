@@ -857,6 +857,10 @@ class AppLocalizationsUz extends AppLocalizations {
   String get noEventsYet => 'Hozircha tadbirlar yo\'q';
 
   @override
+  String get noEventsHint =>
+      'Mahalla raisi yoki xodimlari tadbir e\'lon qilganda, u shu yerda paydo bo\'ladi.';
+
+  @override
   String get announcementsLoadError =>
       'E\'lonlarni yuklashda xatolik yuz berdi';
 
@@ -3059,6 +3063,10 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get noEventsYet => 'Ҳозирча тадбирлар йўқ';
+
+  @override
+  String get noEventsHint =>
+      'Маҳалла раиси ёки ходимлари тадбир эълон қилганда, у шу ерда пайдо бўлади.';
 
   @override
   String get announcementsLoadError => 'Эълонларни юклашда хатолик юз берди';

@@ -1673,6 +1673,12 @@ abstract class AppLocalizations {
   /// **'Hozircha tadbirlar yo\'q'**
   String get noEventsYet;
 
+  /// No description provided for @noEventsHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahalla raisi yoki xodimlari tadbir e\'lon qilganda, u shu yerda paydo bo\'ladi.'**
+  String get noEventsHint;
+
   /// No description provided for @announcementsLoadError.
   ///
   /// In uz, this message translates to:

@@ -262,6 +262,7 @@
   "newButton": "New",
   "noAnnouncementsYet": "No announcements yet",
   "noEventsYet": "No events yet",
+  "noEventsHint": "When the mahalla chairman or staff announce an event, it will appear here.",
   "announcementsLoadError": "Error loading announcements",
   "participantsCount": "{count} participants",
   "todayAt": "Today, {time}",

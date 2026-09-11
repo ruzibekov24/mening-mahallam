@@ -855,6 +855,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noEventsYet => 'No events yet';
 
   @override
+  String get noEventsHint =>
+      'When the mahalla chairman or staff announce an event, it will appear here.';
+
+  @override
   String get announcementsLoadError => 'Error loading announcements';
 
   @override

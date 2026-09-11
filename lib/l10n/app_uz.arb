@@ -388,6 +388,7 @@
   "newButton": "Yangi",
   "noAnnouncementsYet": "Hozircha e'lonlar yo'q",
   "noEventsYet": "Hozircha tadbirlar yo'q",
+  "noEventsHint": "Mahalla raisi yoki xodimlari tadbir e'lon qilganda, u shu yerda paydo bo'ladi.",
   "announcementsLoadError": "E'lonlarni yuklashda xatolik yuz berdi",
   "participantsCount": "{count} qatnashuvchi",
   "@participantsCount": {

@@ -857,6 +857,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noEventsYet => 'Пока нет мероприятий';
 
   @override
+  String get noEventsHint =>
+      'Когда раис или сотрудники махалли объявят мероприятие, оно появится здесь.';
+
+  @override
   String get announcementsLoadError => 'Ошибка при загрузке объявлений';
 
   @override
