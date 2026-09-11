@@ -139,6 +139,7 @@
   "changeButton": "Change",
   "changeMahallaTitle": "Change mahalla",
   "changeMahallaMessage": "You'll connect to a new mahalla by scanning a QR code or entering the code manually. Continue?",
+  "sectionConvenience": "Convenience",
   "sectionGeneral": "General",
   "sectionManagement": "Management",
   "membersManagementTitle": "Manage members",

@@ -104,7 +104,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                 children: [
                   Expanded(
                     child: Text(l10n.feedTitle,
-                        style: context.titleStyle.copyWith(color: Colors.white)),
+                        style:
+                            context.titleStyle.copyWith(color: Colors.white)),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: AppSpacing.sm),
@@ -113,7 +114,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                       iconColor: Colors.white,
                       diameter: 40,
                       iconSize: 20,
-                      onTap: () => AppPageRoute.push(context, const PollsScreen()),
+                      onTap: () =>
+                          AppPageRoute.push(context, const PollsScreen()),
                     ),
                   ),
                   profileAsync.when(
@@ -126,18 +128,22 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                         children: [
                           if (canPostOfficial) ...[
                             Padding(
-                              padding: const EdgeInsets.only(right: AppSpacing.xs),
+                              padding:
+                                  const EdgeInsets.only(right: AppSpacing.xs),
                               child: LiquidGlassCircleButton(
                                 icon: PhosphorIconsFill.megaphone,
                                 iconColor: Colors.white,
                                 diameter: 40,
                                 iconSize: 18,
-                                onTap: () => AppPageRoute.push(context,
-                                    NewAnnouncementScreen(mahallaId: mahallaId)),
+                                onTap: () => AppPageRoute.push(
+                                    context,
+                                    NewAnnouncementScreen(
+                                        mahallaId: mahallaId)),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(right: AppSpacing.sm),
+                              padding:
+                                  const EdgeInsets.only(right: AppSpacing.sm),
                               child: LiquidGlassCircleButton(
                                 icon: PhosphorIconsFill.calendarPlus,
                                 iconColor: Colors.white,
@@ -183,27 +189,27 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                       child: _FeedSegmentButton(
                         label: l10n.announcementsTitle,
                         isActive: filter == _FeedFilter.announcements,
-                        onTap: () =>
-                            ref.read(_feedFilterProvider.notifier).state =
-                                _FeedFilter.announcements,
+                        onTap: () => ref
+                            .read(_feedFilterProvider.notifier)
+                            .state = _FeedFilter.announcements,
                       ),
                     ),
                     Expanded(
                       child: _FeedSegmentButton(
                         label: l10n.eventsTitle,
                         isActive: filter == _FeedFilter.events,
-                        onTap: () =>
-                            ref.read(_feedFilterProvider.notifier).state =
-                                _FeedFilter.events,
+                        onTap: () => ref
+                            .read(_feedFilterProvider.notifier)
+                            .state = _FeedFilter.events,
                       ),
                     ),
                     Expanded(
                       child: _FeedSegmentButton(
                         label: l10n.postsFilterLabel,
                         isActive: filter == _FeedFilter.posts,
-                        onTap: () =>
-                            ref.read(_feedFilterProvider.notifier).state =
-                                _FeedFilter.posts,
+                        onTap: () => ref
+                            .read(_feedFilterProvider.notifier)
+                            .state = _FeedFilter.posts,
                       ),
                     ),
                   ],
@@ -226,11 +232,35 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                   }
                   if (filtered.isEmpty) {
                     return AppEmptyView(
-                      icon: PhosphorIconsFill.rows,
-                      title: l10n.noPostsYet,
-                      subtitle: l10n.noPostsHint,
+                      icon: switch (filter) {
+                        _FeedFilter.posts => PhosphorIconsFill.rows,
+                        _FeedFilter.announcements =>
+                          PhosphorIconsFill.megaphoneSimple,
+                        _FeedFilter.events => PhosphorIconsFill.calendarBlank,
+                      },
+                      // Har bir tab o'z matni va rasmini ko'rsatadi —
+                      // ilgari uchtasi ham "postlar yo'q" matni va
+                      // umumiy chizilgan doira-nuqta illyustratsiyasini
+                      // ko'rsatardi.
+                      title: switch (filter) {
+                        _FeedFilter.posts => l10n.noPostsYet,
+                        _FeedFilter.announcements => l10n.noAnnouncementsYet,
+                        _FeedFilter.events => l10n.noEventsYet,
+                      },
+                      subtitle: switch (filter) {
+                        _FeedFilter.posts => l10n.noPostsHint,
+                        _FeedFilter.announcements => l10n.noAnnouncementsHint,
+                        _FeedFilter.events => l10n.noEventsHint,
+                      },
                       accent: AppAccents.announcements,
                       scrollable: true,
+                      imageAsset: switch (filter) {
+                        _FeedFilter.events =>
+                          'assets/images/empty_states/events.png',
+                        _FeedFilter.posts =>
+                          'assets/images/empty_states/generic.png',
+                        _FeedFilter.announcements => null,
+                      },
                     );
                   }
                   final showLoadMoreRow =
@@ -249,14 +279,14 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                       itemBuilder: (context, index) {
                         if (index >= filtered.length) {
                           return const Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: AppSpacing.lg),
+                            padding:
+                                EdgeInsets.symmetric(vertical: AppSpacing.lg),
                             child: Center(
                               child: SizedBox(
                                 width: 24,
                                 height: 24,
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2.5),
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2.5),
                               ),
                             ),
                           );
@@ -330,9 +360,9 @@ class _FeedSegmentButton extends StatelessWidget {
   }
 }
 
-bool _isPost(FeedItem item) =>
-    item.map(post: (_) => true, announcement: (_) => false, event: (_) => false);
-bool _isAnnouncement(FeedItem item) =>
-    item.map(post: (_) => false, announcement: (_) => true, event: (_) => false);
-bool _isEvent(FeedItem item) =>
-    item.map(post: (_) => false, announcement: (_) => false, event: (_) => true);
+bool _isPost(FeedItem item) => item.map(
+    post: (_) => true, announcement: (_) => false, event: (_) => false);
+bool _isAnnouncement(FeedItem item) => item.map(
+    post: (_) => false, announcement: (_) => true, event: (_) => false);
+bool _isEvent(FeedItem item) => item.map(
+    post: (_) => false, announcement: (_) => false, event: (_) => true);

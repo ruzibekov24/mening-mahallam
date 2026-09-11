@@ -11,6 +11,7 @@ import '../../../core/widgets/girih_header.dart';
 import '../../../core/widgets/liquid_glass.dart';
 import '../../../core/widgets/no_mahalla_view.dart';
 import '../../../core/widgets/shimmer.dart';
+import '../../../core/widgets/tutorial_keys.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../announcements/data/announcements_providers.dart';
@@ -136,57 +137,57 @@ class HomeScreen extends ConsumerWidget {
                     Stack(
                       clipBehavior: Clip.none,
                       children: [
-                          // Ilgari bu yerda yalang'och `Icon` bor edi —
-                          // rangli sarlavha foni ustida hech qanday
-                          // sirt/soya bo'lmagani uchun tugma emas,
-                          // shunchaki "yopishib qolgan" belgidek ko'rinardi.
-                          // Boshqa barcha aylana tugmalar bilan bir xil
-                          // shisha sirt (`LiquidGlassCircleButton`) endi
-                          // shu yerda ham ishlatiladi.
-                          LiquidGlassCircleButton(
-                            icon: PhosphorIconsFill.bell,
-                            diameter: 40,
-                            iconSize: 20,
-                            iconColor: Colors.white,
-                            onTap: () => AppPageRoute.push(
-                                context, const NotificationsScreen()),
-                          ),
-                          Consumer(
-                            builder: (context, ref, _) {
-                              final unreadAsync =
-                                  ref.watch(unreadNotificationCountProvider);
-                              final count = unreadAsync.valueOrNull ?? 0;
-                              if (count == 0) return const SizedBox.shrink();
-                              return Positioned(
-                                right: -2,
-                                top: -2,
-                                child: Container(
-                                  padding: const EdgeInsets.all(3),
-                                  constraints: const BoxConstraints(
-                                      minWidth: 16, minHeight: 16),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.danger,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: AppColors.primary,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    count > 9 ? '9+' : '$count',
-                                    style: context.captionStyle.copyWith(
-                                      color: Colors.white,
-                                      fontSize: 9,
-                                      height: 1.0,
-                                    ),
+                        // Ilgari bu yerda yalang'och `Icon` bor edi —
+                        // rangli sarlavha foni ustida hech qanday
+                        // sirt/soya bo'lmagani uchun tugma emas,
+                        // shunchaki "yopishib qolgan" belgidek ko'rinardi.
+                        // Boshqa barcha aylana tugmalar bilan bir xil
+                        // shisha sirt (`LiquidGlassCircleButton`) endi
+                        // shu yerda ham ishlatiladi.
+                        LiquidGlassCircleButton(
+                          icon: PhosphorIconsFill.bell,
+                          diameter: 40,
+                          iconSize: 20,
+                          iconColor: Colors.white,
+                          onTap: () => AppPageRoute.push(
+                              context, const NotificationsScreen()),
+                        ),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final unreadAsync =
+                                ref.watch(unreadNotificationCountProvider);
+                            final count = unreadAsync.valueOrNull ?? 0;
+                            if (count == 0) return const SizedBox.shrink();
+                            return Positioned(
+                              right: -2,
+                              top: -2,
+                              child: Container(
+                                padding: const EdgeInsets.all(3),
+                                constraints: const BoxConstraints(
+                                    minWidth: 16, minHeight: 16),
+                                decoration: BoxDecoration(
+                                  color: AppColors.danger,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: AppColors.primary,
+                                    width: 2,
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  count > 9 ? '9+' : '$count',
+                                  style: context.captionStyle.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                    height: 1.0,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -395,23 +396,28 @@ class HomeScreen extends ConsumerWidget {
                       data: (profile) {
                         final mahallaId = profile?.mahallaId;
                         if (mahallaId == null) return const SizedBox.shrink();
-                        return TapScale(
-                          onTap: () => AppPageRoute.push(
-                              context, MahallaMapScreen(mahallaId: mahallaId)),
-                          borderRadius: AppRadius.mdAll,
-                          // flutter_map o'zining ichki tap-tanish (gesture)
-                          // qatlamiga ega — `interactive: false` faqat
-                          // pan/zoom/rotate'ni o'chiradi, lekin bosishni hali
-                          // ham "yutib qo'yishi" mumkin va tashqi TapScale
-                          // hech qachon ishga tushmasligiga olib keladi.
-                          // AbsorbPointer xaritani hit-test'dan butunlay olib
-                          // tashlaydi — bosish faqat TapScale'ga tegadi.
-                          child: AbsorbPointer(
-                            child: MahallaMapView(
-                              mahallaId: mahallaId,
-                              height: 170,
-                              interactive: false,
-                              showRequestMarkers: false,
+                        return KeyedSubtree(
+                          key: TutorialKeys.map,
+                          child: TapScale(
+                            onTap: () => AppPageRoute.push(context,
+                                MahallaMapScreen(mahallaId: mahallaId)),
+                            borderRadius: AppRadius.mdAll,
+                            // flutter_map o'zining ichki tap-tanish
+                            // (gesture) qatlamiga ega — `interactive:
+                            // false` faqat pan/zoom/rotate'ni o'chiradi,
+                            // lekin bosishni hali ham "yutib qo'yishi"
+                            // mumkin va tashqi TapScale hech qachon ishga
+                            // tushmasligiga olib keladi. AbsorbPointer
+                            // xaritani hit-test'dan butunlay olib
+                            // tashlaydi — bosish faqat TapScale'ga
+                            // tegadi.
+                            child: AbsorbPointer(
+                              child: MahallaMapView(
+                                mahallaId: mahallaId,
+                                height: 170,
+                                interactive: false,
+                                showRequestMarkers: false,
+                              ),
                             ),
                           ),
                         );

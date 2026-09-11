@@ -60,12 +60,19 @@ class GlassBottomNav extends StatefulWidget {
     required this.currentIndex,
     required this.onTap,
     this.accentColor,
+    this.itemKeys,
   });
 
   final List<GlassNavItem> items;
   final int currentIndex;
   final ValueChanged<int> onTap;
   final Color? accentColor;
+
+  /// Ixtiyoriy — berilsa, `itemKeys[i]` shu indeksdagi tugma ustiga
+  /// o'ralib, uni tashqaridan (masalan qo'llanma/tur uchun) aniq
+  /// joylashuvini topish mumkin bo'ladi. `null` elementlar shunchaki
+  /// o'ralmaydi.
+  final List<GlobalKey?>? itemKeys;
 
   @override
   State<GlassBottomNav> createState() => _GlassBottomNavState();
@@ -222,8 +229,7 @@ class _GlassBottomNavState extends State<GlassBottomNav>
     if (releaseDx != null && _rowWidth > 0 && finalIndex != null) {
       final itemWidth = _rowWidth / widget.items.length;
       final centerIdx = releaseDx / itemWidth;
-      _fromIndex = (centerIdx - 0.5)
-          .clamp(0.0, widget.items.length - 1.0);
+      _fromIndex = (centerIdx - 0.5).clamp(0.0, widget.items.length - 1.0);
       _toIndex = finalIndex.toDouble();
       _blob
         ..duration = const Duration(milliseconds: 260)
@@ -381,9 +387,11 @@ class _GlassBottomNavState extends State<GlassBottomNav>
                                     .clamp(0.0, widget.items.length.toDouble());
                                 final stretch = (_dragVelocity / itemWidth)
                                     .clamp(-0.55, 0.55);
-                                leftIdx = centerIdx - 0.5 +
+                                leftIdx = centerIdx -
+                                    0.5 +
                                     (stretch < 0 ? stretch : 0);
-                                rightIdx = centerIdx + 0.5 +
+                                rightIdx = centerIdx +
+                                    0.5 +
                                     (stretch > 0 ? stretch : 0);
                               } else {
                                 final edges = _blobEdges();
@@ -405,9 +413,9 @@ class _GlassBottomNavState extends State<GlassBottomNav>
                               // "qattiq kapsula" hissini yo'qotadi.
                               final stretchRatio =
                                   ((rightIdx - leftIdx) - 1).clamp(0.0, 1.2);
-                              final height =
-                                  _pillHeight - stretchRatio * 5 +
-                                      (_dragging ? 4 : 0);
+                              final height = _pillHeight -
+                                  stretchRatio * 5 +
+                                  (_dragging ? 4 : 0);
 
                               return Positioned(
                                 left: left,
@@ -421,8 +429,8 @@ class _GlassBottomNavState extends State<GlassBottomNav>
                                         horizontal: 2),
                                     decoration: BoxDecoration(
                                       color: _dragging
-                                          ? selectedPillColor
-                                              .withValues(alpha: 0.85)
+                                          ? selectedPillColor.withValues(
+                                              alpha: 0.85)
                                           : selectedPillColor,
                                       // Burchak radiusi balandlikning
                                       // yarmi — cho'zilganda ham
@@ -437,8 +445,7 @@ class _GlassBottomNavState extends State<GlassBottomNav>
                                           color: Colors.black.withValues(
                                               alpha: _dragging ? 0.18 : 0.08),
                                           blurRadius: _dragging ? 14 : 6,
-                                          offset:
-                                              Offset(0, _dragging ? 5 : 2),
+                                          offset: Offset(0, _dragging ? 5 : 2),
                                         ),
                                       ],
                                     ),
@@ -457,41 +464,47 @@ class _GlassBottomNavState extends State<GlassBottomNav>
                               height: _barHeight - 12,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                children: List.generate(widget.items.length,
-                                    (index) {
+                                children:
+                                    List.generate(widget.items.length, (index) {
                                   final item = widget.items[index];
                                   final selected = index == visualIndex;
                                   final color = selected
                                       ? (item.color ?? accent)
                                       : inactiveColor;
-                                  return SizedBox(
-                                    width: itemWidth,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(item.icon,
-                                            size: 24, color: color),
-                                        const SizedBox(height: 3),
-                                        FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          child: Text(
-                                            item.label,
-                                            maxLines: 1,
-                                            softWrap: false,
-                                            style: GoogleFonts.sourceSans3(
-                                              fontSize: 9,
-                                              fontWeight: selected
-                                                  ? FontWeight.w600
-                                                  : FontWeight.w500,
-                                              color: color,
-                                              height: 1,
-                                            ),
+                                  final itemKey = widget.itemKeys != null &&
+                                          index < widget.itemKeys!.length
+                                      ? widget.itemKeys![index]
+                                      : null;
+                                  final column = Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(item.icon, size: 24, color: color),
+                                      const SizedBox(height: 3),
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          item.label,
+                                          maxLines: 1,
+                                          softWrap: false,
+                                          style: GoogleFonts.sourceSans3(
+                                            fontSize: 9,
+                                            fontWeight: selected
+                                                ? FontWeight.w600
+                                                : FontWeight.w500,
+                                            color: color,
+                                            height: 1,
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
+                                  );
+                                  return SizedBox(
+                                    width: itemWidth,
+                                    child: itemKey != null
+                                        ? KeyedSubtree(
+                                            key: itemKey, child: column)
+                                        : column,
                                   );
                                 }),
                               ),

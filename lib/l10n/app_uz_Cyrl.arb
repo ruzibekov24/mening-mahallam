@@ -146,6 +146,7 @@
   "changeButton": "Алмаштириш",
   "changeMahallaTitle": "Маҳаллани алмаштириш",
   "changeMahallaMessage": "Янги маҳаллага QR код сканерлаш ёки кодни қўлда киритиш орқали боғланасиз. Давом этасизми?",
+  "sectionConvenience": "Қулайлик",
   "sectionGeneral": "Умумий",
   "sectionManagement": "Бошқарув",
   "membersManagementTitle": "Аъзоларни бошқариш",

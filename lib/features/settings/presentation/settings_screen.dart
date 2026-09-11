@@ -338,7 +338,14 @@ class SettingsScreen extends ConsumerWidget {
               error: (_, __) => const SizedBox.shrink(),
             ),
 
-            Text(l10n.sectionGeneral.toUpperCase(),
+            // "Qulaylik" — til, ko'rinish va matn o'lchami ketma-ket,
+            // bitta guruhda. Ilgari bular "Umumiy" kartasida
+            // bildirishnoma qatorlari bilan ARALASH turardi (til,
+            // ko'rinish, bildirishnoma, bildirishnoma sozlamalari,
+            // matn o'lchami) — bir-biriga aloqasi bo'lmagan uchta
+            // "ko'rinish" sozlamasi orasiga ikkita "bildirishnoma"
+            // qatori kirib qolgan edi.
+            Text(l10n.sectionConvenience.toUpperCase(),
                 style: context.captionStyle),
             const SizedBox(height: AppSpacing.sm),
             SettingsCard(
@@ -360,6 +367,24 @@ class SettingsScreen extends ConsumerWidget {
                   onTap: () => _showThemePicker(context, ref),
                 ),
                 SettingsTile(
+                  icon: PhosphorIconsFill.textAa,
+                  iconColor: AppAccents.requests,
+                  title: l10n.textSizeSettingTitle,
+                  subtitle: currentTextScale.label,
+                  subtitleIsValue: true,
+                  onTap: () => _showTextScalePicker(context, ref),
+                  showDivider: false,
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xxl),
+
+            Text(l10n.sectionGeneral.toUpperCase(),
+                style: context.captionStyle),
+            const SizedBox(height: AppSpacing.sm),
+            SettingsCard(
+              children: [
+                SettingsTile(
                   icon: PhosphorIconsFill.bell,
                   iconColor: AppAccents.events,
                   title: l10n.notificationsMenuItem,
@@ -379,19 +404,11 @@ class SettingsScreen extends ConsumerWidget {
                       context, const NotificationPreferencesScreen()),
                 ),
                 SettingsTile(
-                  icon: PhosphorIconsFill.textAa,
-                  iconColor: AppAccents.requests,
-                  title: l10n.textSizeSettingTitle,
-                  subtitle: currentTextScale.label,
-                  subtitleIsValue: true,
-                  onTap: () => _showTextScalePicker(context, ref),
-                ),
-                SettingsTile(
                   icon: PhosphorIconsFill.sparkle,
                   iconColor: AppColors.primary,
                   title: l10n.assistantScreenTitle,
-                  onTap: () => AppPageRoute.push(
-                      context, const AssistantScreen()),
+                  onTap: () =>
+                      AppPageRoute.push(context, const AssistantScreen()),
                   showDivider: false,
                 ),
               ],
@@ -669,9 +686,8 @@ class SettingsScreen extends ConsumerWidget {
                     // qo'lda tanlov kuchini yo'qotadi.
                     Builder(builder: (_) {
                       final isSystem = current == ThemeMode.system;
-                      void toggle() => ref
-                          .read(themeModeProvider.notifier)
-                          .select(
+                      void toggle() =>
+                          ref.read(themeModeProvider.notifier).select(
                               isSystem ? ThemeMode.light : ThemeMode.system);
                       return GestureDetector(
                         behavior: HitTestBehavior.opaque,
@@ -683,8 +699,7 @@ class SettingsScreen extends ConsumerWidget {
                             children: [
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(ThemeMode.system.label,
                                         style: sheetContext.bodyStyle),
@@ -894,6 +909,10 @@ class _ProfileCard extends StatelessWidget {
 /// qoladi va ikkita qo'shimcha rasm hajm oladi. Bu yerda namuna
 /// mavzuning O'Z RANGLARIDAN chiziladi, ya'ni palitra o'zgarsa
 /// namuna ham o'zi bilan o'zgaradi.
+/// Telefonning o'z "Ko'rinish" (Appearance) tanlagichiga o'xshab —
+/// ilova ekranining kichraytirilgan nusxasini chizish o'rniga (ilgari
+/// shunday edi, foydalanuvchi "shunchaki chizilgan" deb topgan),
+/// oddiy quyosh/oy belgisi bilan yumshoq gradient karta.
 class _ThemePreviewOption extends StatelessWidget {
   final ThemeMode mode;
   final bool selected;
@@ -908,10 +927,9 @@ class _ThemePreviewOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = mode == ThemeMode.dark;
-    final bg = dark ? AppColors.darkBg : AppColors.lightBg;
-    final surface = dark ? AppColors.darkSurface : Colors.white;
-    final text = dark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-    final muted = dark ? AppColors.darkTextMuted : AppColors.lightTextMuted;
+    final gradient = dark
+        ? const [Color(0xFF1C1C28), Color(0xFF33334A)]
+        : const [Color(0xFFFFE7B0), Color(0xFF9FD4FF)];
 
     return TapScale(
       onTap: onTap,
@@ -919,64 +937,24 @@ class _ThemePreviewOption extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 132,
+            height: 100,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: bg,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: gradient,
+              ),
               borderRadius: AppRadius.mdAll,
               border: Border.all(
                 color: selected ? AppColors.primary : context.borderColor,
                 width: selected ? 2.5 : 1,
               ),
             ),
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Sarlavha lentasi — ilovadagi GirihHeader'ga ishora.
-                Container(
-                  height: 22,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // Ikkita "kartochka" — ro'yxat ko'rinishi.
-                for (var i = 0; i < 2; i++) ...[
-                  Container(
-                    height: 26,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: surface,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 5,
-                          width: 46,
-                          decoration: BoxDecoration(
-                            color: text,
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Container(
-                          height: 4,
-                          width: 30,
-                          decoration: BoxDecoration(
-                            color: muted,
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (i == 0) const SizedBox(height: 6),
-                ],
-              ],
+            child: Icon(
+              dark ? PhosphorIconsFill.moonStars : PhosphorIconsFill.sun,
+              size: 40,
+              color: dark ? Colors.white : const Color(0xFFB8791A),
             ),
           ),
           const SizedBox(height: AppSpacing.sm),

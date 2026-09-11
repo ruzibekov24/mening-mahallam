@@ -205,6 +205,7 @@
   "changeButton": "Almashtirish",
   "changeMahallaTitle": "Mahallani almashtirish",
   "changeMahallaMessage": "Yangi mahallaga QR kod skanerlash yoki kodni qo'lda kiritish orqali bog'lanasiz. Davom etasizmi?",
+  "sectionConvenience": "Qulaylik",
   "sectionGeneral": "Umumiy",
   "sectionManagement": "Boshqaruv",
   "membersManagementTitle": "A'zolarni boshqarish",

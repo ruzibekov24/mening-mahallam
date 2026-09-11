@@ -57,8 +57,7 @@ class NeighborsScreen extends ConsumerWidget {
                       showConversations
                           ? l10n.yozishmalarTitle
                           : l10n.neighborsTitle,
-                      style:
-                          context.titleStyle.copyWith(color: Colors.white),
+                      style: context.titleStyle.copyWith(color: Colors.white),
                     ),
                   ),
                   if (showConversations)
@@ -76,8 +75,8 @@ class NeighborsScreen extends ConsumerWidget {
                       diameter: 40,
                       iconSize: 20,
                       iconColor: Colors.white,
-                      onTap: () => AppPageRoute.push(
-                          context, const ServicesScreen()),
+                      onTap: () =>
+                          AppPageRoute.push(context, const ServicesScreen()),
                     ),
                 ],
               ),
@@ -229,8 +228,7 @@ class _NeighborsListState extends ConsumerState<_NeighborsList> {
                       hintText: l10n.searchNeighborHint,
                       border: InputBorder.none,
                       isDense: true,
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                     style: context.bodyStyle,
                   ),
@@ -273,6 +271,7 @@ class _NeighborsListState extends ConsumerState<_NeighborsList> {
                   title: l10n.searchNoResults,
                   accent: AppAccents.neighbors,
                   scrollable: true,
+                  imageAsset: 'assets/images/empty_states/search.png',
                 );
               }
 
@@ -282,14 +281,10 @@ class _NeighborsListState extends ConsumerState<_NeighborsList> {
               // bo'lsa, hammasi "Mahalladoshlar" ostida chiqadi.
               final hasMyStreet = myStreet != null && myStreet.isNotEmpty;
               final neighbors = hasMyStreet
-                  ? members
-                      .where((m) => m.street?.trim() == myStreet)
-                      .toList()
+                  ? members.where((m) => m.street?.trim() == myStreet).toList()
                   : <MahallaMember>[];
               final others = hasMyStreet
-                  ? members
-                      .where((m) => m.street?.trim() != myStreet)
-                      .toList()
+                  ? members.where((m) => m.street?.trim() != myStreet).toList()
                   : members;
 
               void sortByOnlineThenName(List<MahallaMember> list) {
@@ -331,14 +326,14 @@ class _NeighborsListState extends ConsumerState<_NeighborsList> {
               }
 
               return ListView(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.xl,
-                    AppSpacing.sm, AppSpacing.xl, AppSpacing.xxl),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.sm,
+                    AppSpacing.xl, AppSpacing.xxl),
                 children: sections,
               );
             },
             loading: () => ListView(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.xl,
-                  AppSpacing.sm, AppSpacing.xl, AppSpacing.xxl),
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.xl, AppSpacing.sm, AppSpacing.xl, AppSpacing.xxl),
               physics: const NeverScrollableScrollPhysics(),
               children: const [ShimmerList(count: 6)],
             ),
@@ -377,8 +372,7 @@ class _NeighborTile extends StatelessWidget {
       // Telegram uslubi: qo'shnini bosish endi to'g'ridan-to'g'ri u
       // bilan suhbatni ochadi — profilni ko'rish uchun suhbat ichidagi
       // ism/rasmga bosiladi (`ChatScreen`da allaqachon bor).
-      onTap: () =>
-          AppPageRoute.push(context, ChatScreen(otherUid: member.uid)),
+      onTap: () => AppPageRoute.push(context, ChatScreen(otherUid: member.uid)),
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       child: Row(
         children: [

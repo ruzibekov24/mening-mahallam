@@ -935,6 +935,12 @@ abstract class AppLocalizations {
   /// **'Yangi mahallaga QR kod skanerlash yoki kodni qo\'lda kiritish orqali bog\'lanasiz. Davom etasizmi?'**
   String get changeMahallaMessage;
 
+  /// No description provided for @sectionConvenience.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qulaylik'**
+  String get sectionConvenience;
+
   /// No description provided for @sectionGeneral.
   ///
   /// In uz, this message translates to:

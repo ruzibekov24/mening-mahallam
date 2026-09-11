@@ -460,6 +460,9 @@ class AppLocalizationsUz extends AppLocalizations {
       'Yangi mahallaga QR kod skanerlash yoki kodni qo\'lda kiritish orqali bog\'lanasiz. Davom etasizmi?';
 
   @override
+  String get sectionConvenience => 'Qulaylik';
+
+  @override
   String get sectionGeneral => 'Umumiy';
 
   @override
@@ -2660,6 +2663,9 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
   @override
   String get changeMahallaMessage =>
       'Янги маҳаллага QR код сканерлаш ёки кодни қўлда киритиш орқали боғланасиз. Давом этасизми?';
+
+  @override
+  String get sectionConvenience => 'Қулайлик';
 
   @override
   String get sectionGeneral => 'Умумий';

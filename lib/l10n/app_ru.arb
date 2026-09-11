@@ -146,6 +146,7 @@
   "changeButton": "Изменить",
   "changeMahallaTitle": "Смена махалли",
   "changeMahallaMessage": "Вы подключитесь к новой махалле через сканирование QR-кода или ввод кода вручную. Продолжить?",
+  "sectionConvenience": "Удобство",
   "sectionGeneral": "Общие",
   "sectionManagement": "Управление",
   "membersManagementTitle": "Управление участниками",

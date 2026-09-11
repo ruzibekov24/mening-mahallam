@@ -458,6 +458,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'You\'ll connect to a new mahalla by scanning a QR code or entering the code manually. Continue?';
 
   @override
+  String get sectionConvenience => 'Convenience';
+
+  @override
   String get sectionGeneral => 'General';
 
   @override

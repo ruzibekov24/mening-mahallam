@@ -461,6 +461,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Вы подключитесь к новой махалле через сканирование QR-кода или ввод кода вручную. Продолжить?';
 
   @override
+  String get sectionConvenience => 'Удобство';
+
+  @override
   String get sectionGeneral => 'Общие';
 
   @override
