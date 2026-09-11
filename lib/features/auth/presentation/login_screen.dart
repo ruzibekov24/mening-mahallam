@@ -6,6 +6,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/girih_header.dart';
 import '../../../core/widgets/uz_phone_input_formatter.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/auth_repository.dart';
@@ -82,67 +83,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Yuqoridagi gradient banner — pastki chegarasi to'lqin
-          // shaklida, ichida esa yumshoq topologik chiziqlar bor
-          // (referensdagi "Welcome"/"wwater" uslubiga o'xshab).
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
+          // Boshqa barcha ro'yxat/tab ekranlari bilan bir xil sarlavha
+          // lentasi — ilgari bu yerda alohida `_WaveClipper` + qo'lda
+          // chizilgan topologik chiziqlar bor edi, endi umumiy
+          // `GirihHeader`ga o'tkazildi (fon surati saqlanadi).
+          SizedBox(
             height: bannerHeight,
-            child: ClipPath(
-              clipper: _WaveClipper(),
-              child: Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/patterns/auth_gate.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                foregroundDecoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      AppColors.primary.withValues(alpha: 0.82),
-                      Color.lerp(AppColors.primary, const Color(0xFF7B5CFA), 0.55)!
-                          .withValues(alpha: 0.82),
-                    ],
-                  ),
-                ),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Positioned.fill(
-                      child: CustomPaint(painter: _TopoLinesPainter()),
-                    ),
-                    Positioned(
-                      top: -40,
-                      right: -30,
-                      child: Container(
-                        width: 140,
-                        height: 140,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.10),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 90,
-                      left: -40,
-                      child: Container(
-                        width: 90,
-                        height: 90,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.08),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            width: double.infinity,
+            child: GirihHeader(
+              image: 'assets/images/patterns/auth_gate.jpg',
+              child: const SizedBox.shrink(),
             ),
           ),
 
@@ -159,13 +109,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: AppRadius.lgAll,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.18),
-                            blurRadius: 24,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
+                        boxShadow: AppShadows.elevated(isDark),
                       ),
                       padding: const EdgeInsets.all(AppSpacing.lg),
                       child: Image.asset('assets/images/logo.png',
@@ -174,8 +118,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: AppSpacing.xxxl),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xxl),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -186,9 +130,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             style: context.displayStyle.copyWith(fontSize: 26),
                           ),
                           const SizedBox(height: AppSpacing.xs),
-                          Text(l10n.loginSubtitle, style: context.secondaryStyle),
+                          Text(l10n.loginSubtitle,
+                              style: context.secondaryStyle),
                           const SizedBox(height: AppSpacing.xxl),
-
                           Text(l10n.phoneLabel, style: context.captionStyle),
                           const SizedBox(height: AppSpacing.sm),
                           _shadowedField(
@@ -210,7 +154,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: AppSpacing.lg),
-
                           Text(l10n.passwordLabel, style: context.captionStyle),
                           const SizedBox(height: AppSpacing.sm),
                           _shadowedField(
@@ -251,39 +194,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: AppSpacing.sm),
-
-                          SizedBox(
-                            height: 54,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: AppRadius.mdAll,
-                                boxShadow: AppShadows.accent(
-                                    AppColors.primary, isDark),
-                              ),
-                              child: ElevatedButton(
-                                onPressed: _isLoading ? null : _handleLogin,
-                                child: _isLoading
-                                    ? const SizedBox(
-                                        width: 22,
-                                        height: 22,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2.5,
-                                          valueColor: AlwaysStoppedAnimation(
-                                              Colors.white),
-                                        ),
-                                      )
-                                    : Text(l10n.loginButton),
-                              ),
-                            ),
+                          ElevatedButton(
+                            onPressed: _isLoading ? null : _handleLogin,
+                            child: _isLoading
+                                ? const SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      valueColor:
+                                          AlwaysStoppedAnimation(Colors.white),
+                                    ),
+                                  )
+                                : Text(l10n.loginButton),
                           ),
                           const SizedBox(height: AppSpacing.xxl),
-
                           Row(
                             children: [
                               Expanded(
                                   child: Divider(
-                                      color: secondaryColor
-                                          .withValues(alpha: 0.3))),
+                                      color: secondaryColor.withValues(
+                                          alpha: 0.3))),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: AppSpacing.md),
@@ -292,12 +223,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                               Expanded(
                                   child: Divider(
-                                      color: secondaryColor
-                                          .withValues(alpha: 0.3))),
+                                      color: secondaryColor.withValues(
+                                          alpha: 0.3))),
                             ],
                           ),
                           const SizedBox(height: AppSpacing.xl),
-
                           Center(
                             child: Wrap(
                               children: [
@@ -342,66 +272,4 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       child: child,
     );
   }
-}
-/// Bannerning pastki chegarasini yumshoq to'lqin shaklida kesadi
-/// (referensdagi "Welcome"/"wwater" ekranlaridagi uslub).
-class _WaveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.lineTo(0, size.height - 46);
-    path.quadraticBezierTo(
-      size.width * 0.25,
-      size.height,
-      size.width * 0.5,
-      size.height - 20,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.75,
-      size.height - 46,
-      size.width,
-      size.height - 10,
-    );
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
-}
-
-/// Banner ichida yumshoq, tasodifiy bo'lmagan topologik chiziqlar —
-/// referensdagi xira "contour line" naqshiga o'xshab, fonni
-/// mazmunliroq qiladi.
-class _TopoLinesPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.07)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.4;
-
-    for (var i = 0; i < 5; i++) {
-      final path = Path();
-      final baseY = size.height * (0.15 + i * 0.16);
-      path.moveTo(-20, baseY);
-      path.quadraticBezierTo(
-        size.width * 0.3,
-        baseY - 30 - i * 6,
-        size.width * 0.55,
-        baseY + 10,
-      );
-      path.quadraticBezierTo(
-        size.width * 0.8,
-        baseY + 40 + i * 4,
-        size.width + 20,
-        baseY - 15,
-      );
-      canvas.drawPath(path, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _TopoLinesPainter oldDelegate) => false;
 }

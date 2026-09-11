@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../services/image_upload_service.dart';
 import '../theme/app_theme.dart';
@@ -39,13 +40,13 @@ class MediaPickerGrid extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.photo_library_outlined),
+                  leading: const Icon(PhosphorIconsRegular.imagesSquare),
                   title: const Text('Rasm'),
                   onTap: () =>
                       Navigator.of(sheetContext).pop(_PickChoice.image),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.videocam_outlined),
+                  leading: const Icon(PhosphorIconsRegular.videoCamera),
                   title: const Text('Video'),
                   onTap: () =>
                       Navigator.of(sheetContext).pop(_PickChoice.video),
@@ -118,7 +119,7 @@ class MediaPickerGrid extends StatelessWidget {
                         color: Colors.black87,
                         alignment: Alignment.center,
                         child: const Icon(
-                          Icons.play_circle_fill_rounded,
+                          PhosphorIconsFill.playCircle,
                           color: Colors.white,
                           size: 32,
                         ),
@@ -136,7 +137,7 @@ class MediaPickerGrid extends StatelessWidget {
                       color: Colors.black54,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.close_rounded,
+                    child: const Icon(PhosphorIconsBold.x,
                         size: 13, color: Colors.white),
                   ),
                 ),
@@ -155,7 +156,7 @@ class MediaPickerGrid extends StatelessWidget {
                 border: Border.all(color: borderColor, width: 1.2),
               ),
               child: Icon(
-                Icons.add_photo_alternate_outlined,
+                PhosphorIconsRegular.imagesSquare,
                 color: isDark
                     ? AppColors.darkTextSecondary
                     : AppColors.lightTextSecondary,

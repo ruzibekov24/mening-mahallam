@@ -48,12 +48,10 @@ class PremiumScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
-
             if (isPremium)
               _ActiveCard(until: profile!.premiumUntil!, l10n: l10n)
             else
               _HeroCard(price: config.monthlyPrice, l10n: l10n),
-
             const SizedBox(height: AppSpacing.xl),
             Text(l10n.premiumBenefitsTitle, style: context.captionStyle),
             const SizedBox(height: AppSpacing.sm),
@@ -97,7 +95,6 @@ class PremiumScreen extends ConsumerWidget {
                 ],
               ),
             ),
-
             if (!isPremium) ...[
               const SizedBox(height: AppSpacing.xl),
               if (request != null && request.isAwaitingPayment)
@@ -275,8 +272,7 @@ class _PlanPickerState extends ConsumerState<_PlanPicker> {
     final profile = widget.profile;
     if (profile == null) return;
 
-    final plan =
-        PremiumPlan.all.firstWhere((p) => p.months == _selectedMonths);
+    final plan = PremiumPlan.all.firstWhere((p) => p.months == _selectedMonths);
 
     setState(() => _busy = true);
     try {
@@ -288,7 +284,8 @@ class _PlanPickerState extends ConsumerState<_PlanPicker> {
           );
     } catch (_) {
       if (!mounted) return;
-      showAppAlert(context, widget.l10n.unexpectedError, kind: AppAlertKind.error);
+      showAppAlert(context, widget.l10n.unexpectedError,
+          kind: AppAlertKind.error);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -418,7 +415,7 @@ class _PlanTile extends StatelessWidget {
                               horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: const Color(0xFF1E8E3E),
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: AppRadius.smAll,
                           ),
                           child: Text(
                             '-${plan.discountPercent}%',
@@ -511,7 +508,8 @@ class _PaymentPanelState extends ConsumerState<_PaymentPanel> {
       await ref.read(premiumRepositoryProvider).markAsPaid(widget.request.id);
     } catch (_) {
       if (!mounted) return;
-      showAppAlert(context, widget.l10n.unexpectedError, kind: AppAlertKind.error);
+      showAppAlert(context, widget.l10n.unexpectedError,
+          kind: AppAlertKind.error);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -556,7 +554,6 @@ class _PaymentPanelState extends ConsumerState<_PaymentPanel> {
           const SizedBox(height: AppSpacing.md),
           Text(l10n.premiumTransferHint, style: context.secondaryStyle),
           const SizedBox(height: AppSpacing.md),
-
           _CopyRow(
             label: l10n.premiumCardNumber,
             value: widget.config.formattedCard,
@@ -578,7 +575,6 @@ class _PaymentPanelState extends ConsumerState<_PaymentPanel> {
             onTap: () => _copy(
                 widget.request.amount.toString(), l10n.premiumAmountCopied),
           ),
-
           const SizedBox(height: AppSpacing.lg),
           SizedBox(
             width: double.infinity,
@@ -711,6 +707,5 @@ String _formatSum(int value) {
   return "${buf.toString()} so'm";
 }
 
-String _formatDate(DateTime dt) =>
-    '${dt.day.toString().padLeft(2, '0')}.'
+String _formatDate(DateTime dt) => '${dt.day.toString().padLeft(2, '0')}.'
     '${dt.month.toString().padLeft(2, '0')}.${dt.year}';

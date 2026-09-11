@@ -86,7 +86,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     // Ekrandan chiqishda yozayotganlik belgisini tozalash — "best
     // effort", javobni kutmaymiz.
     if (_typingActive) {
-      ref.read(chatRepositoryProvider).setTyping(_conversationId, isTyping: false);
+      ref
+          .read(chatRepositoryProvider)
+          .setTyping(_conversationId, isTyping: false);
     }
     _textController.dispose();
     super.dispose();
@@ -116,7 +118,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     _typingIdleTimer = Timer(_typingIdleTimeout, () {
       _typingActive = false;
       _lastTypingWriteAt = null;
-      ref.read(chatRepositoryProvider).setTyping(_conversationId, isTyping: false);
+      ref
+          .read(chatRepositoryProvider)
+          .setTyping(_conversationId, isTyping: false);
     });
   }
 
@@ -125,7 +129,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     if (_typingActive) {
       _typingActive = false;
       _lastTypingWriteAt = null;
-      ref.read(chatRepositoryProvider).setTyping(_conversationId, isTyping: false);
+      ref
+          .read(chatRepositoryProvider)
+          .setTyping(_conversationId, isTyping: false);
     }
   }
 
@@ -287,7 +293,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
           decoration: BoxDecoration(
             color: isDark ? AppColors.darkSurface : Colors.white,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
           ),
           child: SafeArea(
             top: false,
@@ -301,7 +308,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       TapScale(
                         onTap: () {
                           Navigator.of(sheetContext).pop();
-                          ref.read(chatRepositoryProvider).toggleMessageReaction(
+                          ref
+                              .read(chatRepositoryProvider)
+                              .toggleMessageReaction(
                                 conversationId: _conversationId,
                                 messageId: message.id,
                                 emoji: emoji,
@@ -346,7 +355,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       leading: const Icon(PhosphorIconsRegular.trash,
                           color: AppColors.danger),
                       title: Text(l10n.deleteButton,
-                          style: const TextStyle(color: AppColors.danger)),
+                          style: sheetContext.bodyStyle
+                              .copyWith(color: AppColors.danger)),
                       onTap: () {
                         Navigator.of(sheetContext).pop();
                         onDelete();
@@ -458,7 +468,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                                         color:
                                                             AppColors.primary),
                                               ),
-                                              const SizedBox(width: AppSpacing.xxs),
+                                              const SizedBox(
+                                                  width: AppSpacing.xxs),
                                               const _TypingDots(),
                                             ],
                                           )
@@ -518,8 +529,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       // shu xabar bilan undan "keyingi" (vaqt bo'yicha
                       // oldingi, ro'yxatda index+1) xabar orasida
                       // kun farqi bo'lsa ko'rsatiladi.
-                      final olderMessage =
-                          index + 1 < messages.length ? messages[index + 1] : null;
+                      final olderMessage = index + 1 < messages.length
+                          ? messages[index + 1]
+                          : null;
                       final showDateSeparator = olderMessage == null ||
                           !_isSameDay(
                               message.createdAt, olderMessage.createdAt);
@@ -577,8 +589,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           children: [
                             bubble,
                             _DateSeparator(
-                              label: _dateSeparatorLabel(
-                                  l10n, message.createdAt),
+                              label:
+                                  _dateSeparatorLabel(l10n, message.createdAt),
                             ),
                           ],
                         );
@@ -875,58 +887,58 @@ class _MessageBubble extends StatelessWidget {
           Material(
             color: Colors.transparent,
             child: InkWell(
-                borderRadius: AppRadius.mdAll,
-                onLongPress: onLongPress,
-                onTap: message.isImage ? onImageTap : null,
-                child: Container(
-                  constraints: BoxConstraints(
-                      maxWidth: MediaQuery.sizeOf(context).width * 0.75),
-                  padding: message.isImage
-                      ? const EdgeInsets.all(4)
-                      : const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: isMine
-                        ? AppColors.primary
-                        : (context.isDarkMode
-                            ? AppColors.darkSurface
-                            : AppColors.lightBorder),
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(18),
-                      topRight: const Radius.circular(18),
-                      bottomLeft: Radius.circular(isMine ? 18 : 4),
-                      bottomRight: Radius.circular(isMine ? 4 : 18),
-                    ),
+              borderRadius: AppRadius.mdAll,
+              onLongPress: onLongPress,
+              onTap: message.isImage ? onImageTap : null,
+              child: Container(
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.sizeOf(context).width * 0.75),
+                padding: message.isImage
+                    ? const EdgeInsets.all(4)
+                    : const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: isMine
+                      ? AppColors.primary
+                      : (context.isDarkMode
+                          ? AppColors.darkSurface
+                          : AppColors.lightBorder),
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(18),
+                    topRight: const Radius.circular(18),
+                    bottomLeft: Radius.circular(isMine ? 18 : 4),
+                    bottomRight: Radius.circular(isMine ? 4 : 18),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (message.deleted)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(PhosphorIconsRegular.prohibit,
-                                size: 14,
-                                color: (isMine
-                                        ? Colors.white
-                                        : context.textSecondary)
-                                    .withValues(alpha: 0.75)),
-                            const SizedBox(width: 4),
-                            Text(
-                              AppLocalizations.of(context)
-                                  .messageDeletedPlaceholder,
-                              style: context.bodyStyle.copyWith(
-                                fontStyle: FontStyle.italic,
-                                color: (isMine
-                                        ? Colors.white
-                                        : context.textSecondary)
-                                    .withValues(alpha: 0.75),
-                              ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (message.deleted)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(PhosphorIconsRegular.prohibit,
+                              size: 14,
+                              color: (isMine
+                                      ? Colors.white
+                                      : context.textSecondary)
+                                  .withValues(alpha: 0.75)),
+                          const SizedBox(width: 4),
+                          Text(
+                            AppLocalizations.of(context)
+                                .messageDeletedPlaceholder,
+                            style: context.bodyStyle.copyWith(
+                              fontStyle: FontStyle.italic,
+                              color: (isMine
+                                      ? Colors.white
+                                      : context.textSecondary)
+                                  .withValues(alpha: 0.75),
                             ),
-                          ],
-                        )
-                      else ...[
+                          ),
+                        ],
+                      )
+                    else ...[
                       if (message.isImage)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(14),
@@ -970,54 +982,54 @@ class _MessageBubble extends StatelessWidget {
                           ),
                         ),
                       ],
-                      ],
-                      const SizedBox(height: 2),
-                      Padding(
-                        padding: message.isImage
-                            ? const EdgeInsets.fromLTRB(0, 0, AppSpacing.xs, 2)
-                            : EdgeInsets.zero,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (message.editedAt != null && !message.deleted) ...[
-                              Text(
-                                AppLocalizations.of(context).editedLabel,
-                                style: context.captionStyle.copyWith(
-                                  color: isMine
-                                      ? Colors.white.withValues(alpha: 0.65)
-                                      : context.textMuted,
-                                ),
-                              ),
-                              const SizedBox(width: 3),
-                            ],
+                    ],
+                    const SizedBox(height: 2),
+                    Padding(
+                      padding: message.isImage
+                          ? const EdgeInsets.fromLTRB(0, 0, AppSpacing.xs, 2)
+                          : EdgeInsets.zero,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (message.editedAt != null && !message.deleted) ...[
                             Text(
-                              _formatTime(message.createdAt),
+                              AppLocalizations.of(context).editedLabel,
                               style: context.captionStyle.copyWith(
                                 color: isMine
-                                    ? Colors.white.withValues(alpha: 0.75)
+                                    ? Colors.white.withValues(alpha: 0.65)
                                     : context.textMuted,
                               ),
                             ),
-                            if (isMine) ...[
-                              const SizedBox(width: 3),
-                              Icon(
-                                isRead
-                                    ? PhosphorIconsRegular.checks
-                                    : PhosphorIconsRegular.check,
-                                size: 13,
-                                color: isRead
-                                    ? Colors.white
-                                    : Colors.white.withValues(alpha: 0.75),
-                              ),
-                            ],
+                            const SizedBox(width: 3),
                           ],
-                        ),
+                          Text(
+                            _formatTime(message.createdAt),
+                            style: context.captionStyle.copyWith(
+                              color: isMine
+                                  ? Colors.white.withValues(alpha: 0.75)
+                                  : context.textMuted,
+                            ),
+                          ),
+                          if (isMine) ...[
+                            const SizedBox(width: 3),
+                            Icon(
+                              isRead
+                                  ? PhosphorIconsRegular.checks
+                                  : PhosphorIconsRegular.check,
+                              size: 13,
+                              color: isRead
+                                  ? Colors.white
+                                  : Colors.white.withValues(alpha: 0.75),
+                            ),
+                          ],
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
+          ),
           if (reactionEntries.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: AppSpacing.xxs),
@@ -1079,7 +1091,7 @@ class _ReactionsChipRow extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(entry.key, style: const TextStyle(fontSize: 12)),
+                  Text(entry.key, style: context.captionStyle),
                   if (entry.value > 1) ...[
                     const SizedBox(width: 2),
                     Text(

@@ -37,7 +37,7 @@ class ProfileScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillAll),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgAll),
         icon: Container(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
@@ -297,13 +297,13 @@ class _ProfileBannerHeader extends StatelessWidget {
       width: double.infinity,
       decoration: banner.decoration().copyWith(
             borderRadius: const BorderRadius.vertical(
-              bottom: Radius.circular(28),
+              bottom: Radius.circular(AppRadius.pill),
             ),
           ),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.vertical(
-            bottom: Radius.circular(28),
+            bottom: Radius.circular(AppRadius.pill),
           ),
           gradient: LinearGradient(
             begin: Alignment.topCenter,

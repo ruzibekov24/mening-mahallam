@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../../l10n/app_localizations.dart';
 
@@ -8,7 +9,7 @@ class PreviewItem {
   final String label;
 
   /// GPT'da generatsiya qilingan rangli 3D belgi — berilsa, oddiy
-  /// Material ikonkasi o'rniga shu ishlatiladi.
+  /// ikonka o'rniga shu ishlatiladi.
   final String? imagePath;
 
   const PreviewItem({
@@ -22,22 +23,22 @@ List<PreviewItem> onboardingPreviewItems(BuildContext context) {
   final l10n = AppLocalizations.of(context);
   return [
     PreviewItem(
-      icon: Icons.campaign_rounded,
+      icon: PhosphorIconsFill.megaphone,
       label: l10n.previewAnnouncements,
       imagePath: 'assets/images/onboarding_icons/announcements.png',
     ),
     PreviewItem(
-      icon: Icons.event_rounded,
+      icon: PhosphorIconsFill.calendarBlank,
       label: l10n.previewEvents,
       imagePath: 'assets/images/onboarding_icons/events.png',
     ),
     PreviewItem(
-      icon: Icons.chat_bubble_rounded,
+      icon: PhosphorIconsFill.notePencil,
       label: l10n.previewRequests,
       imagePath: 'assets/images/onboarding_icons/requests.png',
     ),
     PreviewItem(
-      icon: Icons.groups_rounded,
+      icon: PhosphorIconsFill.usersThree,
       label: l10n.previewNeighbors,
       imagePath: 'assets/images/onboarding_icons/neighbors.png',
     ),

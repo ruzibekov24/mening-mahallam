@@ -13,7 +13,7 @@ Future<bool> confirmDelete(BuildContext context, {required String itemTitle}) as
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillAll),
+      shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgAll),
       icon: Container(
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(

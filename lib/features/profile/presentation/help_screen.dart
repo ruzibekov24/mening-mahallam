@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/widgets/app_alert.dart';
 
@@ -44,18 +45,28 @@ class HelpScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.helpMenuItem)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(
-              AppSpacing.xl, AppSpacing.md, AppSpacing.xl, AppSpacing.xxxl),
+              AppSpacing.xl, AppSpacing.xs, AppSpacing.xl, AppSpacing.xxxl),
           children: [
+            Row(
+              children: [
+                const LiquidGlassBackButton(),
+                const SizedBox(width: AppSpacing.xs),
+                Expanded(
+                  child: Text(l10n.helpMenuItem, style: context.titleStyle),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
             Text(l10n.faqTitle, style: context.sectionStyle),
             const SizedBox(height: AppSpacing.md),
             AppCard(
               padding: EdgeInsets.zero,
               child: Theme(
-                data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                data: Theme.of(context)
+                    .copyWith(dividerColor: Colors.transparent),
                 child: Column(
                   children: [
                     for (final (question, answer) in faqItems)

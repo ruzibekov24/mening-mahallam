@@ -5,6 +5,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/widgets/app_alert.dart';
 import '../data/premium_repository.dart';
@@ -99,110 +100,122 @@ class _PremiumConfigScreenState extends ConsumerState<PremiumConfigScreen> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.premiumConfigTitle)),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : Form(
-              key: _formKey,
-              child: ListView(
-                padding: const EdgeInsets.all(AppSpacing.xl),
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.08),
-                      borderRadius: AppRadius.smAll,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : Form(
+                key: _formKey,
+                child: ListView(
+                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  children: [
+                    Row(
                       children: [
-                        const Icon(PhosphorIconsFill.info,
-                            size: 18, color: AppColors.primary),
-                        const SizedBox(width: AppSpacing.sm),
+                        const LiquidGlassBackButton(),
+                        const SizedBox(width: AppSpacing.xs),
                         Expanded(
-                          child: Text(
-                            l10n.premiumConfigHint,
-                            style: context.secondaryStyle,
-                          ),
+                          child: Text(l10n.premiumConfigTitle,
+                              style: context.titleStyle),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  TextFormField(
-                    controller: _cardNumber,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(16),
-                    ],
-                    decoration: InputDecoration(
-                      labelText: l10n.premiumCardNumberLabel,
-                    ),
-                    validator: (v) {
-                      final digits = (v ?? '').replaceAll(RegExp(r'\D'), '');
-                      return digits.length == 16
-                          ? null
-                          : l10n.premiumCardNumberInvalid;
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  TextFormField(
-                    controller: _cardHolder,
-                    textCapitalization: TextCapitalization.words,
-                    decoration: InputDecoration(
-                      labelText: l10n.premiumCardHolderLabel,
-                    ),
-                    validator: (v) => (v ?? '').trim().isEmpty
-                        ? l10n.premiumCardHolderInvalid
-                        : null,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  TextFormField(
-                    controller: _price,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: InputDecoration(
-                      labelText: l10n.premiumPriceLabel,
-                      suffixText: l10n.currencySom,
-                    ),
-                    validator: (v) {
-                      final n = int.tryParse((v ?? '').trim());
-                      return (n != null && n > 0)
-                          ? null
-                          : l10n.premiumPriceInvalid;
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  TextFormField(
-                    controller: _telegram,
-                    decoration: InputDecoration(
-                      labelText: l10n.premiumTelegramLabel,
-                      prefixText: '@',
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xxl),
-                  FilledButton(
-                    onPressed: _saving ? null : _save,
-                    style: FilledButton.styleFrom(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                      shape: const RoundedRectangleBorder(
+                    const SizedBox(height: AppSpacing.lg),
+                    Container(
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.08),
                         borderRadius: AppRadius.smAll,
                       ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(PhosphorIconsFill.info,
+                              size: 18, color: AppColors.primary),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: Text(
+                              l10n.premiumConfigHint,
+                              style: context.secondaryStyle,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    child: _saving
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white),
-                          )
-                        : Text(l10n.saveButton),
-                  ),
-                ],
+                    const SizedBox(height: AppSpacing.xl),
+                    TextFormField(
+                      controller: _cardNumber,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(16),
+                      ],
+                      decoration: InputDecoration(
+                        labelText: l10n.premiumCardNumberLabel,
+                      ),
+                      validator: (v) {
+                        final digits = (v ?? '').replaceAll(RegExp(r'\D'), '');
+                        return digits.length == 16
+                            ? null
+                            : l10n.premiumCardNumberInvalid;
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    TextFormField(
+                      controller: _cardHolder,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: InputDecoration(
+                        labelText: l10n.premiumCardHolderLabel,
+                      ),
+                      validator: (v) => (v ?? '').trim().isEmpty
+                          ? l10n.premiumCardHolderInvalid
+                          : null,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    TextFormField(
+                      controller: _price,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(
+                        labelText: l10n.premiumPriceLabel,
+                        suffixText: l10n.currencySom,
+                      ),
+                      validator: (v) {
+                        final n = int.tryParse((v ?? '').trim());
+                        return (n != null && n > 0)
+                            ? null
+                            : l10n.premiumPriceInvalid;
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    TextFormField(
+                      controller: _telegram,
+                      decoration: InputDecoration(
+                        labelText: l10n.premiumTelegramLabel,
+                        prefixText: '@',
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xxl),
+                    FilledButton(
+                      onPressed: _saving ? null : _save,
+                      style: FilledButton.styleFrom(
+                        padding:
+                            const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: AppRadius.smAll,
+                        ),
+                      ),
+                      child: _saving
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white),
+                            )
+                          : Text(l10n.saveButton),
+                    ),
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 }

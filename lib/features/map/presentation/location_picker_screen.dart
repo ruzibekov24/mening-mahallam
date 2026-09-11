@@ -7,6 +7,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/app_alert.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../../l10n/app_localizations.dart';
 
 /// Umumiy joylashuv tanlash ekrani — xaritani bosib nuqta qo'yish yoki
@@ -87,21 +88,6 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     final isDark = context.isDarkMode;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.setLocationLabel),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(_selected),
-            child: Text(
-              l10n.confirmButton,
-              style: const TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
       body: Stack(
         children: [
           FlutterMap(
@@ -134,10 +120,29 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                 ),
             ],
           ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+              child: Row(
+                children: [
+                  LiquidGlassBackButton(
+                    onTap: () => Navigator.of(context).pop(),
+                  ),
+                  const Spacer(),
+                  LiquidPillButton(
+                    label: l10n.confirmButton,
+                    icon: PhosphorIconsFill.check,
+                    onTap: () => Navigator.of(context).pop(_selected),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Positioned(
             left: AppSpacing.md,
             right: AppSpacing.md,
-            top: AppSpacing.md,
+            top: AppSpacing.md + 60,
             child: Container(
               padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md, vertical: AppSpacing.sm),

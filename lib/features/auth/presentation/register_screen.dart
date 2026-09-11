@@ -6,6 +6,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../core/widgets/girih_header.dart';
 import '../../../core/widgets/uz_phone_input_formatter.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/auth_repository.dart';
@@ -105,52 +106,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
+          // Login ekrani bilan bir xil umumiy sarlavha lentasi —
+          // alohida to'lqin/topo chizig'i o'rniga `GirihHeader`.
+          SizedBox(
             height: bannerHeight,
-            child: ClipPath(
-              clipper: _RegisterWaveClipper(),
-              child: Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/patterns/auth_gate.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                foregroundDecoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      AppColors.primary.withValues(alpha: 0.82),
-                      Color.lerp(AppColors.primary, const Color(0xFF7B5CFA), 0.55)!
-                          .withValues(alpha: 0.82),
-                    ],
-                  ),
-                ),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Positioned.fill(
-                      child: CustomPaint(painter: _RegisterTopoLinesPainter()),
-                    ),
-                    Positioned(
-                      top: -30,
-                      right: -20,
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.10),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            width: double.infinity,
+            child: GirihHeader(
+              image: 'assets/images/patterns/auth_gate.jpg',
+              child: const SizedBox.shrink(),
             ),
           ),
           SafeArea(
@@ -177,7 +140,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     const SizedBox(height: AppSpacing.xs),
                     Text(l10n.registerSubtitle, style: context.secondaryStyle),
                     const SizedBox(height: AppSpacing.xxl),
-
                     Text(l10n.firstNameLabel, style: context.captionStyle),
                     const SizedBox(height: AppSpacing.sm),
                     _shadowedField(
@@ -192,7 +154,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
-
                     Text(l10n.lastNameLabel, style: context.captionStyle),
                     const SizedBox(height: AppSpacing.sm),
                     _shadowedField(
@@ -200,14 +161,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       child: TextFormField(
                         controller: _lastNameController,
                         textCapitalization: TextCapitalization.words,
-                        decoration: const InputDecoration(hintText: 'Ruzibekov'),
+                        decoration:
+                            const InputDecoration(hintText: 'Ruzibekov'),
                         validator: (value) => (value ?? '').trim().isEmpty
                             ? l10n.lastNameValidationError
                             : null,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
-
                     Text(l10n.phoneLabel, style: context.captionStyle),
                     const SizedBox(height: AppSpacing.sm),
                     _shadowedField(
@@ -229,7 +190,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
-
                     Text(l10n.passwordLabel, style: context.captionStyle),
                     const SizedBox(height: AppSpacing.sm),
                     _shadowedField(
@@ -261,33 +221,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xxl),
-
-                    SizedBox(
-                      height: 54,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: AppRadius.mdAll,
-                          boxShadow:
-                              AppShadows.accent(AppColors.primary, isDark),
-                        ),
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _handleRegister,
-                          child: _isLoading
-                              ? const SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.5,
-                                    valueColor:
-                                        AlwaysStoppedAnimation(Colors.white),
-                                  ),
-                                )
-                              : Text(l10n.continueButton),
-                        ),
-                      ),
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _handleRegister,
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                valueColor:
+                                    AlwaysStoppedAnimation(Colors.white),
+                              ),
+                            )
+                          : Text(l10n.continueButton),
                     ),
                     const SizedBox(height: AppSpacing.xl),
-
                     Center(
                       child: Wrap(
                         children: [
@@ -328,64 +276,4 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       child: child,
     );
   }
-}
-/// Register ekrani banneri uchun to'lqin shakli — LoginScreen'dagi
-/// bilan bir xil uslub, lekin bannerning o'zi kichikroq bo'lgani
-/// uchun to'lqin chuqurligi ham nisbatan kichraytirilgan.
-class _RegisterWaveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.lineTo(0, size.height - 26);
-    path.quadraticBezierTo(
-      size.width * 0.25,
-      size.height,
-      size.width * 0.5,
-      size.height - 12,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.75,
-      size.height - 26,
-      size.width,
-      size.height - 6,
-    );
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
-}
-
-class _RegisterTopoLinesPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.07)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2;
-
-    for (var i = 0; i < 3; i++) {
-      final path = Path();
-      final baseY = size.height * (0.25 + i * 0.3);
-      path.moveTo(-20, baseY);
-      path.quadraticBezierTo(
-        size.width * 0.35,
-        baseY - 20 - i * 5,
-        size.width * 0.6,
-        baseY + 8,
-      );
-      path.quadraticBezierTo(
-        size.width * 0.85,
-        baseY + 24,
-        size.width + 20,
-        baseY - 10,
-      );
-      canvas.drawPath(path, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _RegisterTopoLinesPainter oldDelegate) => false;
 }
