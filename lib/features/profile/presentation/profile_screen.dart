@@ -7,7 +7,6 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/animated_ui.dart';
 import '../../../core/utils/phone_format.dart';
-import '../../../core/widgets/tutorial_keys.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../admin/presentation/mahalla_switcher_screen.dart';
@@ -186,15 +185,12 @@ class ProfileScreen extends ConsumerWidget {
                         onTap: () =>
                             AppPageRoute.push(context, const PremiumScreen()),
                       ),
-                      KeyedSubtree(
-                        key: TutorialKeys.settingsMenuItem,
-                        child: _MenuItem(
-                          icon: PhosphorIconsFill.gearSix,
-                          label: l10n.settingsMenuItem,
-                          iconColor: AppAccents.neighbors,
-                          onTap: () => AppPageRoute.push(
-                              context, const SettingsScreen()),
-                        ),
+                      _MenuItem(
+                        icon: PhosphorIconsFill.gearSix,
+                        label: l10n.settingsMenuItem,
+                        iconColor: AppAccents.neighbors,
+                        onTap: () =>
+                            AppPageRoute.push(context, const SettingsScreen()),
                       ),
                       _MenuItem(
                         icon: PhosphorIconsFill.question,

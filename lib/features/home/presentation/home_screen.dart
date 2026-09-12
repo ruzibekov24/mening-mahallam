@@ -11,7 +11,6 @@ import '../../../core/widgets/girih_header.dart';
 import '../../../core/widgets/liquid_glass.dart';
 import '../../../core/widgets/no_mahalla_view.dart';
 import '../../../core/widgets/shimmer.dart';
-import '../../../core/widgets/tutorial_keys.dart';
 import '../../../core/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../announcements/data/announcements_providers.dart';
@@ -396,28 +395,23 @@ class HomeScreen extends ConsumerWidget {
                       data: (profile) {
                         final mahallaId = profile?.mahallaId;
                         if (mahallaId == null) return const SizedBox.shrink();
-                        return KeyedSubtree(
-                          key: TutorialKeys.map,
-                          child: TapScale(
-                            onTap: () => AppPageRoute.push(context,
-                                MahallaMapScreen(mahallaId: mahallaId)),
-                            borderRadius: AppRadius.mdAll,
-                            // flutter_map o'zining ichki tap-tanish
-                            // (gesture) qatlamiga ega — `interactive:
-                            // false` faqat pan/zoom/rotate'ni o'chiradi,
-                            // lekin bosishni hali ham "yutib qo'yishi"
-                            // mumkin va tashqi TapScale hech qachon ishga
-                            // tushmasligiga olib keladi. AbsorbPointer
-                            // xaritani hit-test'dan butunlay olib
-                            // tashlaydi — bosish faqat TapScale'ga
-                            // tegadi.
-                            child: AbsorbPointer(
-                              child: MahallaMapView(
-                                mahallaId: mahallaId,
-                                height: 170,
-                                interactive: false,
-                                showRequestMarkers: false,
-                              ),
+                        return TapScale(
+                          onTap: () => AppPageRoute.push(
+                              context, MahallaMapScreen(mahallaId: mahallaId)),
+                          borderRadius: AppRadius.mdAll,
+                          // flutter_map o'zining ichki tap-tanish (gesture)
+                          // qatlamiga ega — `interactive: false` faqat
+                          // pan/zoom/rotate'ni o'chiradi, lekin bosishni hali
+                          // ham "yutib qo'yishi" mumkin va tashqi TapScale
+                          // hech qachon ishga tushmasligiga olib keladi.
+                          // AbsorbPointer xaritani hit-test'dan butunlay olib
+                          // tashlaydi — bosish faqat TapScale'ga tegadi.
+                          child: AbsorbPointer(
+                            child: MahallaMapView(
+                              mahallaId: mahallaId,
+                              height: 170,
+                              interactive: false,
+                              showRequestMarkers: false,
                             ),
                           ),
                         );

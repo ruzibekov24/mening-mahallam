@@ -8,13 +8,9 @@ import '../../features/home/presentation/neighbors_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/requests/presentation/requests_screen.dart';
 import '../../features/feed/presentation/feed_screen.dart';
-import '../services/tutorial_service.dart';
 import 'app_feedback.dart';
-import 'app_alert.dart';
 import 'glass_bottom_nav.dart';
 import 'no_mahalla_view.dart';
-import 'tutorial_keys.dart';
-import 'tutorial_overlay.dart';
 
 /// Joriy faol tab indeksi.
 final mainTabIndexProvider = StateProvider<int>((ref) => 0);
@@ -50,7 +46,7 @@ class _NeighborsTab extends ConsumerWidget {
 /// Har bir bo'lim o'zining ekran sarlavhasidagi aksent rangini olib
 /// yuradi — tanlanganda pastki bar rangi shu ekranning brend rangi
 /// bilan mos keladi.
-class MainShell extends ConsumerStatefulWidget {
+class MainShell extends ConsumerWidget {
   const MainShell({super.key});
 
   static const _screens = [
@@ -90,90 +86,8 @@ class MainShell extends ConsumerStatefulWidget {
     ),
   ];
 
-  static final _itemKeys = <GlobalKey?>[
-    null, // Asosiy — qo'llanmada nishonlanmaydi (foydalanuvchi so'rovi).
-    TutorialKeys.navFeed,
-    TutorialKeys.navRequests,
-    TutorialKeys.navNeighbors,
-    TutorialKeys.navProfile,
-  ];
-
   @override
-  ConsumerState<MainShell> createState() => _MainShellState();
-}
-
-class _MainShellState extends ConsumerState<MainShell> {
-  @override
-  void initState() {
-    super.initState();
-    _maybeStartTour();
-  }
-
-  /// Birinchi marta MainShell ochilganda (login/QR-skanerlashdan
-  /// keyin) — "Xush kelibsiz" xabari, so'ng qisqa qo'llanma. Faqat
-  /// hali ko'rilmagan bo'lsa (`TutorialService`), va faqat BIR MARTA
-  /// shu sessiyada.
-  Future<void> _maybeStartTour() async {
-    final completed = await TutorialService.hasCompletedTour();
-    if (completed || !mounted) return;
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (!mounted) return;
-    // "OK" bosilguncha KUTAMIZ — ilgari bu yerda mustaqil kechikish
-    // (`Future.delayed`) ishlatilardi va tur muloqot oyna ustida
-    // hali ochiq turgan paytda ham boshlanib ketardi.
-    await showAppAlert(
-        context, "Xush kelibsiz! Keling, ilova bilan qisqacha tanishtiraman.",
-        kind: AppAlertKind.success);
-    if (!mounted) return;
-    ref.read(tutorialControllerProvider).start();
-  }
-
-  List<TutorialStep> _tutorialSteps(void Function(int) selectIndex) {
-    return [
-      TutorialStep(
-        targetKey: TutorialKeys.map,
-        title: 'Mahallangiz xaritasi',
-        description:
-            "Bu yerda mahallangiz chegarasi va joylashuvi ko'rsatiladi.",
-      ),
-      TutorialStep(
-        targetKey: TutorialKeys.navFeed,
-        title: 'Lenta',
-        description:
-            "E'lonlar, tadbirlar va postlar shu yerda — davom etish uchun bosing.",
-        onTargetTap: () => selectIndex(1),
-      ),
-      TutorialStep(
-        targetKey: TutorialKeys.navRequests,
-        title: 'Murojaatlar',
-        description: "Muammo haqida murojaat yuborish uchun shu yerga bosing.",
-        onTargetTap: () => selectIndex(2),
-      ),
-      TutorialStep(
-        targetKey: TutorialKeys.navNeighbors,
-        title: "Qo'shnilar",
-        description: "Ko'changizdagi va mahalladagi qo'shnilaringiz shu yerda.",
-        onTargetTap: () => selectIndex(3),
-      ),
-      TutorialStep(
-        targetKey: TutorialKeys.navProfile,
-        title: 'Profil',
-        description: "Ma'lumotlaringiz va sozlamalar shu yerda — bosing.",
-        onTargetTap: () => selectIndex(4),
-      ),
-      TutorialStep(
-        targetKey: TutorialKeys.settingsMenuItem,
-        title: 'Sozlamalar',
-        description:
-            "\"Qulaylik\" bo'limida til, ko'rinish (yorug'/qorong'u) va "
-            "matn o'lchamini o'zgartirasiz.",
-        isLast: true,
-      ),
-    ];
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(mainTabIndexProvider);
 
     void selectIndex(int index) {
@@ -208,7 +122,7 @@ class _MainShellState extends ConsumerState<MainShell> {
               },
               child: KeyedSubtree(
                 key: ValueKey(currentIndex),
-                child: MainShell._screens[currentIndex],
+                child: _screens[currentIndex],
               ),
             ),
           ),
@@ -217,20 +131,11 @@ class _MainShellState extends ConsumerState<MainShell> {
             right: 0,
             bottom: 0,
             child: GlassBottomNav(
-              items: MainShell._items,
+              items: _items,
               currentIndex: currentIndex,
               onTap: selectIndex,
-              itemKeys: MainShell._itemKeys,
             ),
           ),
-          Consumer(builder: (context, ref, _) {
-            final controller = ref.watch(tutorialControllerProvider);
-            if (!controller.isActive) return const SizedBox.shrink();
-            return TutorialOverlay(
-              controller: controller,
-              steps: _tutorialSteps(selectIndex),
-            );
-          }),
         ],
       ),
     );

@@ -60,19 +60,12 @@ class GlassBottomNav extends StatefulWidget {
     required this.currentIndex,
     required this.onTap,
     this.accentColor,
-    this.itemKeys,
   });
 
   final List<GlassNavItem> items;
   final int currentIndex;
   final ValueChanged<int> onTap;
   final Color? accentColor;
-
-  /// Ixtiyoriy — berilsa, `itemKeys[i]` shu indeksdagi tugma ustiga
-  /// o'ralib, uni tashqaridan (masalan qo'llanma/tur uchun) aniq
-  /// joylashuvini topish mumkin bo'ladi. `null` elementlar shunchaki
-  /// o'ralmaydi.
-  final List<GlobalKey?>? itemKeys;
 
   @override
   State<GlassBottomNav> createState() => _GlassBottomNavState();
@@ -471,40 +464,33 @@ class _GlassBottomNavState extends State<GlassBottomNav>
                                   final color = selected
                                       ? (item.color ?? accent)
                                       : inactiveColor;
-                                  final itemKey = widget.itemKeys != null &&
-                                          index < widget.itemKeys!.length
-                                      ? widget.itemKeys![index]
-                                      : null;
-                                  final column = Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(item.icon, size: 24, color: color),
-                                      const SizedBox(height: 3),
-                                      FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        child: Text(
-                                          item.label,
-                                          maxLines: 1,
-                                          softWrap: false,
-                                          style: GoogleFonts.sourceSans3(
-                                            fontSize: 9,
-                                            fontWeight: selected
-                                                ? FontWeight.w600
-                                                : FontWeight.w500,
-                                            color: color,
-                                            height: 1,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
                                   return SizedBox(
                                     width: itemWidth,
-                                    child: itemKey != null
-                                        ? KeyedSubtree(
-                                            key: itemKey, child: column)
-                                        : column,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(item.icon, size: 24, color: color),
+                                        const SizedBox(height: 3),
+                                        FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            item.label,
+                                            maxLines: 1,
+                                            softWrap: false,
+                                            style: GoogleFonts.sourceSans3(
+                                              fontSize: 9,
+                                              fontWeight: selected
+                                                  ? FontWeight.w600
+                                                  : FontWeight.w500,
+                                              color: color,
+                                              height: 1,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 }),
                               ),
