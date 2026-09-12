@@ -7,13 +7,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_quill/flutter_quill.dart' show FlutterQuillLocalizations;
+import 'package:flutter_quill/flutter_quill.dart'
+    show FlutterQuillLocalizations;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/router/app_router.dart';
 import 'core/services/presence_service.dart';
 import 'core/services/push_notification_service.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/eye_comfort_provider.dart';
 import 'core/theme/text_scale_provider.dart';
 import 'core/theme/theme_mode_provider.dart';
 import 'features/language/data/language_repository.dart';
@@ -374,6 +376,7 @@ class _MeningMahallamAppState extends ConsumerState<MeningMahallamApp>
     final themeMode = ref.watch(themeModeProvider);
     final textScale = ref.watch(textScaleProvider);
     final appLanguage = ref.watch(languageProvider);
+    final eyeComfort = ref.watch(eyeComfortProvider);
 
     // `glass_bottom_navigation` alohida widget sifatida ishlaydi va
     // AdaptiveApp kabi maxsus ilova ildizini talab qilmaydi — shuning
@@ -407,8 +410,7 @@ class _MeningMahallamAppState extends ConsumerState<MeningMahallamApp>
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final overlay = SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          statusBarIconBrightness:
-              isDark ? Brightness.light : Brightness.dark,
+          statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
           statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
           // Pastki panel foni shaffof — ilova kontenti uning
           // ostidan ko'rinib turadi.
@@ -423,14 +425,50 @@ class _MeningMahallamAppState extends ConsumerState<MeningMahallamApp>
           systemStatusBarContrastEnforced: false,
         );
 
+        Widget content = MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(textScale.factor),
+          ),
+          child: child!,
+        );
+
+        // "Ko'z himoyasi" — Samsungdagi "Eye comfort shield"ga
+        // o'xshab, ko'k rangni kamaytiruvchi issiq filtr. Faqat
+        // shu ilova ichida ishlaydi (tizim darajasidagi Night
+        // Light'dan farqli), shuning uchun `builder`ning ENG
+        // TASHQI qatlamida — barcha ekranlar, dialoglar va
+        // bottom sheet'lar ustida ham qo'llanadi.
+        if (eyeComfort) {
+          content = ColorFiltered(
+            colorFilter: const ColorFilter.matrix(<double>[
+              1.0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0.92,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0.72,
+              0,
+              8,
+              0,
+              0,
+              0,
+              1,
+              0,
+            ]),
+            child: content,
+          );
+        }
+
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: overlay,
-          child: MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.linear(textScale.factor),
-            ),
-            child: child!,
-          ),
+          child: content,
         );
       },
     );

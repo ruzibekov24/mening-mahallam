@@ -157,6 +157,8 @@
   "languageUpdatedMessage": "Язык изменён",
   "appearanceSettingTitle": "Вид",
   "textSizeSettingTitle": "Размер текста",
+  "eyeComfortTitle": "Защита глаз",
+  "eyeComfortSubtitle": "Тёплый фильтр, снижающий синий свет",
   "sectionAbout": "О приложении",
   "versionLabel": "Версия",
   "statActiveRequests": "Активные обращения",

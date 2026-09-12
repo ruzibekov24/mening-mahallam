@@ -494,6 +494,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get textSizeSettingTitle => 'Размер текста';
 
   @override
+  String get eyeComfortTitle => 'Защита глаз';
+
+  @override
+  String get eyeComfortSubtitle => 'Тёплый фильтр, снижающий синий свет';
+
+  @override
   String get sectionAbout => 'О приложении';
 
   @override

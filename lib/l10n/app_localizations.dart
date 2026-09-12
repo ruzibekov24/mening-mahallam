@@ -1001,6 +1001,18 @@ abstract class AppLocalizations {
   /// **'Matn kattaligi'**
   String get textSizeSettingTitle;
 
+  /// No description provided for @eyeComfortTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ko\'z himoyasi'**
+  String get eyeComfortTitle;
+
+  /// No description provided for @eyeComfortSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ko\'k rangni kamaytiruvchi issiq filtr'**
+  String get eyeComfortSubtitle;
+
   /// No description provided for @sectionAbout.
   ///
   /// In uz, this message translates to:

@@ -216,6 +216,8 @@
   "languageUpdatedMessage": "Til o'zgartirildi",
   "appearanceSettingTitle": "Ko'rinish",
   "textSizeSettingTitle": "Matn kattaligi",
+  "eyeComfortTitle": "Ko'z himoyasi",
+  "eyeComfortSubtitle": "Ko'k rangni kamaytiruvchi issiq filtr",
   "sectionAbout": "Ilova haqida",
   "versionLabel": "Versiya",
   "statActiveRequests": "Faol murojaatlar",

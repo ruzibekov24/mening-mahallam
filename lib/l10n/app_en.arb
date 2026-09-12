@@ -150,6 +150,8 @@
   "languageUpdatedMessage": "Language updated",
   "appearanceSettingTitle": "Appearance",
   "textSizeSettingTitle": "Text size",
+  "eyeComfortTitle": "Eye comfort shield",
+  "eyeComfortSubtitle": "Warm filter that reduces blue light",
   "sectionAbout": "About the app",
   "versionLabel": "Version",
   "statActiveRequests": "Active requests",

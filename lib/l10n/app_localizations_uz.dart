@@ -493,6 +493,12 @@ class AppLocalizationsUz extends AppLocalizations {
   String get textSizeSettingTitle => 'Matn kattaligi';
 
   @override
+  String get eyeComfortTitle => 'Ko\'z himoyasi';
+
+  @override
+  String get eyeComfortSubtitle => 'Ko\'k rangni kamaytiruvchi issiq filtr';
+
+  @override
   String get sectionAbout => 'Ilova haqida';
 
   @override
@@ -2700,6 +2706,12 @@ class AppLocalizationsUzCyrl extends AppLocalizationsUz {
 
   @override
   String get textSizeSettingTitle => 'Матн катталиги';
+
+  @override
+  String get eyeComfortTitle => 'Кўз ҳимояси';
+
+  @override
+  String get eyeComfortSubtitle => 'Кўк рангни камайтирувчи иссиқ фильтр';
 
   @override
   String get sectionAbout => 'Илова ҳақида';

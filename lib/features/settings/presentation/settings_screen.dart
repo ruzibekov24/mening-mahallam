@@ -6,6 +6,7 @@ import '../../../core/router/app_page_route.dart';
 import '../../../core/app_version.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../core/theme/eye_comfort_provider.dart';
 import '../../../core/theme/text_scale_provider.dart';
 import '../../../core/theme/theme_mode_provider.dart';
 import '../../../core/utils/phone_format.dart';
@@ -170,6 +171,7 @@ class SettingsScreen extends ConsumerWidget {
     final currentThemeMode = ref.watch(themeModeProvider);
     final notificationsEnabled = ref.watch(notificationSettingsProvider);
     final currentTextScale = ref.watch(textScaleProvider);
+    final eyeComfortEnabled = ref.watch(eyeComfortProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -373,6 +375,17 @@ class SettingsScreen extends ConsumerWidget {
                   subtitle: currentTextScale.label,
                   subtitleIsValue: true,
                   onTap: () => _showTextScalePicker(context, ref),
+                ),
+                SettingsTile(
+                  icon: PhosphorIconsFill.shieldCheck,
+                  iconColor: AppAccents.announcements,
+                  title: l10n.eyeComfortTitle,
+                  subtitle: l10n.eyeComfortSubtitle,
+                  trailing: LiquidToggleSwitch(
+                    value: eyeComfortEnabled,
+                    onChanged: (value) =>
+                        ref.read(eyeComfortProvider.notifier).setEnabled(value),
+                  ),
                   showDivider: false,
                 ),
               ],
@@ -927,9 +940,14 @@ class _ThemePreviewOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = mode == ThemeMode.dark;
-    final gradient = dark
-        ? const [Color(0xFF1C1C28), Color(0xFF33334A)]
-        : const [Color(0xFFFFE7B0), Color(0xFF9FD4FF)];
+    // Telefonning o'z "Ko'rinish" sozlamasidagi kabi — quyosh/oy
+    // ikonkasi o'rniga, shu rejimda ilova qanday ko'rinishini
+    // ko'rsatuvchi KICHIK, sodda "oyna" maketi (Samsung/Android
+    // Display sozlamalaridagi uslub): fon rangi + ichida ikkita
+    // nuqta+chiziq qatori, faqat shu ikkita rang bilan farqlanadi.
+    final outerBg = dark ? const Color(0xFF17171F) : Colors.white;
+    final windowBg = dark ? const Color(0xFF2A2A38) : const Color(0xFFF1F2F6);
+    final barColor = dark ? const Color(0xFF4A4A5A) : const Color(0xFFD7D9E0);
 
     return TapScale(
       onTap: onTap,
@@ -940,21 +958,53 @@ class _ThemePreviewOption extends StatelessWidget {
             height: 100,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: gradient,
-              ),
+              color: outerBg,
               borderRadius: AppRadius.mdAll,
               border: Border.all(
                 color: selected ? AppColors.primary : context.borderColor,
                 width: selected ? 2.5 : 1,
               ),
             ),
-            child: Icon(
-              dark ? PhosphorIconsFill.moonStars : PhosphorIconsFill.sun,
-              size: 40,
-              color: dark ? Colors.white : const Color(0xFFB8791A),
+            child: Container(
+              width: 72,
+              height: 56,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
+              decoration: BoxDecoration(
+                color: windowBg,
+                borderRadius: AppRadius.smAll,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var i = 0; i < 2; i++) ...[
+                    if (i != 0) const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Expanded(
+                          child: Container(
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: barColor,
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
             ),
           ),
           const SizedBox(height: AppSpacing.sm),

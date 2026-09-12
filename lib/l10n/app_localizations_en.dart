@@ -491,6 +491,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get textSizeSettingTitle => 'Text size';
 
   @override
+  String get eyeComfortTitle => 'Eye comfort shield';
+
+  @override
+  String get eyeComfortSubtitle => 'Warm filter that reduces blue light';
+
+  @override
   String get sectionAbout => 'About the app';
 
   @override
