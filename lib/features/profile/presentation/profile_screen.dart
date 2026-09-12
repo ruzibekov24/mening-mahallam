@@ -148,6 +148,7 @@ class ProfileScreen extends ConsumerWidget {
                     children: [
                       _MenuItem(
                         icon: PhosphorIconsFill.userCircle,
+                        imageAsset: 'assets/images/icons/color_person.png',
                         label: l10n.myInfoMenuItem,
                         iconColor: AppAccents.announcements,
                         onTap: () => AppPageRoute.push(
@@ -161,6 +162,7 @@ class ProfileScreen extends ConsumerWidget {
                               0;
                           return _MenuItem(
                             icon: PhosphorIconsFill.chatDots,
+                            imageAsset: 'assets/images/icons/color_chat.png',
                             label: l10n.conversationsMenuItem,
                             iconColor: AppColors.primary,
                             badgeCount: unread,
@@ -171,6 +173,7 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                       _MenuItem(
                         icon: PhosphorIconsFill.bell,
+                        imageAsset: 'assets/images/icons/color_bell.png',
                         label: l10n.notificationsMenuItem,
                         iconColor: AppAccents.events,
                         onTap: () =>
@@ -180,6 +183,7 @@ class ProfileScreen extends ConsumerWidget {
                       // Sozlamalar ichida edi va amalda topilmasdi.
                       _MenuItem(
                         icon: PhosphorIconsFill.crown,
+                        imageAsset: 'assets/images/icons/color_crown.png',
                         label: l10n.premiumTitle,
                         iconColor: const Color(0xFFE0A526),
                         onTap: () =>
@@ -187,6 +191,7 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                       _MenuItem(
                         icon: PhosphorIconsFill.gearSix,
+                        imageAsset: 'assets/images/icons/color_gear.png',
                         label: l10n.settingsMenuItem,
                         iconColor: AppAccents.neighbors,
                         onTap: () =>
@@ -194,6 +199,7 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                       _MenuItem(
                         icon: PhosphorIconsFill.question,
+                        imageAsset: 'assets/images/icons/color_help.png',
                         label: l10n.helpMenuItem,
                         iconColor: AppAccents.requests,
                         onTap: () =>
@@ -216,6 +222,8 @@ class ProfileScreen extends ConsumerWidget {
                             children: [
                               _MenuItem(
                                 icon: PhosphorIconsFill.buildings,
+                                imageAsset:
+                                    'assets/images/icons/color_building.png',
                                 label: override == null
                                     ? l10n.switchMahallaMenuItem
                                     : l10n.switchMahallaMenuItemActive,
@@ -225,6 +233,8 @@ class ProfileScreen extends ConsumerWidget {
                               ),
                               _MenuItem(
                                 icon: PhosphorIconsFill.star,
+                                imageAsset:
+                                    'assets/images/icons/color_star.png',
                                 label: l10n.feedbackListTitle,
                                 iconColor: AppAccents.events,
                                 onTap: () => AppPageRoute.push(
@@ -232,6 +242,8 @@ class ProfileScreen extends ConsumerWidget {
                               ),
                               _MenuItem(
                                 icon: PhosphorIconsFill.image,
+                                imageAsset:
+                                    'assets/images/icons/color_images.png',
                                 label: l10n.bannerManagementTitle,
                                 iconColor: AppAccents.neighbors,
                                 onTap: () => AppPageRoute.push(
@@ -252,6 +264,7 @@ class ProfileScreen extends ConsumerWidget {
                     children: [
                       _MenuItem(
                         icon: PhosphorIconsFill.signOut,
+                        imageAsset: 'assets/images/icons/color_logout.png',
                         label: l10n.logoutMenuItem,
                         iconColor: AppColors.danger,
                         labelColor: AppColors.danger,
@@ -785,6 +798,11 @@ class _MenuItem extends StatelessWidget {
   final Color? labelColor;
   final bool showDivider;
 
+  /// Berilsa, rangli doira+ikonka o'rniga shu rasm (masalan
+  /// `assets/images/icons/color_person.png`) ishlatiladi — rasm
+  /// o'zining rangi/soyasini olib yuradi, alohida fon kerak emas.
+  final String? imageAsset;
+
   /// O'qilmagan xabarlar/bildirishnomalar soni — berilsa, o'ng
   /// tomonda kichik qizil belgi sifatida ko'rsatiladi.
   final int badgeCount;
@@ -796,6 +814,7 @@ class _MenuItem extends StatelessWidget {
     this.iconColor,
     this.labelColor,
     this.showDivider = true,
+    this.imageAsset,
     this.badgeCount = 0,
   });
 
@@ -821,14 +840,18 @@ class _MenuItem extends StatelessWidget {
               : null,
           child: Row(
             children: [
-              Container(
+              SizedBox(
                 width: 34,
                 height: 34,
-                decoration: BoxDecoration(
-                  color: effectiveIconColor.withValues(alpha: 0.14),
-                  borderRadius: AppRadius.smAll,
-                ),
-                child: Icon(icon, size: 18, color: effectiveIconColor),
+                child: imageAsset != null
+                    ? Image.asset(imageAsset!, fit: BoxFit.contain)
+                    : Container(
+                        decoration: BoxDecoration(
+                          color: effectiveIconColor.withValues(alpha: 0.14),
+                          borderRadius: AppRadius.smAll,
+                        ),
+                        child: Icon(icon, size: 18, color: effectiveIconColor),
+                      ),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
