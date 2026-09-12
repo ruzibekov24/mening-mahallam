@@ -193,8 +193,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       ),
                       child: Row(
                         children: [
-                          Icon(PhosphorIconsBold.magnifyingGlass,
-                              size: 18, color: context.textSecondary),
+                          Image.asset('assets/images/icons/mono_search.png',
+                              width: 18,
+                              height: 18,
+                              color: context.textSecondary,
+                              colorBlendMode: BlendMode.srcIn),
                           const SizedBox(width: AppSpacing.sm),
                           Expanded(
                             child: TextField(
