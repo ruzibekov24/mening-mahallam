@@ -21,8 +21,8 @@ Flutter · Dart · Firebase · Firestore · FCM · Riverpod
 
 ## Holat
 
-Faol rivojlanmoqda (2025 — hozir). To'liq case-study: [ruzibekov-portfolio.pages.dev/projects](https://ruzibekov-portfolio.pages.dev/projects)
+Faol rivojlanmoqda (2026 — hozir). To'liq case-study: [ruzibekov-portfolio.pages.dev/projects](https://ruzibekov-portfolio.pages.dev/projects)
 
 ---
 
-Muallif: [Ilyosbek Ruzibekov](https://ruzibekov-portfolio.pages.dev)
+Muallif: [Ilyos Ruzibekov](https://ruzibekov-portfolio.pages.dev)
