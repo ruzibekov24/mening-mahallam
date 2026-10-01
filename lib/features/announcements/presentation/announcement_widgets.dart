@@ -16,7 +16,14 @@ class ReactionRow extends ConsumerWidget {
   final Announcement announcement;
   const ReactionRow({super.key, required this.announcement});
 
+  /// Firestore'da saqlanadigan emoji -> iOS (Apple) uslubidagi PNG.
   static const _emojis = ['👍', '❤️', '😮', '😂'];
+  static const _emojiAssets = {
+    '👍': 'assets/images/emoji/thumbsup.png',
+    '❤️': 'assets/images/emoji/heart.png',
+    '😮': 'assets/images/emoji/wow.png',
+    '😂': 'assets/images/emoji/laugh.png',
+  };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,6 +37,7 @@ class ReactionRow extends ConsumerWidget {
         for (final emoji in _emojis)
           _ReactionChip(
             emoji: emoji,
+            asset: _emojiAssets[emoji]!,
             count: announcement.reactionCount(emoji),
             isActive: myEmoji == emoji,
             onTap: myUid == null || profile?.mahallaId == null
@@ -49,12 +57,14 @@ class ReactionRow extends ConsumerWidget {
 
 class _ReactionChip extends StatelessWidget {
   final String emoji;
+  final String asset;
   final int count;
   final bool isActive;
   final VoidCallback? onTap;
 
   const _ReactionChip({
     required this.emoji,
+    required this.asset,
     required this.count,
     required this.isActive,
     required this.onTap,
@@ -81,7 +91,7 @@ class _ReactionChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 13)),
+            Image.asset(asset, width: 18, height: 18),
             if (count > 0) ...[
               const SizedBox(width: AppSpacing.xs),
               Text(
